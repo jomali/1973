@@ -1,0 +1,88 @@
+!% -SD
+! Ejemplo de uso del sistema de conversación
+! Está hecho deprisa y corriendo, y sin compilar :) Espero que compile, sino corrige los errores
+! Una conversación bastante estúpida que muestra como definir los items, las descripciones y las (posibles)
+! acciones derivadas del recorrido por la conversación. Creo que es autoexplicativa
+
+Constant Story "Conversacion";
+Constant Headline "^Mastodon (2010)^";
+
+Include "Parser";
+Include ">NPC_Conversacion.inf";
+Include "VerbLib";
+
+NPC_Conversacion mi_conversacion
+with
+	inicio "Empiezas a hablar con tu interlocutor [inicio]^",
+	fin "Has finalizado de hablar con tu interlocutor [fin]^",
+	temas tema_trabajo tema_nombre;
+	
+NPC_Tema tema_nombre
+with
+	desc_corta "preguntarle su nombre",
+	desc_words 'preguntar' 'nombre',
+	desc_larga "~Me presento~, le dices, ~mi nombre es Don Pepito, ¿puedo preguntarle el suyo?~",
+	desc_respuesta "~Por supuesto, Don Pepito, faltaría más. Encantado de conocerle, yo soy Don José.",
+	accion [;
+		parent(self).nuevo_tema(tema_apellidos);
+		"Espera, leches, no me acordaba de los apellidos, son Villaescusa Lacio^";
+	]
+;
+
+NPC_Tema tema_apellidos
+with
+	desc_corta "interesarte por sus apellidos",
+	desc_words 'apellidos' 'apellido' 'villaescusa' 'lacio',
+	desc_larga "~Apellidos curiosos, ¿de donde vienen?~",
+	desc_respuesta "~Pues de mi padre y madre, ¿de quién sino? Ja, soy bromista ¿verdad?~",
+;
+		
+NPC_Tema tema_trabajo
+with
+	desc_corta "investigar en qué trabaja",
+	desc_words 'trabaja' 'trabajo',
+	desc_larga "~¿Tendría la bondad de explicarme su trabajo?~",
+	desc_respuesta "~Mi querido amigo, yo hago de todo, pero digamos que principalmente me dedico al ramo de los viajes.~",
+	temas tema_viajes tema_de_todo;
+	
+NPC_Tema tema_viajes
+with
+	desc_corta "preguntar sobre los viajes",
+	desc_words 'viajes',
+	desc_larga "~Ah, viajes! ¡Me encanta viajar! Claro, como turista, supongo que dedicarse a ello debe ser cansado.~",
+	desc_respuesta "~Cansado y aburrido, no imagina lo tedioso que es explicar las mismas cosas de la Torre Eiffel una y otra vez. Es un tostón.~"
+	;
+	
+NPC_Tema tema_de_todo
+with
+	desc_corta "pedir que te aclare qué quiere decir con ~de todo~",
+	desc_words 'aclarar,' 'aclare' 'decir,' 'todo',
+	desc_larga "~Perdon, ¿de todo? ¿A qué se refiere?.~",
+	desc_respuesta "~Apuestas, inversiones en bolsa, robar bancos... ¡Es broma hombre!~"
+	;
+	
+[ Initialise;
+    ! Lugar de comienzo.
+    location = habitacion;
+
+    lookmode = 2;
+
+    npc_sistema_conversacion.iniciar_conversacion(mi_conversacion);
+    
+    ! Mensaje de Bienvenida
+    "^^Hablemos...^";
+];
+
+[ BeforeParsing;
+	npc_sistema_conversacion.try();
+];
+
+Include "SpanishG";
+
+Class Localidad
+  has light
+;
+
+Localidad habitacion "Habitacion con un personajillo..."
+  with
+    description "Esto es una habitacion como las cientos que has visto antes.";

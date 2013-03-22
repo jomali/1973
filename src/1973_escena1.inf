@@ -1,0 +1,224 @@
+
+
+!!==============================================================================
+!!
+!!	PROYECTO 1973
+!!	Escena 1: Habitación de Gabriel
+!!
+!!==============================================================================
+!!
+!!	File:			1973_escena1.inf
+!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Languague:		ES (Castellano)
+!!	System:			Inform, INFSP 6
+!!	Platform:		Z-Machine / GLULX
+!!	Version:		0.0
+!!	Released:		0000/00/00
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Copyright (c) 2013, J. Francisco Martín
+!!
+!!	This file is part of PROYECTO 1973.
+!!
+!!	PROYECTO 1973 is free software: you can redistribute it and/or modify 
+!!	it under the terms of the GNU General Public License as published by 
+!!	the Free Software Foundation, either version 3 of the License, or 
+!!	(at your option) any later version.
+!!
+!!	PROYECTO 1973 is distributed in the hope that it will be useful, 
+!!	but WITHOUT ANY WARRANTY; without even the implied warranty of 
+!!	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+!!	GNU General Public License for more details.
+!!
+!!	You should have received a copy of the GNU General Public License 
+!!	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!	HABITACION: En la habitación
+!!------------------------------------------------------------------------------
+
+Room	HABITACION "En la habitación"
+ with	is_dark	true,
+		name	'habitacion' 'cuarto' 'dormitorio' 'estancia', 
+		short_name " ", 
+		initial [; if (self hasnt visited) {
+!			box	""
+!				" Te ha dolido, ¿verdad?, dijo el chico.           "
+!				" Si.                                              "
+!				" ¿Eres muy valiente?                              "
+!				" Regular.                                         "
+!				" ¿Qué es lo más valiente que has hecho?           "
+!				" Escupió en la carretera una flema sanguinolenta. "
+!				" Levantarme esta mañana, dijo.                    "
+!				""
+!				"                                   CORMAC MCCARTY "
+!				"                                   The Road, 2006 "
+!				"";
+!			PressAnyKey();
+!			EraseWindow();
+!			box	""
+!				" Te ha dolido, ¿verdad?, dijo el chico.           "
+!				" Si.                                              "
+!				" ¿Eres muy valiente?                              "
+!				" Regular.                                         "
+!				" ¿Qué es lo más valiente que has hecho?           "
+!				" Escupió en la carretera una flema sanguinolenta. "
+!				" Levantarme esta mañana, dijo.                    "
+!				""
+!				"                                   CORMAC MCCARTY "
+!				"                                   The Road, 2006 "
+!				"";
+!			print (parser_type) "Pulsa una tecla para empezar";
+!			PressAnyKey();
+!			EraseWindow();
+
+!! TODO: Cambio de imagen en la version grafica
+
+			SetGrammaticalInflection(PRESENTE_TERCERA_PERSONA);
+print "No debió ser así. Eso es lo primero que el joven Gabriel Mistral piensa al abrir los ojos y despertar en la sofocante oscuridad de la habitación. Aún permanece unos minutos en la cama, tumbado con la mirada perdida entre las sombras del techo mientras las imágenes de los últimos días desfilan ante él en un tropel confuso. Una y otra vez ha repasado esas mismas imágenes últimamente. Y, una y otra vez, le han asaltado las mismas preguntas para las que sigue viéndose incapaz de encontrar respuesta: ¿cómo se podía haber torcido todo de esa manera? ¿dónde se habían equivocado?";
+			new_line; 
+			PressAnyKey();
+			new_line;
+print "Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flowers, " lo ocupa todo. Ella. Automáticamente tiende la mano a un lado, buscando a ciegas el tacto de su cuerpo. Pero lo único que encuentra son las sábanas, húmedas y pegajosas. No, claro que no está, recuerda. No aquí. La dejó durmiendo en el hotel antes de volverse a casa en mitad de la noche, solo de nuevo. Se dice que es mejor así, al fin y al cabo ahora tiene cosas más importantes de las que preocuparse. Deja escapar un largo suspiro de resignación y se obliga a incorporarse finalmente en el colchón.";
+			new_line; 
+			PressAnyKey();
+			new_line;
+			self.short_name = "En la habitación";
+			return true;
+		}],
+		description [;
+			if (self hasnt visited)
+"A su alrededor todo son penumbras. La escasa luz capaz de filtrarse a través de las cortinas cerradas sirve tan sólo para dibujar una estrecha franja blanca y zigzagueante sobre el suelo de la habitación.";
+			else if (self.is_dark)
+"Apenas una fina franja de luz logra colarse en la habitación por entre los resquicios que dejan las cortinas cerradas. Insuficiente todavía como para descorrer el telón de tinieblas que lo envuelve todo.";
+			else
+"La intensa claridad del amanecer se cuela ahora por la ventana abierta, iluminando un caos de ropa, libros, papeles y otros trastos esparcidos por todo el dormitorio. Sólo su cama y el escritorio siguen aún en pie entre el tumulto.";
+		],
+ e_to	[;
+!! TODO
+		return self.cant_go(); ],
+ out_to	[;
+		return self.e_to(); ],
+ cant_go
+		"No puede ir por ahí. La puerta es la única salida de la habitación.",
+;
+
+!!------------------------------------------------------------------------------
+!! Objetos con rutinas react_before:
+
+!!------------------------------------------------------------------------------
+!! NPCs:
+
+!!------------------------------------------------------------------------------
+!! Items:
+
+Item	maleta "maleta de viaje" HABITACION
+ with	size 5, 
+		name_m	'equipaje' 'maleton', 
+		name_f	'maleta',
+		gender	G_FEMENINO, 
+		adjectives 'viaje' 'cuero' 'gran' 'grande' 'desgastado' 'desgastada', 
+		invent [;
+			if (inventory_stage == 1 && self in HABITACION) {
+				print "su maleta de viaje, ya preparada y apoyada junto a la 
+				puerta";
+				return true;
+			}
+		],
+		describe [;
+			if (self in TAXI)
+				"^La maleta reposa sobre el asiento de al lado.";
+		],
+		description [;
+			print "Es un maletón de viaje forrado en cuero desgastado. Dentro 
+			lleva lo poco que guardará de la que ha sido su vida hasta ahora; 
+			algo de ropa y un par de libros. Nada más.";
+			if (self hasnt description_flag) {
+				give self description_flag;
+				" Ningún recuerdo. Ésos tendrá que dejárselos atrás.";
+			}
+			new_line;
+			return true;
+		],
+		before [;
+			Close:
+				"Ya está cerrada.";
+			Open, 
+			Receive:
+				if (location == HABITACION)
+					"Ya tiene dentro todo cuanto puede llevar consigo.";
+				else
+					"Ahora no necesita nada de lo que lleva dentro de la 
+					maleta.";
+		],
+		after [; 
+			Take: 
+				if (self hasnt moved) 
+					"Recoge la maleta del suelo."; 
+		],
+ has	female openable;
+		
+
+!!------------------------------------------------------------------------------
+!! Furniture:
+
+Furniture	escritorio "escritorio" HABITACION
+ with	name_m	'mueble' 'mobiliario' 'moblaje' 'escritorio' 'pupitre',
+		name_mp	'muebles',
+		name_f	'mesa',
+		gender	G_MASCULINO,
+		adjectives 'madera' 'pequeno' 'pequena' 'oscuro' 'oscura',
+		description [;
+			print "Se trata de un funcional escritorio de madera oscura";
+			if (child(self)) {
+				print " sobre el que hay ";
+				WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT);
+			}
+			print ". Tiene un único cajón, que en estos momentos está";
+			if (cajon hasnt open) " cerrado.";
+			print " abierto.";
+			if (~~child(cajon)) " Dentro no hay nada.";
+			print " Dentro alcanza a ver ";
+			WriteListFrom(child(cajon), CONCEAL_BIT + ENGLISH_BIT);
+			".";
+		], 
+		before [;
+			Climb, Enter, Sit:
+				"En realidad no tiene motivos para subirse ahí.";
+			Close:
+				<<Close cajon>>;
+			Open:
+				<<Open cajon>>;
+			Pull, Push, PushDir, Take, Turn:
+				print_ret (The) self, " pesa", (n) self, " demasiado para andar 
+				moviéndol", (o) self, ".";
+		], 
+ has	male concealed supporter transparent;
+
+Furniture	cajon "cajón" HABITACION
+ class	Receptacle, 
+ with	capacity_size 3,
+		name_m	'cajon' 'cajoncillo' 'compartimento', 
+		name_f	'gaveta',
+		gender	G_MASCULINO, 
+		adjectives 'escritorio', 
+		description [; <<Search self>>; ], 
+		before [;
+			Pull: 
+				<<Open self>>;
+			Push:
+				<<Close self>>;
+			PushDir, Take, Turn:
+				"Forma parte del escritorio.";
+		],
+ has	male concealed container openable ~open;
+				
+
+!!------------------------------------------------------------------------------
+!! Atrezzo:
+
+

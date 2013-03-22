@@ -1,0 +1,263 @@
+! ======================================================================================
+! NPC_Conversacion
+! Autor: Mastodon 2009
+! V1.0 (19/04/10) 
+! Descripción: 
+! 	librería genérica para tratamiento de conversaciones al estilo de Eric Eve
+!     (ver Shelter from the Storm). El resultado es igual a la clásica por menús de
+!     LucasArts, pero la forma de presentarla y de introducir las opciones es diferente 
+!     y más "natural". Transcripción de ejemplo:
+!     	> hablar con pirata
+!     	Inicias una interesante conversación con el pirata patapalo. "Buenas, grumete,
+!     	¿qué te trae por aquí?"
+!     	(Se te ocurre hablarle de la busqueda del tesoro, preguntarle por la isla secreta,
+!     	 o cambiar de tema)
+!     	> hablar del tesoro
+!     	"Verás, pirata", le dices, "hace tiempo que estoy buscando el famoso tesoro, ¿sabes
+!     	algo de el?"
+!     	"Mi querido marinero de agua dulce", te responde con sorna, "a ti te lo voy a decir...
+!     	salvo... quizás puedas hacerme un favor y entonces me pensaría ayudarte".
+!     	(Consideras aceptar el trato, preguntarle por la isla secreta,
+!     	o cambiar de tema)
+!     	> cambio de tema
+!     	"Pues parece que va a llover por aquí", cortas, mirando al cielo.
+!     	"Ahh, veo que eres un chico listo, creo que vamos a hacer buenas migas."
+!     	... etc ...
+!     El reconocimiento de patrones se hace mediante parseado ligero y comparación entre la entrada del
+!     jugador y la definición de cada tema, de forma que la librería sabe interpretar (casi siempre)
+!     la intención del jugador por una serie de palabras clave indicadas en los temas. Se ponen 
+!     directamente en el prompt sin necesidad de definir nuevas gramáticas.
+!     
+! Uso
+! ---
+! Antes de usar la librería:
+! 	- Solamente incluir en la rutina BeforeParsing (crearla si no existe) lo siguiente: 
+! 			npc_sistema_conversacion.try();
+! 	 
+!======================================================================================   	
+
+!Constant DEBUG_CONVERSACION; ! descomentar para info de depuración
+
+Array tmp_text1 -> 64; ! Array para guardar las palabras temporalmente
+
+#ifdef DEBUG_CONVERSACION;
+! Función para pintar un String Array
+[ PrintStringArray the_array i;
+	print "(", the_array-->0, ")";
+	for (i=WORDSIZE : i<(the_array-->0)+WORDSIZE : i++) print (char)the_array->i;
+];
+
+! Funcion para pintar una palabra del Prompt de entrada del jugador
+[ PrintPromptWord num_word dir i;
+	dir = WordAddress(num_word);
+	for (i = 0 : i < WordLength(num_word) : i++)
+	{
+		print (char)dir->i;
+	}
+];
+#endif;
+
+! Compara una entrada en array (del prompt, indicada por el número de orden de la palabra) 
+! con una palabra de diccionario.
+! Devuelve 1 si coinciden, 0 si diferentes
+[compararPal num_word_prompt dictword i len;
+	
+	! A) Volcamos la palabra de diccionario a un array
+	#ifdef TARGET_ZCODE;
+	@output_stream 3 tmp_text1;
+	print (address)dictword; ! vuelca la palabra de diccionario en el array
+	@output_stream -3;
+	#endif;
+
+	#ifdef TARGET_GLULX;
+	tmp_text1->(WORDSIZE-1) = PrintAnyToArray(tmp_text1+WORDSIZE, 60, dictword);
+	#endif;
+
+	len = tmp_text1->(WORDSIZE-1); 
+	! B) Si el ultimo carácter es una coma, se elimina para evitar conflictos con la conversión de 
+	! infitivos y los diccionarios en informATE--> NO DEBE HABER NUNCA PALABRAS EN INFINITIVO EN EL DICCIONARIO
+	! No vale para palabras que antes de ponerles la coma tengan 9 o más caracteres (limitación
+	! de inform)
+	
+	if (tmp_text1->(len+WORDSIZE-1) == ',')
+	{
+		tmp_text1->(len+WORDSIZE-1) = 0; ! Eliminamos el ; del buffer
+		(tmp_text1->(WORDSIZE-1))--;     ! Decrementamos el tamaño indicado en el buffer
+		len = tmp_text1->(WORDSIZE-1);   ! Y actualizamos la longitud al nuevo valor
+	}
+	
+	#ifdef DEBUG_CONVERSACION;
+	print "Comparando prompt:<", (PrintPromptWord)num_word_prompt,"> con palabra de diccionario:<", (PrintStringArray)tmp_text1, ">^";
+	#endif;
+	
+	! Si tienen diferentes longitudes devuelve NO coincidente
+	! Tratando el caso especial de la limitacion a 9 de las palabras de diccionario en inform
+	if (WordLength(num_word_prompt) ~= len &&
+	    ~~(WordLength(num_word_prompt) >9 && len == 9)) 
+		return 0;
+		
+	! Para la misma longitud, miramos letra a letra buscando diferencias
+	for (i = 0: i < len: i++)
+	{
+		if (WordAddress(num_word_prompt)->i ~= tmp_text1->(i+WORDSIZE))
+			return 0; ! Letra diferente, retorno que son diferentes
+	}
+	
+	! Son iguales
+	return 1;
+];
+
+Class NPC_Conversacion
+with
+	iniciar [i;
+		self.finalizar(); ! Borramos todo por si acaso
+		for (i = 0 : i < self.#temas/WORDSIZE : i++)
+		{
+			!print "Move:", (string)(self.&temas-->i).desc_corta, "^";
+			move self.&temas-->i to self;
+		}
+	],
+	finalizar [o; ! Borra todos los item actuales en la conversación
+		objectloop (o in self)
+		{
+			remove o;	
+		}
+	],
+	mostrar_lista_temas [o;
+		for (o = child(self) : o ~= nothing : o = sibling(o))
+		{
+			PrintOrRun(o,desc_corta, true);
+			if (sibling(o) ~= nothing) 
+				if (sibling(sibling(o)) == nothing)
+					print " o ";
+				else
+					print ", ";	
+		}
+	],
+	nuevo_tema [tema; 
+		move tema to self;
+	],
+	incorporar_subtemas [tema i;
+		for (i = 0 : i < tema.#temas/WORDSIZE : i++)
+		{
+			move tema.&temas-->i to self;
+		}
+	],
+	quitar_tema [tema;
+		remove tema;
+	],
+;
+	
+Class NPC_Tema
+with
+	comparar_prompt [i j;
+		self.hits = 0;
+		for (i = 0 : i < self.#desc_words/WORDSIZE : i++)
+		{
+			for (j = 1 : j <= num_words : j++)
+				if (compararPal(j, self.&desc_words-->i)) 
+					self.hits++;
+		}
+	],
+	hits 0,     ! número de palabras de este tema que coinciden con la entrada del jugador
+	accion [; ] ! accion a ejecutar (opcional) tras haber leido este item
+;
+
+Object npc_sistema_conversacion
+	with
+		sin_temas "(No se te ocurre qué más comentar)",
+		iniciar_conversacion [conversacion;
+			self.seleccionar_conversacion(conversacion);
+			self.conversacion_actual.iniciar();
+			PrintOrRun(self.conversacion_actual, inicio);
+			print "^";
+			self.preguntar();
+		],
+		finalizar_conversacion [;
+			PrintOrRun(self.conversacion_actual, fin);
+			self.conversacion_actual = 0;
+		],
+		seleccionar_conversacion [conversacion;
+			self.conversacion_actual = conversacion;
+		],
+		try [o o_tmp_hits;
+			if (self.conversacion_actual)
+			{
+				! A) Da un repaso a los temas actuales intentando encajar con el prompt
+				self.hits = 0; self.tema = 0;
+				objectloop (o in self.conversacion_actual)
+				{
+					#ifdef DEBUG_CONVERSACION;
+					print "Probando: ", (string)o.desc_corta, "... ";
+					#endif;
+					
+					! Calculamos el número de coincidencias del tema en relación al total de palabras (%)
+					o.comparar_prompt();
+					!o_tmp_hits = (o.hits*100)/(o.#desc_words*WORDSIZE); 
+					o_tmp_hits = (o.hits*100)/num_words; 
+					
+					#ifdef DEBUG_CONVERSACION;
+					print "Ajuste de ", o.hits, " sobre ", o.#desc_words/WORDSIZE, " palabras: ", o_tmp_hits, "%^";
+					#endif;
+					
+					if (o_tmp_hits > self.hits)    	  ! si coincide más que el máximo actual
+					{
+						self.hits = o_tmp_hits;
+						self.tema = o;
+					}
+				}
+				
+				! B) Mostrar la respuesta al tema elegido, si lo hay, y añadir los subtemas
+				if (self.hits)
+				{
+					#ifdef DEBUG_CONVERSACION;
+					print "Tema seleccionado: ", (string)self.tema.desc_corta, "^";
+					#endif;
+					PrintOrRun(self.tema, desc_larga);
+					print "^";
+					PrintOrRun(self.tema, desc_respuesta);
+					print "^";
+					PrintOrRun(self.tema, accion);
+					
+					! Sustituimos la accion tecleada por una fake que no diga nada
+					parse-->1 = 'npc_talk,';
+					num_words = 1;
+					! Por último añadimos los nuevos temas, si los hay, y repreguntamos
+					self.conversacion_actual.quitar_tema(self.tema);
+					self.conversacion_actual.incorporar_subtemas(self.tema);
+					
+					! Ahora la acción NPC_OK_Talk toma el control para mostrar la nueva lista de temas
+				}
+			}
+			rfalse; ! retorna de la funcion sin hacer nada->Tratamiento normal del prompt	
+		],
+		hits 0, ! hits del tema con más coincidencias 
+				! (en tanto por 100 sobre el número de palabras del tema)
+		tema 0, ! tema con más porcentaje de coincidencia hasta el momento
+		conversacion_actual 0,
+		preguntas "Se te ocurre" "Piensas en" "Podrías" "Sería posible" "No sería mala idea",
+		preguntar [n;
+			n = random(self.#preguntas/WORDSIZE)-1;
+			print "(", (string)self.&preguntas-->n, " ";
+			self.conversacion_actual.mostrar_lista_temas();
+			")";
+		]
+;
+
+! Gramática de pega que se activa cuando se proporciona una de las opciones válidas (muestra la lista de temas pendientes)
+
+[ NPC_Talk_OKSub;
+	! Tras responder a una pregunta, vuelve a mostrar la lista de temas
+	if (child(npc_sistema_conversacion.conversacion_actual) ~= nothing)
+		npc_sistema_conversacion.preguntar();
+	else
+	{
+		PrintOrRun(npc_sistema_conversacion, sin_temas);
+		npc_sistema_conversacion.finalizar_conversacion();
+	}
+	rtrue;
+];
+
+Verb 'npc_talk,'
+  *                                   -> NPC_Talk_OK
+  * topic							  -> NPC_Talk_OK;

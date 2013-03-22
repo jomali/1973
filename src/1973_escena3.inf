@@ -1,0 +1,319 @@
+
+
+!!==============================================================================
+!!
+!!	PROYECTO 1973
+!!	Escena 3: Calles de Santiago
+!!
+!!==============================================================================
+!!
+!!	File:			1973_escena3.inf
+!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Languague:		ES (Castellano)
+!!	System:			Inform, INFSP 6
+!!	Platform:		Z-Machine / GLULX
+!!	Version:		0.0
+!!	Released:		0000/00/00
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Copyright (c) 2013, J. Francisco Martín
+!!
+!!	This file is part of PROYECTO 1973.
+!!
+!!	PROYECTO 1973 is free software: you can redistribute it and/or modify 
+!!	it under the terms of the GNU General Public License as published by 
+!!	the Free Software Foundation, either version 3 of the License, or 
+!!	(at your option) any later version.
+!!
+!!	PROYECTO 1973 is distributed in the hope that it will be useful, 
+!!	but WITHOUT ANY WARRANTY; without even the implied warranty of 
+!!	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+!!	GNU General Public License for more details.
+!!
+!!	You should have received a copy of the GNU General Public License 
+!!	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!	TAXI: Dentro del taxi
+!!------------------------------------------------------------------------------
+
+!! TODO
+!!	<>	definir asientos
+!!	<>	radio
+!!	<>	mirar a la calle / la ciudad / santiago...
+
+Room	TAXI "Dentro del taxi"
+ with	is_stopped			false,
+		triggered_action	false,
+		counter				0, 
+		name	'taxi' 'coche' 'vehiculo' 'automovil' 'auto', 
+		initial [; if (self hasnt visited) {
+			SetGrammaticalInflection (PRESENTE_TERCERA_PERSONA);
+			move maleta to self;
+			StartDaemon(self);
+!! XXX
+print "Siente en la mano el frío peso del revólver un instante antes de comprender que lleva un rato jugueteando con él, absorto. Inmediatamente lo vuelve a guardar en uno de los bolsillos del abrigo y mira alarmado al taxista. El hombre, sin embargo, está concentrado en la carretera y no parece prestar demasiada atención a nada más. No da señales de haber reparado en el arma, al menos. Aliviado, Gabriel se recuesta mejor en el asiento y deja caer la mirada sobre la ciudad que se va esfumando tras las ventanillas, procurando alejar los recuerdos de su cabeza.";
+			new_line;
+			new_line;
+			return true;
+		}],
+		description [;
+!! TODO
+			if (self.is_stopped)
+				"El taxi está detenido.";
+			if (self.triggered_action) {
+				self.triggered_action = false;
+				self.is_stopped = true;
+print "El coche da una ligera sacudida al cambiar de calle. Gabriel advierte que acaban de doblar por Neftalí Basoalto, y al momento le vienen a la mente los Juegos Florales que aquí se celebraron hace unos meses. Él participó, pues siempre ha adorado la poesía. Se presentó con un breve poemario: ~Luces de Medianoche~, del que recuerda unos versos en especial:";
+				new_line;
+				new_line;
+!! TODO: usar comillas españolas
+print (italic_type) "~Las mareas susurran al incierto / oscuro cielo estrellado, / lamentos y lloros amargos / grandes duelos y sueños aciagos. / Pues no conocen de mayor acierto / ni peor sino marcado, / el fin de la noche amante, / de su rostro fresco, siempre radiante. / Con el amanecer a cielo abierto / el Sol brilla asombrado, / de ver su noche desnuda / a los pies ya muerta y siempre muda.~";
+				new_line;
+				new_line;
+				print "---Así que es usted poeta, ¿eh?";
+				new_line;
+				new_line;
+				print "Siente un leve pinchazo de vergüenza; no pretendía 
+				recitar en voz alta. ---Si. Y de los malos. No conseguí el 
+				premio.";
+				new_line;
+				new_line;
+				print "---¿Cómo dice?";
+				new_line;
+				new_line;
+				print "---Presenté esos versos a un concurso. Aquí al lado, 
+				hace unos meses. No conseguí el premio. ---Aunque sí se sintió 
+				bastante satisfecho de su obra.";
+				new_line;
+				new_line;
+				print "---Lástima. A propósito ---le dice el hombre volviendo 
+				un poco la cabeza hacia él---, ¿tiene prisa?";
+				new_line;
+				new_line;
+				TagConversationSystem.start(conversacion_taxista);
+				return true;
+			}
+!! XXX
+"El taxi avanza lentamente a través de las congestionadas calles de Santiago. Desde su asiento en la parte de atrás, Gabriel ve cómo desfilan, quizá por última vez, las calles, los edificios y las gentes de la que ha sido su ciudad hasta hoy.";
+		],
+		before [; 
+			Listen:
+				"En la radio suenan las pausadas notas de piano de alguna 
+				pieza clásica que no puede reconocer.";
+			Smell:
+				"Humo viejo, viejo perfume, viejo sudor.";
+			Xyzzy:
+				AimAndFire();
+				return true;
+		],
+		daemon [;
+			switch (self.counter) {
+			5:	self.triggered_action = true;
+			default:
+				self.counter++;
+			}
+		],
+		e_to	CALLE_ARRIBA,
+		out_to	[; return self.e_to(); ],
+;
+
+!!------------------------------------------------------------------------------
+!! Objetos con rutinas react_before:
+
+!!------------------------------------------------------------------------------
+!! Conversaciones:
+
+TCS_Conversation	conversacion_taxista
+ with	temas	op01_a op01_b op01_c op01_d;
+
+TCS_Topic	op01_a
+ with	entry
+			"decirle que un poco", 
+		keys
+			'decir,' 'decirle,' 'poco' 'si' 'afirmar,', 
+		reply
+			"---Un poco.", 
+		reaction [;
+			parent(self).remove_topic(op01_b);
+			parent(self).remove_topic(op01_c);
+			parent(self).remove_topic(op01_d);
+		];
+
+TCS_Topic	op01_b
+ with	entry	
+			"contarle que tienes que estar en San Antonio a las cuatro y media", 
+		keys
+			'contar,' 'contarle,' 'estar,' 'san' 'antonio' 'cuatro' 'media',
+		reply
+			"---Cojo un barco en San Antonio a las cuatro y media.", 
+		reaction [;
+			parent(self).remove_topic(op01_a);
+			parent(self).remove_topic(op01_c);
+			parent(self).remove_topic(op01_d);
+		];
+
+TCS_Topic	op01_c
+ with	entry
+			"preguntarle por qué lo dice", 
+		keys
+			'por' 'que' 'dice' 'pregunta', 
+		reply
+			"---¿Por qué lo pregunta?", 
+!		reaction [;
+!			parent(self).remove_topic(op01_a);
+!			parent(self).remove_topic(op01_b);
+!			parent(self).remove_topic(op01_d);
+!		],
+;
+
+TCS_Topic	op01_d
+ with	entry
+			"decirle que eso no le incumbe", 
+		keys
+			'eso' 'incumbe' 'importa', 
+		reply
+			"---A usted qué le importa.", 
+		reaction [;
+			parent(self).remove_topic(op01_a);
+			parent(self).remove_topic(op01_b);
+			parent(self).remove_topic(op01_c);
+		];
+
+!!------------------------------------------------------------------------------
+!! NPCs:
+
+NPC		taxista "taxista" TAXI
+ with	name_m	'taxista' 'conductor' 'chofer' 'hombre' 'individuo',
+		name_f	'persona', 
+		gender	G_MASCULINO, 
+		description [;
+			print "Es un hombre de mediana edad, con los brazos desnudos 
+			bronceados por el sol. Mordisquea el extremo de un largo puro 
+			apagado mientras observa concentrado el estado del tráfico";
+			if (self hasnt description_flag) {
+				give self description_flag;
+				", como un experimentado jugador de ajedrez que, erguido sobre 
+				el tablero, estudia la disposición de las fichas antes de 
+				planificar su siguiente movimiento.";
+			}
+			".";
+		],
+		before [;
+			TalkTo:
+				"El taxista permanece en silencio, absorto en la carretera y en
+				sus pensamientos. Gabriel decide no interrumpirle y centrarse 
+				en los suyos propios.";
+		],
+ has	male concealed;
+
+!!------------------------------------------------------------------------------
+!! Items:
+
+!!------------------------------------------------------------------------------
+!! Furniture:
+
+!!------------------------------------------------------------------------------
+!! Atrezzo:
+
+Atrezzo	"ventanilla" TAXI
+ with	counter 0, 
+		name_m	'cristal' 'vidrio', 
+		name_f	'ventanilla' 'ventana' 'luna', 
+		name_mp	'cristales' 'vidrios', 
+		name_fp	'ventanillas' 'ventanas', 
+		gender	G_FEMENINO, 
+		adjectives 'lateral' 'laterales' 'puerta' 'puertas', 
+		description [; 
+!! TODO
+			if (TAXI.is_stopped) {
+print "Distraído, posa los ojos sobre la gente que pasea por la acera esta mañana. Y de repente, durante apenas un instante, vuelve a su mente el intenso perfume de ", (the) flowers ,". ¡Ella! Allí, a tan sólo un puñado de metros, ve a Luz Acosta caminando sinuosa por la calle. Alta, cabello negro largo, vestido rojo, piernas rectas que castigan el suelo a cada paso y una mirada capaz de derribar montañas. Luz Acosta... la mujer que conoció anoche.";
+				new_line;
+				new_line;
+print "---¡Pare! ¡Pare! ¡Espere aquí un momento! ---Abre apresuradamente la puerta del taxi y sale a su encuentro, casi a la carrera. Perfectamente consciente del tremendo riesgo que podía conllevar ser visto.";
+				new_line;
+				new_line;
+				PlayerTo(CALLE_ARRIBA);
+				return true;
+			}
+			if (self hasnt description_flag) {
+				give self description_flag;
+"Al mirar por la ventanilla reconoce un parquecillo con árboles a lo lejos. Cuando eran poco más que niños, recuerda utilizar aquellos troncos para grabar primerizas declaraciones de amor adolescente con la ayuda de alguna pequeña navaja, o de un clavo. Aunque las muchachas nunca encontraron aquellos garabatos especialmente románticos. A él, al menos, nunca le funcionaron.";
+			}
+			"Su mirada se pierde entre los detalles de la ciudad que se va 
+			desvaneciendo poco a poco tras las ventanillas.";
+		],
+		before [; Search: <<Examine self>>; ], 
+ has	female;
+
+
+!!==============================================================================
+!!	CALLE_ARRIBA: Santiago
+!!------------------------------------------------------------------------------
+
+Room	CALLE_ARRIBA "Santiago"
+ with	name	'calle' 'calles' 'santiago' 'aceras' 'acera' 'via' 'paseo' 
+				'avenida' 'bulevar' 'rambla' 'ronda' 'bordillo' 'anden' 
+				'pavimento' 'calzada' 'carretera',
+		description [;
+!! XXX
+print "Apenas una semana después del golpe, el ambiente que se respira en la calle vuelve a ser el de siempre, como si nunca hubiera ocurrido nada. Los habitantes de Santiago han vuelto a sus quehaceres diarios. Las tiendas y los bares están frecuentados otra vez por la clientela habitual, los ociosos pasean tranquilamente bajo el sol del mediodía y todos se esfuerzan, en fin, por recuperar la vida que tenían antes. Al menos aquéllos que aún conservan una.";
+			new_line;
+		],
+		s_to	CALLE_ABAJO, 
+		w_to	TAXI, 
+		in_to	[; return self.w_to(); ],
+;
+
+!!------------------------------------------------------------------------------
+!! Objetos con rutinas react_before:
+
+!!------------------------------------------------------------------------------
+!! NPCs:
+
+!!------------------------------------------------------------------------------
+!! Items:
+
+!!------------------------------------------------------------------------------
+!! Furniture:
+
+!!------------------------------------------------------------------------------
+!! Atrezzo:
+
+
+!!==============================================================================
+!!	CALLE_ABAJO: Santiago
+!!------------------------------------------------------------------------------
+
+Room	CALLE_ABAJO "Santiago"
+ with	name	'calle' 'calles' 'santiago' 'aceras' 'acera' 'via' 'paseo' 
+				'avenida' 'bulevar' 'rambla' 'ronda' 'bordillo' 'anden' 
+				'pavimento' 'calzada' 'carretera',
+		description [;
+!! XXX:
+print "Un puñado de pasos calle abajo la ve por fin. Esta a punto de echar a correr a su encuentro, pero se detiene en el último momento. Luz está en una terraza cercana, pero no es ella la única a quién ve. Dos soldados están sentados a una de las mesas y la han hecho detenerse. Tras unos instantes interrogándola acerca de algún asunto ---Gabriel no puede escuchar cuál---, la dejan continuar. Luz se sienta a otra mesa de la terraza, sola.";
+			new_line;
+		],
+		n_to	CALLE_ARRIBA,
+;
+
+!!------------------------------------------------------------------------------
+!! Objetos con rutinas react_before:
+
+!!------------------------------------------------------------------------------
+!! NPCs:
+
+!!------------------------------------------------------------------------------
+!! Items:
+
+!!------------------------------------------------------------------------------
+!! Furniture:
+
+!!------------------------------------------------------------------------------
+!! Atrezzo:
+
+

@@ -1,0 +1,312 @@
+
+
+!!==============================================================================
+!!
+!!	PROYECTO 1973
+!!	Prólogo: El Limbo
+!!
+!!==============================================================================
+!!
+!!	File:			1973_escena0.inf
+!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Languague:		ES (Castellano)
+!!	System:			Inform, INFSP 6
+!!	Platform:		Z-Machine / GLULX
+!!	Version:		0.0
+!!	Released:		0000/00/00
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Copyright (c) 2013, J. Francisco Martín
+!!
+!!	This file is part of PROYECTO 1973.
+!!
+!!	PROYECTO 1973 is free software: you can redistribute it and/or modify 
+!!	it under the terms of the GNU General Public License as published by 
+!!	the Free Software Foundation, either version 3 of the License, or 
+!!	(at your option) any later version.
+!!
+!!	PROYECTO 1973 is distributed in the hope that it will be useful, 
+!!	but WITHOUT ANY WARRANTY; without even the implied warranty of 
+!!	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+!!	GNU General Public License for more details.
+!!
+!!	You should have received a copy of the GNU General Public License 
+!!	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+!!
+!!------------------------------------------------------------------------------
+
+Default	GRAMMATICAL_INFLECTION 2;
+
+
+!!==============================================================================
+!!	Definición de atributos y clases
+!!------------------------------------------------------------------------------
+
+Attribute description_flag;
+
+!!------------------------------------------------------------------------------
+Class	Room
+ with	description [;
+			if (action == ##Look || self hasnt visited) self.long_description();
+			else self.short_description();
+			!! Espacio para elementos comunes a las dos descripciones
+			return true;
+		],
+		long_description "EN CONSTRUCCIÓN.",
+		!! Por defecto, la descripción corta es la misma descripción larga
+		short_description [; return self.long_description(); ],
+ has	light;
+
+!!------------------------------------------------------------------------------
+Class	Thing
+ with	size	0,			! Tamaño
+		volume	0,			! Volumen
+		weight	0,			! Peso
+		capacity_number	-1,	! Capacidad total: número de objetos
+		capacity_size	-1,	! Capacidad total: tamaño
+		capacity_volume	-1,	! Capacidad total: volumen
+		capacity_weight	-1,	! Capacidad total: peso
+		description [;
+			if (self hasnt description_flag) {
+				self.long_description();
+				give self description_flag;
+			} else
+				self.short_description();
+			return true;
+		],
+		long_description [;
+			switch (GRAMMATICAL_INFLECTION) {
+				1:	print "No veo ";
+				2:	print "No ves ";
+				3:	print "No ve ";
+				4:	print "No vi ";
+				5:	print "No viste ";
+				6:	print "No vio ";
+			}
+			"nada especial en ", (the) self, ".";
+		],
+		short_description [; return self.long_description(); ];
+
+!!------------------------------------------------------------------------------
+Class	Item
+ class	Thing
+ with	long_description [;
+			switch (GRAMMATICAL_INFLECTION) {
+				1,2,3:	print "Tiene", (n) self;
+				4,5,6:	print "Tenía", (n) self;
+			}
+			print " el mismo aspecto que cual";
+			if ( self has pluralname ) print "esquiera otr";
+			else print "quier otr";
+			print (o) self, " ", (name) self, " ";
+			switch (GRAMMATICAL_INFLECTION) {
+				1:	"que haya visto antes.";
+				2:	"que hayas visto antes.";
+				3:	"que haya visto antes.";
+				4:	"que hubiese visto antes.";
+				5:	"que hubieses visto antes.";
+				6:	"que hubiese visto antes.";
+			}
+		];
+
+!!------------------------------------------------------------------------------
+Class	Furniture
+ class	Thing,
+ with	before [;
+			Pull, Push, PushDir, Take, Turn:
+				switch (GRAMMATICAL_INFLECTION) {
+					1,2,3:	print (The) self, " ", (es) self;
+					4,5,6:	print (The) self, " era", (n) self;
+				} " demasiado pesad", (o) self, " para andar moviéndol",
+				(o) self, ".";
+		],
+ has	static;
+
+!!------------------------------------------------------------------------------
+Class	Atrezzo
+ class	Thing
+ has	scenery;
+
+!!------------------------------------------------------------------------------
+!! TODO: Crear clase atuendo (Attire) que implemente propiedad list_together
+
+!!------------------------------------------------------------------------------
+!! Hay algunas librerías para manejar conversaciones que definen una nueva 
+!! clase con la que representar personajes (por ejemplo "gtalk.h" de Greg 
+!! Boettcher, Krister Fundin y Mark J. Tilford para manejar conversaciones 
+!! por medio de menús, define la clase Character). Se puede reutilizar la 
+!! clase definida en una librería externa dentro de NPC convirtiendo esta 
+!! última en una subclase de aquella definida en la librería externa.
+!!------------------------------------------------------------------------------
+Class	NPC
+ class	Thing
+! class	Character	! Definida en la librería "gtalk.h"
+ with	life [;
+			Answer, Ask, AskFor, Order, Tell:
+				print_ret (parser_type) "Para iniciar una conversación usa 
+				simplemente la orden HABLA (a/con) PERSONAJE.";
+		],
+ has	animate;
+
+!!------------------------------------------------------------------------------
+Class	SmartEnterable
+ with	!! TODO: Repasar el conjunto completo de acciones de la librería para 
+		!! determinar su comportamiento cuando el protagonista se encuentra 
+		!! dentro o sobre un objeto SmartEnterable.
+		react_before [; if (player notin self) return false;
+			!! GROUP 2 ACTIONS: Usually work, given the right circumstances.
+			Close, Open:
+				if (noun hasnt openable)						return false;
+				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				return false;
+			Disrobe, Wear:
+				if (noun == nothing or player or self)			return false;
+				if (noun hasnt clothing)						return false;
+				<Exit self>; new_line;
+				return false;
+			Drop: !! TODO: Comprobar funcionamiento
+				return false;
+			Eat:
+				if (noun hasnt edible)							return false;
+				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				return false;
+			Empty, Remove, Search, Take:
+				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				return false;
+			EmptyT: !! TODO: Comprobar funcionamiento
+				if (ObjectIsUntouchable(noun, 1)) return false;
+				if (self.out_of_reach(second)) { <Exit self>; new_line; }
+				return false;
+!Enter
+			Exit:
+				if (noun == nothing) <<Exit self>>;
+!GetOff
+!Give
+			Go:
+				if (noun == nothing or player or self)			return false;
+				if (~~(noun ofclass CompassDirection))			return false;
+				<Exit self>; new_line;
+				return false;
+!GoIn
+			Insert, PutOn:
+				if ((second == d_obj) || (player in second)) <<Drop noun>>;
+				if (self.out_of_reach(second)) { <Exit self>; new_line; }
+				return false;
+			Lock, Unlock:
+				if (noun hasnt lockable)						return false;
+				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				return false;
+!Order
+!Show
+			SwitchOff, SwitchOn:
+				if (noun hasnt switchable)						return false;
+				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				return false;
+			Transfer: !! TODO: Comprobar funcionamiento
+				if (noun notin player)							return false;
+				return false;
+			!! GROUP 3 ACTIONS: Output a message and stop at the "before" stage.
+!Answer
+!Ask
+!AskFor
+			Attack, Blow, LookUnder, Smell, Squeeze, Taste, Touch:
+				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				return false;
+			Burn:
+				!! TODO: comprobaciones de noun y second
+				return false;
+!Buy
+			Climb:
+				if (noun has enterable) {
+					if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				}
+				return false;
+!Consult
+!Fill
+!Jump
+!JumpOver
+!Kiss
+!LetGo
+!Listen
+!Mild
+!No
+!Pray
+			Pull, Push, Turn: !! TODO:
+				! if (noun has scenery or static or concealed)	return false;
+				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				return false;
+!PushDir
+!Receive
+!Rub
+!Set
+!SetTo
+!Swim
+!Swing
+!Tell
+!Wake
+!WakeOther
+!Wave
+!WaveHands
+!! CUSTOM ACTIONS
+!Dance
+!GoDown
+!GoUp
+!KnockOn
+!Masturbate
+!Sit
+!SleepWith
+			StandUp:
+				if (noun == nothing) <<Exit self>>;
+!TalkTo
+!Untie
+!Use
+		],
+		out_of_reach [ obj;
+			if (obj == nothing or player or self)	return false;
+			if (IndirectlyContains(self, obj))		return false;
+			if (IndirectlyContains(player, obj))	return false;
+			return true;
+		],
+ has	enterable;
+
+
+!!==============================================================================
+!!	LIMBO: En algún lugar
+!!------------------------------------------------------------------------------
+
+Room	LIMBO "En algún lugar"
+ with	name	'limbo' 'lugar' 'sueno' 'vacio',
+		clarification "",
+		description [;
+			print "Más allá de la barrera casi insuperable que separa la 
+			realidad de todo lo demás. Un lugar etéreo, donde la vida, la 
+			materia y la vitalidad no son necesariamente constantes; un lugar 
+			donde el tiempo y el espacio no existen tal y como los capta 
+			nuestro ser despierto...";
+			if (self hasnt visited)
+				print (italic_type) " ¿Qué? ¿Cómo?... ¿cómo he llegado aquí?";
+			new_line;
+			return true;
+		];
+
+Item	ropa "ropa" LIMBO
+ with	name_m	'atuendo' 'vestuario' 'pantalon' 'tejano' 'vaquero' 'abrigo'
+				'gaban' 'sobretodo' 'chaqueton' 'bolsillo',
+		name_f	'ropa' 'indumentaria' 'prenda' 'vestimenta' 'pelliza' 
+				'chaqueta' 'faltriquera' 'camisa' 'camisola' 'camiseta',
+		name_mp	'atuendos' 'pantalones' 'tejanos' 'vaqueros' 'bolsillos',
+		name_fp	'prendas' 'vestimentas' 'faltriqueras',
+		gender	G_FEMENINO,
+		article	"su", 
+		!! TODO: adjectives
+		description [;
+		!! TODO:
+			print "Siempre ha vestido ropa barata y discreta. Estos son unos pantalones negros, algo desgastados por el uso, camisa blanca de algodón, y un gran abrigo gris de tela basta, largo hasta las rodillas y de profundos bolsillos.";
+			new_line;
+			return true;
+		],
+		!! TODO
+ has	female clothing container open;
+
+

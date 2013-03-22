@@ -1,0 +1,849 @@
+
+
+!!==============================================================================
+!!
+!!	PROYECTO 1973
+!!	Personalizaciones de la librería Inform
+!!
+!!==============================================================================
+!!
+!!	File:			1973_lib.inf
+!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Languague:		ES (Castellano)
+!!	System:			Inform, INFSP 6
+!!	Platform:		Z-Machine / GLULX
+!!	Version:		1.0
+!!	Released:		2013/01/16
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Copyright (c) 2013, J. Francisco Martín
+!!
+!!	This file is part of PROYECTO 1973.
+!!
+!!	PROYECTO 1973 is free software: you can redistribute it and/or modify 
+!!	it under the terms of the GNU General Public License as published by 
+!!	the Free Software Foundation, either version 3 of the License, or 
+!!	(at your option) any later version.
+!!
+!!	PROYECTO 1973 is distributed in the hope that it will be useful, 
+!!	but WITHOUT ANY WARRANTY; without even the implied warranty of 
+!!	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+!!	GNU General Public License for more details.
+!!
+!!	You should have received a copy of the GNU General Public License 
+!!	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!	Constantes y variables globales de la librería
+!!------------------------------------------------------------------------------
+
+Constant PRESENTE_PRIMERA_PERSONA = 1;
+Constant PRESENTE_SEGUNDA_PERSONA = 2;
+Constant PRESENTE_TERCERA_PERSONA = 3;
+Constant PASADO_PRIMERA_PERSONA   = 4;
+Constant PASADO_SEGUNDA_PERSONA   = 5;
+Constant PASADO_TERCERA_PERSONA   = 6;
+
+Global	GRAMMATICAL_INFLECTION = PRESENTE_SEGUNDA_PERSONA;
+
+
+!!==============================================================================
+!! Trata de transferir un objeto dado al jugador: retorna falso si la acción se 
+!! realiza con éxito, verdadero si se produce algún error (imprimiendo un 
+!! mensaje adecuado en este último caso).
+!!------------------------------------------------------------------------------
+[ AttemptToTakeObject item     ancestor after_recipient i j k;
+	if (item == player) return L__M(##Take, 2);
+	if (item has animate) return L__M(##Take, 3, item);
+
+	ancestor = CommonAncestor(player, item);
+
+	if (ancestor == 0) {
+		i = ObjectScopedBySomething(item);
+		if (i ~= 0) ancestor = CommonAncestor(player, i);
+	}
+
+	!! Is the player indirectly inside the item?
+	if (ancestor == item) return L__M(##Take, 4, item);
+
+	!! Does the player already directly contain the item?
+	if (item in player) return L__M(##Take, 5, item);
+
+	!! Can the player touch the item, or is there (e.g.) a closed container 
+	!! in the way?
+	if (ObjectIsUntouchable(item, false, true)) return;
+
+	!! The item is now known to be accessible.
+
+	!! Consult the immediate possessor of the item, if it's in a container 
+	!! which the player is not in.
+
+	i = parent(item);
+	if (i && i ~= ancestor && (i has container || i has supporter)) {
+		after_recipient = i;
+		k = action; action = ##LetGo;
+		if (RunRoutines(i, before) ~= 0) { action = k; rtrue; }
+		action=k;
+	}
+
+	if (item has scenery) return L__M(##Take, 10, item);
+	if (item has static)  return L__M(##Take, 11, item);
+
+	!! The item is now known to be available for taking.  Is the player 
+	!! carrying too much?  If so, possibly juggle items into the rucksack 
+	!! to make room.
+
+	k = 0; objectloop (j in player) if (j hasnt worn) k++;
+
+	if (k >= ValueOrRun(player, capacity)) {
+		if (SACK_OBJECT ~= 0) {
+			if (parent(SACK_OBJECT) ~= player) return L__M(##Take, 12);
+			j = 0;
+			objectloop (k in player) 
+				if (k ~= SACK_OBJECT && k hasnt worn && k hasnt light 
+					!! XXX: Se comprueba además si el objeto cabe dentro o sobre 
+					!! SACK_OBJECT de forma que, si no lo hace, no se intenta 
+					!! introducirlo automáticamente. La rutina 
+					!! CheckIfObjectFits(receiver, obj) está definida dentro de 
+					!! la extensión "receptacles.h".
+					&& CheckIfObjectFits(SACK_OBJECT, k)) j = k;
+
+			if (j ~= 0) {
+				L__M(##Take, 13, j);
+				keep_silent = 1; <Insert j SACK_OBJECT>; keep_silent = 0;
+				if (j notin SACK_OBJECT) rtrue;
+			}
+			else return L__M(##Take, 12);
+		}
+		else return L__M(##Take, 12);
+	}
+
+	!! Transfer the item.
+	move item to player;
+
+	!! Send "after" message to the object letting go of the item, if any.
+	if (after_recipient ~= 0) {
+		k = action; action = ##LetGo;
+		if (RunRoutines(after_recipient, after) ~= 0) { action = k; rtrue; }
+		action=k;
+	}
+	rfalse;
+];
+
+
+!!==============================================================================
+!! Créditos generales de la aplicación
+!! TODO: Traducir
+!!------------------------------------------------------------------------------
+!! Imprime el número de versión
+[ PrintVersionNumber i;
+	i = 0;  ! shut up compiler warning
+	#Ifdef	TARGET_ZCODE;
+	print (HDR_GAMERELEASE-->0) & $03ff;
+	#Ifnot;	! TARGET_GLULX;
+	@aloads ROM_GAMERELEASE 0 i;
+	print i;
+	#Endif;	! TARGET_
+];
+!! Imprime el número de serie
+[ PrintSerialNumber i;
+	#Ifdef	TARGET_ZCODE;
+	for (i=0 : i<6 : i++) print (char) HDR_GAMESERIAL->i;
+	#Ifnot;	! TARGET_GLULX;
+	for (i=0 : i<6 : i++) print (char) ROM_GAMESERIAL->i;
+	#Endif;	! TARGET_
+];
+[ Banner;
+	if (Story ~= 0) {
+		#Ifdef TARGET_ZCODE;
+		#IfV5; style bold; #Endif;
+		print (string) Story;
+		#IfV5; style roman; #Endif;
+		#Ifnot; ! TARGET_GLULX;
+		glk($0086, 3); ! set header style
+		print (string) Story;
+		glk($0086, 0); ! set normal style
+		#Endif; ! TARGET_
+		new_line;
+	}
+	if (Headline ~= 0) { print (string) Headline; new_line; }
+	print "Release ";
+	PrintVersionNumber();
+	print " / Serial number ";
+	PrintSerialNumber();
+	print " / Inform v"; inversion;
+	print " Library ", (string) LibRelease, " ";
+	#Ifdef STRICT_MODE;
+	print "S";
+	#Endif; ! STRICT_MODE
+	#Ifdef INFIX;
+	print "X";
+	#Ifnot;
+	#Ifdef DEBUG;
+	print "D";
+	#Endif; ! DEBUG
+	#Endif; ! INFIX
+	new_line;
+];
+
+
+!!==============================================================================
+!! Dibuja una barra de estado con el nombre de la localidad centrado en pantalla
+!!------------------------------------------------------------------------------
+!! Buffer temporal para calcular el largo de un texto
+#Ifdef	VN_1630; ! compilador 6.30 o superior
+Array	_AlmacenDeTexto_ buffer 160;	! 150 y algo caracteres deberían bastar
+#Ifnot;		 ! compiladores más viejos
+Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
+#Endif;	!VN_1630
+!! La siguiente función sirve tanto para imprimir el nombre de la localidad 
+!! como para redirigir su salida a PrintToBuffer() para contar caracteres
+[ PrintLocationName;
+	if (location == thedark) print (name) location;
+	else {
+		FindVisibilityLevels();
+		if (visibility_ceiling == location) print (name) location;
+		else print (The) visibility_ceiling;
+	}
+];
+[ DrawStatusLine width pos;
+    #Ifdef TARGET_GLULX;
+    ! If we have no status window, we must not try to redraw it.
+    if (gg_statuswin == 0) return;
+    #Endif; ! TARGET_GLULX
+    ! If there is no player location, we should not try either.
+    if (location == nothing || parent(player) == nothing) return;
+
+    StatusLineHeight(gg_statuswin_size);
+    MoveCursor(1, 1);
+    width = ScreenWidth();
+    spaces width;
+
+    ! Primero calculamos la posición inicial para imprimir centrado.
+    ! XXX: Si se cambia el nombre o el tamaño del buffer de texto temporal, se 
+	! deben cambiar también los dos primeros argumentos de PrintToBuffer().
+    pos = (width - PrintToBuffer(_AlmacenDeTexto_, 160, PrintLocationName)) / 2;
+    MoveCursor(1, pos); 	! se mueve el cursor a la posición calculada
+	PrintLocationName();	! se imprime el nombre de la localidad
+
+    MainWindow();
+];
+
+
+!!==============================================================================
+!! Determines the gender-number-animation of the short name of the given object
+!! obj. Returns the GNA, which is a number between 0 and 11. See table of GNA 
+!! values in THE INFORM DESIGNER'S MANUAL Ch.34. Si se invoca con el parámetro 
+!! flag activado, el GNA se elige basándose en el atributo animate y la 
+!! propiedad gender del objeto. En caso contrario, lo hace basándose en sus 
+!! atributos animate, male, female, neuter y pluralname. [Extraído de parserm.h]
+!!------------------------------------------------------------------------------
+[ GetGNAOfObject obj flag case gen;
+	if (obj hasnt animate) case = 6;
+	! Si se invoca la función con el parámetro flag activo (==true)
+	if (flag && obj provides gender) {
+		switch (obj.gender) {
+			1:	gen = male;
+			2:	gen = female;
+			3:	gen = male; case = case + 3;
+			4:	gen = female; case = case + 3;
+		}
+	} else {
+		if (obj has male) gen = male;
+		if (obj has female) gen = female;
+		if (obj has neuter) gen = neuter;
+		if (obj has pluralname) case = case + 3;
+	}
+	if (gen == 0) {
+		if (obj has animate) gen = LanguageAnimateGender;
+		else gen = LanguageInanimateGender;
+	}
+	!if (gen == male)	case = case + 0; ! (0,3,6,9)  masculine
+	if (gen == female)	case = case + 1; ! (1,4,7,10) feminine
+	if (gen == neuter)	case = case + 2; ! (2,5,8,11) neuter
+	return case;
+];
+
+
+!!==============================================================================
+!! Rutinas para tomar inventario del protagonista
+!!------------------------------------------------------------------------------
+[ InvWideSub; <Inv>; ];
+[ InvTallSub; <Inv>; ];
+[ InvSub item number_worn number_carried first_worn;
+
+	!! El protagonista no lleva ningún objeto en el inventario
+	if (child(player) == 0) return L__M(##Inv, 1);
+
+	objectloop (item in player) {
+		if (item has worn) {
+			give item workflag;
+			number_worn++; 
+			if (number_worn == 1) first_worn = item;
+		} else { 
+			give item ~workflag; 
+			number_carried++;
+		}
+	}
+
+	!! XXX: La rutina ParseNoun (tanto la rutina original de SpanishG.h como la 
+	!! versión utilizada aquí) puede modificar temporalmente los atributos 
+	!! female y pluralname de un objeto en función del nombre que haya 
+	!! utilizado el interlector para referirse a él, con lo que su GNA cambia. 
+	!! Esto podía provocar un resultado inadecuado en la primera línea del 
+	!! inventario (imprimir cosas como "Lleva puesto su ropa..."). Para 
+	!! corregirlo se han añadido la rutina _o() y una pequeña modificación de 
+	!! GetGNAOfObject().
+
+	!! Objetos que el protagonista lleva puestos
+	if (number_worn ~= 0) {
+		switch (GRAMMATICAL_INFLECTION) {
+			1:	print "Llevo puest",	(_o) first_worn, " ";
+			2:	print "Llevas puest",	(_o) first_worn, " ";
+			3:	print "Lleva puest",	(_o) first_worn, " ";
+			4:	print "Llevaba puest",	(_o) first_worn, " ";
+			5:	print "Llevabas puest",	(_o) first_worn, " ";
+			6:	print "Llevaba puest",	(_o) first_worn, " ";
+		}
+
+		!! XXX: Observar que no se toma inventario de los objetos que pueda 
+		!! haber dentro de aquellos que el protagonista lleva puestos.
+		WriteListFrom(child(player), ENGLISH_BIT + WORKFLAG_BIT);
+
+		!! El protagonista tiene cosas en las manos además
+		if (number_carried ~= 0) {
+			objectloop (item in player) {
+				if (item has worn) give item ~workflag;
+				else give item workflag;
+			}
+			switch (GRAMMATICAL_INFLECTION) {
+				1:	print ", y tengo además ";
+				2:	print ", y tienes además ";
+				3:	print ", y tiene además ";
+				4:	print ", y tenía además ";
+				5:	print ", y tenías además ";
+				6:	print ", y tenía además ";
+			}
+			WriteListFrom(child(player), 
+				ENGLISH_BIT + RECURSE_BIT + FULLINV_BIT + WORKFLAG_BIT);
+			print " en las manos";
+		}
+
+		if (SACK_OBJECT in player && SACK_OBJECT has worn) {
+			!! Lleva puesta su ropa, y NO tiene cosas dentro de los bolsillos
+			if (~~child(SACK_OBJECT)) {
+				switch (GRAMMATICAL_INFLECTION) {
+				1,2,3:	print ". Los bolsillos del abrigo están vacíos";
+				4,5,6:	print ". Los bolsillos del abrigo estaban vacíos";
+				}
+			}
+
+			!! Lleva puesta su ropa, y tiene cosas dentro de los bolsillos
+			else {
+				switch (GRAMMATICAL_INFLECTION) {
+					1:	print ". En los bolsillos del abrigo guardo ";
+					2:	print ". En los bolsillos del abrigo guardas ";
+					3:	print ". En los bolsillos del abrigo guarda ";
+					4:	print ". En los bolsillos del abrigo guardaba ";
+					5:	print ". En los bolsillos del abrigo guardabas ";
+					6:	print ". En los bolsillos del abrigo guardaba ";
+				}
+				WriteListFrom(child(SACK_OBJECT), 
+					ENGLISH_BIT + RECURSE_BIT + FULLINV_BIT);
+			}
+		}
+		print ".^";
+	}
+
+	!! El protagonista no lleva ningún objeto puesto
+	else {
+		switch (GRAMMATICAL_INFLECTION) {
+			1:	print "Tengo ";
+			2:	print "Tienes ";
+			3:	print "Tiene ";
+			4:	print "Tenía ";
+			5:	print "Tenías ";
+			6:	print "Tenía ";
+		}
+		WriteListFrom(child(player), ENGLISH_BIT + RECURSE_BIT + FULLINV_BIT);
+		print " en las manos.^";
+	}
+
+	#Ifndef MANUAL_PRONOUNS;
+	objectloop (x in player) PronounNotice(x);
+	#Endif;
+	AfterRoutines();
+];
+
+
+!!==============================================================================
+!! Redefinición de los 'lookmode': Breve, Largo y Superbreve
+!!------------------------------------------------------------------------------
+[ LMode1Sub; lookmode = 1; L__M( ##LMode1 ); ];	! Breve
+[ LMode2Sub; lookmode = 2; L__M( ##LMode2 ); ];	! Largo (por defecto)
+[ LMode3Sub; lookmode = 3; L__M( ##LMode3 ); ];	! Superbreve
+
+
+!!==============================================================================
+!! Redefinición de LookSub para que no imprima el nombre de la localidad actual
+!!------------------------------------------------------------------------------
+[ LookSub allow_abbrev  visibility_levels i j k nl_flag;
+	if (parent(player) == 0) return RunTimeError(10);
+
+	.MovedByInitial;
+
+	if (location == thedark) { visibility_ceiling = thedark; NoteArrival(); }
+	else {
+		visibility_levels = FindVisibilityLevels();
+		if (visibility_ceiling == location) {
+			NoteArrival();
+			if (visibility_ceiling ~= location) jump MovedByInitial;
+		}
+	}
+
+!	! Printing the top line: e.g.
+!	! Octagonal Room (on the table) (as Frodo)
+!	new_line;
+!	#Ifdef TARGET_ZCODE;
+!	style bold;
+!	#Ifnot; ! TARGET_GLULX;
+!	glk($0086, 4); ! set subheader style
+!	#Endif; ! TARGET_
+!	if (visibility_levels == 0) print (name) thedark;
+!	else {
+!		if (visibility_ceiling ~= location) print (The) visibility_ceiling;
+!		else print (name) visibility_ceiling;
+!	}
+!	#Ifdef TARGET_ZCODE;
+!	style roman;
+!	#Ifnot; ! TARGET_GLULX;
+!	glk($0086, 0); ! set normal style
+!	#Endif; ! TARGET_
+!	for (j=1,i=parent(player) : j<visibility_levels : j++,i=parent(i))
+!		if (i has supporter) L__M(##Look, 1, i);
+!		else                 L__M(##Look, 2, i);
+!	if (print_player_flag == 1) L__M(##Look, 3, player);
+!	new_line;
+
+	! The room description (if visible)
+	if (lookmode < 3 && visibility_ceiling == location) {
+		if ((allow_abbrev ~= 1) || (lookmode == 2) || (location hasnt visited)) {
+			if (location.&describe ~= 0) RunRoutines(location, describe);
+			else {
+				if (location.description == 0) RunTimeError(11, location);
+				else PrintOrRun(location, description);
+			}
+		}
+	}
+
+	if (visibility_ceiling == location) nl_flag = 1;
+	if (visibility_levels == 0) Locale(thedark);
+	else {
+		for (i=player,j=visibility_levels : j>0: j--,i=parent(i)) give i workflag;
+
+		for (j=visibility_levels : j>0 : j--) {
+			for (i=player,k=0 : k<j : k++) i=parent(i);
+			if (i.inside_description ~= 0) {
+				if (nl_flag) new_line; else nl_flag = 1;
+				PrintOrRun(i,inside_description); }
+			if (Locale(i)~=0) nl_flag=1;
+		}
+	}
+
+	LookRoutine();
+	ScoreArrival();
+	action = ##Look;
+	if (AfterRoutines() == 1) rtrue;
+];
+
+
+!!==============================================================================
+!! Escribe la terminación -o -a -os -as según el género y número del objeto 
+!! recibido, para hacer concordar los adjetivos. Si se invoca con el parámetro 
+!! flag activado (=true), GetGNAOfObject trata de devolver (si es que el objeto 
+!! está definido apropiadamente) el GNA definido por su propiedad gender, en 
+!! lugar de tener en cuenta los atributos animate, male, female y pluralname.
+!!------------------------------------------------------------------------------
+[ _o obj gna;
+	gna = GetGNAOfObject (obj, true);
+	switch (gna) {
+		0, 6:	print "o";
+		1, 7:	print "a";
+		3, 9:	print "os";
+		4, 10:	print "as";
+	}
+]; 
+
+
+!!==============================================================================
+!! La rutina ParseNoun se ocupa de ignorar "de" cuando aparece entre dos 
+!! palabras reconocidas como names de un mismo objeto. Así, si un objeto tiene 
+!! en su campo "name" los valores "caja" "madera" "caoba" ParseNoun aceptará 
+!! "caja de madera" "caja de caoba" e incluso "caja de madera de caoba". En 
+!! cambio, ante la cadena "caja de bolsa", sólo aceptará la primera palabra 
+!! (caja) dejando sin procesar "de bolsa", lo que permite la posterior 
+!! interpretacion de frases como "saca caja de bolsa" e incluso "saca caja de 
+!! madera de caoba de bolsa". De paso también ignora artículos con lo que 
+!! también se admite: "saca la caja de madera de caoba de la bolsa".
+!!
+!! ParseNoun debe retornar un número que indica cuántas palabras admite como 
+!! pertenecientes al objeto. En nuestro ejemplo, ante "caja de madera" debe 
+!! retornar 3, pero ante "caja de bolsa" debe retornar 1.
+!!
+!! MODIFICACIÓN SOBRE LA RUTINA ParseNoun DE SpanishG.h
+!!
+!! Si redefinimos el objeto con el valor "caja" en sus campos "name" (name, 
+!! name_m, name_f, name_mp y name_fp) y los valores "madera" y "caoba" en el 
+!! campo "adjectives", ParseNoun aceptaría las cadenas "caja", "caja de madera", 
+!! "caja de madera de caoba", "madera", "caoba",... para referirse al objeto. 
+!! Con la modificación se altera el comportamiento de ParseNoun para que las 
+!! cadenas "madera" y "caoba" no sean cadenas válidas, de manera que sea 
+!! precisa la existencia de al menos una coincidencia con los valores de los 
+!! campos "name" del objeto.
+!!------------------------------------------------------------------------------
+[ ParseNoun obj n dudas seguir gen p aux m nm nf nmp nfp a;
+
+	n	= 0;	! núm. de palabras reconocidas de momento
+	m	= 0;	! núm. de nombres reconocidos de momento
+	nm	= 0;	! núm. de nombres masculinos reconocidos de momento
+	nf	= 0;	! núm. de nombres femeninos reconocidos de momento
+	nmp	= 0;	! núm. de nombres masculinos plurales reconocidos de momento
+	nfp	= 0;	! núm. de nombres femeninos plurales reconocidos de momento
+	a	= 0;	! núm. de adjetivos reconocidos de momento
+
+	! Indica si hay que seguir mirando palabras para comprobar si las 
+	! siguientes se refieren o no a este mismo objeto
+	seguir = 1;
+
+	aux = aux;
+	#ifdef DEBUG;
+	aux = debug_flag;
+	! Se desactiva el trazado de give
+	! (para no cansar con tanto "nombreusado" cambiando continuamente)
+	debug_flag = 0;
+	#endif;
+	give obj ~nombreusado; ! resetear nombreusado (quitar nombreusado)
+	gen = 5;
+	! 1=masculino,		  2=femenino,
+	! 3=masculino plural, 4=femenino plural
+	! 5=sin determinar
+
+	while (seguir)
+	{
+		p = NextWord();
+		if ((p=='de') && (n==0)) return 0;
+
+		if (WordInProperty (p, obj, name_f))
+		! Una palabra que se refiere al objeto
+		{
+			if (p) dict_flags_of_noun = (p->#dict_par1) & $$01110100;
+			if (gen==5) gen = G_FEMENINO;
+			n++;		! la contamos
+			m++;
+			nf++;
+			n=n+dudas;	! añadimos todos los "de" "la"... que estaban sin contar
+			dudas=0;	! y resetamos el contador de "de"s
+!			print " --> es ahora femenino...." ; !infsp debug
+			continue;	! volvemos al while
+		}
+		if (WordInProperty (p, obj, name_mp))
+		! Una palabra que se refiere al objeto
+		{
+			if (p) dict_flags_of_noun = (p->#dict_par1) & $$01110100;
+			if (gen==5) gen=G_MASCULINO+G_PLURAL;
+			n++;		! la contamos
+			m++;
+			nmp++;
+			n=n+dudas;	! añadimos todos los "de" "la"... que estaban sin contar
+			dudas=0;	! y resetamos el contador de "de"s
+			continue;	! volvemos al while
+		}
+		if (WordInProperty(p, obj, name_fp))
+		! Una palabra que se refiere al objeto
+		{
+			if (p) dict_flags_of_noun = (p->#dict_par1) & $$01110100;
+			if (gen==5) gen=G_FEMENINO+G_PLURAL;
+			n++;		! la contamos
+			m++;
+			nfp++;
+			n=n+dudas;	! añadimos todos los "de" "la"... que estaban sin contar
+			dudas=0;	! y resetamos el contador de "de"s
+			continue;	! volvemos al while
+		}
+		! [I7] se cambio de lugar este if para buscar el name_m (o name)
+		! en ultimo lugar, debido a una interferencia q provoca la asignacion 
+		! 'automatica' de plural en los objetos I7
+		if (WordInProperty(p, obj, name_m))
+		! Una palabra que se refiere al objeto
+		{
+			if (p) dict_flags_of_noun = (p->#dict_par1) & $$01110100;
+			if (gen==5) gen=G_MASCULINO;
+			n++;		! la contamos
+			m++;
+			nm++;
+			n=n+dudas;	! añadimos todos los "de" "la"... que estaban sin contar
+			dudas=0;	! y resetamos el contador de "de"s
+!			print " --> es ahora masculino...." ; !infsp debug
+			continue;	! volvemos al while
+		}
+		if (WordInProperty(p, obj, adjectives))
+		{
+			if (p) dict_flags_of_noun = (p->#dict_par1) & $$01110100;
+			n++;		! la contamos
+			a++;
+			n=n+dudas;	! añadimos todos los "de" "la"... que estaban sin contar
+			dudas = 0;	! y resetamos el contador de "de"s
+!			print (the) obj," --> adjetivo detectado....^" ; !infsp debug
+			continue;	! volvemos al while
+		}
+				
+		! Si la palabra no fue reconocida, miraremos si se trata
+		! de 'de' o un artículo. En este caso mantenemos la duda y
+		! seguimos mirando palabras, hasta que una de ellas encaje
+		! en este objeto$ en cuyo caso se retornan todas las que se
+		! han leido, o bien se encuentre una que no encaja en cuyo
+		! caso se retorna las que se habían encontrado antes del "de"
+
+		else if (p== 'el' or 'la' or 'los' or 'las' or 'de')
+		{
+			dudas++; continue;
+		}
+		! Si la palabra no fue reconocida, ni se trata de un artículo o de un 
+		! "de", se da la búsqueda por finalizada y se sale del bucle
+		else seguir = 0;
+
+	}! while block
+
+	if (obj provides gender) {
+		switch (gen) {
+			1: give obj ~female ~pluralname;
+			2: give obj female ~pluralname;
+			3: give obj ~female pluralname;
+			4: give obj female pluralname;
+		}
+	}
+
+	! Si el matcheo fue por adjectives, entonces gen = 5 y "nombresusado" no 
+	! se han puesto
+	if (gen<5) give obj nombreusado;
+
+	#ifdef DEBUG;
+	debug_flag=aux;
+	#endif;
+
+	if (m==0) return 0;
+	return n; ! Se retorna número de palabras reconocidas
+];
+
+
+!!==============================================================================
+!! Establece la flexión gramatical de los mensajes de la librería.
+!!------------------------------------------------------------------------------
+[ SetGrammaticalInflection gi;
+	switch (gi) {
+	PRESENTE_PRIMERA_PERSONA:
+		GRAMMATICAL_INFLECTION = PRESENTE_PRIMERA_PERSONA;
+		FORMER__TX		= "mi antiguo ~yo~";
+		CANTGO__TX		= "No puedo ir por ahí.";
+		IS__TX			= " veo";
+		ARE__TX			= " veo";
+		IS2__TX			= "veo ";
+		ARE2__TX		= "veo ";
+		YOU__TX			= "Yo";
+		PARTICULA_TE	= "me";
+		if (player has female || 
+			(player provides gender && player.gender == G_FEMENINO)) { 
+			YOURSELF__TX	= "mi misma";
+		} else {
+			YOURSELF__TX	= "mi mismo";
+		}
+	PRESENTE_SEGUNDA_PERSONA:
+		GRAMMATICAL_INFLECTION = PRESENTE_SEGUNDA_PERSONA;
+		FORMER__TX		= "tu antiguo ~yo~";
+		CANTGO__TX		= "No puedes ir por ahí.";
+		IS__TX			= " ves";
+		ARE__TX			= " ves";
+		IS2__TX			= "ves ";
+		ARE2__TX		= "ves ";
+		YOU__TX			= "Tú";
+		PARTICULA_TE	= "te";
+		if (player has female || 
+			(player provides gender && player.gender == G_FEMENINO)) { 
+			YOURSELF__TX	= "ti misma";
+		} else {
+			YOURSELF__TX	= "ti mismo";
+		}
+	PRESENTE_TERCERA_PERSONA:
+		GRAMMATICAL_INFLECTION = PRESENTE_TERCERA_PERSONA;
+		FORMER__TX    = "su antiguo ~yo~";
+		CANTGO__TX    = "No puede ir por ahí.";
+		IS__TX        = " ve";
+		ARE__TX       = " ve";
+		IS2__TX       = "ve ";
+		ARE2__TX      = "ve ";
+		PARTICULA_TE  = "se";
+		if (player has female || 
+			(player provides gender && player.gender == G_FEMENINO)) { 
+			YOURSELF__TX  = "si misma";
+			YOU__TX       = "Ella";
+		} else {
+			YOURSELF__TX  = "si mismo";
+			YOU__TX       = "Él";
+		}
+	PASADO_PRIMERA_PERSONA:
+		GRAMMATICAL_INFLECTION = PASADO_PRIMERA_PERSONA;
+		FORMER__TX		= "mi antiguo ~yo~";
+		CANTGO__TX		= "No podía ir por ahí.";
+		IS__TX			= " veía";
+		ARE__TX			= " veía";
+		IS2__TX			= "veía ";
+		ARE2__TX		= "veía ";
+		YOU__TX			= "Yo";
+		PARTICULA_TE	= "me";
+		if (player has female || 
+			(player provides gender && player.gender == G_FEMENINO)) { 
+			YOURSELF__TX	= "mi misma";
+		} else {
+			YOURSELF__TX	= "mi mismo";
+		}
+	PASADO_SEGUNDA_PERSONA:
+		GRAMMATICAL_INFLECTION = PASADO_TERCERA_PERSONA;
+		FORMER__TX		= "tu antiguo ~yo~";
+		CANTGO__TX		= "No podías ir por ahí.";
+		IS__TX			= " veías";
+		ARE__TX			= " veías";
+		IS2__TX			= "veías ";
+		ARE2__TX		= "veías ";
+		YOU__TX			= "Tú";
+		PARTICULA_TE	= "te";
+		if (player has female || 
+			(player provides gender && player.gender == G_FEMENINO)) { 
+			YOURSELF__TX	= "ti misma";
+		} else {
+			YOURSELF__TX	= "ti mismo";
+		}
+	PASADO_TERCERA_PERSONA:
+		GRAMMATICAL_INFLECTION = PASADO_TERCERA_PERSONA;
+		FORMER__TX    = "su antiguo ~yo~";
+		CANTGO__TX    = "No podía ir por ahí.";
+		IS__TX        = " veía";
+		ARE__TX       = " veía";
+		IS2__TX       = "veía ";
+		ARE2__TX      = "veía ";
+		PARTICULA_TE  = "se";
+		if (player has female || 
+			(player provides gender && player.gender == G_FEMENINO)) { 
+			YOURSELF__TX  = "si misma";
+			YOU__TX       = "Ella";
+		} else {
+			YOURSELF__TX  = "si mismo";
+			YOU__TX       = "Él";
+		}
+	default:
+		start_parser_style();
+		print "SetGrammaticalInflection() ERROR. El parámetro ", gi, " no es un 
+		parámetro válido de la función.";
+		end_parser_style();
+		new_line;
+		return false;
+	}
+	ChangeDefault(cant_go, CANTGO__TX);
+];
+
+#Ifdef	DEBUG;
+Verb	meta 'gramatica'
+	*								-> Gramatica
+	* number						-> Gramatica;
+[ GramaticaSub;
+	start_parser_style();
+	switch (noun) {
+		1:	SetGrammaticalInflection( PRESENTE_PRIMERA_PERSONA); 
+			print "Cambio de flexión gramatical: ";
+		2:	SetGrammaticalInflection( PRESENTE_SEGUNDA_PERSONA );
+			print "Cambio de flexión gramatical: ";
+		3:	SetGrammaticalInflection( PRESENTE_TERCERA_PERSONA); 
+			print "Cambio de flexión gramatical: ";
+		4:	SetGrammaticalInflection( PASADO_PRIMERA_PERSONA ); 
+			print "Cambio de flexión gramatical: ";
+		5:	SetGrammaticalInflection( PASADO_SEGUNDA_PERSONA ); 
+			print "Cambio de flexión gramatical: ";
+		6:	SetGrammaticalInflection( PASADO_TERCERA_PERSONA ); 
+			print "Cambio de flexión gramatical: ";
+		default:
+			print "Flexión gramatical actual: ";
+	}
+	switch ( GRAMMATICAL_INFLECTION ) {
+		PRESENTE_PRIMERA_PERSONA:	print "(1) presente 1a persona";
+		PRESENTE_SEGUNDA_PERSONA:	print "(2) presente 2a persona";
+		PRESENTE_TERCERA_PERSONA:	print "(3) presente 3a persona";
+		PASADO_PRIMERA_PERSONA:		print "(4) pasado 1a persona";
+		PASADO_SEGUNDA_PERSONA:		print "(5) pasado 2a persona";
+		PASADO_TERCERA_PERSONA:		print "(6) pasado 3a persona";
+	}
+	print ".";
+	end_parser_style();
+	new_line;
+	return true;
+];
+#Endif;
+
+
+!!==============================================================================
+!! Imprime el pronombre nominativo correcto correspondiente a un objeto
+!!------------------------------------------------------------------------------
+[ SpanishNominativePronoun obj;
+	switch (GetGNAOfObject(obj)) {
+		0, 6:	print "él";
+		1, 7:	print "ella";
+		2, 8:	print "ello";
+		3, 9:	print "ellos";
+		4, 10:	print "ellas";
+		5, 11:	print "ellos";
+   }
+];
+
+
+!!==============================================================================
+!! Créditos detallados de la aplicación
+!! TODO: traducir al castellano
+!!------------------------------------------------------------------------------
+[ VersionSub ix;
+	new_line; Banner();
+	#Ifdef TARGET_ZCODE;
+	ix = 0; ! shut up compiler warning
+	if (standard_interpreter > 0) {
+		print "Standard interpreter ", standard_interpreter/256, ".", 
+			standard_interpreter%256, " (", HDR_TERPNUMBER->0;
+		#Iftrue (#version_number == 6);
+		print (char) '.', HDR_TERPVERSION->0;
+		#Ifnot;
+		print (char) HDR_TERPVERSION->0;
+		#Endif;
+		print ") / ";
+	} else {
+		print "Interpreter ", HDR_TERPNUMBER->0, " Version ";
+		#Iftrue (#version_number == 6);
+		print HDR_TERPVERSION->0;
+		#Ifnot;
+		print (char) HDR_TERPVERSION->0;
+		#Endif;
+		print " / ";
+	}
+	#Ifnot; ! TARGET_GLULX;
+	@gestalt 1 0 ix;
+	print "Interpreter version ", ix / $10000, ".", (ix & $FF00) / $100,
+	".", ix & $FF, " / ";
+	@gestalt 0 0 ix;
+	print "VM ", ix / $10000, ".", (ix & $FF00) / $100, ".", ix & $FF, " / ";
+	#Endif; ! TARGET_;
+	print "Library serial number ", (string) LibSerial, "^";
+	#Ifdef LanguageVersion;
+	print (string) LanguageVersion, "^";
+	#Endif; ! LanguageVersion
+];
+
+

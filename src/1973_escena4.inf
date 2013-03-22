@@ -1,0 +1,66 @@
+
+
+!!==============================================================================
+!!
+!!	PROYECTO 1973
+!!	Escena 4: Encuentro con Luz
+!!
+!!==============================================================================
+!!
+!!	File:			1973_escena4.inf
+!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Languague:		ES (Castellano)
+!!	System:			Inform, INFSP 6
+!!	Platform:		Z-Machine / GLULX
+!!	Version:		0.0
+!!	Released:		0000/00/00
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Copyright (c) 2013, J. Francisco Martín
+!!
+!!	This file is part of PROYECTO 1973.
+!!
+!!	PROYECTO 1973 is free software: you can redistribute it and/or modify 
+!!	it under the terms of the GNU General Public License as published by 
+!!	the Free Software Foundation, either version 3 of the License, or 
+!!	(at your option) any later version.
+!!
+!!	PROYECTO 1973 is distributed in the hope that it will be useful, 
+!!	but WITHOUT ANY WARRANTY; without even the implied warranty of 
+!!	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+!!	GNU General Public License for more details.
+!!
+!!	You should have received a copy of the GNU General Public License 
+!!	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!	CALLEJON: En el callejón
+!!------------------------------------------------------------------------------
+
+Room	CALLEJON "En el callejón"
+ with	name	'callejon' 'calleja' 'callejuela' 'callizo' 'calle' 'calles' 
+				'avenida' 'bulevar' 'rambla' 'santiago',
+		description
+			"Descripción del callejón.",
+;
+
+!!------------------------------------------------------------------------------
+!! Objetos con rutinas react_before:
+
+!!------------------------------------------------------------------------------
+!! NPCs:
+
+!!------------------------------------------------------------------------------
+!! Items:
+
+!!------------------------------------------------------------------------------
+!! Furniture:
+
+!!------------------------------------------------------------------------------
+!! Atrezzo:
+
+

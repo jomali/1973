@@ -1,0 +1,411 @@
+!% -SD
+!% +language_name=Spanish
+!% $MAX_LABELS=2000
+!% $MAX_ZCODE_SIZE=45000
+!% $list
+
+
+!!==============================================================================
+!!
+!!	PROYECTO 1973
+!!
+!!==============================================================================
+!!
+!!	File:			1973.inf
+!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Languague:		ES (Castellano)
+!!	System:			Inform, INFSP 6
+!!	Platform:		Z-Machine / GLULX
+!!	Version:		0.0
+!!	Released:		0000/00/00
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Copyright (c) 2013, J. Francisco Martín
+!!
+!!	This file is part of PROYECTO 1973.
+!!
+!!	PROYECTO 1973 is free software: you can redistribute it and/or modify 
+!!	it under the terms of the GNU General Public License as published by 
+!!	the Free Software Foundation, either version 3 of the License, or 
+!!	(at your option) any later version.
+!!
+!!	PROYECTO 1973 is distributed in the hope that it will be useful, 
+!!	but WITHOUT ANY WARRANTY; without even the implied warranty of 
+!!	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+!!	GNU General Public License for more details.
+!!
+!!	You should have received a copy of the GNU General Public License 
+!!	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!	Constantes y variables globales del relato
+!!------------------------------------------------------------------------------
+
+Constant Story "PROYECTO 1973";
+
+Release 0;
+
+Constant ALFA_RELEASE;
+
+Constant MANUAL_PRONOUNS;		! Los pronoms. refieren a objetos ya mencionados
+Constant NO_PLACES;				! Acciones LUGARES Y OBJETOS desactivadas
+Constant NO_SCORE;				! No se lleva conteo de puntuación
+Constant SIN_MENSAJES;			! Se omiten los mensajes por defecto de la lib.
+Constant MAX_CARRIED = 3;		! Máx. de objetos que se pueden llevar en mano
+Constant SACK_OBJECT = ropa;	! Contenedor principal para la librería
+
+Constant PARSERST_TYPE _IST_;	! Selecciona estilo de los mensajes del parser
+Constant PARSERST_MSG1 "[";		! Define texto inicial de mensajes del parser
+Constant PARSERST_MSG2 "]";		! Define texto final de mensajes del parser
+
+Global flowers;					! Tipo de flor seleccionado (ver NOTA #1)
+
+
+!!==============================================================================
+!!	Reemplazos de rutinas utilizadas por la librería Inform
+!!------------------------------------------------------------------------------
+
+Replace	AttemptToTakeObject;	! Intento de transferir un objeto al jugador
+Replace	Banner;					! Créditos generales de la aplicación
+Replace	DrawStatusLine;			! Dibuja la barra de estado
+Replace	GetGNAOfObject;			! Rutina para obtener el GNA de un objeto
+Replace	InvSub;					! Rutinas para tomar INVENTARIO del personaje
+Replace	InvTallSub;				! Rutinas para tomar INVENTARIO del personaje
+Replace	InvWideSub;				! Rutinas para tomar INVENTARIO del personaje
+Replace	LMode1Sub;				! Lookmode 1: Breve
+Replace	LMode2Sub;				! Lookmode 2: Largo (establecido por defecto)
+Replace	LMode3Sub;				! Lookmode 3: Superbreve
+Replace	LookSub;				! Rutina para la acción MIRAR
+Replace	VersionSub;				! Créditos detallados de la aplicación
+
+
+!!==============================================================================
+!!	Librerías y extensiones (Parte 1 de 2)
+!!------------------------------------------------------------------------------
+
+#Ifdef	TARGET_GLULX;
+Include	"gwindefs.h";			! GWindows: Definiciones
+#Endif;	! TARGET_GLULX;
+
+Include	"Parser.h";				! Decodifica la entrada del teclado
+Include	">1973_lib.inf";		! Personalizaciones de la librería Inform
+Include	">1973_langLM.inf";		! Mensajes de la librería
+
+#Ifdef	TARGET_GLULX;
+Include	"gwincls.h";			! GWindows; Window Class Framework
+#Endif;	! TARGET_GLULX;
+
+
+!!==============================================================================
+!! Puntos de entrada para Glk (sólo Glulx)
+!!------------------------------------------------------------------------------
+
+#Ifdef	TARGET_GLULX;
+[ GWindowsGlkEvent ev;
+	Damusix.NotificarFade(ev);
+	if (ev-->0 == 1) ! evtype_Timer
+		AimingManager.run();
+];
+#Endif;	! TARGET_GLULX;
+
+
+!!==============================================================================
+!!	Librerías y extensiones (Parte 2 de 2)
+!!------------------------------------------------------------------------------
+
+#Ifdef	TARGET_GLULX;
+Include	"gwindows.h";			! GWindows: Remplazos de la librería
+Include	"damusix.h";			! Administrador unificado de sonido en Glulx
+Include	">1973.bli";			! Recursos multimedia
+Include	">1973_gui.inf";		! Definición de la interfaz gráfica
+#Endif;	! TARGET_GLULX;
+
+Include	"aimAndFire.h";			! Sistema de apuntado y disparo QTE
+Include	"tagConversationSystem.h"; ! Sistema de conversación por etiquetas
+Include	"receptacles.h";		! Contenedores (con capacidad limitada)
+Include	"types.h";				! Rutinas para modificar estilo de los textos
+Include	"VerbLib.h";			! Define cómo trabajan las acciones
+				
+
+!!==============================================================================
+!!	Definición de atributos, clases y objetos
+!!------------------------------------------------------------------------------
+
+Include	">1973_escena0.inf";	! Prólogo: El Limbo
+Include	">1973_escena1.inf";	! Escena 1: Habitación de Gabriel
+Include	">1973_escena2.inf";	! Escena 2: Café Blanca Florida
+Include	">1973_escena3.inf";	! Escena 3: Calles de Santiago
+Include	">1973_escena4.inf";	! Escena 4: Encuentro con Luz
+Include	">1973_escena5.inf";	! Escena 5: Flores para un joven difunto
+
+
+!!==============================================================================
+!!	Puntos de entrada y otras rutinas
+!!------------------------------------------------------------------------------
+
+[ Initialise;
+	EraseWindow();
+	SelectFlowerType();
+
+	location = TAXI;
+	lookmode = 2;
+	return 2;
+];
+
+!!------------------------------------------------------------------------------
+[ BeforeParsing; 
+	TagConversationSystem.try();
+];
+
+!!------------------------------------------------------------------------------
+!! Foco del jugador
+!!------------------------------------------------------------------------------
+[ InScope person item;
+	!!-------------------
+	if ( person==player && location==thedark ) {
+		objectloop( item in parent(player) )
+			if ( item has moved ) PlaceInScope( item );
+	}
+	!!-------------------
+	return false;
+];
+
+!!------------------------------------------------------------------------------
+!! Espera una pulsación de tecla para continuar
+!!------------------------------------------------------------------------------
+[ PressAnyKey tenths;
+	#Ifdef	TARGET_GLULX;
+	#Ifdef	USAR_GWINDOWS;
+	!! Si hay un Fade activo de Damusix se fuerza espera "no-temporizada"
+	if (Damusix.EnFade()) { tenths = 0; }
+	#Endif;	! USAR_GWINDOWS;
+	#Endif;	! TARGET_GLULX;
+	if (tenths > 0) { return KeyDelay (tenths); }
+	else { return KeyCharPrimitive(); }
+];
+
+!!------------------------------------------------------------------------------
+!! Deja la ventana en blanco
+!!------------------------------------------------------------------------------
+[ EraseWindow;
+    #Ifdef TARGET_ZCODE;
+    @erase_window -1;
+    #Ifnot; ! TARGET_GLULX
+    if (gg_quotewin) {
+		glk($0024, gg_quotewin, 0); ! close_window
+		gg_quotewin = 0;
+    }
+    glk($002A, gg_mainwin);  ! window_clear
+    if (gg_statuswin) glk($002A, gg_statuswin); ! window_clear
+    #Endif;
+];
+
+!!------------------------------------------------------------------------------
+!! NOTA #1: Cada vez que se inicia el relato se selecciona, de manera aleatoria, 
+!! un tipo de flor de entre el siguiente conjunto de valores posibles: 
+!! {crisantemos, gladiolos, jazmines, madreselvas, narcisos, rosas, tulipanes, 
+!! violetas}. La variable "flowers" guarda el tipo de flor seleccionado.
+!!------------------------------------------------------------------------------
+[ SelectFlowerType;
+	switch (random(8)) {
+		1:	flowers = crisantemos;
+		2:	flowers = gladiolos;
+		3:	flowers = jazmines;
+		4:	flowers = madreselvas;
+		5:	flowers = narcisos;
+		6:	flowers = rosas;
+		7:	flowers = tulipanes;
+		8:	flowers = violetas;
+	}
+];
+
+Object	crisantemos "crisantemos"
+ with	name_mp	'crisantemos', 
+		gender	G_MASCULINO + G_PLURAL, 
+ has	male pluralname scenery;
+
+Object	gladiolos "gladiolos"
+ with	name_mp	'gladiolos', 
+		gender	G_MASCULINO + G_PLURAL, 
+ has	male pluralname scenery;
+
+Object	jazmines "jazmines"
+ with	name_mp	'jazmines', 
+		gender G_MASCULINO + G_PLURAL, 
+ has	male pluralname scenery;
+
+Object	madreselvas "madreselvas"
+ with	name_fp	'madreselvas', 
+		gender G_FEMENINO + G_PLURAL, 
+ has	female pluralname scenery;
+
+Object	narcisos "narcisos"
+ with	name_mp	'narcisos', 
+		gender	G_MASCULINO + G_PLURAL, 
+ has	male pluralname scenery;
+
+Object	rosas "rosas"
+ with	name_fp	'rosas', 
+		gender	G_FEMENINO + G_PLURAL, 
+ has	female pluralname scenery;
+
+Object	tulipanes "tulipanes"
+ with	name_mp	'tulipanes', 
+		gender	G_MASCULINO + G_PLURAL, 
+ has	male pluralname scenery;
+
+Object	violetas "violetas"
+ with	name_fp	'violetas', 
+		gender	G_FEMENINO + G_PLURAL, 
+ has	female pluralname scenery;
+
+
+!!==============================================================================
+!!	Gramática estándar y extendida
+!!------------------------------------------------------------------------------
+
+Include	"SpanishG.h";		! Gramática española
+Include	"SpanishEG.h";		! Gramática española extendida
+
+!!------------------------------------------------------------------------------
+
+Extend only 'normal' replace
+    *								-> LMode2
+;
+
+Extend	'corre' replace
+	* noun							-> CloseX
+;
+
+Verb	'descorre'
+	* noun							-> OpenX
+;
+
+Extend	'habla' replace
+	* noun							-> TalkTo
+	* 'a'/'con' noun				-> TalkTo
+	* creature						-> TalkTo
+	* 'a'/'con' creature			-> TalkTo
+	* 'por' noun					-> TalkOn
+	* 'por' creature				-> TalkOn
+;
+
+Verb	'conversa' 'platica'
+	* noun							-> TalkTo
+	* 'a'/'con' noun				-> TalkTo
+	* creature						-> TalkTo
+	* 'a'/'con' creature			-> TalkTo
+	* 'por' noun					-> TalkOn
+	* 'por' creature				-> TalkOn
+;
+
+!!------------------------------------------------------------------------------
+
+[ CloseXSub;
+	print (parser_type) "En lugar de ~correr~ el objeto, se intenta utilizar 
+	la acción ~cerrar~, que en este contexto es sinónima, y es más general. 
+	(Apenas hay objetos corredizos en el mundo del relato, pero muchos se 
+	pueden abrir y cerrar.)";
+	new_line; new_line;
+	<<Close noun second>>;
+];
+
+[ OpenXSub;
+	print (parser_type) "En lugar de ~descorrer~ el objeto, se intenta utilizar 
+	la acción ~abrir~, que en este contexto es sinónima, y es más general. 
+	(Apenas hay objetos corredizos en el mundo del relato, pero muchos se 
+	pueden abrir y cerrar.)";
+	new_line; new_line;
+	<<Open noun second>>;
+];
+
+[ TalkOnSub;
+	start_parser_style();
+	print "Habla con ", (name) noun;
+	end_parser_style();
+	new_line;
+	<<TalkTo noun second>>;
+];
+
+[ TalkToSub;
+	if ( noun == player ) {
+		switch (GRAMMATICAL_INFLECTION) {
+		1,2,3:	"Hablar con uno mismo no resulta especialmente divertido.";
+		4,5,6:	"Hablar con uno mismo no resultaba especialmente divertido.";
+		}
+	}
+	if ( noun hasnt animate ) 
+		switch (GRAMMATICAL_INFLECTION) {
+		1,2,3:	"Mejor intentar hablar con cosas que puedan devolver 
+				una respuesta.";
+		4,5,6:	"Mejor intentar hablar con cosas que pudiesen devolver 
+				una respuesta.";
+	}
+	switch (GRAMMATICAL_INFLECTION) {
+	1:	print_ret (The) noun, " no parece", (n) noun, " estar interesad", 
+		(o) noun, " en hablar conmigo.";
+	2:	print_ret (The) noun, " no parece", (n) noun, " estar interesad",
+		(o) noun, " en hablar contigo.";
+	3:	print (The) noun, " no parece", (n) noun, " estar interesad",
+		(o) noun, " en hablar con ";
+		if (player has female || 
+			(player provides gender && player.gender == G_FEMENINO))
+			print "ella";
+		else
+			print "él";
+		".";
+	4:	print_ret (The) noun, " no parecía", (n) noun, " estar interesad",
+		(o) noun, " en hablar conmigo.";
+	5:	print_ret (The) noun, " no parecía", (n) noun, " estar interesad",
+		(o) noun, " en hablar contigo.";
+	6:	print (The) noun, " no parecía", (n) noun, " estar interesad",
+		(o) noun, " en hablar con ";
+		if (player has female || 
+			(player provides gender && player.gender == G_FEMENINO))
+			print "ella";
+		else
+			print "él";
+		".";
+	}
+];
+
+!!------------------------------------------------------------------------------
+
+#Ifdef	DEBUG;
+Verb meta 'gna'
+	* multi							-> GNA
+;
+
+[ GNA g;
+	g = GetGNAOfObject(noun);
+	print g, ": ";
+	switch (g) {
+		0,1,2,3,4,5: print "animado ";
+		default:	 print "inanimado ";
+	}
+	switch (g) {
+		0,1,2,6,7,8: print "singular ";
+		default:	 print "plural ";
+	}
+	switch (g) {
+		0,3,6,9:	 print "masculino";
+		1,4,7,10:	 print "femenino";
+		default:	 print "neutro";
+	}
+];
+
+[ GNASub;
+	start_parser_style(); print "Objeto: ";
+	roman_style(); print (name) noun; 
+	parser_style(); print ". (", (The) noun," / ", (the) noun," / ", (a) noun, 
+	" / -", (o) noun, ")^GNA ", (GNA) noun;
+	end_parser_style();
+	new_line;
+];
+#Endif; ! DEBUG;
+
+

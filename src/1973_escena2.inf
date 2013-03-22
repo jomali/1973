@@ -1,0 +1,140 @@
+
+
+!!==============================================================================
+!!
+!!	PROYECTO 1973
+!!	Escena 2: Café Blanca Florida
+!!
+!!==============================================================================
+!!
+!!	File:			1973_escena2.inf
+!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Languague:		ES (Castellano)
+!!	System:			Inform, INFSP 6
+!!	Platform:		Z-Machine / GLULX
+!!	Version:		0.0
+!!	Released:		0000/00/00
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Copyright (c) 2013, J. Francisco Martín
+!!
+!!	This file is part of PROYECTO 1973.
+!!
+!!	PROYECTO 1973 is free software: you can redistribute it and/or modify 
+!!	it under the terms of the GNU General Public License as published by 
+!!	the Free Software Foundation, either version 3 of the License, or 
+!!	(at your option) any later version.
+!!
+!!	PROYECTO 1973 is distributed in the hope that it will be useful, 
+!!	but WITHOUT ANY WARRANTY; without even the implied warranty of 
+!!	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+!!	GNU General Public License for more details.
+!!
+!!	You should have received a copy of the GNU General Public License 
+!!	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!	CAFE: Café Blanca Florida
+!!------------------------------------------------------------------------------
+
+Room	CAFE "Café Blanca Florida"
+ with	name	'cafe' 'blanca' 'florida' 'cafeteria' 'bar' 'local' 'taberna' 
+				'meson' 'tasca' 'establecimiento',
+		initial [; if (self hasnt visited) {
+			SetGrammaticalInflection(PASADO_TERCERA_PERSONA);
+
+print "Debe abandonar el país ahora que la situación se ha vuelto insostenible. Los militares se han hecho a la calle y todos los del partido están en peligro de ser prendidos o encarcelados. O algo peor, puesto que desde que cayó el gobierno se han sucedido las ejecuciones... entre ellas la de su amigo Pablo Ureta. Todavía siente cómo la frente se le perla con un sudor frío al pensar en que estuvieron juntos apenas horas antes de su asesinato, en un bar de la avenida Libertador Bernardo O'Higgins:^";
+
+			new_line;
+			return true;
+		}],
+		description [;
+			print "Las aspas de un gran ventilador giraban lentamente en el 
+			techo, removiendo el humo de tabaco y los ecos de casi una veintena 
+			de voces que se enroscaban y retorcían en el aire antes de terminar 
+			empotradas contra las amarillentas paredes del café. Tras la barra";
+			if (self hasnt visited) print ", una"; else print ", la";
+			print " camarera pasaba";
+			if (self hasnt visited) print " el"; else print " un";
+			" trapo a los vasos sucios mientras los clientes repartidos por el 
+			local charlaban, fumaban y daban cuenta de sus bebidas.";
+			!! TODO: "Al fondo puede ver una diana de dardos.
+		],
+	w_to	[; return self.out_to(); ],
+	out_to	"No podía irse aún. No sin hablar antes con Pablo.",
+	cant_go "Esa dirección no llevaba a ningún lado.";
+
+!!------------------------------------------------------------------------------
+!! Objetos con rutinas react_before:
+
+Atrezzo	-> silla "silla" 
+ class	SmartEnterable
+ with	clarification "sentado a una de las mesas", 
+		name_m	'asiento' 'taburete', 
+		name_f	'silla' 'banqueta', 
+		gender	G_FEMENINO, 
+		!! TODO: adjectives
+		description "Una silla normal y corriente.", 
+		before [;
+			Pull, Push, PushDir, Take, Turn:
+				"Ya estaba", (n) self, " muy bien donde estaba", (n) self, 
+				". No había ningún motivo para andar moviéndol", (o) self, ".";
+			Sit:
+				<<Enter self>>;
+			StandUp:
+				<<Exit self>>;
+		],
+		after [;
+			Enter:	"Se sentó en ", (the) self, ", frente a Pablo.";
+			Exit:	"Se levantó de ", (the) self, ".";
+		],
+ has	female enterable supporter transparent;
+
+!!------------------------------------------------------------------------------
+!! NPCs:
+
+!! Objetos referenciados:
+!!		<>	silla
+NPC		-> Pablo "Pablo"
+ with	first_description true, 
+	name_m	'pablo' 'ureta' 'amigo' 'hombre', 
+		name_f	'persona', 
+		gender	G_MASCULINO, 
+		!! TODO: adjectives
+		describe [;
+			if (self.first_description) {
+				self.first_description = false;
+
+"^Él ya se encontraba allí, tal y como habían quedado. Su rostro, apenas reconocible, estaba surcado por toda una colección de arrugas nuevas y marcado ferozmente por la tristeza y el cansancio. Pero seguía siendo su mismo rostro al fin y al cabo: duro, inteligente, familiar. Pablo bebía una cerveza en silencio, sentado solo en una de las mesas más alejadas.";
+
+			}
+			else {
+				print "^Pablo estudiaba su cerveza en silencio, sentado";
+				if (player in silla) " frente a Gabriel.";
+				else " solo en una de las mesas más alejadas.";
+			}
+		],
+		description [;
+			if (player notin silla)
+				print "Estaba sentado en una de las mesas del fondo, con la 
+				vista clavada en su botellín de cerveza. ";
+
+"En un par de días parecía haber envejecido años; su espesa barba negra estaba más salpicada de canas que nunca, varias arrugas nuevas surcaban su frente y el contorno de sus ojos y, si bien es cierto que parte de su pelo había empezado a esfumarse hacía ya tiempo, el claro de piel enrrojecida que se revelaba entre los rizos color carbón de la coronilla era cada vez mayor.";
+
+		],
+ has	male proper;
+
+!!------------------------------------------------------------------------------
+!! Items:
+
+!!------------------------------------------------------------------------------
+!! Furniture:
+
+!!------------------------------------------------------------------------------
+!! Atrezzo:
+
+

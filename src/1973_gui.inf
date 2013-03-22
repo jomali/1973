@@ -1,0 +1,184 @@
+
+
+!!==============================================================================
+!!
+!!	PROYECTO 1973
+!!	Definición de la interfaz gráfica (sólo GLULX)
+!!
+!!==============================================================================
+!!
+!!	File:			1973_gui.inf
+!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Language:		ES (Castellano)
+!!	System:			Inform/INFSP 6
+!!	Platform:		Máquina-Z / Glulx
+!!	Version:		1.0
+!!	Released:		2012/01/22
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Copyright (c) 2013, J. Francisco Martín
+!!
+!!	This file is part of PROYECTO 1973.
+!!
+!!	PROYECTO 1973 is free software: you can redistribute it and/or modify 
+!!	it under the terms of the GNU General Public License as published by 
+!!	the Free Software Foundation, either version 3 of the License, or 
+!!	(at your option) any later version.
+!!
+!!	PROYECTO 1973 is distributed in the hope that it will be useful, 
+!!	but WITHOUT ANY WARRANTY; without even the implied warranty of 
+!!	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+!!	GNU General Public License for more details.
+!!
+!!	You should have received a copy of the GNU General Public License 
+!!	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!	Librerías
+!!------------------------------------------------------------------------------
+
+Include	"gimage.h";				! GWindows; Image Window Widget
+!Include	"gquote.h";				! GWindows; Quote Box Widget
+Include "gstatusX.h";			! GWindows; Status Window Module
+Include	"gtile.h";				! GWindows; Tiled Image Windows
+
+
+!!==============================================================================
+!!	Definición de la interfaz
+!!------------------------------------------------------------------------------
+!!
+!!	+---+---------------------------+---+
+!!	| Ñ |             M             | N |	(A) - textWindow: TextBuffer
+!!	+---+---------------------------+---+	(B) - statusBar: GStatusXWin
+!!	|	|             G             |   |	(C) - imageWindow: GImageWin
+!!	|   +---+-----++------------+---+   |	(D) - rightMargin: GraphWin
+!!	|	|   |     ||     B      |   |   |	(E) - leftMargin: GraphWin
+!!	|	|   |     ||------------+   |   |	(F) - bottomMargin: GraphWin
+!!	|	|   |     ||            |   |   |	(G) - topMargin: GraphWin
+!!	|	| E |  C  ||            | D |   |	(H) - rightSide: GVTileWin
+!!	| I |   |     ||     A      |   | H |	(I) - leftSide: GVTileWin
+!!	|	|   |     ||            |   |   |	(J) - bottomSide: GHTileWin
+!!	|	|   |     ||            |   |   |	(K) - bottomRightCorner: GImageWin
+!!	|   +---+-----++------------+---+   |	(L) - bottomLeftCorner: GImageWin
+!!	|	|             F             |   |	(M) - topSide: GHTileWin
+!!	+---+---------------------------+---+	(N) - topRightCorner: GImageWin
+!!	| L |             J             | K |	(Ñ) - topLeftCorner: GImageWin
+!!	+---+---------------------------+---+
+!!
+!!------------------------------------------------------------------------------
+WindowPair rootUI;
+  WindowPair -> bottomCentralArea;											!1
+	WindowPair -> -> centralArea;											!2
+	  WindowPair -> -> -> centralSecondaryArea;								!3
+		!! Área interior
+		WindowPair -> -> -> -> prueba;
+
+		WindowPair -> -> -> -> -> interiorArea;								!4
+		  WindowPair -> -> -> -> -> -> bottomCentralInteriorArea;				!5
+			WindowPair -> -> -> -> -> -> -> centralInteriorArea;				!6
+			  WindowPair -> -> -> -> -> -> -> -> centralInteriorSecondaryArea;	!7
+
+!!------------------------------------------------------------------------------
+!				!! Área principal (con barra de estado y ventana de imágenes)
+!				WindowPair -> -> -> -> -> -> -> -> mainArea;				!8
+!				  WindowPair -> -> -> -> -> -> -> -> -> Z;					!9
+!					WindowPair -> -> -> -> -> -> -> -> -> -> secondaryMainArea;
+!					  !! A !!
+!					  TextBuffer -> -> -> -> -> -> -> -> -> -> -> textWindow;
+!					  !! B !!
+!					  GStatusXWin -> -> -> -> -> -> -> -> -> -> -> statusBar
+!						with split_dir winmethod_Above;
+!					GraphWin -> -> -> -> -> -> -> -> -> -> Xmargin			!10
+!					  with split 5, split_dir winmethod_Left;
+!				  !! C !!
+!				  GImageWin -> -> -> -> -> -> -> -> -> imageWindow			!9
+!					with split 30, split_dir winmethod_Left;
+!
+!!------------------------------------------------------------------------------
+!				!! Área principal (con barra de estado)
+!				WindowPair -> -> -> -> -> -> -> -> mainArea;				!8
+!				  !! A !!
+!				  TextBuffer -> -> -> -> -> -> -> -> -> textWindow;			!9
+!				  !! C !!
+!				  GStatusXWin -> -> -> -> -> -> -> -> -> statusBar			!9
+!					with split_dir winmethod_Above;
+!
+!!------------------------------------------------------------------------------
+				!! Área principal (sin barra de estado)
+				!! A !!
+				TextBuffer -> -> -> -> -> -> -> -> -> textWindow;				!8
+
+!!------------------------------------------------------------------------------
+!! Definición de los márgenes interiores
+!!------------------------------------------------------------------------------
+				!! D !!
+				GraphWin -> -> -> -> -> -> -> -> -> rightMargin				!8
+				  with split 8, split_dir winmethod_Right;
+			  !! E !!
+			  GraphWin -> -> -> -> -> -> -> -> leftMargin						!7
+				with split 8, split_dir winmethod_Left;
+			!! F !!
+			GraphWin -> -> -> -> -> -> -> bottomMargin							!6
+			  with split 8, split_dir winmethod_Below;
+		  !! G !!
+		  GraphWin -> -> -> -> -> -> topMargin									!5
+			with split 8, split_dir winmethod_Above;
+
+	GStatusXWin -> -> -> -> -> statusBar
+	  with split_dir winmethod_Above;
+
+!!------------------------------------------------------------------------------
+!! Definición del marco
+!!------------------------------------------------------------------------------
+		!! H !!
+		GVTileWin -> -> -> -> rightSide										!4
+		  with split 56, split_dir winmethod_Right, image FRAME_RIGHT,
+		  has abssplit;
+	  !! I !!
+	  GVTileWin -> -> -> leftSide											!3
+		with split 56, split_dir winmethod_Left, image FRAME_LEFT,
+		has abssplit;
+	WindowPair -> -> bottomArea;											!2
+	  WindowPair -> -> -> bottomSecondaryArea;								!3
+		!! J !!
+		GHTileWin -> -> -> -> bottomSide									!4
+		  with split 56, split_dir winmethod_Below, image FRAME_BOTTOM,
+		  has abssplit;
+		!! K !!
+		GImageWin -> -> -> -> bottomRightCorner								!4
+		  with split 56, split_dir winmethod_Right, image FRAME_BOTTOM_RIGHT,
+		  has aspected abssplit;
+	  !! L !!
+	  GImageWin -> -> -> bottomLeftCorner									!3
+		with split 56, split_dir winmethod_Left, image FRAME_BOTTOM_LEFT,
+		has aspected abssplit;
+  WindowPair -> topArea;													!1
+	WindowPair -> -> topSecondaryArea;										!2
+	  !! M !!
+	  GHTileWin -> -> -> topSide											!3
+		with split 56, split_dir winmethod_Above, image FRAME_TOP,
+		has abssplit;
+	  !! N !!
+	  GImageWin -> -> -> topRightCorner										!3
+		with split 56, split_dir winmethod_Right, image FRAME_TOP_RIGHT,
+		has aspected abssplit;
+	!! Ñ !!
+	GImageWin -> -> topLeftCorner											!2
+	  with split 56, split_dir winmethod_Left, image FRAME_TOP_LEFT,
+	  has aspected abssplit;
+
+
+!!==============================================================================
+!!	Inicialización de la interfaz
+!!------------------------------------------------------------------------------
+
+[ InitGWindows;
+	Active_UI = rootUI;
+	Main_GWindow = textWindow;
+];
+
+
