@@ -125,8 +125,9 @@ Include	">1973_gui.inf";		! Definición de la interfaz gráfica
 #Endif;	! TARGET_GLULX;
 
 Include	"aimAndFire.h";			! Sistema de apuntado y disparo QTE
-Include	"tagConversationSystem.h"; ! Sistema de conversación por etiquetas
+Include	"gtalk.h";				! Sistema de conversación por menús
 Include	"receptacles.h";		! Contenedores (con capacidad limitada)
+Include	"tagConversationSystem.h"; ! Sistema de conversación por etiquetas
 Include	"types.h";				! Rutinas para modificar estilo de los textos
 Include	"VerbLib.h";			! Define cómo trabajan las acciones
 				

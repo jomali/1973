@@ -56,6 +56,10 @@ Class	Room
 		long_description "EN CONSTRUCCIÓN.",
 		!! Por defecto, la descripción corta es la misma descripción larga
 		short_description [; return self.long_description(); ],
+		!! Si se activa, se inhibe el listado automático de objetos simples 
+		!! al imprimir la descripción de la localidad (ver comportamiento de 
+		!! ##Look en "1973_langLM.inf")
+		inhibit_object_list false,
  has	light;
 
 !!------------------------------------------------------------------------------
@@ -141,7 +145,7 @@ Class	Atrezzo
 !!------------------------------------------------------------------------------
 Class	NPC
  class	Thing
-! class	Character	! Definida en la librería "gtalk.h"
+ class	Character	! Definida en la librería "gtalk.h"
  with	life [;
 			Answer, Ask, AskFor, Order, Tell:
 				print_ret (parser_type) "Para iniciar una conversación usa 

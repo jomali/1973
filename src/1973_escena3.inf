@@ -52,10 +52,10 @@ Room	TAXI "Dentro del taxi"
 		counter				0, 
 		name	'taxi' 'coche' 'vehiculo' 'automovil' 'auto', 
 		initial [; if (self hasnt visited) {
+!! TODO
 			SetGrammaticalInflection (PRESENTE_TERCERA_PERSONA);
 			move maleta to self;
-			StartDaemon(self);
-!! XXX
+			StartDaemon(taxista);
 print "Siente en la mano el frío peso del revólver un instante antes de comprender que lleva un rato jugueteando con él, absorto. Inmediatamente lo vuelve a guardar en uno de los bolsillos del abrigo y mira alarmado al taxista. El hombre, sin embargo, está concentrado en la carretera y no parece prestar demasiada atención a nada más. No da señales de haber reparado en el arma, al menos. Aliviado, Gabriel se recuesta mejor en el asiento y deja caer la mirada sobre la ciudad que se va esfumando tras las ventanillas, procurando alejar los recuerdos de su cabeza.";
 			new_line;
 			new_line;
@@ -65,41 +65,10 @@ print "Siente en la mano el frío peso del revólver un instante antes de comprend
 !! TODO
 			if (self.is_stopped)
 				"El taxi está detenido.";
-			if (self.triggered_action) {
-				self.triggered_action = false;
-				self.is_stopped = true;
-print "El coche da una ligera sacudida al cambiar de calle. Gabriel advierte que acaban de doblar por Neftalí Basoalto, y al momento le vienen a la mente los Juegos Florales que aquí se celebraron hace unos meses. Él participó, pues siempre ha adorado la poesía. Se presentó con un breve poemario: ~Luces de Medianoche~, del que recuerda unos versos en especial:";
-				new_line;
-				new_line;
-!! TODO: usar comillas españolas
-print (italic_type) "~Las mareas susurran al incierto / oscuro cielo estrellado, / lamentos y lloros amargos / grandes duelos y sueños aciagos. / Pues no conocen de mayor acierto / ni peor sino marcado, / el fin de la noche amante, / de su rostro fresco, siempre radiante. / Con el amanecer a cielo abierto / el Sol brilla asombrado, / de ver su noche desnuda / a los pies ya muerta y siempre muda.~";
-				new_line;
-				new_line;
-				print "---Así que es usted poeta, ¿eh?";
-				new_line;
-				new_line;
-				print "Siente un leve pinchazo de vergüenza; no pretendía 
-				recitar en voz alta. ---Si. Y de los malos. No conseguí el 
-				premio.";
-				new_line;
-				new_line;
-				print "---¿Cómo dice?";
-				new_line;
-				new_line;
-				print "---Presenté esos versos a un concurso. Aquí al lado, 
-				hace unos meses. No conseguí el premio. ---Aunque sí se sintió 
-				bastante satisfecho de su obra.";
-				new_line;
-				new_line;
-				print "---Lástima. A propósito ---le dice el hombre volviendo 
-				un poco la cabeza hacia él---, ¿tiene prisa?";
-				new_line;
-				new_line;
-				TagConversationSystem.start(conversacion_taxista);
-				return true;
-			}
-!! XXX
-"El taxi avanza lentamente a través de las congestionadas calles de Santiago. Desde su asiento en la parte de atrás, Gabriel ve cómo desfilan, quizá por última vez, las calles, los edificios y las gentes de la que ha sido su ciudad hasta hoy.";
+			"El taxi avanza lentamente a través de las congestionadas calles de 
+			Santiago. Desde su asiento en la parte de atrás, Gabriel ve cómo 
+			desfilan, quizá por última vez, las calles, los edificios y las 
+			gentes de la que ha sido su ciudad hasta hoy.";
 		],
 		before [; 
 			Listen:
@@ -111,13 +80,6 @@ print (italic_type) "~Las mareas susurran al incierto / oscuro cielo estrellado,
 				AimAndFire();
 				return true;
 		],
-		daemon [;
-			switch (self.counter) {
-			5:	self.triggered_action = true;
-			default:
-				self.counter++;
-			}
-		],
 		e_to	CALLE_ARRIBA,
 		out_to	[; return self.e_to(); ],
 ;
@@ -126,69 +88,11 @@ print (italic_type) "~Las mareas susurran al incierto / oscuro cielo estrellado,
 !! Objetos con rutinas react_before:
 
 !!------------------------------------------------------------------------------
-!! Conversaciones:
-
-TCS_Conversation	conversacion_taxista
- with	temas	op01_a op01_b op01_c op01_d;
-
-TCS_Topic	op01_a
- with	entry
-			"decirle que un poco", 
-		keys
-			'decir,' 'decirle,' 'poco' 'si' 'afirmar,', 
-		reply
-			"---Un poco.", 
-		reaction [;
-			parent(self).remove_topic(op01_b);
-			parent(self).remove_topic(op01_c);
-			parent(self).remove_topic(op01_d);
-		];
-
-TCS_Topic	op01_b
- with	entry	
-			"contarle que tienes que estar en San Antonio a las cuatro y media", 
-		keys
-			'contar,' 'contarle,' 'estar,' 'san' 'antonio' 'cuatro' 'media',
-		reply
-			"---Cojo un barco en San Antonio a las cuatro y media.", 
-		reaction [;
-			parent(self).remove_topic(op01_a);
-			parent(self).remove_topic(op01_c);
-			parent(self).remove_topic(op01_d);
-		];
-
-TCS_Topic	op01_c
- with	entry
-			"preguntarle por qué lo dice", 
-		keys
-			'por' 'que' 'dice' 'pregunta', 
-		reply
-			"---¿Por qué lo pregunta?", 
-!		reaction [;
-!			parent(self).remove_topic(op01_a);
-!			parent(self).remove_topic(op01_b);
-!			parent(self).remove_topic(op01_d);
-!		],
-;
-
-TCS_Topic	op01_d
- with	entry
-			"decirle que eso no le incumbe", 
-		keys
-			'eso' 'incumbe' 'importa', 
-		reply
-			"---A usted qué le importa.", 
-		reaction [;
-			parent(self).remove_topic(op01_a);
-			parent(self).remove_topic(op01_b);
-			parent(self).remove_topic(op01_c);
-		];
-
-!!------------------------------------------------------------------------------
 !! NPCs:
 
 NPC		taxista "taxista" TAXI
- with	name_m	'taxista' 'conductor' 'chofer' 'hombre' 'individuo',
+ with	counter 0, 
+		name_m	'taxista' 'conductor' 'chofer' 'hombre' 'individuo',
 		name_f	'persona', 
 		gender	G_MASCULINO, 
 		description [;
@@ -203,13 +107,165 @@ NPC		taxista "taxista" TAXI
 			}
 			".";
 		],
+		react_before [;
+			Look:
+				if (noun == nothing && self.counter == 5) {
+					self.counter ++;
+					return self.start_conversation();
+				}
+		],
 		before [;
 			TalkTo:
 				"El taxista permanece en silencio, absorto en la carretera y en
 				sus pensamientos. Gabriel decide no interrumpirle y centrarse 
 				en los suyos propios.";
 		],
+		daemon [;
+			switch (self.counter) {
+				5, 6: return true;
+				default: self.counter++;
+			}
+		], 
+		quip [ a b;
+			switch (a) {
+			!! 1. Menú principal
+			11:
+				! No requiere nombre
+				new_line;
+			12:
+				! No requiere réplica
+			13:
+				qtype = MainMenu;
+				qqon = true;
+				killq = true;
+				killz = true;
+			14:
+				switch (b) {
+				0:	return 2; ! 2 opciones
+				1:	return 2;
+				2:	return 3;
+				}
+			!! 2. 
+			21:
+				print_ret (italic_type) "No. Qué va... es algo que escuché en 
+				una canción.";
+			22:
+				self.qoff(3);
+				print "---No. Qué va... es algo que escuché por ahí. En una, en 
+				una canción.";
+				new_line;
+				new_line;
+				"---Es bonito.";
+			23:
+				qqon = true;
+				killq = true;
+				killz = true;
+			!! 3.
+			31:
+				print_ret (italic_type) "Si. Soy poeta.";
+			32:
+				self.qoff(2);
+				print "---Pues si. Me parecen bastante aceptables. Aunque no 
+				conseguí el premio.";
+				new_line;
+				new_line;
+				print "---¿Cómo dice?";
+				new_line;
+				new_line;
+				print "---Presenté esos versos a un concurso. Aquí al lado, 
+				hace unos meses. No conseguí el premio. ---No obstante se 
+				sintió bastante satisfecho de su obra.";
+				new_line;
+				new_line;
+				"---Lástima. Es bonito.";
+			33:
+				qqon = true;
+				killq = true;
+				killz = true;
+			}
+		],
+		start_conversation [;
+print "El coche da una ligera sacudida al cambiar de calle. Gabriel advierte que acaban de doblar por Neftalí Basoalto, y al momento le vienen a la mente los Juegos Florales que aquí se celebraron hace unos meses. Él participó, pues siempre ha adorado la poesía. Se presentó con un breve poemario: ~Luces de Medianoche~, del que recuerda unos versos en especial:";
+			new_line;
+			new_line;
+print (italic_type) "@<<Las mareas susurran al incierto / oscuro cielo estrellado, / lamentos y lloros amargos / grandes duelos y sueños aciagos. / Pues no conocen de mayor acierto / ni peor sino marcado, / el fin de la noche amante, / de su rostro fresco, siempre radiante. / Con el amanecer a cielo abierto / el Sol brilla asombrado, / de ver su noche desnuda / a los pies ya muerta y siempre muda.@>>";
+			new_line;
+			new_line;
+			print "---Muy bonito, ¿es suyo?";
+			new_line;
+			new_line;
+			print "Siente cómo la sangre le salta de repente a la cara. No 
+			se había dado cuenta de que recitaba en voz alta.";
+			new_line;
+			new_line;
+			!! Se inicia la conversación con el taxista:
+			TagConversationSystem.start(conversacion_taxista);
+			return true;
+		],
  has	male concealed;
+
+TCS_Conversation	conversacion_taxista
+ with	temas op03 op02 op01;
+
+TCS_Topic	op01
+ with	entry
+			"contestar al taxista", 
+		keys
+			'contestar,' 'contestarle,' 'contesta' 'contestale',
+		reply [;
+			taxista.select(1);
+			return true;
+		];
+
+TCS_Topic	op02
+ with	entry
+			"preguntarle por el tráfico", 
+		keys
+			'preguntar,' 'preguntarle,' 'pregunta' 'preguntale' 
+			'trafico' 'coches' 'atasco', 
+		reply [;
+			print "---No es habitual que se forme un atasco así a estas horas, 
+			¿no es cierto?";
+			new_line;
+			new_line;
+			print "---Nada de lo que ocurre estos días es habitual. Todavía 
+			queda alguna calle cortada, y los camiones del ejército andan de un 
+			lado para otra parando el tráfico, así que últimamente hay atascos 
+			a todas horas.";
+			new_line;
+			new_line;
+			print "---Parando el tráfico... ¿controles? ---no puede evitar que 
+			la voz se le escape con una octava de más.";
+			new_line;
+			new_line;
+			"---Si. El otro día me hicieron parar un par de veces. Pero no. No 
+			he vuelto a ver un control desde entonces. Lo que pasa es que 
+			aparece un camión y entonces te tienen ahí quieto hasta que termina 
+			de pasar. Como si toda la puñetera ciudad fuera su casa. Enseguida 
+			vuelven a abrir la carretera. En cuanto termina de pasar, claro. 
+			Para cuando arrancas ya se ha montado el pifostio.";
+		],
+		reaction [;
+			parent(self).remove_topic(op01);			
+		];
+
+TCS_Topic	op03
+ with	entry
+			"preguntarle por el golpe contra el gobierno", 
+		keys
+			'preguntar,' 'preguntarle,' 'golpe' 'gobierno' 'estado', 
+		reply [;
+			print "---¿Puedo preguntarle una cosa? ¿Qué le parece todo lo que 
+			ha ocurrido?";
+			new_line;
+			new_line;
+			"---Puede preguntar, desde luego. Pero no espere que le conteste. 
+			Yo no meto el hocico donde no me llaman. Yo sólo sé de mi taxi y de 
+			cuáles son los sitios dónde la gente suele necesitarme. Y ya.";
+		], 
+		reaction [;
+			parent(self).remove_topic(op01);			
+		];
 
 !!------------------------------------------------------------------------------
 !! Items:
@@ -231,10 +287,20 @@ Atrezzo	"ventanilla" TAXI
 		description [; 
 !! TODO
 			if (TAXI.is_stopped) {
-print "Distraído, posa los ojos sobre la gente que pasea por la acera esta mañana. Y de repente, durante apenas un instante, vuelve a su mente el intenso perfume de ", (the) flowers ,". ¡Ella! Allí, a tan sólo un puñado de metros, ve a Luz Acosta caminando sinuosa por la calle. Alta, cabello negro largo, vestido rojo, piernas rectas que castigan el suelo a cada paso y una mirada capaz de derribar montañas. Luz Acosta... la mujer que conoció anoche.";
+				print "Distraído, posa los ojos sobre la gente que pasea por la 
+				acera esta mañana. Y de repente, durante apenas un instante, 
+				vuelve a su mente el intenso perfume de ", (the) flowers 
+				,". ¡Ella! Allí, a tan sólo un puñado de metros, ve a Luz 
+				Acosta caminando sinuosa por la calle. Alta, cabello negro 
+				largo, vestido rojo, piernas rectas que castigan el suelo a 
+				cada paso y una mirada capaz de derribar montañas. Luz 
+				Acosta... la mujer que conoció anoche.";
 				new_line;
 				new_line;
-print "---¡Pare! ¡Pare! ¡Espere aquí un momento! ---Abre apresuradamente la puerta del taxi y sale a su encuentro, casi a la carrera. Perfectamente consciente del tremendo riesgo que podía conllevar ser visto.";
+				print "---¡Pare! ¡Pare! ¡Espere aquí un momento! ---Abre 
+				apresuradamente la puerta del taxi y sale a su encuentro, casi 
+				a la carrera. Perfectamente consciente del tremendo riesgo que 
+				podía conllevar ser visto.";
 				new_line;
 				new_line;
 				PlayerTo(CALLE_ARRIBA);
@@ -242,7 +308,12 @@ print "---¡Pare! ¡Pare! ¡Espere aquí un momento! ---Abre apresuradamente la puer
 			}
 			if (self hasnt description_flag) {
 				give self description_flag;
-"Al mirar por la ventanilla reconoce un parquecillo con árboles a lo lejos. Cuando eran poco más que niños, recuerda utilizar aquellos troncos para grabar primerizas declaraciones de amor adolescente con la ayuda de alguna pequeña navaja, o de un clavo. Aunque las muchachas nunca encontraron aquellos garabatos especialmente románticos. A él, al menos, nunca le funcionaron.";
+				"Al mirar por la ventanilla reconoce un parquecillo con árboles 
+				a lo lejos. Cuando eran poco más que niños, recuerda utilizar 
+				aquellos troncos para grabar primerizas declaraciones de amor 
+				adolescente con la ayuda de alguna pequeña navaja. Aunque las 
+				muchachas nunca encontraron aquellos garabatos especialmente 
+				románticos. A él, al menos, nunca le funcionaron.";
 			}
 			"Su mirada se pierde entre los detalles de la ciudad que se va 
 			desvaneciendo poco a poco tras las ventanillas.";

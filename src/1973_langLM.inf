@@ -1147,10 +1147,13 @@ Default GRAMMATICAL_INFLECTION 2;
 						ENGLISH_BIT + RECURSE_BIT + PARTINV_BIT
 						+ TERSE_BIT + ISARE_BIT + CONCEAL_BIT);
 				".";
-			5,	!! XXX: Cuando el interlector está en la habitación y la 
-			6:	!! habitación está a oscuras no se realiza el listado 
-				!! automático de objetos simples
-				if (real_location == HABITACION && HABITACION.is_dark) rtrue;
+			5,	!! XXX: Si la localidad actual tiene definida la propiedad 
+			6:	!! "inhibit_object_list" y está establecida como verdadero, se 
+				!! evita que se imprima el listado automático de objetos 
+				!! simples junto con la descripción de la localidad
+				if (real_location provides inhibit_object_list)
+					if (real_location.inhibit_object_list)
+						return true;
 
 				new_line;
 				if (x1~=location) {

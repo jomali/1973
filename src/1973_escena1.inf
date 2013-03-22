@@ -43,6 +43,7 @@
 
 Room	HABITACION "En la habitación"
  with	is_dark	true,
+		inhibit_object_list true, 
 		name	'habitacion' 'cuarto' 'dormitorio' 'estancia', 
 		short_name " ", 
 		initial [; if (self hasnt visited) {
@@ -92,19 +93,31 @@ print "Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flo
 		}],
 		description [;
 			if (self hasnt visited)
-"A su alrededor todo son penumbras. La escasa luz capaz de filtrarse a través de las cortinas cerradas sirve tan sólo para dibujar una estrecha franja blanca y zigzagueante sobre el suelo de la habitación.";
+				"A su alrededor todo son penumbras. La escasa luz capaz de 
+				filtrarse a través de las cortinas cerradas sirve tan sólo para 
+				dibujar una estrecha franja blanca y zigzagueante sobre el 
+				suelo de la habitación.";
 			else if (self.is_dark)
-"Apenas una fina franja de luz logra colarse en la habitación por entre los resquicios que dejan las cortinas cerradas. Insuficiente todavía como para descorrer el telón de tinieblas que lo envuelve todo.";
+				"Apenas una fina franja de luz logra colarse en la habitación 
+				por entre los resquicios que dejan las cortinas cerradas. 
+				Insuficiente todavía como para descorrer el telón de tinieblas 
+				que lo envuelve todo.";
 			else
-"La intensa claridad del amanecer se cuela ahora por la ventana abierta, iluminando un caos de ropa, libros, papeles y otros trastos esparcidos por todo el dormitorio. Sólo su cama y el escritorio siguen aún en pie entre el tumulto.";
+				"La intensa claridad del amanecer se cuela ahora por la ventana 
+				abierta, iluminando un caos de ropa, libros, papeles y otros 
+				trastos esparcidos por todo el dormitorio. Sólo su cama y el 
+				escritorio siguen aún en pie entre el tumulto.";
 		],
- e_to	[;
-!! TODO
-		return self.cant_go(); ],
- out_to	[;
-		return self.e_to(); ],
- cant_go
-		"No puede ir por ahí. La puerta es la única salida de la habitación.",
+		e_to [;
+			!! TODO
+			return self.cant_go();
+		],
+		out_to [;
+			return self.e_to();
+		],
+		cant_go
+			"No puede ir por ahí. La puerta es la única salida de la 
+			habitación.", 
 ;
 
 !!------------------------------------------------------------------------------
