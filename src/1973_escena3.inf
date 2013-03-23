@@ -90,9 +90,8 @@ print "Siente en la mano el frío peso del revólver un instante antes de comprend
 !!------------------------------------------------------------------------------
 !! NPCs:
 
-NPC		taxista "taxista" TAXI
- with	counter 0, 
-		name_m	'taxista' 'conductor' 'chofer' 'hombre' 'individuo',
+NPC		taxista "taxista" TAXI	
+ with	name_m	'taxista' 'conductor' 'chofer' 'hombre' 'individuo',
 		name_f	'persona', 
 		gender	G_MASCULINO, 
 		description [;
@@ -109,120 +108,101 @@ NPC		taxista "taxista" TAXI
 		],
 		react_before [;
 			Look:
-				if (noun == nothing && self.counter == 5) {
+				if (noun == nothing && self.counter == self.counter_limit) {
 					self.counter ++;
 					return self.start_conversation();
 				}
 		],
 		before [;
 			TalkTo:
-				"El taxista permanece en silencio, absorto en la carretera y en
-				sus pensamientos. Gabriel decide no interrumpirle y centrarse 
-				en los suyos propios.";
+				if (TagConversationSystem.current_conversation == 0)
+					"El taxista permanece en silencio, absorto en la carretera 
+					y en sus pensamientos. Gabriel decide no interrumpirle y 
+					centrarse en los suyos propios.";
+				switch (self.state) {
+				0:
+					print "---Eso que ha recitado, ---insiste el conductor, 
+					---¿lo ha escrito usted?^";
+					new_line;
+				default:
+					print "El taxista le hace un leve gesto con la cabeza, como 
+					haciéndole ver que le está escuchando.^";
+					new_line;
+				}
+				TagConversationSystem.ask();
+				return true;
 		],
 		daemon [;
-			switch (self.counter) {
-				5, 6: return true;
-				default: self.counter++;
-			}
+			if (self.counter == self.counter_limit)
+				return true;
+			if (self.counter == self.counter_limit + 1)
+				return true;
+			self.counter++;
 		], 
-		quip [ a b;
-			switch (a) {
-			!! 1. Menú principal
-			11:
-				! No requiere nombre
-				new_line;
-			12:
-				! No requiere réplica
-			13:
-				qtype = MainMenu;
-				qqon = true;
-				killq = true;
-				killz = true;
-			14:
-				switch (b) {
-				0:	return 2; ! 2 opciones
-				1:	return 2;
-				2:	return 3;
-				}
-			!! 2. 
-			21:
-				print_ret (italic_type) "No. Qué va... es algo que escuché en 
-				una canción.";
-			22:
-				self.qoff(3);
-				print "---No. Qué va... es algo que escuché por ahí. En una, en 
-				una canción.";
-				new_line;
-				new_line;
-				"---Es bonito.";
-			23:
-				qqon = true;
-				killq = true;
-				killz = true;
-			!! 3.
-			31:
-				print_ret (italic_type) "Si. Soy poeta.";
-			32:
-				self.qoff(2);
-				print "---Pues si. Me parecen bastante aceptables. Aunque no 
-				conseguí el premio.";
-				new_line;
-				new_line;
-				print "---¿Cómo dice?";
-				new_line;
-				new_line;
-				print "---Presenté esos versos a un concurso. Aquí al lado, 
-				hace unos meses. No conseguí el premio. ---No obstante se 
-				sintió bastante satisfecho de su obra.";
-				new_line;
-				new_line;
-				"---Lástima. Es bonito.";
-			33:
-				qqon = true;
-				killq = true;
-				killz = true;
-			}
-		],
 		start_conversation [;
-print "El coche da una ligera sacudida al cambiar de calle. Gabriel advierte que acaban de doblar por Neftalí Basoalto, y al momento le vienen a la mente los Juegos Florales que aquí se celebraron hace unos meses. Él participó, pues siempre ha adorado la poesía. Se presentó con un breve poemario: ~Luces de Medianoche~, del que recuerda unos versos en especial:";
+print "El coche da una ligera sacudida al cambiar de calle. Gabriel advierte que acaban de doblar por Neftalí Basoalto, y al momento le vienen a la mente los Juegos Florales que aquí se celebraron hace unos meses. Él participó, pues siempre ha adorado la poesía. Se presentó con un breve poemario: ~Luces de Medianoche~, del que recuerda unos versos en especial:^";
 			new_line;
+print (italic_type) "@<<Las mareas susurran al incierto / oscuro cielo estrellado, / lamentos y lloros amargos / grandes duelos y sueños aciagos. / Pues no conocen de mayor acierto / ni peor sino marcado, / el fin de la noche amante, / de su rostro fresco, siempre radiante. / Con el amanecer a cielo abierto / el Sol brilla asombrado, / de ver su noche desnuda / a los pies ya muerta y siempre muda.@>>^";
 			new_line;
-print (italic_type) "@<<Las mareas susurran al incierto / oscuro cielo estrellado, / lamentos y lloros amargos / grandes duelos y sueños aciagos. / Pues no conocen de mayor acierto / ni peor sino marcado, / el fin de la noche amante, / de su rostro fresco, siempre radiante. / Con el amanecer a cielo abierto / el Sol brilla asombrado, / de ver su noche desnuda / a los pies ya muerta y siempre muda.@>>";
-			new_line;
-			new_line;
-			print "---Muy bonito, ¿es suyo?";
-			new_line;
+			print "---Eso es muy bonito, ¿es suyo?^";
+			PressAnyKey();
 			new_line;
 			print "Siente cómo la sangre le salta de repente a la cara. No 
-			se había dado cuenta de que recitaba en voz alta.";
-			new_line;
+			se había dado cuenta de que recitaba en voz alta.^";
 			new_line;
 			!! Se inicia la conversación con el taxista:
 			TagConversationSystem.start(conversacion_taxista);
 			return true;
 		],
+		set_state [ i; 
+			self.state = i;
+		],
+		set_sennor_poeta [ flag;
+			self.sennor_poeta = flag;
+		],
+ private
+		counter 4,			!! contador TODO -> 0
+		counter_limit 5,	!! punto en que se inicia la conversación
+		state 0,			!! estado del objeto
+		sennor_poeta false,	!! el taxista sabe que Gabriel escribe poesía
  has	male concealed;
 
 TCS_Conversation	conversacion_taxista
  with	temas op03 op02 op01;
 
 TCS_Topic	op01
- with	entry
-			"contestar al taxista", 
-		keys
-			'contestar,' 'contestarle,' 'contesta' 'contestale',
+ with	id		1,
+		entry	"poema",
+		keys	'poemario' 'poema' 'poesia' 'versos' 'luces' 'medianoche', 
 		reply [;
-			taxista.select(1);
-			return true;
+!! XXX
+			print "---Si, es algo que escribí yo. Me alegro que le guste.^";
+			new_line;
+			print "---Vaya, así que es usted poeta.^";
+			new_line;
+			print "---Supongo. De los malos. No gané el premio.^";
+			new_line;
+			print "---¿Cómo dice?^";
+			new_line;
+			print "---Presenté esos versos a un concurso. Aquí al lado, hace 
+			unos meses. No conseguí el premio. ---Aunque sí se sintió bastante 
+			satisfecho de su obra.^";
+			new_line;
+			print "---Lástima. Bueno, la próxima vez será.^";
+			new_line;
+			print "Lo duda mucho. No habrá una próxima vez, se dice. Pero en 
+			esta ocasión tiene cuidado de guardárselo para si mismo y no 
+			decirlo en voz alta.^";
+		], 
+		reaction [;
+			taxista.set_state(self.id);
+			taxista.set_sennor_poeta(true);
 		];
 
 TCS_Topic	op02
- with	entry
-			"preguntarle por el tráfico", 
-		keys
-			'preguntar,' 'preguntarle,' 'pregunta' 'preguntale' 
-			'trafico' 'coches' 'atasco', 
+ with	id		2,
+		entry	"estado del tráfico", 
+		keys	'estado' 'trafico' 'coches' 'atasco' 'carretera', 
 		reply [;
 			print "---No es habitual que se forme un atasco así a estas horas, 
 			¿no es cierto?";
@@ -246,14 +226,14 @@ TCS_Topic	op02
 			Para cuando arrancas ya se ha montado el pifostio.";
 		],
 		reaction [;
-			parent(self).remove_topic(op01);			
+			parent(self).remove_topic(op01);
+			taxista.set_state(self.id);
 		];
 
 TCS_Topic	op03
- with	entry
-			"preguntarle por el golpe contra el gobierno", 
-		keys
-			'preguntar,' 'preguntarle,' 'golpe' 'gobierno' 'estado', 
+ with	id		3,
+		entry	"golpe contra el gobierno", 
+		keys	'golpe' 'gobierno' 'estado' 'sublevacion', 
 		reply [;
 			print "---¿Puedo preguntarle una cosa? ¿Qué le parece todo lo que 
 			ha ocurrido?";
@@ -264,7 +244,8 @@ TCS_Topic	op03
 			cuáles son los sitios dónde la gente suele necesitarme. Y ya.";
 		], 
 		reaction [;
-			parent(self).remove_topic(op01);			
+			parent(self).remove_topic(op01);
+			taxista.set_state(self.id);
 		];
 
 !!------------------------------------------------------------------------------

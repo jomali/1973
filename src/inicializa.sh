@@ -55,12 +55,13 @@ if [ -d $fichero_extensiones/other ]; then
 fi
 sudo mkdir $fichero_extensiones/other
 sudo cp extensions/aimAndFire.h	 $fichero_extensiones/other/aimAndFire.h
-sudo cp extensions/tagConversationSystem.h $fichero_extensiones/other/tagConversationSystem.h
 sudo cp extensions/dainunek.h	 $fichero_extensiones/other/dainunek.h
 sudo cp extensions/damusix.h	 $fichero_extensiones/other/damusix.h
+sudo cp extensions/GlulxBox.h	 $fichero_extensiones/other/GlulxBox.h
 sudo cp extensions/gtalk.h		 $fichero_extensiones/other/gtalk.h
 sudo cp extensions/receptacles.h $fichero_extensiones/other/receptacles.h
 sudo cp extensions/SpanishEG.h	 $fichero_extensiones/other/SpanishEG.h
+sudo cp extensions/tagConversationSystem.h $fichero_extensiones/other/tagConversationSystem.h
 sudo cp extensions/types.h		 $fichero_extensiones/other/types.h
 sudo ln -s $fichero_extensiones/other/dainunek.h $fichero_extensiones/other/Dainunek.h
 sudo ln -s $fichero_extensiones/other/damusix.h $fichero_extensiones/other/Damusix.h

@@ -38,7 +38,7 @@
 !!------------------------------------------------------------------------------
 !!
 !!	'tagConversationSystem' es una remodelación de la extensión 
-!! 'NPC_Conversacion' versión 1.0 (2010/04/19) escrita por Mastodon. Tan sólo 
+!!	'NPC_Conversacion' versión 1.0 (2010/04/19) escrita por Mastodon. Tan sólo 
 !!	presenta pequeñas modificaciones con respecto a la original (altera ciertos 
 !!	comportamientos y cambia el nombre de algunas funciones y objetos). A 
 !!	continuación se adjunta la descripción original de la librería:

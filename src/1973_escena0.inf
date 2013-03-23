@@ -145,7 +145,7 @@ Class	Atrezzo
 !!------------------------------------------------------------------------------
 Class	NPC
  class	Thing
- class	Character	! Definida en la librería "gtalk.h"
+! class	Character	! Definida en la librería "gtalk.h"
  with	life [;
 			Answer, Ask, AskFor, Order, Tell:
 				print_ret (parser_type) "Para iniciar una conversación usa 
