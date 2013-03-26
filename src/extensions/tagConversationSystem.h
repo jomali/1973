@@ -310,7 +310,7 @@ Object TagConversationSystem
 !			")";
 !		],
 		no_topics [;
-			print_ret (parser_type) "Se han agotado los temas.";
+			print_ret (parser) "Se han agotado los temas.";
 		],
 		ask [;
 			start_parser_style();

@@ -44,7 +44,6 @@
 !! TODO
 !!	<>	definir asientos
 !!	<>	radio
-!!	<>	mirar a la calle / la ciudad / santiago...
 
 Room	TAXI "Dentro del taxi"
  with	is_stopped			false,
@@ -91,7 +90,9 @@ print "Siente en la mano el frío peso del revólver un instante antes de comprend
 !! NPCs:
 
 NPC		taxista "taxista" TAXI	
- with	name_m	'taxista' 'conductor' 'chofer' 'hombre' 'individuo',
+ with	state 0,			!! estado del objeto
+		sennor_poeta false,	!! el taxista sabe que Gabriel escribe poesía
+		name_m	'taxista' 'conductor' 'chofer' 'hombre' 'individuo',
 		name_f	'persona', 
 		gender	G_MASCULINO, 
 		description [;
@@ -142,7 +143,7 @@ NPC		taxista "taxista" TAXI
 		start_conversation [;
 print "El coche da una ligera sacudida al cambiar de calle. Gabriel advierte que acaban de doblar por Neftalí Basoalto, y al momento le vienen a la mente los Juegos Florales que aquí se celebraron hace unos meses. Él participó, pues siempre ha adorado la poesía. Se presentó con un breve poemario: ~Luces de Medianoche~, del que recuerda unos versos en especial:^";
 			new_line;
-print (italic_type) "@<<Las mareas susurran al incierto / oscuro cielo estrellado, / lamentos y lloros amargos / grandes duelos y sueños aciagos. / Pues no conocen de mayor acierto / ni peor sino marcado, / el fin de la noche amante, / de su rostro fresco, siempre radiante. / Con el amanecer a cielo abierto / el Sol brilla asombrado, / de ver su noche desnuda / a los pies ya muerta y siempre muda.@>>^";
+print (emph) "@<<Las mareas susurran al incierto / oscuro cielo estrellado, / lamentos y lloros amargos / grandes duelos y sueños aciagos. / Pues no conocen de mayor acierto / ni peor sino marcado, / el fin de la noche amante, / de su rostro fresco, siempre radiante. / Con el amanecer a cielo abierto / el Sol brilla asombrado, / de ver su noche desnuda / a los pies ya muerta y siempre muda.@>>^";
 			new_line;
 			print "---Eso es muy bonito, ¿es suyo?^";
 			PressAnyKey();
@@ -154,17 +155,9 @@ print (italic_type) "@<<Las mareas susurran al incierto / oscuro cielo estrellad
 			TagConversationSystem.start(conversacion_taxista);
 			return true;
 		],
-		set_state [ i; 
-			self.state = i;
-		],
-		set_sennor_poeta [ flag;
-			self.sennor_poeta = flag;
-		],
  private
 		counter 4,			!! contador TODO -> 0
 		counter_limit 5,	!! punto en que se inicia la conversación
-		state 0,			!! estado del objeto
-		sennor_poeta false,	!! el taxista sabe que Gabriel escribe poesía
  has	male concealed;
 
 TCS_Conversation	conversacion_taxista
@@ -195,8 +188,8 @@ TCS_Topic	op01
 			decirlo en voz alta.^";
 		], 
 		reaction [;
-			taxista.set_state(self.id);
-			taxista.set_sennor_poeta(true);
+			taxista.state = self.id;
+			taxista.sennor_poeta = true;
 		];
 
 TCS_Topic	op02
@@ -206,6 +199,8 @@ TCS_Topic	op02
 		reply [;
 			print "---No es habitual que se forme un atasco así a estas horas, 
 			¿no es cierto?";
+			if (taxista.state == 0 && ~~taxista.sennor_poeta)
+				print " ---cambia de tema Gabriel.";
 			new_line;
 			new_line;
 			print "---Nada de lo que ocurre estos días es habitual. Todavía 
@@ -227,7 +222,7 @@ TCS_Topic	op02
 		],
 		reaction [;
 			parent(self).remove_topic(op01);
-			taxista.set_state(self.id);
+			taxista.state = self.id;
 		];
 
 TCS_Topic	op03
@@ -237,6 +232,8 @@ TCS_Topic	op03
 		reply [;
 			print "---¿Puedo preguntarle una cosa? ¿Qué le parece todo lo que 
 			ha ocurrido?";
+			if (taxista.state == 0 && ~~taxista.sennor_poeta)
+				print " ---cambia de tema Gabriel.";
 			new_line;
 			new_line;
 			"---Puede preguntar, desde luego. Pero no espere que le conteste. 
@@ -245,7 +242,7 @@ TCS_Topic	op03
 		], 
 		reaction [;
 			parent(self).remove_topic(op01);
-			taxista.set_state(self.id);
+			taxista.state = self.id;
 		];
 
 !!------------------------------------------------------------------------------
@@ -257,7 +254,38 @@ TCS_Topic	op03
 !!------------------------------------------------------------------------------
 !! Atrezzo:
 
-Atrezzo	"ventanilla" TAXI
+!! TODO
+Atrezzo	"ciudad" TAXI
+ with	name_m	'santiago' 'edificio' 'parque' 'parquecillo' 'paseo' 'bulevar' 
+				'bordillo' 'anden' 'pavimento', 
+		name_f	'ciudad' 'urbe' 'capital' 'metropoli' 'calle' 'carretera' 
+				'acera' 'manzana' 'via' 'avenida' 'rambla' 'ronda' 'calzada', 
+		name_mp	'edificios' 'parques' 'calles', 
+		name_fp	'aceras', 
+		gender	G_FEMENINO, 
+		before [;
+			Examine:
+				<<Examine ventanilla>>;
+		], 
+ has	female;
+
+!! TODO
+Atrezzo	puerta "puerta" TAXI
+ with	name_f	'puerta', 
+		gender	G_FEMENINO, 
+		before [;
+			Examine:
+				<<Examine ventanilla>>;
+		],
+		door_dir 
+			out_to, 
+		door_to	
+			CALLE_ARRIBA,
+ has	female door openable ~open;
+
+!! TODO:
+!!	<>	abrir / cerrar ventanilla
+Atrezzo	ventanilla "ventanilla" TAXI
  with	counter 0, 
 		name_m	'cristal' 'vidrio', 
 		name_f	'ventanilla' 'ventana' 'luna', 
@@ -317,7 +345,7 @@ print "Apenas una semana después del golpe, el ambiente que se respira en la cal
 			new_line;
 		],
 		s_to	CALLE_ABAJO, 
-		w_to	TAXI, 
+		w_to	taxi_aparcado, 
 		in_to	[; return self.w_to(); ],
 ;
 
@@ -335,6 +363,16 @@ print "Apenas una semana después del golpe, el ambiente que se respira en la cal
 
 !!------------------------------------------------------------------------------
 !! Atrezzo:
+
+Atrezzo	taxi_aparcado "taxi" CALLE_ARRIBA
+ with	name_m	'taxi' 'coche' 'vehiculo' 'automovil' 'auto', 
+		gender	G_MASCULINO, 
+		adjectives 'parado' 'detenido' 'aparcado', 
+		door_dir 
+			in_to, 
+		door_to
+			TAXI, 
+ has	male door openable ~open;
 
 
 !!==============================================================================

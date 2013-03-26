@@ -41,6 +41,7 @@
 !!	HABITACION: En la habitación
 !!------------------------------------------------------------------------------
 
+
 Room	HABITACION "En la habitación"
  with	is_dark	true,
 		inhibit_object_list true, 
@@ -73,7 +74,7 @@ Room	HABITACION "En la habitación"
 !				"                                   CORMAC MCCARTY "
 !				"                                   The Road, 2006 "
 !				"";
-!			print (parser_type) "Pulsa una tecla para empezar";
+!			print (parser) "Pulsa una tecla para empezar";
 !			PressAnyKey();
 !			EraseWindow();
 
@@ -109,8 +110,12 @@ print "Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flo
 				escritorio siguen aún en pie entre el tumulto.";
 		],
 		e_to [;
-			!! TODO
-			return self.cant_go();
+!! TODO
+			if (puerta_habitacion hasnt open) {
+				<Open puerta_habitacion>;
+				new_line;
+			}
+			return puerta_habitacion;
 		],
 		out_to [;
 			return self.e_to();
@@ -123,11 +128,14 @@ print "Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flo
 !!------------------------------------------------------------------------------
 !! Objetos con rutinas react_before:
 
+
 !!------------------------------------------------------------------------------
 !! NPCs:
 
+
 !!------------------------------------------------------------------------------
 !! Items:
+
 
 Item	maleta "maleta de viaje" HABITACION
  with	size 5, 
@@ -179,6 +187,7 @@ Item	maleta "maleta de viaje" HABITACION
 !!------------------------------------------------------------------------------
 !! Furniture:
 
+
 Furniture	escritorio "escritorio" HABITACION
  with	name_m	'mueble' 'mobiliario' 'moblaje' 'escritorio' 'pupitre',
 		name_mp	'muebles',
@@ -212,6 +221,7 @@ Furniture	escritorio "escritorio" HABITACION
 		], 
  has	male concealed supporter transparent;
 
+
 Furniture	cajon "cajón" HABITACION
  class	Receptacle, 
  with	capacity_size 3,
@@ -233,5 +243,58 @@ Furniture	cajon "cajón" HABITACION
 
 !!------------------------------------------------------------------------------
 !! Atrezzo:
+
+
+!! TODO: nombres y adjetivos
+Atrezzo	puerta_habitacion "puerta" HABITACION
+ with	name_f	'puerta' 'entrada' 'salida', 
+		gender	G_FEMENINO, 
+		adjectives 'madera' 'pintada' 'blanco' 'blanca' 'sencilla' 'cerrada' 
+			'abierta', 
+		description [;
+			print "De madera pintada en blanco, tiene colgado un colorido 
+			calendario de pared.";
+			if (self has open) " Está abierta de par en par.";
+			else " Está cerrada.";
+		], 
+		after [;
+			Close:
+				"La puerta se cierra con un ligero crujir de goznes.";
+			Open:
+				"La puerta se abre con un ligero crujir de goznes.";
+		], 
+		door_dir
+			out_to, 
+		door_to [;
+!! XXX
+print "Gabriel se detiene a echar un último vistazo a la habitación y tuerce la boca en una media sonrisa al pensar que se parece mucho a su propia vida; puesta toda patas arriba, llena de sueños rotos, pisoteados y tirados por el suelo. Al cabo de un momento, sin más, le da la espalda al pasado y sale con paso decidido por la puerta abierta.^";
+			KeyCharPrimitive();
+			new_line;
+!! TODO: ResetChapter1();
+			return CAFE; !! XXX: Fin del capítulo 1
+		], 
+ has	female door openable ~open transparent;
+
+
+!! TODO: nombres y adjectivos
+Atrezzo	"calendario de pared" puerta_habitacion
+ with	name_m	'calendario' 'anuario', 
+		gender	G_MASCULINO, 
+		adjectives 'pared' 'colorido', 
+		description [;
+			"En su mitad superior hay una copia a color de una pintura de Van 
+			Gogh: un bodegón floral de tonos cálidos en el que varios claveles 
+			anaranjados comparten jarra con otros blanquecinos de tallo más 
+			largo. La mitad inferior del calendario está ocupada por la 
+			cuadrícula ordenada de los días de septiembre y al final, en 
+			grandes números: ", (emph) "1973", ".";
+		], 
+		before [;
+			Close, Open:
+				"Ya está bien como está.";
+			Pull, Push, PushDir, Take:
+				"Está enganchado a la puerta.";
+		], 
+ has	male;
 
 

@@ -58,9 +58,9 @@ Constant SIN_MENSAJES;			! Se omiten los mensajes por defecto de la lib.
 Constant MAX_CARRIED = 3;		! Máx. de objetos que se pueden llevar en mano
 Constant SACK_OBJECT = ropa;	! Contenedor principal para la librería
 
-Constant PARSERST_TYPE _IST_;	! Selecciona estilo de los mensajes del parser
-Constant PARSERST_MSG1 "[";		! Define texto inicial de mensajes del parser
-Constant PARSERST_MSG2 "]";		! Define texto final de mensajes del parser
+Constant PARSER_STYLE _IST_;	! Selecciona estilo de los mensajes del parser
+Constant PARSER_MSG1 "[";		! Define texto inicial de mensajes del parser
+Constant PARSER_MSG2 "]";		! Define texto final de mensajes del parser
 
 Global flowers;					! Tipo de flor seleccionado (ver NOTA #1)
 
@@ -155,7 +155,7 @@ Include ">1973_escena5.inf";	! Escena 5: Flores para un joven difunto
 	EraseWindow();
 	SelectFlowerType();
 
-	location = TAXI;
+	location = HABITACION;
 	lookmode = 2;
 	return 2;
 ];
@@ -279,7 +279,7 @@ Object	violetas "violetas"
 
 [ PrintVerb v;
 	if (v == 'no.verb') {
-		print "hacer algo a";
+		print "hacer algo con";
 		return true;
 	}
 	return false;
@@ -330,7 +330,7 @@ Verb	'conversa' 'platica'
 !!------------------------------------------------------------------------------
 
 [ CloseXSub;
-	print (parser_type) "En lugar de ~correr~ el objeto, se intenta utilizar 
+	print (parser) "En lugar de ~correr~ el objeto, se intenta utilizar 
 	la acción ~cerrar~, que en este contexto es sinónima, y es más general. 
 	(Apenas hay objetos corredizos en el mundo del relato, pero muchos se 
 	pueden abrir y cerrar.)";
@@ -339,7 +339,7 @@ Verb	'conversa' 'platica'
 ];
 
 [ OpenXSub;
-	print (parser_type) "En lugar de ~descorrer~ el objeto, se intenta utilizar 
+	print (parser) "En lugar de ~descorrer~ el objeto, se intenta utilizar 
 	la acción ~abrir~, que en este contexto es sinónima, y es más general. 
 	(Apenas hay objetos corredizos en el mundo del relato, pero muchos se 
 	pueden abrir y cerrar.)";

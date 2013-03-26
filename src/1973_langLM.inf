@@ -51,7 +51,7 @@ Default GRAMMATICAL_INFLECTION 2;
 [ LanguageLM n x1;
 
 	Answer, Ask, AskFor, Order, Tell:
-		print_ret (parser_type) "Para iniciar una conversación, usa 
+		print_ret (parser) "Para iniciar una conversación, usa 
 		simplemente la orden HABLA (a/con) PERSONAJE.";
 
 !!	Ask:	see Answer
@@ -121,33 +121,33 @@ Default GRAMMATICAL_INFLECTION 2;
 
 	CommandsOff:
 		switch (n) {
-			1:	print_ret (parser_type) "Grabación de órdenes finalizada.";
+			1:	print_ret (parser) "Grabación de órdenes finalizada.";
 			#Ifdef TARGET_GLULX;
-			2:	print_ret (parser_type) "La grabación de órdenes ya estaba 
+			2:	print_ret (parser) "La grabación de órdenes ya estaba 
 				finalizada.";
 			#Endif; ! TARGET_
 		}
 
 	CommandsOn:
 		switch (n) {
-			1:	print_ret (parser_type) "Grabación de órdenes activada.";
+			1:	print_ret (parser) "Grabación de órdenes activada.";
 			#Ifdef TARGET_GLULX;
-			2:	print_ret (parser_type) "Órdenes relanzadas.";
-			3:	print_ret (parser_type) "Grabación de órdenes ya activada.";
-			4:	print_ret (parser_type) "Fallo en la grabación de órdenes.";
+			2:	print_ret (parser) "Órdenes relanzadas.";
+			3:	print_ret (parser) "Grabación de órdenes ya activada.";
+			4:	print_ret (parser) "Fallo en la grabación de órdenes.";
 			#Endif; ! TARGET_
 		}
 
 	CommandsRead:
 		switch (n) {
-			1:	print_ret (parser_type) "Relanzando acciones.";
+			1:	print_ret (parser) "Relanzando acciones.";
 			#Ifdef TARGET_GLULX;
-			2:	print_ret (parser_type) "Las órdenes ya están siendo 
+			2:	print_ret (parser) "Las órdenes ya están siendo 
 				relanzadas.";
-			3:	print_ret (parser_type) "Fallo en la reejecución de órdenes: 
+			3:	print_ret (parser) "Fallo en la reejecución de órdenes: 
 				grabación en curso.";
-			4:	print_ret (parser_type) "Fallo en la reejecución de órdenes.";
-			5:	print_ret (parser_type) "Acciones ejecutadas: fin del proceso.";
+			4:	print_ret (parser) "Fallo en la reejecución de órdenes.";
+			5:	print_ret (parser) "Acciones ejecutadas: fin del proceso.";
 			#Endif; ! TARGET_
 		}
 
@@ -1008,19 +1008,19 @@ Default GRAMMATICAL_INFLECTION 2;
 	LMode1:
 		!! La acción LMode1 se genera ante el comando BREVE. La librería 
 		!! imprime la constante Story y a continuación este mensaje.
-		print_ret (parser_type) "El relato está ahora en su modo ~breve~, que 
+		print_ret (parser) "El relato está ahora en su modo ~breve~, que 
 		da sólo descripciones largas de los lugares la primera vez que son 
 		visitadas, y descripciones cortas en otro caso.";
 
 	LMode2:
 		!! La acción LMode2 se genera ante el comando LARGO (o NORMAL). La 
 		!! librería imprime la constante Historia y a continuación este mensaje.
-		print_ret (parser_type) "El relato está ahora en su modo normal 
+		print_ret (parser) "El relato está ahora en su modo normal 
 		~largo~, que siempre da descripciones largas de los lugares (incluso si 
 		ya habías estado antes).";
 
 	LMode3:
-		print_ret (parser_type) "El relato está ahora en su modo ~superbreve~, 
+		print_ret (parser) "El relato está ahora en su modo ~superbreve~, 
 		que siempre da descripciones cortas de los lugares (incluso si nunca 
 		habías estado antes).";
 
@@ -1234,13 +1234,13 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! tiene una lista que no admite más de 16, de modo que los 
 				!! restantes objetos no serán procesados.
 				!! -- "(Sólo considero los dieciséis primeros objetos)^";
-				print_ret (parser_type) "Sólo se consideran los dieciséis 
+				print_ret (parser) "Sólo se consideran los dieciséis 
 				primeros objetos.";
 			2:
 				!! El jugador ha usado objetos múltiples, pero por alguna razón 
 				!! la lista del parser está vacía.
 				!! -- "¡No sé a qué objetos te refieres!";
-				print_ret (parser_type) "No se pudo determinar a qué objetos 
+				print_ret (parser) "No se pudo determinar a qué objetos 
 				te has referido.";
 			3:
 				!! Mensaje de fin del relato. Has muerto.
@@ -1285,23 +1285,23 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! Error si el intérprete no tiene "undo"
 				!! -- "[Tu intérprete no puede ~deshacer~ acciones, 
 				!! ¡lo siento!]";
-				print_ret (parser_type) "Tu intérprete no puede ~deshacer~ 
+				print_ret (parser) "Tu intérprete no puede ~deshacer~ 
 				acciones.";
 			#Ifdef TARGET_ZCODE; ![6/11]
 			!! Otro error si el intérprete no tiene "undo", pero no había 
 			!! sido detectado correctamente.
 			7:
-				print_ret (parser_type) "~deshacer~ falló. (No todos los 
+				print_ret (parser) "~deshacer~ falló. (No todos los 
 				intérpretes lo implementan.)";
 			#Ifnot; ! TARGET_GLULX
 			7:
 				!! -- "[No puedes ~deshacer~ más.]";
-				print_ret (parser_type) "No puedes ~deshacer~ más.";
+				print_ret (parser) "No puedes ~deshacer~ más.";
 			#Endif; ! TARGET_
 			8:
 				!! Si el jugador no responde correctamente a la pregunta del 
 				!! mensaje [Miscellany,5]
-				print_ret (parser_type) "Por favor, da una de las respuestas 
+				print_ret (parser) "Por favor, da una de las respuestas 
 				anteriores.";
 !! TODO: cambiar mensaje
 			9:
@@ -1325,16 +1325,16 @@ Default GRAMMATICAL_INFLECTION 2;
 			11:
 				!! Si el jugador intenta "undo" al principio del juego
 				!! -- "[No puedes ~deshacer~ lo que no has hecho.]";
-				print_ret (parser_type) "No se puede ~deshacer~ algo que no has 
+				print_ret (parser) "No se puede ~deshacer~ algo que no has 
 				hecho.";
 			12:
 				!! Si el jugador pone "undo" dos veces.
 				!! -- "[No puedes ~deshacer~ dos veces seguidas. ¡Lo siento!]";
-				print_ret (parser_type) "No se puede ~deshacer~ dos veces 
+				print_ret (parser) "No se puede ~deshacer~ dos veces 
 				seguidas.";
 			13:
 				!! Éxito en el "undo".
-				print_ret (parser_type) "Retrocediendo al turno anterior.";
+				print_ret (parser) "Retrocediendo al turno anterior.";
 			14:
 				!! Si el jugador pone EEPA (verbo para corregir), pero el 
 				!! parser no recordaba ninguna palabra mal. Ejmplo de uso del 
@@ -1344,13 +1344,13 @@ Default GRAMMATICAL_INFLECTION 2;
 				!!		> EEPA MANZANA
 				!!		Sacas la manzana verde de la cesta de mimbre.
 				!! -- "Lo siento, eso no puede corregirse.";
-				print_ret (parser_type) "Eso no puede corregirse.";
+				print_ret (parser) "Eso no puede corregirse.";
 			15:
 				!! Se usa EEPA sin especificar la palabra corregida.
-				print_ret (parser_type) "No te preocupes.";
+				print_ret (parser) "No te preocupes.";
 			16:
 				!! Si el jugador pone EEPA seguido de dos o más palabras.
-				print_ret (parser_type) "~Eepa~ sólo puede corregir una 
+				print_ret (parser) "~Eepa~ sólo puede corregir una 
 				palabra.";
 			17:
 				!! Descripción del objeto Oscuridad.
@@ -1376,21 +1376,21 @@ Default GRAMMATICAL_INFLECTION 2;
 			20:
 				!! Cuando el jugador pone PNJ, REPITE para que el PNJ haga otra 
 				!! vez la última acción.
-				print_ret (parser_type) "Para repetir un comando como ~rana, 
+				print_ret (parser) "Para repetir un comando como ~rana, 
 				salta~, escribe ~repite~, en lugar de ~rana, repite~.";
 			21:
 				!! Cuando el jugador pone REPITE como primer commando del juego.
-				print_ret (parser_type) "No hay comando que repetir.";
+				print_ret (parser) "No hay comando que repetir.";
 			22:
 				!! El jugador ha comenzado la frase con una coma.
-				print_ret (parser_type) "No se puede empezar una frase con una 
+				print_ret (parser) "No se puede empezar una frase con una 
 				coma.";
 			23:
 				!! Cuando el jugador pone, por ejemplo; PEPE, COGE HACHA, pero 
 				!! no hay un objeto que responda al name PEPE.
 				!! -- "Parece que quieres hablar con alguien, pero no veo con 
 				!! -- quién.";
-				print_ret (parser_type) "Parece que has tratado de hablar con 
+				print_ret (parser) "Parece que has tratado de hablar con 
 				alguien, pero no se pudo identificar con quién.";
 			24:
 				!! Si el jugador intenta hablar con un objeto que no es 
@@ -1406,7 +1406,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! coma, ej: PEPE ZAFDSRGG, SALTA.
 				!! -- "Para hablar con alguien intenta ~alguien, hola~ o algo 
 				!! -- así.";
-				print_ret (parser_type) "Para iniciar una conversación, usa 
+				print_ret (parser) "Para iniciar una conversación, usa 
 				simplemente la orden HABLA (a/con) PERSONAJE.";
 			26:
 				!! La gramática especifica que una acción debe efectuarse sobre 
@@ -1584,7 +1584,7 @@ Default GRAMMATICAL_INFLECTION 2;
 		"Sólo era una pregunta retórica.";
 
 	NotifyOff:
-		print_ret (parser_type) "Notificación de puntuación desactivada.";
+		print_ret (parser) "Notificación de puntuación desactivada.";
 
 !!TODO: Mensaje del parser (parser_style)
 	Objects:
@@ -1688,7 +1688,7 @@ Default GRAMMATICAL_INFLECTION 2;
 		!! El prompt aparece justo antes de pedir una nueva línea al jugador. 
 		!! Puede definirse para que sea una frase, o se genere una frase 
 		!! aleatoria en cada turno.
-		new_line; print (italic_type) "> ";
+		new_line; print (emph) "> ";
 
 	Pronouns:
 		!! Esta acción (generada por el verbo PRONOMBRES) muestra una lista 
@@ -1893,8 +1893,8 @@ Default GRAMMATICAL_INFLECTION 2;
 		!!	1:	Respuesta al comando FIN.
 		!!	2:	Respuesta si el jugador escribe algo distinto de "si" o "no".
 		switch (n) {
-			1:	print (parser_type) "Por favor, responde sí o no.", " ";
-			2:	print (parser_type) "¿Realmente quieres abandonar el relato?", 
+			1:	print (parser) "Por favor, responde sí o no.", " ";
+			2:	print (parser) "¿Realmente quieres abandonar el relato?", 
 				" ";
 		}
 		return true;
@@ -1928,9 +1928,9 @@ Default GRAMMATICAL_INFLECTION 2;
 		!!	1:	Respuesta al comando REINICIAR.
 		!!	2:	Si no se puede reiniciar.
 		switch (n) {
-			1:	print (parser_type) "¿Realmente quieres reiniciar el relato?",
+			1:	print (parser) "¿Realmente quieres reiniciar el relato?",
 				" ";
-			2:	print_ret (parser_type) "Error al reiniciar la partida.";
+			2:	print_ret (parser) "Error al reiniciar la partida.";
 		}
 
 	Restore:
@@ -1939,9 +1939,9 @@ Default GRAMMATICAL_INFLECTION 2;
 		!!		del juego cambia al momento en que se salvó. El "Ok" que se ve 
 		!!		entonces es el del comando Salvar.
 		switch (n) {
-			1:	print_ret (parser_type) "Error. No se pudo recuperar la 
+			1:	print_ret (parser) "Error. No se pudo recuperar la 
 				partida.";
-			2:	print (parser_type) "Partida cargada."; 
+			2:	print (parser) "Partida cargada."; 
 				new_line; <<Look>>; 
 		}
 
@@ -1955,8 +1955,8 @@ Default GRAMMATICAL_INFLECTION 2;
 		!!	1:	Si no se pudo guardar el juego.
 		!!	2:	Éxito.
 		switch (n) {
-			1:	print_ret (parser_type) "Error. No se pudo guardar la partida.";
-			2:	print_ret (parser_type) "Partida guardada.";
+			1:	print_ret (parser) "Error. No se pudo guardar la partida.";
+			2:	print_ret (parser) "Partida guardada.";
 		}
 
 	Score:
@@ -1974,7 +1974,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				end_parser_style();
 				new_line;
 				return;
-			2:	print_ret (parser_type) "Este juego no tiene conteo de 
+			2:	print_ret (parser) "Este juego no tiene conteo de 
 				puntuación.";
 		}
 
@@ -1982,10 +1982,10 @@ Default GRAMMATICAL_INFLECTION 2;
 		!!	1:	Error ya estaba desactivada la transcrcipción.
 		!!	2:	Éxito.
 		switch (n) {
-			1:	print_ret (parser_type) "La transcripción ya estaba 
+			1:	print_ret (parser) "La transcripción ya estaba 
 				desactivada.";
-			2:	new_line; print_ret (parser_type) "Fin de la transcripción.";
-			3:	print_ret (parser_type) "Intento fallido de finalización de 
+			2:	new_line; print_ret (parser) "Fin de la transcripción.";
+			3:	print_ret (parser) "Intento fallido de finalización de 
 				transcripción.";
 		}
 
@@ -1994,10 +1994,10 @@ Default GRAMMATICAL_INFLECTION 2;
 		!!	2:	Éxito (parte inicial del mensaje, la librería añade el título 
 		!!		del juego obtenido de la constante Historia).
 		switch (n) {
-			1:	print_ret (parser_type) "La transcripción ya estaba activada.";
+			1:	print_ret (parser) "La transcripción ya estaba activada.";
 !! TODO: probar
-			2:	print_ret (parser_type) "Iniciando la transcripción de:";
-			3:	print_ret (parser_type) "Intento fallido de comienzo de la 
+			2:	print_ret (parser) "Iniciando la transcripción de:";
+			3:	print_ret (parser) "Intento fallido de comienzo de la 
 				transcripción.";
 		}
 
@@ -2168,7 +2168,7 @@ Default GRAMMATICAL_INFLECTION 2;
 	Strong:
 		!! Respuesta si se usa como primera palabra algún taco.
 		!! "Los verdaderos aventureros no usan ese vocabulario.";
-		print_ret (parser_type) "No vas a conseguir nada poniéndote hosco.";
+		print_ret (parser) "No vas a conseguir nada poniéndote hosco.";
 
 !! TODO: Dar una respuesta más apropiada
 	Swim:
@@ -2523,15 +2523,15 @@ Default GRAMMATICAL_INFLECTION 2;
 
 	VagueGo:
 		!! El jugador ha dicho IR sin especificar a dónde
-		print_ret (parser_type) "Tienes que especificar en qué dirección ir.";
+		print_ret (parser) "Tienes que especificar en qué dirección ir.";
 
 	Verify:
 		!!	1:	Éxito.
 		!!	2:	Error en la verificación.
 		switch (n) {
-			1:	print_ret (parser_type) "Fichero de juego verificado e 
+			1:	print_ret (parser) "Fichero de juego verificado e 
 				intacto.";
-			2:	print_ret (parser_type) "El fichero de juego no parece intacto, 
+			2:	print_ret (parser) "El fichero de juego no parece intacto, 
 				puede estar corrompido (a menos que estés jugando con un 
 				intérprete muy primitivo que no sea capaz de realizar la 
 				comprobación).";
@@ -2661,7 +2661,7 @@ Default GRAMMATICAL_INFLECTION 2;
 		InformLibrary.end_turn_sequence();
 		return true;
 	}
-	print_ret (parser_type) "No es necesario referirse a eso para terminar 
+	print_ret (parser) "No es necesario referirse a eso para terminar 
 	la historia.";
 !	return false;	! Error was NOT handled by this routine.
 ];
@@ -2676,7 +2676,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! #27: El parser se ha atascado. Es el tipo de error más 
 				!! genérico. Si el parser puede, dará un error más concreto.
 				!! -- "No entendí esa frase.";
-				print_ret (parser_type) "No se pudo entender esa instrucción.";
+				print_ret (parser) "No se pudo entender esa instrucción.";
 		UPTO_PE:
 				!! #28: Al parser le sobran palabras, aunque ha entendido gran 
 				!! parte de la orden.
@@ -2690,20 +2690,20 @@ Default GRAMMATICAL_INFLECTION 2;
 		NUMBER_PE:
 				!! #29: El parser esperaba un token de tipo número.
 				!! --"No comprendí ese número.";
-				print_ret (parser_type) "No se pudo comprender ese número.";
+				print_ret (parser) "No se pudo comprender ese número.";
 		CANTSEE_PE:
 				!! #30: El parser no ha comprendido el nombre del objeto al que 
 				!! se refiere el player, o ese objeto no está aquí.
 				!! -- "No veo eso que dices.";
 !! TODO: [Ver rutina UnknownVerb()]
 				! if (unknown_verb_obj ~= 0) <<ExamineFake>>;
-				print_ret (parser_type) "Te has referido a algo con lo que 
+				print_ret (parser) "Te has referido a algo con lo que 
 				no se puede interactuar en este momento.";
 		TOOLIT_PE:
 				!! #31: Este error parece que no se genera nunca. Un posible 
 				!! bug de libreria, o restos de versiones arcaicas.
 				!! -- "¡Pareces haber dicho muy poca cosa!";
-				print_ret (parser_type) "Parece que has indicado demasiada 
+				print_ret (parser) "Parece que has indicado demasiada 
 				poca cosa.";
 		NOTHELD_PE:
 				!! #32: El objeto que el jugador intenta usar no está en su 
@@ -2734,7 +2734,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! para "second", como en METE TODO EN TODO.
 				!! -- "Sólo puedes especificar objetos múltiples una vez en 
 				!! -- cada línea.";
-				print_ret (parser_type) "Sólo se pueden especificar objetos 
+				print_ret (parser) "Sólo se pueden especificar objetos 
 				múltiples una vez en cada línea.";
 		VAGUE_PE:
 				!! #35: El jugador ha usado un pronombre, como COMELO, pero el 
@@ -2752,7 +2752,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! palabra EXCEPTO para exceptuar algo que no estaba incluido 
 				!! en la lista, por ejemplo: COGE TODAS LAS MONEDAS EXCEPTO EL 
 				!! SACO.
-				print_ret (parser_type) "Has exceptuado algo que no estaba 
+				print_ret (parser) "Has exceptuado algo que no estaba 
 				incluido.";
 		ANIMA_PE:
 				!! #37: La gramática de un verbo obliga a que el objeto sobre 
@@ -2760,7 +2760,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! "creature"), pero el jugador lo ha intentado sobre un objeto 
 				!! que no es animate. 
 				!! -- "Sólo puedes hacer eso con seres animados.";
-				print_ret (parser_type) "Sólo se puede hacer eso con seres 
+				print_ret (parser) "Sólo se puede hacer eso con seres 
 				animados.";
 		VERB_PE:
 				!! #38: La primera palabra usada por el jugador es desconocida 
@@ -2789,7 +2789,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! están en la propiedad "irrelevante" de la localidad.
 				!! -- "Eso no es importante.";
 				return Handle_SCENERY_PE();
-!				print_ret (parser_type) "No es necesario referirse a eso 
+!				print_ret (parser) "No es necesario referirse a eso 
 !				para terminar la historia.";
 		ITGONE_PE:
 				!! #40: El jugador ha usado un proname, como EXAMINALO, pero el 
@@ -2806,7 +2806,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! ha sido sustituido en versiones mas recients por el mensaje 
 				!! número 28?
 				!! -- "No entendí la última parte de la orden.";
-				print_ret (parser_type) "No se pudo entender la última parte de 
+				print_ret (parser) "No se pudo entender la última parte de 
 				la orden.";
 		TOOFEW_PE:
 				!! #42: El jugador ha solicitado un numero de objetos en una 
@@ -2828,7 +2828,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! error parece no producirse nunca y el que acaba generándose 
 				!! siempre es el siguiente (#44, ASKSCOPE_PE):
 				!! -- "¡No encuentro nada para hacer eso!";
-				print_ret (parser_type) "No se puede encontrar nada con lo que 
+				print_ret (parser) "No se puede encontrar nada con lo que 
 				hacer eso.";
 		default:
 				!! Error was NOT handled by this routine.

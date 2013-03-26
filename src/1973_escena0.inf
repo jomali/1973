@@ -148,7 +148,7 @@ Class	NPC
 ! class	Character	! Definida en la librería "gtalk.h"
  with	life [;
 			Answer, Ask, AskFor, Order, Tell:
-				print_ret (parser_type) "Para iniciar una conversación usa 
+				print_ret (parser) "Para iniciar una conversación usa 
 				simplemente la orden HABLA (a/con) PERSONAJE.";
 		],
  has	animate;
@@ -289,7 +289,7 @@ Room	LIMBO "En algún lugar"
 			donde el tiempo y el espacio no existen tal y como los capta 
 			nuestro ser despierto...";
 			if (self hasnt visited)
-				print (italic_type) " ¿Qué? ¿Cómo?... ¿cómo he llegado aquí?";
+				print (emph) " ¿Qué? ¿Cómo?... ¿cómo he llegado aquí?";
 			new_line;
 			return true;
 		];
