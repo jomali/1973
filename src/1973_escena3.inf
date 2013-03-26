@@ -46,41 +46,61 @@
 !!	<>	radio
 
 Room	TAXI "Dentro del taxi"
- with	is_stopped			false,
-		triggered_action	false,
-		counter				0, 
+ private
+		stopped false,
+ with
 		name	'taxi' 'coche' 'vehiculo' 'automovil' 'auto', 
 		initial [; if (self hasnt visited) {
-!! TODO
-			SetGrammaticalInflection (PRESENTE_TERCERA_PERSONA);
+			SetGrammaticalInflection(PRESENTE_TERCERA_PERSONA);
 			move maleta to self;
-			StartDaemon(taxista);
+			StartTimer(self, 10); ! TODO: ajustar temporizador
+			StartTimer(taxista, 5); ! TODO: ajustar temporizador
 print "Siente en la mano el frío peso del revólver un instante antes de comprender que lleva un rato jugueteando con él, absorto. Inmediatamente lo vuelve a guardar en uno de los bolsillos del abrigo y mira alarmado al taxista. El hombre, sin embargo, está concentrado en la carretera y no parece prestar demasiada atención a nada más. No da señales de haber reparado en el arma, al menos. Aliviado, Gabriel se recuesta mejor en el asiento y deja caer la mirada sobre la ciudad que se va esfumando tras las ventanillas, procurando alejar los recuerdos de su cabeza.";
 			new_line;
 			new_line;
 			return true;
 		}],
 		description [;
-!! TODO
-			if (self.is_stopped)
-				"El taxi está detenido.";
-			"El taxi avanza lentamente a través de las congestionadas calles de 
-			Santiago. Desde su asiento en la parte de atrás, Gabriel ve cómo 
-			desfilan, quizá por última vez, las calles, los edificios y las 
-			gentes de la que ha sido su ciudad hasta hoy.";
+			if (self.stopped)
+				!! TODO
+				"Descripción del taxi detenido.";
+			else
+				!! XXX
+				"El taxi avanza lentamente a través de las congestionadas 
+				calles de Santiago. Desde su asiento en la parte de atrás, 
+				Gabriel ve cómo desfilan, quizá por última vez, las calles, los 
+				edificios y las gentes de la que ha sido su ciudad hasta hoy.";
 		],
-		before [; 
+		before [;
 			Listen:
 				"En la radio suenan las pausadas notas de piano de alguna 
 				pieza clásica que no puede reconocer.";
 			Smell:
 				"Humo viejo, viejo perfume, viejo sudor.";
-			Xyzzy:
-				AimAndFire();
-				return true;
 		],
-		e_to	CALLE_ARRIBA,
-		out_to	[; return self.e_to(); ],
+		time_left, 
+		time_out [;
+			self.stopped = true;
+			!! XXX:
+			"El taxi se detiene por culpa de un atasco.";
+		],
+		e_to [;
+			if (~~self.stopped) {
+				!! XXX
+				"No puede abandonar el taxi en marcha.";
+			}
+			if (puerta_taxi hasnt open) {
+				<Open puerta_taxi>;
+				new_line;
+			}
+			return puerta_taxi;
+		],
+		out_to [;
+			return self.e_to();
+		],
+		is_stopped [;
+			return self.stopped;
+		],
 ;
 
 !!------------------------------------------------------------------------------
@@ -89,57 +109,13 @@ print "Siente en la mano el frío peso del revólver un instante antes de comprend
 !!------------------------------------------------------------------------------
 !! NPCs:
 
-NPC		taxista "taxista" TAXI	
- with	state 0,			!! estado del objeto
-		sennor_poeta false,	!! el taxista sabe que Gabriel escribe poesía
-		name_m	'taxista' 'conductor' 'chofer' 'hombre' 'individuo',
-		name_f	'persona', 
-		gender	G_MASCULINO, 
-		description [;
-			print "Es un hombre de mediana edad, con los brazos desnudos 
-			bronceados por el sol. Mordisquea el extremo de un largo puro 
-			apagado mientras observa concentrado el estado del tráfico";
-			if (self hasnt description_flag) {
-				give self description_flag;
-				", como un experimentado jugador de ajedrez que, erguido sobre 
-				el tablero, estudia la disposición de las fichas antes de 
-				planificar su siguiente movimiento.";
-			}
-			".";
-		],
-		react_before [;
-			Look:
-				if (noun == nothing && self.counter == self.counter_limit) {
-					self.counter ++;
-					return self.start_conversation();
-				}
-		],
-		before [;
-			TalkTo:
-				if (TagConversationSystem.current_conversation == 0)
-					"El taxista permanece en silencio, absorto en la carretera 
-					y en sus pensamientos. Gabriel decide no interrumpirle y 
-					centrarse en los suyos propios.";
-				switch (self.state) {
-				0:
-					print "---Eso que ha recitado, ---insiste el conductor, 
-					---¿lo ha escrito usted?^";
-					new_line;
-				default:
-					print "El taxista le hace un leve gesto con la cabeza, como 
-					haciéndole ver que le está escuchando.^";
-					new_line;
-				}
-				TagConversationSystem.ask();
-				return true;
-		],
-		daemon [;
-			if (self.counter == self.counter_limit)
-				return true;
-			if (self.counter == self.counter_limit + 1)
-				return true;
-			self.counter++;
-		], 
+NPC		taxista "taxista" TAXI
+ private
+		!! Si está activado, se imprime una descripción reducida del objeto
+		described false, 
+		!! Si está activado, se puede iniciar la conversación
+		conversation_trigger false,
+		!! Inicio de la conversación
 		start_conversation [;
 print "El coche da una ligera sacudida al cambiar de calle. Gabriel advierte que acaban de doblar por Neftalí Basoalto, y al momento le vienen a la mente los Juegos Florales que aquí se celebraron hace unos meses. Él participó, pues siempre ha adorado la poesía. Se presentó con un breve poemario: ~Luces de Medianoche~, del que recuerda unos versos en especial:^";
 			new_line;
@@ -155,10 +131,60 @@ print (emph) "@<<Las mareas susurran al incierto / oscuro cielo estrellado, / la
 			TagConversationSystem.start(conversacion_taxista);
 			return true;
 		],
- private
-		counter 4,			!! contador TODO -> 0
-		counter_limit 5,	!! punto en que se inicia la conversación
- has	male concealed;
+ with
+		name_m	'taxista' 'conductor' 'chofer' 'hombre' 'individuo', 
+		name_f	'persona', 
+		gender	G_MASCULINO, 
+		!! TODO: adjetivos
+		description [;
+			print "Es un hombre de mediana edad, con los brazos desnudos 
+			bronceados por el sol. Mordisquea el extremo de un largo puro 
+			apagado mientras observa concentrado el tráfico";
+			if (~~self.described) {
+				self.described = true;
+				", como un experimentado jugador de ajedrez que, erguido sobre 
+				el tablero, estudia la disposición de las fichas antes de 
+				planificar su siguiente movimiento.";
+			}
+			".";
+		],
+		react_before [;
+			Look:
+				if (noun == nothing && self.conversation_trigger) {
+					self.conversation_trigger = false;
+					return self.start_conversation();
+				}
+		],
+		before [;
+			TalkTo:
+!! TODO: estudiar implementación
+				if (TagConversationSystem.current_conversation == 0)
+					"El taxista permanece en silencio, absorto en la carretera 
+					y en sus pensamientos. Gabriel decide no interrumpirle y 
+					centrarse en los suyos propios.";
+				switch (self.estado) {
+				0:
+					print "---Eso que ha recitado, ---insiste el conductor, 
+					---¿lo ha escrito usted?";
+					new_line;
+					new_line;
+				default:
+					print "El taxista le hace un leve gesto con la cabeza, como 
+					haciéndole ver que le está escuchando.";
+					new_line;
+					new_line;
+				}
+				TagConversationSystem.ask();
+				return true;
+		],
+		time_left,
+		time_out [;
+			self.conversation_trigger = true;
+		],
+		estado 0,		! estado del taxista
+		poeta false,	! indica si el taxista sabe que Gabriel escribe poesía
+ has
+		male concealed;
 
 TCS_Conversation	conversacion_taxista
  with	temas op03 op02 op01;
@@ -188,8 +214,8 @@ TCS_Topic	op01
 			decirlo en voz alta.^";
 		], 
 		reaction [;
-			taxista.state = self.id;
-			taxista.sennor_poeta = true;
+			taxista.estado = self.id;
+			taxista.poeta = true;
 		];
 
 TCS_Topic	op02
@@ -199,7 +225,7 @@ TCS_Topic	op02
 		reply [;
 			print "---No es habitual que se forme un atasco así a estas horas, 
 			¿no es cierto?";
-			if (taxista.state == 0 && ~~taxista.sennor_poeta)
+			if (taxista.estado == 0 && ~~taxista.poeta)
 				print " ---cambia de tema Gabriel.";
 			new_line;
 			new_line;
@@ -222,7 +248,7 @@ TCS_Topic	op02
 		],
 		reaction [;
 			parent(self).remove_topic(op01);
-			taxista.state = self.id;
+			taxista.estado = self.id;
 		];
 
 TCS_Topic	op03
@@ -232,7 +258,7 @@ TCS_Topic	op03
 		reply [;
 			print "---¿Puedo preguntarle una cosa? ¿Qué le parece todo lo que 
 			ha ocurrido?";
-			if (taxista.state == 0 && ~~taxista.sennor_poeta)
+			if (taxista.estado == 0 && ~~taxista.poeta)
 				print " ---cambia de tema Gabriel.";
 			new_line;
 			new_line;
@@ -242,7 +268,7 @@ TCS_Topic	op03
 		], 
 		reaction [;
 			parent(self).remove_topic(op01);
-			taxista.state = self.id;
+			taxista.estado = self.id;
 		];
 
 !!------------------------------------------------------------------------------
@@ -270,7 +296,7 @@ Atrezzo	"ciudad" TAXI
  has	female;
 
 !! TODO
-Atrezzo	puerta "puerta" TAXI
+Atrezzo	puerta_taxi "puerta" TAXI
  with	name_f	'puerta', 
 		gender	G_FEMENINO, 
 		before [;
@@ -286,6 +312,9 @@ Atrezzo	puerta "puerta" TAXI
 !! TODO:
 !!	<>	abrir / cerrar ventanilla
 Atrezzo	ventanilla "ventanilla" TAXI
+ private
+		!! Si está activado, se imprime una descripción reducida del objeto
+		described false, 
  with	counter 0, 
 		name_m	'cristal' 'vidrio', 
 		name_f	'ventanilla' 'ventana' 'luna', 
@@ -294,8 +323,7 @@ Atrezzo	ventanilla "ventanilla" TAXI
 		gender	G_FEMENINO, 
 		adjectives 'lateral' 'laterales' 'puerta' 'puertas', 
 		description [; 
-!! TODO
-			if (TAXI.is_stopped) {
+			if (TAXI.is_stopped()) {
 				print "Distraído, posa los ojos sobre la gente que pasea por la 
 				acera esta mañana. Y de repente, durante apenas un instante, 
 				vuelve a su mente el intenso perfume de ", (the) flowers 
@@ -315,8 +343,8 @@ Atrezzo	ventanilla "ventanilla" TAXI
 				PlayerTo(CALLE_ARRIBA);
 				return true;
 			}
-			if (self hasnt description_flag) {
-				give self description_flag;
+			else if (~~self.described) {
+				self.described = true;
 				"Al mirar por la ventanilla reconoce un parquecillo con árboles 
 				a lo lejos. Cuando eran poco más que niños, recuerda utilizar 
 				aquellos troncos para grabar primerizas declaraciones de amor 
@@ -324,8 +352,9 @@ Atrezzo	ventanilla "ventanilla" TAXI
 				muchachas nunca encontraron aquellos garabatos especialmente 
 				románticos. A él, al menos, nunca le funcionaron.";
 			}
-			"Su mirada se pierde entre los detalles de la ciudad que se va 
-			desvaneciendo poco a poco tras las ventanillas.";
+			else
+				"Su mirada se pierde entre los detalles de la ciudad que se va 
+				desvaneciendo poco a poco tras las ventanillas.";
 		],
 		before [; Search: <<Examine self>>; ], 
  has	female;

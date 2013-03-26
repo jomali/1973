@@ -43,7 +43,6 @@ Default	GRAMMATICAL_INFLECTION 2;
 !!	Definición de atributos y clases
 !!------------------------------------------------------------------------------
 
-Attribute description_flag;
 
 !!------------------------------------------------------------------------------
 Class	Room
@@ -72,14 +71,6 @@ Class	Thing
 		capacity_volume	-1,	! Capacidad total: volumen
 		capacity_weight	-1,	! Capacidad total: peso
 		description [;
-			if (self hasnt description_flag) {
-				self.long_description();
-				give self description_flag;
-			} else
-				self.short_description();
-			return true;
-		],
-		long_description [;
 			switch (GRAMMATICAL_INFLECTION) {
 				1:	print "No veo ";
 				2:	print "No ves ";
@@ -89,8 +80,7 @@ Class	Thing
 				6:	print "No vio ";
 			}
 			"nada especial en ", (the) self, ".";
-		],
-		short_description [; return self.long_description(); ];
+		];
 
 !!------------------------------------------------------------------------------
 Class	Item

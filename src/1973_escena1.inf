@@ -41,7 +41,6 @@
 !!	HABITACION: En la habitación
 !!------------------------------------------------------------------------------
 
-
 Room	HABITACION "En la habitación"
  with	is_dark	true,
 		inhibit_object_list true, 
@@ -128,17 +127,18 @@ print "Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flo
 !!------------------------------------------------------------------------------
 !! Objetos con rutinas react_before:
 
-
 !!------------------------------------------------------------------------------
 !! NPCs:
-
 
 !!------------------------------------------------------------------------------
 !! Items:
 
-
 Item	maleta "maleta de viaje" HABITACION
- with	size 5, 
+ private
+		!! Si está activado, se imprime una descripción reducida del objeto
+		described false, 
+ with
+		size 5, 
 		name_m	'equipaje' 'maleton', 
 		name_f	'maleta',
 		gender	G_FEMENINO, 
@@ -158,9 +158,9 @@ Item	maleta "maleta de viaje" HABITACION
 			print "Es un maletón de viaje forrado en cuero desgastado. Dentro 
 			lleva lo poco que guardará de la que ha sido su vida hasta ahora; 
 			algo de ropa y un par de libros. Nada más.";
-			if (self hasnt description_flag) {
-				give self description_flag;
-				" Ningún recuerdo. Ésos tendrá que dejárselos atrás.";
+			if (~~self.described) {
+				self.described = true;
+				" Ningún recuerdo. Esos tendrá que dejárselos atrás.";
 			}
 			new_line;
 			return true;
@@ -181,12 +181,11 @@ Item	maleta "maleta de viaje" HABITACION
 				if (self hasnt moved) 
 					"Recoge la maleta del suelo."; 
 		],
- has	female openable;
-		
+ has
+		female openable;
 
 !!------------------------------------------------------------------------------
 !! Furniture:
-
 
 Furniture	escritorio "escritorio" HABITACION
  with	name_m	'mueble' 'mobiliario' 'moblaje' 'escritorio' 'pupitre',
@@ -221,7 +220,6 @@ Furniture	escritorio "escritorio" HABITACION
 		], 
  has	male concealed supporter transparent;
 
-
 Furniture	cajon "cajón" HABITACION
  class	Receptacle, 
  with	capacity_size 3,
@@ -239,11 +237,9 @@ Furniture	cajon "cajón" HABITACION
 				"Forma parte del escritorio.";
 		],
  has	male concealed container openable ~open;
-				
 
 !!------------------------------------------------------------------------------
 !! Atrezzo:
-
 
 !! TODO: nombres y adjetivos
 Atrezzo	puerta_habitacion "puerta" HABITACION
@@ -270,11 +266,9 @@ Atrezzo	puerta_habitacion "puerta" HABITACION
 print "Gabriel se detiene a echar un último vistazo a la habitación y tuerce la boca en una media sonrisa al pensar que se parece mucho a su propia vida; puesta toda patas arriba, llena de sueños rotos, pisoteados y tirados por el suelo. Al cabo de un momento, sin más, le da la espalda al pasado y sale con paso decidido por la puerta abierta.^";
 			KeyCharPrimitive();
 			new_line;
-!! TODO: ResetChapter1();
 			return CAFE; !! XXX: Fin del capítulo 1
 		], 
  has	female door openable ~open transparent;
-
 
 !! TODO: nombres y adjectivos
 Atrezzo	"calendario de pared" puerta_habitacion

@@ -8,7 +8,7 @@
 !!==============================================================================
 !!
 !!	File:			types.h
-!!	Author(s):		J. Francisco Mart铆n <jfm.lisaso@gmail.com>
+!!	Author(s):		J. Francisco Mart韓 <jfm.lisaso@gmail.com>
 !!	Language:		ES (Castellano)
 !!	System:			Inform, INFSP 6
 !!	Platform:		Z-Machine / Glulx
@@ -17,19 +17,19 @@
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	Copyright (c) 2013, J. Francisco Mart铆n
+!!	Copyright (c) 2013, J. Francisco Mart韓
 !!
 !!	Este programa es software libre: usted puede redistribuirlo y/o 
-!!	modificarlo bajo los t茅rminos de la Licencia P煤blica General GNU 
-!!	publicada por la Fundaci贸n para el Software Libre, ya sea la versi贸n 
-!!	3 de la Licencia, o (a su elecci贸n) cualquier versi贸n posterior.
+!!	modificarlo bajo los t閞minos de la Licencia P鷅lica General GNU 
+!!	publicada por la Fundaci髇 para el Software Libre, ya sea la versi髇 
+!!	3 de la Licencia, o (a su elecci髇) cualquier versi髇 posterior.
 !!
-!!	Este programa se distribuye con la esperanza de que sea 煤til, pero 
-!!	SIN GARANT脥A ALGUNA; ni siquiera la garant铆a impl铆cita MERCANTIL o 
-!!	de APTITUD PARA UN PROP脫SITO DETERMINADO. Consulte los detalles de 
-!!	la Licencia P煤blica General GNU para m谩s informaci贸n.
+!!	Este programa se distribuye con la esperanza de que sea 鷗il, pero 
+!!	SIN GARANT虯 ALGUNA; ni siquiera la garant韆 impl韈ita MERCANTIL o 
+!!	de APTITUD PARA UN PROP覵ITO DETERMINADO. Consulte los detalles de 
+!!	la Licencia P鷅lica General GNU para m醩 informaci髇.
 !!
-!!	Deber铆a haber recibido una copia de la Licencia P煤blica General GNU 
+!!	Deber韆 haber recibido una copia de la Licencia P鷅lica General GNU 
 !!	junto a este programa. En caso contrario, consulte
 !!	<http://www.gnu.org/licenses/>.
 !!
@@ -38,8 +38,8 @@ System_file;
 
 Constant _RST_	= 0;
 Constant _IST_	= 1;
-Constant _BST_	= 2;
-Constant _MST_	= 3;
+Constant _MST_	= 2;
+Constant _BST_	= 3;
 
 Default	EMPHASIS_STYLE	_IST_;
 Default	STRONG_STYLE	_BST_;
@@ -49,7 +49,7 @@ Default	PARSER_MSG1		"";
 Default PARSER_MSG2		"";
 
 !!==============================================================================
-!!	Selecci贸n de estilo de texto
+!!	Selecci髇 de estilo de texto
 !!------------------------------------------------------------------------------
 
 #Ifdef	TARGET_ZCODE;

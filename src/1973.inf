@@ -152,12 +152,25 @@ Include ">1973_escena5.inf";	! Escena 5: Flores para un joven difunto
 !!------------------------------------------------------------------------------
 
 [ Initialise;
+	lookmode = 2;
+
 	EraseWindow();
 	SelectFlowerType();
+	SelectScene(1);
 
-	location = HABITACION;
-	lookmode = 2;
 	return 2;
+];
+
+!!------------------------------------------------------------------------------
+!!	Selección de escena
+!!------------------------------------------------------------------------------
+[ SelectScene scene;
+	switch (scene) {
+	1:
+		location = HABITACION;
+	default:
+		location = LIMBO;
+	}
 ];
 
 !!------------------------------------------------------------------------------
