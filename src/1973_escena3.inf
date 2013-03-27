@@ -47,6 +47,7 @@
 
 Room	TAXI "Dentro del taxi"
  private
+		!! Indica si el taxi se encuentra detenido
 		stopped false,
  with
 		name	'taxi' 'coche' 'vehiculo' 'automovil' 'auto', 
@@ -55,6 +56,8 @@ Room	TAXI "Dentro del taxi"
 			move maleta to self;
 			StartTimer(self, 10); ! TODO: ajustar temporizador
 			StartTimer(taxista, 5); ! TODO: ajustar temporizador
+!			StartTimer(self, 5);
+!			StartTimer(taxista, 1);
 print "Siente en la mano el frío peso del revólver un instante antes de comprender que lleva un rato jugueteando con él, absorto. Inmediatamente lo vuelve a guardar en uno de los bolsillos del abrigo y mira alarmado al taxista. El hombre, sin embargo, está concentrado en la carretera y no parece prestar demasiada atención a nada más. No da señales de haber reparado en el arma, al menos. Aliviado, Gabriel se recuesta mejor en el asiento y deja caer la mirada sobre la ciudad que se va esfumando tras las ventanillas, procurando alejar los recuerdos de su cabeza.";
 			new_line;
 			new_line;
@@ -62,8 +65,11 @@ print "Siente en la mano el frío peso del revólver un instante antes de comprend
 		}],
 		description [;
 			if (self.stopped)
-				!! TODO
-				"Descripción del taxi detenido.";
+				!! XXX
+				"El humo blanquecino del cigarro flota pesadamente en el 
+				interior del vehículo. Están detenidos en mitad de un atasco. Y 
+				detenida también ha quedado la ciudad tras las ventanillas, 
+				como una última intantánea para el recuerdo.";
 			else
 				!! XXX
 				"El taxi avanza lentamente a través de las congestionadas 
@@ -76,13 +82,33 @@ print "Siente en la mano el frío peso del revólver un instante antes de comprend
 				"En la radio suenan las pausadas notas de piano de alguna 
 				pieza clásica que no puede reconocer.";
 			Smell:
-				"Humo viejo, viejo perfume, viejo sudor.";
+				if (self.stopped) "El olor del cigarro ocupa el vehículo.";
+				else "Humo viejo, viejo perfume, viejo sudor.";
 		],
 		time_left, 
 		time_out [;
 			self.stopped = true;
-			!! XXX:
-			"El taxi se detiene por culpa de un atasco.";
+!! XXX
+			new_line;
+			print "Gabriel ve cómo se iluminan las luces de freno del coche que tienen delante y un instante después ellos mismos empiezan a frenar hasta detenerse por completo.";
+			new_line;
+			new_line;
+			print "---¿Va todo bien?";
+			new_line;
+			new_line;
+			print "---No va bien una mierda en este cochino país. Han cortado una calle un poco más atrás y todo ese tráfico pasa ahora por aquí. Así que se montan unos pifostios de... ---deja la frase en el aire, tal vez porque no es capaz de encontrar una palabra lo suficientemente malsonante. Después gira la cabeza hacia atrás, mirando a Gabriel por encima del hombro ---¿tiene mucha prisa";
+			if (taxista.poeta) print ", señor poeta";
+			print "?";
+			new_line; 
+			new_line;
+			print "---Tengo que estar en San Antonio antes de las 4:30.";
+			new_line;
+			new_line;
+			print "---De modo que va a huir, ¿eh?";
+			new_line;
+			new_line;
+			TagConversationSystem.start(conversacion_taxista_2);
+			return true;
 		],
 		e_to [;
 			if (~~self.stopped) {
@@ -111,21 +137,24 @@ print "Siente en la mano el frío peso del revólver un instante antes de comprend
 
 NPC		taxista "taxista" TAXI
  private
-		!! Si está activado, se imprime una descripción reducida del objeto
+		!! Indica si el objeto ha sido ya descrito al usuario o no
 		described false, 
 		!! Si está activado, se puede iniciar la conversación
 		conversation_trigger false,
 		!! Inicio de la conversación
 		start_conversation [;
-print "El coche da una ligera sacudida al cambiar de calle. Gabriel advierte que acaban de doblar por Neftalí Basoalto, y al momento le vienen a la mente los Juegos Florales que aquí se celebraron hace unos meses. Él participó, pues siempre ha adorado la poesía. Se presentó con un breve poemario: ~Luces de Medianoche~, del que recuerda unos versos en especial:^";
+print "El coche da una ligera sacudida al cambiar de calle. Gabriel advierte que acaban de doblar por Neftalí Basoalto, y al momento le vienen a la mente los Juegos Florales que aquí se celebraron hace unos meses. Él participó, pues siempre ha adorado la poesía. Se presentó con un breve poemario: ~Luces de Medianoche~, del que recuerda unos versos en especial:";
 			new_line;
-print (emph) "@<<Las mareas susurran al incierto / oscuro cielo estrellado, / lamentos y lloros amargos / grandes duelos y sueños aciagos. / Pues no conocen de mayor acierto / ni peor sino marcado, / el fin de la noche amante, / de su rostro fresco, siempre radiante. / Con el amanecer a cielo abierto / el Sol brilla asombrado, / de ver su noche desnuda / a los pies ya muerta y siempre muda.@>>^";
 			new_line;
-			print "---Eso es muy bonito, ¿es suyo?^";
-			PressAnyKey();
+print (emph) "@<<Las mareas susurran al incierto / oscuro cielo estrellado, / lamentos y lloros amargos / grandes duelos y sueños aciagos. / Pues no conocen de mayor acierto / ni peor sino marcado, / el fin de la noche amante, / de su rostro fresco, siempre radiante. / Con el amanecer a cielo abierto / el Sol brilla asombrado, / de ver su noche desnuda / a los pies ya muerta y siempre muda.@>>";
+			new_line;
+			new_line;
+			print "---Eso es muy bonito, ¿es suyo?";
+			new_line;
 			new_line;
 			print "Siente cómo la sangre le salta de repente a la cara. No 
-			se había dado cuenta de que recitaba en voz alta.^";
+			se había dado cuenta de que recitaba en voz alta.";
+			new_line;
 			new_line;
 			!! Se inicia la conversación con el taxista:
 			TagConversationSystem.start(conversacion_taxista);
@@ -139,7 +168,7 @@ print (emph) "@<<Las mareas susurran al incierto / oscuro cielo estrellado, / la
 		description [;
 			print "Es un hombre de mediana edad, con los brazos desnudos 
 			bronceados por el sol. Mordisquea el extremo de un largo puro 
-			apagado mientras observa concentrado el tráfico";
+			apagado mientras observa concentrado el estado del tráfico";
 			if (~~self.described) {
 				self.described = true;
 				", como un experimentado jugador de ajedrez que, erguido sobre 
@@ -190,9 +219,13 @@ TCS_Conversation	conversacion_taxista
  with	temas op03 op02 op01;
 
 TCS_Topic	op01
- with	id		1,
-		entry	"poema",
-		keys	'poemario' 'poema' 'poesia' 'versos' 'luces' 'medianoche', 
+ with	id	1,
+		entry [;
+			print (strong) "responder", (em) " a la pregunta";
+			italic_style();
+		],
+		keys	'responder,' 'reponderle,' 'responde,' 'pregunta' 'taxista' 
+				'chofer' 'conductor' 'hombre' 'persona',
 		reply [;
 !! XXX
 			print "---Si, es algo que escribí yo. Me alegro que le guste.^";
@@ -220,7 +253,10 @@ TCS_Topic	op01
 
 TCS_Topic	op02
  with	id		2,
-		entry	"estado del tráfico", 
+		entry [;
+			print (em) "hablar del ", (strong) "estado del tráfico";
+			italic_style();
+		],
 		keys	'estado' 'trafico' 'coches' 'atasco' 'carretera', 
 		reply [;
 			print "---No es habitual que se forme un atasco así a estas horas, 
@@ -253,11 +289,15 @@ TCS_Topic	op02
 
 TCS_Topic	op03
  with	id		3,
-		entry	"golpe contra el gobierno", 
-		keys	'golpe' 'gobierno' 'estado' 'sublevacion', 
+		entry [;
+			print (em) "hablar sobre el ", (strong) "golpe contra el gobierno";
+			italic_style();
+		],
+		keys	'golpe' 'contra' 'gobierno' 'estado' 'sublevacion' 'militar', 
 		reply [;
+!! TODO
 			print "---¿Puedo preguntarle una cosa? ¿Qué le parece todo lo que 
-			ha ocurrido?";
+			ha ocurrido? Ya sabe, la caída de Allende y todo eso...";
 			if (taxista.estado == 0 && ~~taxista.poeta)
 				print " ---cambia de tema Gabriel.";
 			new_line;
@@ -269,6 +309,63 @@ TCS_Topic	op03
 		reaction [;
 			parent(self).remove_topic(op01);
 			taxista.estado = self.id;
+		];
+
+TCS_Conversation	conversacion_taxista_2
+ with	temas op06 op05 op04;
+
+TCS_Topic	op04
+ with	id	4, 
+		keys	'ser,' 'se,' 'contestar,' 'contesta,' 'sincero' 'sinceridad', 
+		entry [;
+			print (strong) "ser sincero";
+			italic_style();
+		],
+		reply [;
+			print "---Si. Voy a escapar de Chile en barco.";
+			new_line;
+		],
+		reaction [;
+			parent(self).remove_topic(op05);
+			parent(self).remove_topic(op06);
+			TagConversationSystem.start(conversacion_taxista);
+		];
+
+TCS_Topic	op05
+ with	id	5,
+		keys	'mentir,' 'miente,' 'mentira', 
+		entry [;
+			print (strong) "mentir";
+			italic_style();
+		],
+		reply [;
+			print "---¿Que si voy a huir? ¡Qué va! Qué va... vaya tontería...";
+			new_line;
+		],
+		reaction [;
+			parent(self).remove_topic(op04);
+			parent(self).remove_topic(op06);
+			TagConversationSystem.start(conversacion_taxista);
+		];
+
+TCS_Topic	op06
+ with	id	6, 
+		keys	'guardar,' 'guarda,' 'silencio', 
+		entry [;
+			print (strong) "guardar silencio";
+			italic_style();
+		], 
+		reply [;
+print "Al ver que Gabriel no contesta, el taxista se inclina a un lado para abrir la guantera y descubre un pequeño alijo de estuches de cerillas en el interior del receptáculo. Coge uno, y utiliza la llama de un fósforo para encenderse el cigarro.";
+			new_line;
+			new_line;
+print "---Bueno, ---rompe finalmente el silencio, y exhalando una gran nube de humo contra la luna delantera del coche. ---sea como sea no se preocupe. Tardaremos un rato en pasar esto, pero hay tiempo más que de sobra para llegar hasta San Antonio a hacer lo que sea que tenga que hacer allí.";
+			new_line;
+		],
+		reaction [;
+			parent(self).remove_topic(op04);
+			parent(self).remove_topic(op05);
+			TagConversationSystem.start(conversacion_taxista);
 		];
 
 !!------------------------------------------------------------------------------

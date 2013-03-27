@@ -39,13 +39,13 @@
 !!
 !!	Include "SpanishEG.h" after SpanishG in your gamefile.
 !!
-!!	Se puede definir la variable GRAMMATICAL_INFLECTION en el archivo de juego, 
-!!	que puede tomar los valores: 1 (PRESENTE 1ª PERSONA), 2 (PRESENTE 2ª 
+!!	Se puede definir una variable GRAMMATICAL_INFLECTION en el archivo de 
+!!	juego que puede tomar los valores: 1 (PRESENTE 1ª PERSONA), 2 (PRESENTE 2ª 
 !!	PERSONA), 3 (PRESENTE 3ª PERSONA), 4 (PASADO 1ª PERSONA), 5 (PASADO 2ª 
 !!	PERSONA) o 6 (PASADO 3ª PERSONA) para modificar la conjugación gramatical 
-!!	de los mensajes de la librería. Si no se define ninguna 
-!!	GRAMMATICAL_INFLECTION, la librería interpreta que se usa el valor 2: los 
-!!	mensajes de "SpanishEG.h" se imprimen en presente y segunda persona.
+!!	de los mensajes de la librería. Si no se define esta variable, la librería 
+!!	interpreta que se usa el valor 2 con lo que los mensajes se imprimen en 
+!!	presente y segunda persona.
 !!
 !!
 !!	NEW ACTIONS:

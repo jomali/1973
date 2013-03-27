@@ -72,15 +72,28 @@
 !!	jugador por una serie de palabras clave indicadas en los temas. Se ponen 
 !!	directamente en el prompt sin necesidad de definir nuevas gramáticas.
 !!
-!!	USO 
+!!	## USO 
 !!
 !!	Para usar la librería únicamente hay que incluir la siguiente línea en la 
 !!	rutina BeforeParsing (crearla si no existe):
 !!
 !!		TagConversationSystem.try();
 !!
+!!	## SOBRE LOS MENSAJES
+!!
+!!	Se puede definir una variable GRAMMATICAL_INFLECTION en el archivo de 
+!!	juego que puede tomar los valores: 1 (PRESENTE 1ª PERSONA), 2 (PRESENTE 2ª 
+!!	PERSONA), 3 (PRESENTE 3ª PERSONA), 4 (PASADO 1ª PERSONA), 5 (PASADO 2ª 
+!!	PERSONA) o 6 (PASADO 3ª PERSONA) para modificar la conjugación gramatical 
+!!	de los mensajes de la librería. Si no se define esta variable, la librería 
+!!	interpreta que se usa el valor 2 con lo que los mensajes se imprimen en 
+!!	presente y segunda persona.
+!!
 !!------------------------------------------------------------------------------
 System_file;
+
+!! Flexión gramatical por defecto: Presente 2ª persona
+Default GRAMMATICAL_INFLECTION 2;
 
 !! Descomentar para obtener informacion de depuración:
 !Constant DEBUG_CONVERSATION;
@@ -310,15 +323,43 @@ Object TagConversationSystem
 !			")";
 !		],
 		no_topics [;
-			print_ret (parser) "Se han agotado los temas.";
+			#Ifdef	TARGET_ZCODE;		!!
+			font on; style underline;	!!
+			#Ifnot;	! TARGET_GLULX;		!! Itálica
+			glk($0086, 1);				!!
+			#Endif; ! TARGET_			!!
+			switch (GRAMMATICAL_INFLECTION) {
+			1,2,3:	print "(Se han agotado los temas.)^";
+			4,5,6:	print "(Se habían agotado los temas.)^";
+			}
+			#Ifdef	TARGET_ZCODE;		!!
+			font on; style roman;		!!
+			#Ifnot;	! TARGET_GLULX;		!! Romana
+			glk($0086, 0);				!!
+			#Endif; ! TARGET_			!!
+			return true;
 		],
 		ask [;
-			start_parser_style();
-			print "Temas: ";
+			#Ifdef	TARGET_ZCODE;		!!
+			font on; style underline;	!!
+			#Ifnot;	! TARGET_GLULX;		!! Itálica
+			glk($0086, 1);				!!
+			#Endif; ! TARGET_			!!
+			switch (GRAMMATICAL_INFLECTION) {
+			1:	print "(Puedo ";
+			2:	print "(Puedes ";
+			3:	print "(Puede ";
+			4:	print "(Podía ";
+			5:	print "(Podías ";
+			6:	print "(Podía ";
+			}
 			self.current_conversation.show_topic_list();
-			print ".";
-			end_parser_style();
-			new_line;
+			print ".)^";
+			#Ifdef	TARGET_ZCODE;		!!
+			font on; style roman;		!!
+			#Ifnot;	! TARGET_GLULX;		!! Romana
+			glk($0086, 0);				!!
+			#Endif; ! TARGET_			!!
 			return true;
 		],
 ;

@@ -62,7 +62,7 @@ Default PARSER_MSG2		"";
 [ italic_style;	glk($0086, 1); ];				! Estilo: italica
 [ bold_style;	glk($0086, 3); ];				! Estilo: negrita
 [ monospaced_style; glk($0086, 2); ];			! Estilo: monoespaciada
-#Endif;
+#Endif; ! TARGET_
 
 !! Estilo de mensajes del parser:
 

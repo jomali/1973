@@ -42,7 +42,11 @@
 !!------------------------------------------------------------------------------
 
 Room	HABITACION "En la habitación"
- with	is_dark	true,
+ private
+		!! Indica si el objeto ha sido ya descrito al usuario o no
+		described false, 
+ with
+		is_dark	true,
 		inhibit_object_list true, 
 		name	'habitacion' 'cuarto' 'dormitorio' 'estancia', 
 		short_name " ", 
@@ -82,22 +86,22 @@ Room	HABITACION "En la habitación"
 			SetGrammaticalInflection(PRESENTE_TERCERA_PERSONA);
 print "No debió ser así. Eso es lo primero que el joven Gabriel Mistral piensa al abrir los ojos y despertar en la sofocante oscuridad de la habitación. Aún permanece unos minutos en la cama, tumbado con la mirada perdida entre las sombras del techo mientras las imágenes de los últimos días desfilan ante él en un tropel confuso. Una y otra vez ha repasado esas mismas imágenes últimamente. Y, una y otra vez, le han asaltado las mismas preguntas para las que sigue viéndose incapaz de encontrar respuesta: ¿cómo se podía haber torcido todo de esa manera? ¿dónde se habían equivocado?";
 			new_line; 
-			PressAnyKey();
 			new_line;
 print "Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flowers, " lo ocupa todo. Ella. Automáticamente tiende la mano a un lado, buscando a ciegas el tacto de su cuerpo. Pero lo único que encuentra son las sábanas, húmedas y pegajosas. No, claro que no está, recuerda. No aquí. La dejó durmiendo en el hotel antes de volverse a casa en mitad de la noche, solo de nuevo. Se dice que es mejor así, al fin y al cabo ahora tiene cosas más importantes de las que preocuparse. Deja escapar un largo suspiro de resignación y se obliga a incorporarse finalmente en el colchón.";
 			new_line; 
-			PressAnyKey();
+			KeyCharPrimitive();
 			new_line;
 			self.short_name = "En la habitación";
 			return true;
 		}],
 		description [;
-			if (self hasnt visited)
+			if (~~self.described) {
+				self.described = true;
 				"A su alrededor todo son penumbras. La escasa luz capaz de 
 				filtrarse a través de las cortinas cerradas sirve tan sólo para 
 				dibujar una estrecha franja blanca y zigzagueante sobre el 
 				suelo de la habitación.";
-			else if (self.is_dark)
+			} else if (self.is_dark)
 				"Apenas una fina franja de luz logra colarse en la habitación 
 				por entre los resquicios que dejan las cortinas cerradas. 
 				Insuficiente todavía como para descorrer el telón de tinieblas 
@@ -109,12 +113,14 @@ print "Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flo
 				escritorio siguen aún en pie entre el tumulto.";
 		],
 		e_to [;
-!! TODO
-			if (puerta_habitacion hasnt open) {
-				<Open puerta_habitacion>;
-				new_line;
-			}
-			return puerta_habitacion;
+!! TODO: comprobaciones
+!! XXX
+print "Gabriel se detiene a echar un último vistazo a la habitación y tuerce la boca en una media sonrisa al pensar que se parece mucho a su propia vida; puesta toda patas arriba, llena de sueños rotos, pisoteados y tirados por el suelo. Al cabo de un momento, sin más, le da la espalda al pasado y sale con paso decidido por la puerta abierta.";
+			new_line;
+			KeyCharPrimitive();
+			new_line;
+			SelectScene(2); !! Fin de la escena
+			return true;
 		],
 		out_to [;
 			return self.e_to();
@@ -127,6 +133,49 @@ print "Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flo
 !!------------------------------------------------------------------------------
 !! Objetos con rutinas react_before:
 
+!! TODO: nombres y adjetivos
+Atrezzo	"puerta" HABITACION
+ with
+		name_f	'puerta' 'entrada' 'salida', 
+		gender	G_FEMENINO, 
+		adjectives 'madera' 'pintada' 'blanco' 'blanca' 'sencilla' 'cerrada' 
+			'abierta', 
+		description [;
+			print "De madera pintada en blanco, tiene colgado un colorido 
+			calendario de pared.";
+			if (self has open) " Está abierta de par en par.";
+			else " Está cerrada.";
+		], 
+		after [;
+			Close:
+				"La puerta se cierra con un ligero crujir de goznes.";
+			Open:
+				"La puerta se abre con un ligero crujir de goznes.";
+		], 
+ has
+		female openable ~open transparent;
+
+!! TODO: nombres y adjectivos
+Atrezzo	-> -> "calendario de pared"
+ with	name_m	'calendario' 'anuario', 
+		gender	G_MASCULINO, 
+		adjectives 'pared' 'colorido', 
+		description [;
+			"En su mitad superior hay una copia a color de una pintura de Van 
+			Gogh: un bodegón floral de tonos cálidos en el que varios claveles 
+			anaranjados comparten jarra con otros blanquecinos de tallo más 
+			largo. La mitad inferior del calendario está ocupada por la 
+			cuadrícula ordenada de los días de septiembre y al final, en 
+			grandes números: ", (emph) "1973", ".";
+		], 
+		before [;
+			Close, Open:
+				"Ya está bien como está.";
+			Pull, Push, PushDir, Take:
+				"Está enganchado a la puerta.";
+		], 
+ has	male;
+
 !!------------------------------------------------------------------------------
 !! NPCs:
 
@@ -135,7 +184,7 @@ print "Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flo
 
 Item	maleta "maleta de viaje" HABITACION
  private
-		!! Si está activado, se imprime una descripción reducida del objeto
+		!! Indica si el objeto ha sido ya descrito al usuario o no
 		described false, 
  with
 		size 5, 
@@ -168,8 +217,7 @@ Item	maleta "maleta de viaje" HABITACION
 		before [;
 			Close:
 				"Ya está cerrada.";
-			Open, 
-			Receive:
+			Open, Receive:
 				if (location == HABITACION)
 					"Ya tiene dentro todo cuanto puede llevar consigo.";
 				else
@@ -240,55 +288,5 @@ Furniture	cajon "cajón" HABITACION
 
 !!------------------------------------------------------------------------------
 !! Atrezzo:
-
-!! TODO: nombres y adjetivos
-Atrezzo	puerta_habitacion "puerta" HABITACION
- with	name_f	'puerta' 'entrada' 'salida', 
-		gender	G_FEMENINO, 
-		adjectives 'madera' 'pintada' 'blanco' 'blanca' 'sencilla' 'cerrada' 
-			'abierta', 
-		description [;
-			print "De madera pintada en blanco, tiene colgado un colorido 
-			calendario de pared.";
-			if (self has open) " Está abierta de par en par.";
-			else " Está cerrada.";
-		], 
-		after [;
-			Close:
-				"La puerta se cierra con un ligero crujir de goznes.";
-			Open:
-				"La puerta se abre con un ligero crujir de goznes.";
-		], 
-		door_dir
-			out_to, 
-		door_to [;
-!! XXX
-print "Gabriel se detiene a echar un último vistazo a la habitación y tuerce la boca en una media sonrisa al pensar que se parece mucho a su propia vida; puesta toda patas arriba, llena de sueños rotos, pisoteados y tirados por el suelo. Al cabo de un momento, sin más, le da la espalda al pasado y sale con paso decidido por la puerta abierta.^";
-			KeyCharPrimitive();
-			new_line;
-			return CAFE; !! XXX: Fin del capítulo 1
-		], 
- has	female door openable ~open transparent;
-
-!! TODO: nombres y adjectivos
-Atrezzo	"calendario de pared" puerta_habitacion
- with	name_m	'calendario' 'anuario', 
-		gender	G_MASCULINO, 
-		adjectives 'pared' 'colorido', 
-		description [;
-			"En su mitad superior hay una copia a color de una pintura de Van 
-			Gogh: un bodegón floral de tonos cálidos en el que varios claveles 
-			anaranjados comparten jarra con otros blanquecinos de tallo más 
-			largo. La mitad inferior del calendario está ocupada por la 
-			cuadrícula ordenada de los días de septiembre y al final, en 
-			grandes números: ", (emph) "1973", ".";
-		], 
-		before [;
-			Close, Open:
-				"Ya está bien como está.";
-			Pull, Push, PushDir, Take:
-				"Está enganchado a la puerta.";
-		], 
- has	male;
 
 

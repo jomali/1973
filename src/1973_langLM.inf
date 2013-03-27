@@ -1120,7 +1120,7 @@ Default GRAMMATICAL_INFLECTION 2;
 		!!	7:	Respuesta estandar para MirarHacia [6/11]
 		switch (n) {
 			1:	print ", ";
-				!! Se puede usar un mensaje de aclaración completamente 
+				!! XXX: Se puede usar un mensaje de aclaración completamente 
 				!! personalizado definiendo la propiedad "clarification" en un 
 				!! objeto ("clarification" tiene que devolver un string o una 
 				!! rutina encargada de imprimir un string). Ej: SALA DE ESTAR, 
@@ -1129,11 +1129,11 @@ Default GRAMMATICAL_INFLECTION 2;
 					if (x1.clarification ofclass string) 
 						print (string) x1.clarification;
 					else if (x1.clarification ofclass routine)
-						indirect( x1.clarification);
+						indirect(x1.clarification);
 				}
 				else print "sobre ", (the) x1;
 			2:	print ", ";
-				!! Ver comportamiento de Look con n == 1
+				!! XXX: Ver comportamiento de Look con n == 1
 				if ( x1 provides clarification ) {
 					if (x1.clarification ofclass string) 
 						print (string) x1.clarification;
