@@ -13,8 +13,8 @@
 !!	Languague:		ES (Castellano)
 !!	System:			Inform, INFSP 6
 !!	Platform:		Z-Machine / GLULX
-!!	Version:		3.0
-!!	Released:		2013/01/16
+!!	Version:		3.1
+!!	Released:		2013/03/28
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -181,8 +181,11 @@ Class	TCS_Conversation
  with	iniciar [ i;
 			self.finalizar(); ! Borramos todo por si acaso
 			for (i = 0 : i < self.#temas/WORDSIZE : i++) {
-				!print "Move:", (string)(self.&temas-->i).entry, "^";
-				move self.&temas-->i to self;
+				!! XXX
+				if (self.&temas-->i hasnt general) {
+					!print "Move:", (string)(self.&temas-->i).entry, "^";
+					move self.&temas-->i to self;
+				}
 			}
 		],
 		finalizar [ o; ! Borra todos los item actuales en la conversación
@@ -204,7 +207,10 @@ Class	TCS_Conversation
 		],
 		add_subtopics [ topic i;
 			for (i = 0 : i < topic.#temas/WORDSIZE : i++) {
-				move topic.&temas-->i to self;
+				!! XXX
+				if (topic.&temas-->i hasnt general) {
+					move topic.&temas-->i to self;
+				}
 			}
 		],
 		remove_topic [ topic;
@@ -214,6 +220,7 @@ Class	TCS_Conversation
 
 !!------------------------------------------------------------------------------
 
+!! El atributo general de los temas se activa al ser tratados en una conv.
 Class TCS_Topic
  with	compare_prompt [i j;
 			self.hits = 0;
@@ -231,6 +238,8 @@ Class TCS_Topic
 ;
 
 !!------------------------------------------------------------------------------
+!! TODO: eliminar accion falsa 'npc_talk' y gestionar todo el sistema desde 
+!! el punto de entrada BeforeParsing
 
 Object TagConversationSystem
  with	start [ conversacion;
@@ -284,6 +293,8 @@ Object TagConversationSystem
 					print "Tema seleccionado: ", (string) self.topic.entry;
 					new_line;
 					#Endif;
+					!! XXX
+					give self.topic general;
 					PrintOrRun(self.topic, reply);
 					new_line;
 					PrintOrRun(self.topic, reaction);
@@ -300,6 +311,7 @@ Object TagConversationSystem
 					
 					!! Ahora la acción NPC_OK_Talk toma el control para mostrar 
 					!! la nueva lista de temas
+
 				}
 			}
 

@@ -2647,23 +2647,32 @@ Default GRAMMATICAL_INFLECTION 2;
 
 
 !!==============================================================================
-!! For a SCENERY error (using a word from the NAME property of a room) due to 
-!! an EXAMINE-like operation, outputs the room''s description.
-!! [Extraído de "scenic.h"]
+!! Para errores SCENERY (el usuario a utilizado una palabra de la propiedad 
+!! NAME de la localidad actual) provocados por una operación de tipo EXAMINAR, 
+!! se lanza la acción ##Look que imprime una descripción de la localidad.
 !!------------------------------------------------------------------------------
+!! Versión de la rutina extraída de <scenic.h>:
+![ Handle_SCENERY_PE;
+!	if ( action_to_be == ##Examine or ##Search or ##Consult ) {
+!		if ( location.describe ~= NULL ) RunRoutines(location, describe);
+!		else {
+!			if ( location.description == 0 ) RunTimeError(11, location);
+!			else PrintOrRun(location, description);
+!		}
+!		InformLibrary.end_turn_sequence();
+!		return true;
+!	}
+!	print_ret (parser) "No es necesario referirse a eso para terminar 
+!	la historia.";
+!];
 [ Handle_SCENERY_PE;
-	if ( action_to_be == ##Examine or ##Search or ##Consult ) {
-		if ( location.describe ~= NULL ) RunRoutines(location, describe);
-		else {
-			if ( location.description == 0 ) RunTimeError(11, location);
-			else PrintOrRun(location, description);
-		}
+	if (action_to_be == ##Examine or ##Search or ##Consult) {
+		<Look>; 
 		InformLibrary.end_turn_sequence();
 		return true;
 	}
 	print_ret (parser) "No es necesario referirse a eso para terminar 
 	la historia.";
-!	return false;	! Error was NOT handled by this routine.
 ];
 
 
@@ -2695,8 +2704,6 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! #30: El parser no ha comprendido el nombre del objeto al que 
 				!! se refiere el player, o ese objeto no está aquí.
 				!! -- "No veo eso que dices.";
-!! TODO: [Ver rutina UnknownVerb()]
-				! if (unknown_verb_obj ~= 0) <<ExamineFake>>;
 				print_ret (parser) "Te has referido a algo con lo que 
 				no se puede interactuar en este momento.";
 		TOOLIT_PE:
