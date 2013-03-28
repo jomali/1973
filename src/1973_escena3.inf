@@ -236,7 +236,7 @@ NPC		taxista "taxista" TAXI
 		male concealed;
 
 TCS_Conversation	conversacion_taxista_1
- with	temas op03 op02 op01;
+ with	topics op03 op02 op01;
 
 TCS_Topic	op01
  with	id	1,
@@ -268,7 +268,9 @@ TCS_Topic	op01
 		reaction [;
 			taxista.estado = self.id;
 			taxista.poeta = true;
-		];
+		],
+		verbose true,
+;
 
 TCS_Topic	op02
  with	id		2,
@@ -304,7 +306,9 @@ TCS_Topic	op02
 		reaction [;
 			parent(self).remove_topic(op01);
 			taxista.estado = self.id;
-		];
+		],
+		verbose true,
+;
 
 TCS_Topic	op03
  with	id		3,
@@ -328,10 +332,12 @@ TCS_Topic	op03
 		reaction [;
 			parent(self).remove_topic(op01);
 			taxista.estado = self.id;
-		];
+		], 
+		verbose true,
+;
 
 TCS_Conversation	conversacion_taxista_2
- with	temas op06 op05 op04;
+ with	topics op06 op05 op04;
 
 TCS_Topic	op04
  with	id	4, 
@@ -348,7 +354,7 @@ TCS_Topic	op04
 			parent(self).remove_topic(op05);
 			parent(self).remove_topic(op06);
 		],
-		temas op02 op03;
+		subtopics op02 op03;
 
 TCS_Topic	op05
  with	id	5,
@@ -365,7 +371,7 @@ TCS_Topic	op05
 			parent(self).remove_topic(op04);
 			parent(self).remove_topic(op06);
 		],
-		temas op02 op03;
+		subtopics op02 op03;
 
 TCS_Topic	op06
  with	id	6, 
@@ -385,7 +391,7 @@ print "---Bueno, ---rompe finalmente el silencio, y exhalando una gran nube de h
 			parent(self).remove_topic(op04);
 			parent(self).remove_topic(op05);
 		],
-		temas op02 op03;
+		subtopics op02 op03;
 
 !!------------------------------------------------------------------------------
 !! Items:

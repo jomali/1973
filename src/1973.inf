@@ -131,7 +131,7 @@ Include "aimAndFire.h";			! Sistema de apuntado y disparo QTE
 !Include "GlulxBox.h";			! Comando box multiplataforma
 !Include "gtalk.h";				! Sistema de conversación por menús
 Include "receptacles.h";		! Contenedores (con capacidad limitada)
-Include "tagConversationSystem.h"; ! Sistema de conversación por etiquetas
+Include "topicInventory.h";		! Sistema de conversación con inv. de temas
 Include "types.h";				! Rutinas para modificar estilo de los textos
 				
 
