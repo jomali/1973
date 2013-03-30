@@ -179,7 +179,7 @@ Include ">1973_escena5.inf";	! Escena 5: Flores para un joven difunto
 
 !!------------------------------------------------------------------------------
 [ BeforeParsing; 
-	TagConversationSystem.try();
+	ConversationManager.try();
 ];
 
 !!------------------------------------------------------------------------------

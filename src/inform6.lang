@@ -215,6 +215,39 @@
       </include>
     </context>
 
+<!-- DM4 #1.2: Hello World
+    <context id="statement" style-ref="keyword">
+      <keyword>box</keyword>
+      <keyword>break</keyword>
+      <keyword>continue</keyword>
+      <keyword>do</keyword>
+      <keyword>font</keyword>
+      <keyword>for</keyword>
+      <keyword>give</keyword>
+      <keyword>if</keyword>
+      <keyword>inversion</keyword>
+      <keyword>jump</keyword>
+      <keyword>move</keyword>
+      <keyword>new_line</keyword>
+      <keyword>objectloop</keyword>
+      <keyword>print</keyword>
+      <keyword>print_ret</keyword>
+      <keyword>quit</keyword>
+      <keyword>read</keyword>
+      <keyword>remove</keyword>
+      <keyword>restore</keyword>
+      <keyword>return</keyword>
+      <keyword>rfalse</keyword>
+      <keyword>rtrue</keyword>
+      <keyword>save</keyword>
+      <keyword>spaces</keyword>
+      <keyword>string</keyword>
+      <keyword>style</keyword>
+      <keyword>switch</keyword>
+      <keyword>while</keyword>
+    </context>
+-->
+
     <context id="flow" style-ref="keyword">
       <keyword>assert</keyword>
       <keyword>break</keyword>

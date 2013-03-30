@@ -74,7 +74,7 @@ print (em) "@<<Las mareas susurran al incierto / oscuro cielo estrellado, / lame
 			había dado cuenta de que recitaba en voz alta.";
 			new_line;
 			new_line;
-			TagConversationSystem.start(conversacion_taxista_1);
+			ConversationManager.start(conversacion_taxista_1);
 			return true;
 		],
 		gets_stuck [;
@@ -99,7 +99,7 @@ print "---En este país no va bien una mierda últimamente. Han cortado una calle 
 			print "---De modo que está huyendo, ¿eh?";
 			new_line;
 			new_line;
-			TagConversationSystem.start(conversacion_taxista_2);
+			ConversationManager.start(conversacion_taxista_2);
 			return true;
 		],
  with
@@ -211,7 +211,7 @@ NPC		taxista "taxista" TAXI
 		before [;
 			TalkTo:
 !! TODO: estudiar implementación
-				if (TagConversationSystem.current_conversation == 0)
+				if (ConversationManager.current_conversation == 0)
 					"El taxista permanece en silencio, absorto en la carretera 
 					y en sus pensamientos. Gabriel decide no interrumpirle y 
 					centrarse en los suyos propios.";
@@ -227,7 +227,7 @@ NPC		taxista "taxista" TAXI
 					new_line;
 					new_line;
 				}
-				TagConversationSystem.ask();
+				ConversationManager.ask();
 				return true;
 		],
 		estado 0,		! estado del taxista
@@ -268,8 +268,8 @@ TCS_Topic	op01
 		reaction [;
 			taxista.estado = self.id;
 			taxista.poeta = true;
+			self.append_topic_inventory = true;
 		],
-		verbose true,
 ;
 
 TCS_Topic	op02
@@ -307,7 +307,7 @@ TCS_Topic	op02
 			parent(self).remove_topic(op01);
 			taxista.estado = self.id;
 		],
-		verbose true,
+		append_topic_inventory true,
 ;
 
 TCS_Topic	op03
@@ -333,7 +333,7 @@ TCS_Topic	op03
 			parent(self).remove_topic(op01);
 			taxista.estado = self.id;
 		], 
-		verbose true,
+		append_topic_inventory true,
 ;
 
 TCS_Conversation	conversacion_taxista_2
