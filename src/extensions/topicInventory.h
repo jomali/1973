@@ -13,7 +13,7 @@
 !!	Language:		ES (Castellano)
 !!	System:			Inform-INFSP 6
 !!	Platform:		Z-Machine / Glulx
-!!	Version:		1.1
+!!	Version:		1.2
 !!	Released:		2013/03/30
 !!
 !!------------------------------------------------------------------------------
@@ -39,19 +39,20 @@
 !!
 !!	# INTRODUCCIÓN
 !!
-!!	<topicInventory> es una extensión para implementar sistemas de conversación 
-!!	utilizando inventario de temas y análisis ligero de la entrada de usuario 
-!!	para el reconocimiento de patrones. Está basada en las notas de Eric Eve 
-!!	sobre sistemas de conversación: <http://www.tads.org/howto/convbkg.htm> y 
-!!	construida sobre la extensión <NPC_Conversacion> v1.0 de Mastodon.
+!!	*TOPIC INVENTORY* es una extensión para implementar sistemas de 
+!!	conversación utilizando inventario de temas y análisis no estricto de la 
+!!	entrada de usuario para el reconocimiento de patrones. Está basada en las 
+!!	notas de Eric Eve sobre sistemas de conversación:
+!!	<http://www.tads.org/howto/convbkg.htm>, y construida sobre la extensión 
+!!	*NPC_Conversacion* v1.0 de Mastodon.
 !!
 !!
 !!	# CONVERSACIONES CON INVENTARIO DE TEMAS
 !!
 !!	El sistema de conversación con invantario de temas está ideado con el 
 !!	objetivo de esquivar los problemas que suelen presentar los sistemas de 
-!!	conversación más habituales en los relatos interactivos; los problemas de 
-!!	adivinar la palabra clave en sistemas basados en acciones ASK/TELL, la 
+!!	conversación más habituales en los relatos interactivos; dificultades para 
+!!	adivinar la palabra clave en sistemas basados en acciones ASK/TELL, 
 !!	simplificación excesiva en sistemas basados en la acción TALK TO, o falta 
 !!	de libertad y ruptura de la interfaz textual en sistemas de menús. 
 !!
@@ -69,7 +70,7 @@
 !!		Bob levanta la vista de su libro y se quita las gafas- ---¿Si?
 !!
 !!		(Puedes preguntar por la antena, hablarle sobre el faro o hablarle 
-!!		sobre la rata gigante.)
+!!		del tema que nunca se acaba.)
 !!
 !!		> hablar sobre el faro
 !!		---He pasado junto al faro esta mañana ---empiezas.
@@ -80,7 +81,7 @@
 !!		Bob simula limpiar las gafas, inquieto. 
 !!
 !!		(Puedes preguntar por la antena, preguntar por el asunto o hablarle 
-!!		sobre la rata gigante.)
+!!		del tema que nunca se acaba.)
 !!
 !!		> asunto
 !!		---¿A qué "asunto" te refieres?
@@ -88,8 +89,15 @@
 !!		claramente agitado. ---T-Tengo mucho trabajo que hacer. Si me 
 !!		disculpas...
 !!
-!!		(Puedes insistir en el tema del asunto, preguntar por la antena o 
-!!		preguntarle por su trabajo.)
+!!		(Puedes insistir con el "asunto", preguntar por la antena o hablarle 
+!!		del tema que nunca se acaba.)
+!!
+!!		> tema interminable
+!!		---Tío, ¿dónde está mi coche?
+!!		---¿Y tu coche, tío?
+!!
+!!		(Puedes insistir con el "asunto", preguntar por la antena o hablarle 
+!!		del tema que nunca se acaba.)
 !!
 !!	El reconocimiento de patrones entre la entrada de usuario y las claves de 
 !!	cada tema se lleva a cabo por medio de análisis no estricto; si entre todas 
@@ -114,6 +122,13 @@
 !!	rutina BeforeParsing (crearla si no existe):
 !!
 !!		ConversationManager.try();
+!!
+!!
+!!	# LIMITACIONES Y POSIBLES MEJORAS
+!!
+!!	Podría ser interesante contemplar la posibilidad de crear temas que no 
+!!	aparezcan sugeridos automáticamente al imprimir el inventario de temas 
+!!	disponibles.
 !!
 !!------------------------------------------------------------------------------
 System_file;
@@ -209,9 +224,17 @@ Default GRAMMATICAL_INFLECTION 2;
 ];
 
 !!==============================================================================
-!!	Representa un tema sobre el que se puede hablar en una conversación. Puede 
-!!	tener los atributos 'visited' si el tema ya ha sido tratado, y 'concealed' 
-!!	para evitar que aparezca listado en el inventario de temas
+!!	Representa un tema sobre el que se puede hablar en una conversación. Cuando 
+!!	el gestor trata un tema, automáticamente le da el atributo "visited" para 
+!!	marcarlo como tema tratado y al final lo elimina de la conversación. Se 
+!!	puede forzar, sin embargo, que un tema esté siempre disponible si en la 
+!!	función reaction() se le quita el atributo "visited". Ej:
+!!
+!!		Object	topic
+!!		 class	TI_Topic
+!!		 with
+!!				[...]
+!!				reaction [; give self ~visited; ];
 !!------------------------------------------------------------------------------
 
 Class TI_Topic
@@ -227,9 +250,7 @@ Class TI_Topic
 		],
 		!! Número de coincidencias de la entrada del usuario con el tema
 		hits 0,
-		!! Acciones a ejecutar después de tratar el tema (se puede forzar que 
-		!! se termine el turno mostrando el inventario de temas disponibles con 
-		!! la línea "ConversationManager.append_topic_inventory = true;")
+		!! Acciones a ejecutar después de tratar el tema
 		reaction 0,
 		!! Establecer a 'true' para forzar que el turno en que se trata este 
 		!! tema finalice mostrando el inventario de temas disponibles
@@ -257,7 +278,6 @@ Class	TI_Conversation
 		remove_topic [ topic;
 			remove topic;
 		], 
-!! TODO: no mostrar temas con el atributo 'concealed' activado
 		!! Imprime la lista de temas de la conversación
 		show_topic_list [ topic;
 			for (topic=child(self) : topic~=nothing : topic=sibling(topic)) {
