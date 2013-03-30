@@ -314,12 +314,12 @@ Include	"SpanishEG.h";		! Gramática española extendida
 
 !!------------------------------------------------------------------------------
 
-Extend only 'normal' replace
-    *								-> LMode2
-;
-
 Extend	'corre' replace
 	* noun							-> CloseX
+;
+
+Extend only 'normal' replace
+    *								-> LMode2
 ;
 
 Verb	'descorre'
@@ -343,6 +343,11 @@ Verb	'conversa' 'platica'
 	* 'por' noun					-> TalkOn
 	* 'por' creature				-> TalkOn
 ;
+
+Verb	meta 'temas' 't//'
+	*								-> TopicInventory
+;
+VerboIrregular "mostrar inventario de temas" with imperativo 'temas' 't//';
 
 !!------------------------------------------------------------------------------
 
@@ -411,6 +416,18 @@ Verb	'conversa' 'platica'
 		else
 			print "él";
 		".";
+	}
+];
+
+[ TopicInventorySub;
+	if (ConversationManager.is_running()) {
+		if (ConversationManager.topic_inventory_size() > 0) {
+			ConversationManager.show_topic_inventory();
+		} else {
+			print_ret (parser) "No hay temas disponibles en este momento.";
+		}
+	} else {
+		print_ret (parser) "No hay conversaciones activas en este momento.";
 	}
 ];
 

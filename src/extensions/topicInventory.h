@@ -13,7 +13,7 @@
 !!	Language:		ES (Castellano)
 !!	System:			Inform-INFSP 6
 !!	Platform:		Z-Machine / Glulx
-!!	Version:		1.0
+!!	Version:		1.1
 !!	Released:		2013/03/30
 !!
 !!------------------------------------------------------------------------------
@@ -92,8 +92,8 @@
 !!		preguntarle por su trabajo.)
 !!
 !!	El reconocimiento de patrones entre la entrada de usuario y las claves de 
-!!	cada tema se lleva a cabo por medio de análisis ligero; si entre todas las 
-!!	palabras introducidas se reconocen claves de uno o más temas, se lanza 
+!!	cada tema se lleva a cabo por medio de análisis no estricto; si entre todas 
+!!	las palabras introducidas se reconocen claves de uno o más temas, se lanza 
 !!	aquel tema con más coincidencias ignorando el resto de la entrada.
 !!
 !!
@@ -282,18 +282,65 @@ Class	TI_Conversation
 ;
 
 !!==============================================================================
-!!	Objeto gestor del sistema de conversación
+!!	Objeto gestor del sistema de conversación. Cuenta con el siguiente conjunto 
+!!	de funciones que pueden ser utilizadas por un programador de relatos 
+!!	interactivos para manejar conversaciones:
+!!
+!!	*	start(conversation) : Activa en el gestor la conversación pasada como 
+!!		argumento.
+!!	*	end() : Quita la conversación activa del gestor.
+!!	*	is_running() : Indica si hay una conversación activa en el gestor. 
+!!		Retorna verdadero si es así, o falso en caso contrario.
+!!	*	topic_inventory_size() : Retorna el número de temas disponibles en la 
+!!		conversación activa.
+!!	*	show_topic_inventory() : Muestra el inventario de temas disponibles.
+!!	*	try() : Función principal del gestor. Comprueba si la entrada de 
+!!		usuario se refiere a alguno de los temas disponibles y lanza la acción 
+!!		adecuada para tratarlo si es así. Debe invocarse desde el punto de 
+!!		entrada "BeforeParsing()" del relato.
 !!------------------------------------------------------------------------------
 
 Object ConversationManager
- with	start [ conversation;
+ with		!! INTERFAZ DEL GESTOR
+		start [ conversation;
 			self.current_conversation = conversation;
 			self.current_conversation.initiate();
 			self.show_topic_inventory();
-		],
+		], 
 		end [;
 			self.current_conversation = 0;
-		],
+		], 
+		is_running [;
+			return self.current_conversation ~= nothing;
+		], 
+		topic_inventory_size [ o size;
+			objectloop (o in self.current_conversation)
+				size++;
+			return size;
+		], 
+		show_topic_inventory [;
+			#Ifdef	TARGET_ZCODE;		!!
+			font on; style underline;	!!
+			#Ifnot;	! TARGET_GLULX;		!! Itálica
+			glk($0086, 1);				!!
+			#Endif; ! TARGET_			!!
+			switch (GRAMMATICAL_INFLECTION) {
+			1:	print "(Puedo ";
+			2:	print "(Puedes ";
+			3:	print "(Puede ";
+			4:	print "(Podía ";
+			5:	print "(Podías ";
+			6:	print "(Podía ";
+			}
+			self.current_conversation.show_topic_list();
+			print ".)^";
+			#Ifdef	TARGET_ZCODE;		!!
+			font on; style roman;		!!
+			#Ifnot;	! TARGET_GLULX;		!! Romana
+			glk($0086, 0);				!!
+			#Endif; ! TARGET_			!!
+			return true;
+		], 
 		try [ o o_tmp_hits;
 			if (self.current_conversation) {
 
@@ -366,8 +413,13 @@ Object ConversationManager
 
 			!! Retorna de la función sin hacer nada -> tratamiento normal de 
 			!! la entrada del usuario
-			return false;	
+			return false;
+		], 
+			!! OTRAS FUNCIONES DE APOYO
+		get_topic_inventory_flag [;
+			return self.topic_inventory_flag;
 		],
+ private	!! PROPIEDADES PRIVADAS
 		!! Tema con mayor porcentaje de coincidencias hasta el momento
 		topic 0,
 		!! Número de coincidencias del tema con más coincidencias de la 
@@ -378,30 +430,6 @@ Object ConversationManager
 		!! Indica si hay que mostrar el inventario de temas al terminar de 
 		!! desarrollar uno de los temas de la conversación actual
 		topic_inventory_flag false, 
-		!! Muestra la lista de temas activos
-		show_topic_inventory [;
-			#Ifdef	TARGET_ZCODE;		!!
-			font on; style underline;	!!
-			#Ifnot;	! TARGET_GLULX;		!! Itálica
-			glk($0086, 1);				!!
-			#Endif; ! TARGET_			!!
-			switch (GRAMMATICAL_INFLECTION) {
-			1:	print "(Puedo ";
-			2:	print "(Puedes ";
-			3:	print "(Puede ";
-			4:	print "(Podía ";
-			5:	print "(Podías ";
-			6:	print "(Podía ";
-			}
-			self.current_conversation.show_topic_list();
-			print ".)^";
-			#Ifdef	TARGET_ZCODE;		!!
-			font on; style roman;		!!
-			#Ifnot;	! TARGET_GLULX;		!! Romana
-			glk($0086, 0);				!!
-			#Endif; ! TARGET_			!!
-			return true;
-		],
 ;
 
 !!==============================================================================
@@ -416,8 +444,8 @@ Verb	'npc.talk'
 ;
 
 [ NPCTalkSub;
-	if (child(ConversationManager.current_conversation) ~= nothing) {
-		if (ConversationManager.topic_inventory_flag) {
+	if (ConversationManager.is_running()) {
+		if (ConversationManager.get_topic_inventory_flag()) {
 			new_line;
 			ConversationManager.show_topic_inventory();
 		}

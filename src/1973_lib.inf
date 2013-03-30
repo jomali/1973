@@ -789,7 +789,7 @@ Verb	meta 'gramatica'
 	new_line;
 	return true;
 ];
-#Endif;
+#Endif; ! DEBUG;
 
 
 !!==============================================================================

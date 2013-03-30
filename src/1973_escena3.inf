@@ -211,7 +211,7 @@ NPC		taxista "taxista" TAXI
 		before [;
 			TalkTo:
 !! TODO: estudiar implementación
-				if (ConversationManager.current_conversation == 0)
+				if (~~ConversationManager.is_running())
 					"El taxista permanece en silencio, absorto en la carretera 
 					y en sus pensamientos. Gabriel decide no interrumpirle y 
 					centrarse en los suyos propios.";
