@@ -227,7 +227,7 @@ NPC		taxista "taxista" TAXI
 					new_line;
 					new_line;
 				}
-				ConversationManager.ask();
+				ConversationManager.show_topic_inventory();
 				return true;
 		],
 		estado 0,		! estado del taxista
@@ -235,10 +235,10 @@ NPC		taxista "taxista" TAXI
  has
 		male concealed;
 
-TCS_Conversation	conversacion_taxista_1
+TI_Conversation	conversacion_taxista_1
  with	topics op03 op02 op01;
 
-TCS_Topic	op01
+TI_Topic	op01
  with	id	1,
 		entry [;
 			print (strong) "responder", (em) " a la pregunta";
@@ -272,7 +272,7 @@ TCS_Topic	op01
 		],
 ;
 
-TCS_Topic	op02
+TI_Topic	op02
  with	id		2,
 		entry [;
 			print (em) "hablar del ", (strong) "estado del tráfico";
@@ -310,7 +310,7 @@ TCS_Topic	op02
 		append_topic_inventory true,
 ;
 
-TCS_Topic	op03
+TI_Topic	op03
  with	id		3,
 		entry [;
 			print (em) "hablar sobre el ", (strong) "golpe contra el gobierno";
@@ -332,14 +332,15 @@ TCS_Topic	op03
 		reaction [;
 			parent(self).remove_topic(op01);
 			taxista.estado = self.id;
+			give self ~visited;
 		], 
 		append_topic_inventory true,
 ;
 
-TCS_Conversation	conversacion_taxista_2
+TI_Conversation	conversacion_taxista_2
  with	topics op06 op05 op04;
 
-TCS_Topic	op04
+TI_Topic	op04
  with	id	4, 
 		keys	'ser,' 'se,' 'contestar,' 'contesta,' 'sincero' 'sinceridad', 
 		entry [;
@@ -356,7 +357,7 @@ TCS_Topic	op04
 		],
 		subtopics op02 op03;
 
-TCS_Topic	op05
+TI_Topic	op05
  with	id	5,
 		keys	'mentir,' 'miente,' 'mentira', 
 		entry [;
@@ -373,7 +374,7 @@ TCS_Topic	op05
 		],
 		subtopics op02 op03;
 
-TCS_Topic	op06
+TI_Topic	op06
  with	id	6, 
 		keys	'guardar,' 'guarda,' 'silencio', 
 		entry [;

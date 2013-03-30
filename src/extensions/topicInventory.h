@@ -13,8 +13,8 @@
 !!	Language:		ES (Castellano)
 !!	System:			Inform-INFSP 6
 !!	Platform:		Z-Machine / Glulx
-!!	Version:		0.2
-!!	Released:		2013/03/28
+!!	Version:		1.0
+!!	Released:		2013/03/30
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -118,14 +118,14 @@
 !!------------------------------------------------------------------------------
 System_file;
 
-!! Flexión gramatical utilizada por defecto: Presente 2ª persona
-Default GRAMMATICAL_INFLECTION 2;
-
 !! Descomentar para obtener información de depuración:
 !Constant DEBUG_CONVERSATION;
 
 !! Vector para guardar palabras temporalmente:
-Array tmp_text1 -> 64;
+Array tmp_text -> 64;
+
+!! Flexión gramatical utilizada por defecto: Presente 2ª persona
+Default GRAMMATICAL_INFLECTION 2;
 
 !!==============================================================================
 !!	Funciones de depuración
@@ -150,66 +150,71 @@ Array tmp_text1 -> 64;
 #Endif; ! DEBUG_CONVERSATION;
 
 !!==============================================================================
-!!	Compara una entrada en array (del prompt, indicada por el número de orden 
-!!	de la palabra) con una palabra de diccionario.
-!!	Devuelve 1 si coinciden, 0 si diferentes
+!!	Compara una palabra de la entrada del usuario con una de las palabras de 
+!!	diccionario. La palabra de entrada se pasa a la función a través de 
+!!	'num_word_prompt', un número que indica el orden de la palabra en el vector 
+!!	de entrada, y la palabra de diccionario se pasa a través de 'dictword' 
+!!	(hay que volcarla en un vector antes de hacer la comprobación).
+!!
+!!	Se retorna 1 si las palabras son iguales, o 0 si son diferentes
 !!------------------------------------------------------------------------------
 
 [ CompareWord num_word_prompt dictword i len;
 
-	!! A) Volcamos la palabra de diccionario a un array
+	!! A) Se vuelca la palabra de diccionario a un array
+
 	#Ifdef TARGET_ZCODE;
-	@output_stream 3 tmp_text1;
-	print (address)dictword; ! vuelca la palabra de diccionario en el array
+	@output_stream 3 tmp_text;
+	print (address)dictword;
 	@output_stream -3;
-	#Endif;
+	#Ifnot;	! TARGET_GLULX;
+	tmp_text->(WORDSIZE-1) = PrintAnyToArray(tmp_text+WORDSIZE, 60, dictword);
+	#Endif; ! TARGET_
 
-	#Ifdef TARGET_GLULX;
-	tmp_text1->(WORDSIZE-1) = PrintAnyToArray(tmp_text1+WORDSIZE, 60, dictword);
-	#Endif;
-
-	len = tmp_text1->(WORDSIZE-1); 
+	len = tmp_text->(WORDSIZE-1); 
 
 	!! B) Si el ultimo carácter es una coma, se elimina para evitar conflictos 
 	!! con la conversión de infitivos y los diccionarios en informATE --> NO 
 	!! DEBE HABER NUNCA PALABRAS EN INFINITIVO EN EL DICCIONARIO. No vale para 
 	!! palabras que antes de ponerles la coma tengan 9 o más caracteres 
-	!! (limitación de inform)
-	if (tmp_text1->(len+WORDSIZE-1) == ',') {
-		tmp_text1->(len+WORDSIZE-1) = 0; ! Eliminamos el ; del buffer
-		(tmp_text1->(WORDSIZE-1))--; ! Reducimos el tamaño indicado en el buffer
-		len = tmp_text1->(WORDSIZE-1); ! Y actualizamos la long. al nuevo valor
+	!! (limitación de Inform)
+
+	if (tmp_text->(len+WORDSIZE-1) == ',') {
+		tmp_text->(len+WORDSIZE-1) = 0;	! Se elimina el caracter del buffer
+		(tmp_text->(WORDSIZE-1))--;		! Se reducen las dimensiones
+		len = tmp_text->(WORDSIZE-1);	! Se actualiza el valor de 'len'
 	}
 	
 	#Ifdef DEBUG_CONVERSATION;
 	print "Comparando prompt: <", (PrintPromptWord) num_word_prompt, 
-	"> con palabra de diccionario:<", (PrintStringArray) tmp_text1, ">^";
-	#Endif;
-	
-	!! Si tienen diferentes longitudes devuelve NO coincidente, tratando el 
-	!! caso especial de la limitacion a 9 caracteres de las palabras de 
-	!! diccionario en Inform
+	"> con palabra de diccionario:<", (PrintStringArray) tmp_text, ">^";
+	#Endif; ! DEBUG_CONVERSATION;
+
+	!! Si la longitud de las palabras no es igual, se retorna NO coincidente. 
+	!! (NOTA: Hay que contemplar el caso especial de palabras de más de 9 
+	!! caracteres por las limitaciones de Inform)
 	if (WordLength(num_word_prompt) ~= len && 
-			~~(WordLength(num_word_prompt) >9 && len == 9)) 
+			~~(WordLength(num_word_prompt) > 9 && len == 9)) 
 		return 0;
-		
-	!! Para la misma longitud, miramos letra a letra buscando diferencias
+
+	!! Si las palabras tienen la misma longitud, se comparan caracter a 
+	!! caracter y se retorna NO coincidente si se encuentra una diferencia
 	for (i = 0: i < len: i++) {
-		if (WordAddress(num_word_prompt)->i ~= tmp_text1->(i+WORDSIZE))
-			return 0; ! Letra diferente, retorno que son diferentes
+		if (WordAddress(num_word_prompt)->i ~= tmp_text->(i+WORDSIZE))
+			return 0;
 	}
-	
-	!! Son iguales
+
+	!! Las palabras son iguales
 	return 1;
 ];
 
 !!==============================================================================
 !!	Representa un tema sobre el que se puede hablar en una conversación. Puede 
-!!	tener los atributos 'general' si el tema ya ha sido tratado, y 'concealed' 
+!!	tener los atributos 'visited' si el tema ya ha sido tratado, y 'concealed' 
 !!	para evitar que aparezca listado en el inventario de temas
 !!------------------------------------------------------------------------------
 
-Class TCS_Topic
+Class TI_Topic
  with	compare_prompt [i j;
 			self.hits = 0;
 			for (i = 0 : i < self.#keys/WORDSIZE : i++) {
@@ -222,12 +227,13 @@ Class TCS_Topic
 		],
 		!! Número de coincidencias de la entrada del usuario con el tema
 		hits 0,
-		!! Acción a ejecutar (opcional) tras haber desarrollado el tema
+		!! Acciones a ejecutar después de tratar el tema (se puede forzar que 
+		!! se termine el turno mostrando el inventario de temas disponibles con 
+		!! la línea "ConversationManager.append_topic_inventory = true;")
 		reaction 0,
-!! XXX
 		!! Establecer a 'true' para forzar que el turno en que se trata este 
 		!! tema finalice mostrando el inventario de temas disponibles
-		append_topic_inventory false, 
+		append_topic_inventory false,
 ;
 
 !!==============================================================================
@@ -236,52 +242,43 @@ Class TCS_Topic
 !!	manipular la lista de temas disponible
 !!------------------------------------------------------------------------------
 
-Class	TCS_Conversation
- with	!! Se inicializa la lista de temas de la conversación con aquellos 
-		!! temas presentes en 'topics' que no hayan sido tratados previamente
-		iniciar [ i;
-			self.finalizar(); ! Borramos todo por si acaso
-			for (i = 0 : i < self.#topics/WORDSIZE : i++) {
-				if (self.&topics-->i hasnt general) {
-					!print "Move:", (string)(self.&topics-->i).entry, "^";
-					move self.&topics-->i to self;
-				}
-			}
+Class	TI_Conversation
+ with	!! Mueve un tema a la conversación (si no está marcado como ya tratado)
+		add_topic [ topic;
+			if (topic hasnt visited)
+				move topic to self;
 		],
-		!! Elimina todos los temas que hay en la conversación
-		finalizar [ topic;
-			objectloop (topic in self) 
-				remove topic;
+		!! Mueve a la conversación los subtemas de 'topic'
+		add_subtopics [ topic i;
+			for (i = 0 : i < topic.#subtopics/WORDSIZE : i++)
+				self.add_topic(topic.&subtopics-->i);
 		],
-!! TODO: no mostrar temas con 'concealed' activado
-		!! Imprime en pantalla la lista de temas de la conversación
-		show_topic_list [ o;
-			for (o = child(self) : o ~= nothing : o = sibling(o)) {
-				PrintOrRun(o,entry, true);
-				if (sibling(o) ~= nothing) 
-					if (sibling(sibling(o)) == nothing)
+		!! Elimina un tema de la conversación
+		remove_topic [ topic;
+			remove topic;
+		], 
+!! TODO: no mostrar temas con el atributo 'concealed' activado
+		!! Imprime la lista de temas de la conversación
+		show_topic_list [ topic;
+			for (topic=child(self) : topic~=nothing : topic=sibling(topic)) {
+				PrintOrRun(topic, entry, true);
+				if (sibling(topic) ~= nothing) 
+					if (sibling(sibling(topic)) == nothing)
 						print " o ";
 					else
 						print ", ";	
 			}
 		],
-		!! Mueve el tema 'topic' a la conversación
-		add_topic [ topic; 
-			move topic to self;
+		!! Se inicializa la lista de temas de la conversación con aquellos 
+		!! temas presentes en 'topics' que no hayan sido tratados previamente
+		initiate [ topic i;
+			!! primero se asegura que no haya temas en la conversación:
+			objectloop (topic in self)
+				self.remove_topic(topic);
+			!! se inicializa la lista de temas de la conversación:
+			for (i = 0 : i < self.#topics/WORDSIZE : i++)
+				self.add_topic(self.&topics-->i);
 		],
-		!! Mueve a la conversación todos aquellos subtemas del tema 'topic' 
-		!! pasado como argumento que no hayan sido tratados previamente
-		add_subtopics [ topic i;
-			for (i = 0 : i < topic.#subtopics/WORDSIZE : i++) {
-				if (topic.&subtopics-->i hasnt general) {
-					move topic.&subtopics-->i to self;
-				}
-			}
-		],
-		!! Elimina el tema 'topic'
-		remove_topic [ topic;
-			remove topic;
-		], 
 ;
 
 !!==============================================================================
@@ -291,8 +288,8 @@ Class	TCS_Conversation
 Object ConversationManager
  with	start [ conversation;
 			self.current_conversation = conversation;
-			self.current_conversation.iniciar();
-			self.ask();
+			self.current_conversation.initiate();
+			self.show_topic_inventory();
 		],
 		end [;
 			self.current_conversation = 0;
@@ -300,27 +297,27 @@ Object ConversationManager
 		try [ o o_tmp_hits;
 			if (self.current_conversation) {
 
-				self.topic_inventory_flag = false;
+				!! A) Inicializaciones del método
+				self.topic_inventory_flag = false; 
+				self.hits = 0;
+				self.topic = 0;
 
 				!! B) Da un repaso a los temas actuales comprobando si alguno 
 				!! encaja con la entrada de usuario
-				self.hits = 0; 
-				self.topic = 0;
 				objectloop (o in self.current_conversation) {
 					#Ifdef DEBUG_CONVERSATION;
 					print "Probando: ", (string) o.entry, "... ";
-					#Endif;
+					#Endif; ! DEBUG_CONVERSATION;
 
 					!! Se calcula el número de coincidencias del tema en 
 					!! relación al total de palabras (%)
 					o.compare_prompt();
-					!o_tmp_hits = (o.hits*100)/(o.#keys*WORDSIZE); 
 					o_tmp_hits = (o.hits*100) / num_words; 
 					
 					#Ifdef DEBUG_CONVERSATION;
 					print "Ajuste de ", o.hits, " sobre ", 
 					o.#keys / WORDSIZE, " palabras: ", o_tmp_hits, "%^";
-					#Endif;
+					#Endif; ! DEBUG_CONVERSATION;
 
 					!! Si coincide más que el máximo actual:
 					if (o_tmp_hits > self.hits) {
@@ -335,16 +332,14 @@ Object ConversationManager
 					#Ifdef DEBUG_CONVERSATION;
 					print "Tema seleccionado: ", (string) self.topic.entry;
 					new_line;
-					#Endif;
+					#Endif; ! DEBUG_CONVERSATION;
 
-					!! Se le da el atributo general para indicar que se trata 
-					!! de un tema ya tratado
-					give self.topic general;
+					!! El tema queda marcado como tratado
+					give self.topic visited;
 
 					PrintOrRun(self.topic, reply);
 					PrintOrRun(self.topic, reaction);
 
-!! XXX
 					!! Se establece la propiedad 'topic_inventory_flag' del 
 					!! sistema en función de las propiedades del tema
 					self.topic_inventory_flag
@@ -356,10 +351,10 @@ Object ConversationManager
 					parse-->1 = 'npc.talk';
 					num_words = 1;
 
-					!! Se añaden a la conversación todos los posibles subtemas 
-					!! del tema seleccionado y éste se borra automáticamente si 
-					!! es necesario
-					self.current_conversation.remove_topic(self.topic);
+					!! Se elimina el tema seleccionado si está agotado y se 
+					!! añaden a la conversación todos sus subtemas, si los hay
+					if (self.topic has visited)
+						self.current_conversation.remove_topic(self.topic);
 					self.current_conversation.add_subtopics(self.topic);
 
 					!! A partir de este punto, la librería lanzará la acción 
@@ -380,13 +375,11 @@ Object ConversationManager
 		hits 0, 
 		!! Conversación actual activa en el gestor
 		current_conversation 0, 
-
-		!! XXX: 
 		!! Indica si hay que mostrar el inventario de temas al terminar de 
 		!! desarrollar uno de los temas de la conversación actual
 		topic_inventory_flag false, 
-
-		ask [;
+		!! Muestra la lista de temas activos
+		show_topic_inventory [;
 			#Ifdef	TARGET_ZCODE;		!!
 			font on; style underline;	!!
 			#Ifnot;	! TARGET_GLULX;		!! Itálica
@@ -423,16 +416,13 @@ Verb	'npc.talk'
 ;
 
 [ NPCTalkSub;
-	! Tras responder a una pregunta, vuelve a mostrar la lista de temas
 	if (child(ConversationManager.current_conversation) ~= nothing) {
 		if (ConversationManager.topic_inventory_flag) {
 			new_line;
-			ConversationManager.ask();
+			ConversationManager.show_topic_inventory();
 		}
-	} else {
-!		PrintOrRun(ConversationManager, no_topics);
+	} else
 		ConversationManager.end();
-	}
 	return true;
 ];
 
