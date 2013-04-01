@@ -12,7 +12,7 @@
 !!	Language:		ES (Castellano)
 !!	System:			Inform, INFSP 6
 !!	Platform:		Z-Machine / Glulx
-!!	Version:		4.0
+!!	Version:		4.1
 !!	Released:		2013/03/25
 !!
 !!------------------------------------------------------------------------------
@@ -66,13 +66,17 @@ Default PARSER_MSG2		"";
 
 !! Estilo de mensajes del parser:
 
-[ start_parser_style;
+[ parser_style;
 	switch (PARSER_STYLE) {
 	_RST_:	roman_style();
 	_IST_:	italic_style();
 	_BST_:	bold_style();
 	_MST_:	monospaced_style();
 	}
+];
+
+[ start_parser_style;
+	parser_style();
 	if (PARSER_MSG1 ~= 0) print (string) PARSER_MSG1;
 ];
 
@@ -125,6 +129,14 @@ Default PARSER_MSG2		"";
 ];
 
 [ parser text;
+	if (text == 0) return false;
+	parser_style();
+	print (string) text;
+	roman_style();
+	return true;
+];
+
+[ parser_line text;
 	if (text == 0) return false;
 	start_parser_style();
 	print (string) text;
