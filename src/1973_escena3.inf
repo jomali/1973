@@ -44,64 +44,10 @@
 !! TODO
 !!	<>	definir asientos
 !!	<>	radio
+!!	<>	abrir/cerrar puerta
+!!	<>	acción gritar
 
 Room	TAXI "Dentro del taxi"
- private
-		!! Indicador del estado en que se encuentra el taxi:
-		!!	0.	estado inicial
-		!!	1.	tras pasar por Neftalí Basoalto
-		!!	2.	recién detenido en el atasco
-		!!	3.	listo para reanudar la marcha
-		state 0,
-		!! Indica si el taxi está preparado para avanzar a la etapa siguiente
-		trigger false,
-		crosses_neftali_basoalto [;
-!! TODO: ajustar temporizador
-			StartTimer(self, 5);
-			self.state = 1;
-			self.trigger = false;
-!! XXX
-print "El coche da una ligera sacudida al cambiar de calle. Gabriel advierte que acaban de doblar por Neftalí Basoalto, y al momento le vienen a la mente los Juegos Florales que aquí se celebraron hace unos meses. Él participó, pues siempre ha adorado la poesía. Se presentó con un breve poemario: ~Luces de Medianoche~, del que recuerda unos versos en especial:";
-			new_line;
-			new_line;
-print (em) "@<<Las mareas susurran al incierto / oscuro cielo estrellado, / lamentos y lloros amargos / grandes duelos y sueños aciagos. / Pues no conocen de mayor acierto / ni peor sino marcado, / el fin de la noche amante, / de su rostro fresco, siempre radiante. / Con el amanecer a cielo abierto / el Sol brilla asombrado, / de ver su noche desnuda / a los pies ya muerta y siempre muda.@>>";
-			new_line;
-			new_line;
-			print "---Eso es muy bonito, ¿es suyo?";
-			new_line;
-			new_line;
-			print "Siente cómo la sangre le salta de repente a la cara. No se 
-			había dado cuenta de que recitaba en voz alta.";
-			new_line;
-			new_line;
-			ConversationManager.start(conversacion_taxista_1);
-			return true;
-		],
-		gets_stuck [;
-			self.state = 2;
-!! XXX
-print "Gabriel ve cómo se iluminan las luces de freno del coche que tienen delante y un instante después ellos mismos empiezan a frenar hasta detenerse por completo.";
-			new_line;
-			new_line;
-			print "---¿Va todo bien?";
-			new_line;
-			new_line;
-!! XXX
-print "---En este país no va bien una mierda últimamente. Han cortado una calle un poco más atrás y todo ese tráfico pasa ahora por aquí. Así que se montan unos pifostios de... ---deja la frase en el aire, tal vez porque no es capaz de encontrar una palabra lo suficientemente malsonante. Después gira la cabeza hacia atrás, mirando a Gabriel por encima del hombro ---¿tiene mucha prisa";
-			if (taxista.poeta) print ", señor poeta";
-			print "?";
-			new_line;
-			new_line;
-			print "---Tengo que estar en San Antonio sobre las 16:15. Mejor 
-			antes.";
-			new_line;
-			new_line;
-			print "---De modo que está huyendo, ¿eh?";
-			new_line;
-			new_line;
-			ConversationManager.start(conversacion_taxista_2);
-			return true;
-		],
  with
 		name	'taxi' 'coche' 'vehiculo' 'automovil' 'auto', 
 		initial [; if (self hasnt visited) {
@@ -129,23 +75,31 @@ print "Siente en la mano el frío peso del revólver un instante antes de comprend
 				edificios y las gentes de la que ha sido su ciudad hasta hoy.";
 		],
 		before [;
+			!! TODO Jump:
 			Listen:
 				"En la radio suenan las pausadas notas de piano de alguna 
 				pieza clásica que no puede reconocer.";
 			Look:
-				if (self.trigger && self.state == 0)
-					return self.crosses_neftali_basoalto();
-				if (self.trigger && self.state == 1)
-					return self.gets_stuck();
+				if (self.trigger)
+					return self.next_state();
+			!! TODO: Sit
 			Smell:
 !! XXX
 				if (self.state == 2) "El olor del cigarro ocupa el vehículo.";
 				else "Humo viejo, viejo perfume, viejo sudor.";
+			!! TODO StandUp:
 		],
 		time_left, 
 		time_out [;
 			self.trigger = true;
+			StartDaemon(self);
 		],
+		daemon [;
+			if (action ~= ##Examine) {
+				new_line;
+				self.next_state();
+			}
+		], 
 		e_to [;
 			if (self.state == 0 || self.state == 1) {
 !! XXX
@@ -179,6 +133,70 @@ print "Siente en la mano el frío peso del revólver un instante antes de comprend
 		get_state [;
 			return self.state;
 		],
+ private
+		!! Indicador del estado en que se encuentra el taxi:
+		!!	0.	estado inicial
+		!!	1.	tras pasar por Neftalí Basoalto
+		!!	2.	recién detenido en el atasco
+		!!	3.	listo para reanudar la marcha
+		state 0,
+		!! Indica si el taxi está preparado para avanzar a la etapa siguiente
+		trigger false,
+		!! Avanza al siguiente estado del objeto
+		next_state [;
+			self.trigger = false;
+			StopDaemon(self);
+			if (self.state == 0)
+				return self.crosses_neftali_basoalto();
+			if (self.state == 1)
+				return self.gets_stuck();
+		],
+		!! Avanza al estado: 1
+		crosses_neftali_basoalto [ flag;
+!! TODO: ajustar temporizador
+			StartTimer(self, 5);
+			self.state = 1;
+!! XXX
+print "El coche da una ligera sacudida al cambiar de calle. Gabriel advierte que acaban de doblar por Neftalí Basoalto, y al momento le vienen a la mente los Juegos Florales que aquí se celebraron hace unos meses. Él participó, pues siempre ha adorado la poesía. Se presentó con un breve poemario: ~Luces de Medianoche~, del que recuerda unos versos en especial:^";
+			new_line;
+print (em) "@<<Las mareas susurran al incierto / oscuro cielo estrellado, / lamentos y lloros amargos / grandes duelos y sueños aciagos. / Pues no conocen de mayor acierto / ni peor sino marcado, / el fin de la noche amante, / de su rostro fresco, siempre radiante. / Con el amanecer a cielo abierto / el Sol brilla asombrado, / de ver su noche desnuda / a los pies ya muerta y siempre muda.@>>^";
+			new_line;
+			print "---Eso es muy bonito, ¿es suyo?^";
+			flag = PressAnyKey(flag);
+			new_line;
+			print "Siente cómo la sangre le salta de repente a la cara. No se 
+			había dado cuenta de que recitaba en voz alta.";
+			new_line;
+			new_line;
+			ConversationManager.start(conversacion_taxista_1);
+			return true;
+		],
+		!! Avanza al estado: 2
+		gets_stuck [;
+			self.state = 2;
+!! XXX
+print "Gabriel ve cómo se iluminan las luces de freno del coche que tienen delante y un instante después ellos mismos empiezan a frenar hasta detenerse por completo.";
+			new_line;
+			new_line;
+			print "---¿Va todo bien?";
+			new_line;
+			new_line;
+!! XXX
+print "---En este país no va bien una mierda últimamente. Han cortado una calle un poco más atrás y todo ese tráfico pasa ahora por aquí. Así que se montan unos pifostios de... ---deja la frase en el aire, tal vez porque no es capaz de encontrar una palabra lo suficientemente malsonante. Después gira la cabeza hacia atrás, mirando a Gabriel por encima del hombro ---¿tiene mucha prisa";
+			if (taxista.k_poetry) print ", señor poeta";
+			print "?";
+			new_line;
+			new_line;
+			print "---Tengo que estar en San Antonio sobre las 16:15. Mejor 
+			antes.";
+			new_line;
+			new_line;
+			print "---De modo que está huyendo, ¿eh?";
+			new_line;
+			new_line;
+			ConversationManager.start(conversacion_taxista_2);
+			return true;
+		],
 ;
 
 !!------------------------------------------------------------------------------
@@ -188,9 +206,6 @@ print "Siente en la mano el frío peso del revólver un instante antes de comprend
 !! NPCs:
 
 NPC		taxista "taxista" TAXI
- private
-		!! Indica si el objeto ha sido ya descrito al usuario o no
-		described false, 
  with
 		name_m	'taxista' 'conductor' 'chofer' 'hombre' 'individuo', 
 		name_f	'persona', 
@@ -210,28 +225,28 @@ NPC		taxista "taxista" TAXI
 		],
 		before [;
 			TalkTo:
-!! TODO: estudiar implementación
 				if (~~ConversationManager.is_running())
 					"El taxista permanece en silencio, absorto en la carretera 
 					y en sus pensamientos. Gabriel decide no interrumpirle y 
 					centrarse en los suyos propios.";
-				switch (self.estado) {
+				switch (self.last_topic) {
 				0:
 					print "---Eso que ha recitado, ---insiste el conductor, 
-					---¿lo ha escrito usted?";
-					new_line;
+					---¿lo ha escrito usted?^";
 					new_line;
 				default:
-					print "El taxista le hace un leve gesto con la cabeza, como 
-					haciéndole ver que le está escuchando.";
-					new_line;
+					print "El taxista le mira atento a través del 
+					retrovisor.^";
 					new_line;
 				}
 				ConversationManager.show_topic_inventory();
 				return true;
 		],
-		estado 0,		! estado del taxista
-		poeta false,	! indica si el taxista sabe que Gabriel escribe poesía
+		last_topic 0,	 	! Identificador del último tema discutido
+		k_poetry false,		! Sabe que Gabriel escribe poesía
+ private
+		!! Indica si el objeto ha sido ya descrito al usuario o no
+		described false, 
  has
 		male concealed;
 
@@ -239,110 +254,117 @@ TI_Conversation	conversacion_taxista_1
  with	topics op03 op02 op01;
 
 TI_Topic	op01
- with	id	1,
-		entry [;
+ with	entry [;
 			print (strong) "responder", (em) " a la pregunta";
 			italic_style();
 		],
 		keys	'responder,' 'reponderle,' 'responde,' 'pregunta',
-		reply [;
 !! XXX
-			print "---Si, es algo que escribí yo. Me alegro que le guste.^";
+		reply [ flag;
+			print "---Si. Es... es algo que escribí yo.^";
+			flag = PressAnyKey(flag);
 			new_line;
-			print "---Vaya, así que es usted poeta.^";
+			print "---Vaya. De modo que es usted poeta, ¿eh?^";
+			flag = PressAnyKey(flag);
 			new_line;
-			print "---Supongo. De los malos. No gané el premio.^";
+			print "---Si... supongo. De los malos, me temo. No conseguí ningún 
+			premio.^";
+			flag = PressAnyKey(flag);
 			new_line;
 			print "---¿Cómo dice?^";
+			flag = PressAnyKey(flag);
 			new_line;
 			print "---Presenté esos versos a un concurso. Aquí al lado, hace 
-			unos meses. No conseguí el premio. ---Aunque sí se sintió bastante 
+			unos meses. No gané nada. ---Aunque sí se sintió bastante 
 			satisfecho de su obra.^";
+			flag = PressAnyKey(flag);
 			new_line;
 			print "---Lástima. Bueno, la próxima vez será.^";
+			flag = PressAnyKey(flag);
 			new_line;
-			print "Lo duda mucho. No habrá una próxima vez, se dice. Pero en 
-			esta ocasión tiene cuidado de guardárselo para si mismo y no 
-			decirlo en voz alta.^";
+			print "Lo duda mucho. Estaba seguro de que abandonaría Chile para 
+			regresar algún día, cuando todo fuese seguro otra vez. ¿Pero qué 
+			sentido tiene volver? No deja nada atrás, salvo recuerdos, y no hay 
+			forma de regresar al pasado. ¿Por qué iba a regresar aquí?^";
+			new_line;
+			print "Afortunadamente, en esta ocasión tiene cuidado de guardarse 
+			esos pensamientos para sí mismo y no expresarlos en voz alta.^";
 		], 
 		reaction [;
-			taxista.estado = self.id;
-			taxista.poeta = true;
+			taxista.last_topic = 1;
+			taxista.k_poetry = true;
 			self.append_topic_inventory = true;
 		],
 ;
 
 TI_Topic	op02
- with	id		2,
-		entry [;
-			print (em) "hablar del ", (strong) "estado del tráfico";
+ with	entry [;
+			print (em) "hablar sobre el ", (strong) "estado del tráfico";
 			italic_style();
 		],
 		keys	'estado' 'trafico' 'coches' 'atasco' 'carretera', 
-		reply [;
+!! XXX
+		reply [ flag;
 			print "---No es habitual que se forme un atasco así a estas horas, 
 			¿no es cierto?";
-			if (taxista.estado == 0 && ~~taxista.poeta)
+			if (taxista.last_topic == 0 && ~~taxista.k_poetry)
 				print " ---cambia de tema Gabriel.";
 			new_line;
+			flag = PressAnyKey(flag);
 			new_line;
-			print "---Nada de lo que ocurre estos días es habitual. Todavía 
-			queda alguna calle cortada, y los camiones del ejército andan de un 
-			lado para otra parando el tráfico, así que últimamente hay atascos 
-			a todas horas.";
-			new_line;
-			new_line;
-			print "---Parando el tráfico... ¿controles? ---no puede evitar que 
-			la voz se le escape con una octava de más.";
-			new_line;
-			new_line;
-			"---Si. El otro día me hicieron parar un par de veces. Pero no. No 
-			he vuelto a ver un control desde entonces. Lo que pasa es que 
-			aparece un camión y entonces te tienen ahí quieto hasta que termina 
-			de pasar. Como si toda la puñetera ciudad fuera su casa. Enseguida 
-			vuelven a abrir la carretera. En cuanto termina de pasar, claro. 
-			Para cuando arrancas ya se ha montado el pifostio.";
-		],
+			print "---No, no es habitual. ¿Pero qué hay de habitual 
+			últimamente? Deja que yo se lo diga: una mierda hay de habitual. 
+			Han cortado una calle ahí al lado y todo ese tráfico pasa ahora por 
+			aquí. Por eso estos pifostios de... ---deja la frase en el aire, 
+			incapaz tal vez de dar con una palabra lo suficientemente 
+			malsonante.^";
+		], 
 		reaction [;
 			parent(self).remove_topic(op01);
-			taxista.estado = self.id;
-		],
-		append_topic_inventory true,
+			taxista.last_topic = 2;
+			self.append_topic_inventory = true;
+		], 
 ;
 
 TI_Topic	op03
- with	id		3,
-		entry [;
+ with	entry [;
 			print (em) "hablar sobre el ", (strong) "golpe contra el gobierno";
 			italic_style();
 		],
 		keys	'golpe' 'contra' 'gobierno' 'estado' 'sublevacion' 'militar', 
-		reply [;
-!! TODO
-			print "---¿Puedo preguntarle una cosa? ¿Qué le parece todo lo que 
-			ha ocurrido? Ya sabe, la caída de Allende y todo eso...";
-			if (taxista.estado == 0 && ~~taxista.poeta)
+!! XXX
+		reply [ flag;
+			print "---¿Puedo preguntarle una cosa?";
+			if (taxista.last_topic == 0 && ~~taxista.k_poetry)
 				print " ---cambia de tema Gabriel.";
 			new_line;
+			flag = PressAnyKey(flag);
 			new_line;
-			"---Puede preguntar, desde luego. Pero no espere que le conteste. 
-			Yo no meto el hocico donde no me llaman. Yo sólo sé de mi taxi y de 
-			cuáles son los sitios dónde la gente suele necesitarme. Y ya.";
+			print "---Claro. Adelante.^";
+			flag = PressAnyKey(flag);
+			new_line;
+			print "¿Qué opinión tiene de todo lo que ha ocurrido? Ya sabe, 
+			el... eh... la caída de Allende y... y todo eso.^";
+			flag = PressAnyKey(flag);
+			new_line;
+			print "---Pues qué quiere que le diga. Yo no meto el hocico donde 
+			no me llaman, ¿sabe? Además, ¿qué sé yo? Yo sólo soy un taxista. 
+			Entiendo de motores, de cuáles son los lugares donde suele haber 
+			alguien necesitando que le lleven. Y ya. Las cosas de política para 
+			quienes sepan de política.^";
 		], 
 		reaction [;
 			parent(self).remove_topic(op01);
-			taxista.estado = self.id;
-			give self ~visited;
+			taxista.last_topic = 3;
+			self.append_topic_inventory = true;
 		], 
-		append_topic_inventory true,
 ;
 
 TI_Conversation	conversacion_taxista_2
  with	topics op06 op05 op04;
 
 TI_Topic	op04
- with	id	4, 
-		keys	'ser,' 'se,' 'contestar,' 'contesta,' 'sincero' 'sinceridad', 
+ with	keys	'ser,' 'se,' 'contestar,' 'contesta,' 'sincero' 'sinceridad', 
 		entry [;
 			print (strong) "ser sincero";
 			italic_style();
@@ -354,12 +376,12 @@ TI_Topic	op04
 		reaction [;
 			parent(self).remove_topic(op05);
 			parent(self).remove_topic(op06);
+			taxista.last_topic = 4;
 		],
 		subtopics op02 op03;
 
 TI_Topic	op05
- with	id	5,
-		keys	'mentir,' 'miente,' 'mentira', 
+ with	keys	'mentir,' 'miente,' 'mentira', 
 		entry [;
 			print (strong) "mentir";
 			italic_style();
@@ -371,12 +393,12 @@ TI_Topic	op05
 		reaction [;
 			parent(self).remove_topic(op04);
 			parent(self).remove_topic(op06);
+			taxista.last_topic = 5;
 		],
 		subtopics op02 op03;
 
 TI_Topic	op06
- with	id	6, 
-		keys	'guardar,' 'guarda,' 'silencio', 
+ with	keys	'guardar,' 'guarda,' 'silencio', 
 		entry [;
 			print (strong) "guardar silencio";
 			italic_style();
@@ -391,6 +413,7 @@ print "---Bueno, ---rompe finalmente el silencio, y exhalando una gran nube de h
 		reaction [;
 			parent(self).remove_topic(op04);
 			parent(self).remove_topic(op05);
+			taxista.last_topic = 6;
 		],
 		subtopics op02 op03;
 

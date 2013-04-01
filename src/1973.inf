@@ -196,17 +196,24 @@ Include ">1973_escena5.inf";	! Escena 5: Flores para un joven difunto
 ];
 
 !!------------------------------------------------------------------------------
-!! Espera una pulsación de tecla para continuar
+!!	Espera una pulsación de tecla para continuar. Retorna verdadero si la tecla 
+!!	pulsada es 'q' o 'Q', falso en caso contrario.
 !!------------------------------------------------------------------------------
-[ PressAnyKey tenths;
-	#Ifdef	TARGET_GLULX;
-	#Ifdef	USAR_GWINDOWS;
-	!! Si hay un Fade activo de Damusix se fuerza espera "no-temporizada"
-	if (Damusix.EnFade()) { tenths = 0; }
-	#Endif;	! USAR_GWINDOWS;
-	#Endif;	! TARGET_GLULX;
-	if (tenths > 0) { return KeyDelay (tenths); }
-	else { return KeyCharPrimitive(); }
+![ PressAnyKey tenths;
+!	#Ifdef	TARGET_GLULX;
+!	#Ifdef	USAR_GWINDOWS;
+!	!! Si hay un Fade activo de Damusix se fuerza espera "no-temporizada"
+!	if (Damusix.EnFade()) { tenths = 0; }
+!	#Endif;	! USAR_GWINDOWS;
+!	#Endif;	! TARGET_GLULX;
+!	if (tenths > 0) { return KeyDelay (tenths); }
+!	else { return KeyCharPrimitive(); }
+!];
+[ PressAnyKey flag char;
+	if (flag) return true;
+	char = KeyCharPrimitive();
+	if (char == 'q' or 'Q') return true;
+	else return false;
 ];
 
 !!------------------------------------------------------------------------------

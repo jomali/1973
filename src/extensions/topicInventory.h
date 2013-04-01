@@ -13,8 +13,8 @@
 !!	Language:		ES (Castellano)
 !!	System:			Inform-INFSP 6
 !!	Platform:		Z-Machine / Glulx
-!!	Version:		1.2
-!!	Released:		2013/03/30
+!!	Version:		1.3
+!!	Released:		2013/04/01
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -248,10 +248,14 @@ Class TI_Topic
 				}
 			}
 		],
-		!! Número de coincidencias de la entrada del usuario con el tema
-		hits 0,
+		!! Descripción del tema
+		entry 0, 
+		!! Desarrollo del tema
+		reply 0, 
 		!! Acciones a ejecutar después de tratar el tema
 		reaction 0,
+		!! Número de coincidencias de la entrada del usuario con el tema
+		hits 0,
 		!! Establecer a 'true' para forzar que el turno en que se trata este 
 		!! tema finalice mostrando el inventario de temas disponibles
 		append_topic_inventory false,
@@ -334,8 +338,9 @@ Object ConversationManager
 			return self.current_conversation ~= nothing;
 		], 
 		topic_inventory_size [ o size;
-			objectloop (o in self.current_conversation)
-				size++;
+			if (self.is_running()) 
+				objectloop (o in self.current_conversation)
+					size++;
 			return size;
 		], 
 		show_topic_inventory [;
@@ -464,12 +469,12 @@ Verb	'npc.talk'
 ;
 
 [ NPCTalkSub;
-	if (ConversationManager.is_running()) {
+	if (ConversationManager.topic_inventory_size() > 0) {
 		if (ConversationManager.get_topic_inventory_flag()) {
 			new_line;
 			ConversationManager.show_topic_inventory();
 		}
-	} else
+	} else 
 		ConversationManager.end();
 	return true;
 ];
