@@ -4,7 +4,7 @@
 
  File:			inform6.lang
  Author(s):		J. Francisco Martín <jfm.lisaso@gmail.com>
- Version:		1.1
+ Version:		1.2
  Released:		2013/03/26
 
  Para instalar este resaltado parcial de sintaxis de Inform 6 en GtkSourceView 
@@ -362,13 +362,14 @@
     </context>
 
     <context id ="types" style-ref="name">
-      <keyword>emph</keyword>	<!-- types.h v.4.0 -->
-      <keyword>strong</keyword>	<!-- types.h v.4.0 -->
-      <keyword>code</keyword>	<!-- types.h v.4.0 -->
-      <keyword>parser</keyword>	<!-- types.h v.4.0 -->
-      <keyword>em</keyword>		<!-- types.h v.4.0 -->
-      <keyword>ESB</keyword>	<!-- HelpRoutines, bold type -->
-      <keyword>ESI</keyword>	<!-- HelpRoutines, italic type -->
+      <keyword>emph</keyword>			<!-- types.h v.4.0 -->
+      <keyword>strong</keyword>			<!-- types.h v.4.0 -->
+      <keyword>code</keyword>			<!-- types.h v.4.0 -->
+      <keyword>parser</keyword>			<!-- types.h v.4.0 -->
+      <keyword>parser_line</keyword>	<!-- types.h v.4.1 -->
+      <keyword>em</keyword>				<!-- types.h v.4.0 -->
+      <keyword>ESB</keyword>			<!-- HelpRoutines, bold type -->
+      <keyword>ESI</keyword>			<!-- HelpRoutines, italic type -->
     </context>
 
     <context id="inform_6">
