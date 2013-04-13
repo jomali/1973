@@ -42,13 +42,19 @@
 !!------------------------------------------------------------------------------
 
 Room	CAFE "Café Blanca Florida"
- with	name	'cafe' 'blanca' 'florida' 'cafeteria' 'bar' 'local' 'taberna' 
+ with
+		name	'cafe' 'blanca' 'florida' 'cafeteria' 'bar' 'local' 'taberna' 
 				'meson' 'tasca' 'establecimiento',
 		initial [; if (self hasnt visited) {
+			!! Inicializaciones multimedia: ------------------------------------
+			#Ifdef TARGET_GLULX;
+			Damusix.AsignarCanal(BAR_ENVIRONMENT, 0, 50, -1);
+			Damusix.Tocar(BAR_ENVIRONMENT);
+			#Endif; ! TARGET_GLULX;
+			!! Otra inicializaciones de la escena: -----------------------------
 			SetGrammaticalInflection(PASADO_TERCERA_PERSONA);
-
+			!! Introducción ----------------------------------------------------
 print "Debe abandonar el país ahora que la situación se ha vuelto insostenible. Los militares se han hecho a la calle y todos los del partido están en peligro de ser prendidos o encarcelados. O algo peor, puesto que desde que cayó el gobierno se han sucedido las ejecuciones... entre ellas la de su amigo Pablo Ureta. Todavía siente cómo la frente se le perla con un sudor frío al pensar en que estuvieron juntos apenas horas antes de su asesinato, en un bar de la avenida Libertador Bernardo O'Higgins:^";
-
 			new_line;
 			return true;
 		}],
@@ -64,9 +70,10 @@ print "Debe abandonar el país ahora que la situación se ha vuelto insostenible. 
 			local charlaban, fumaban y daban cuenta de sus bebidas.";
 			!! TODO: "Al fondo puede ver una diana de dardos.
 		],
-	w_to	[; return self.out_to(); ],
-	out_to	"No podía irse aún. No sin hablar antes con Pablo.",
-	cant_go "Esa dirección no llevaba a ningún lado.";
+		w_to	[; return self.out_to(); ],
+		out_to	"No podía irse aún. No sin hablar antes con Pablo.",
+		cant_go "Esa dirección no llevaba a ningún lado.", 
+;
 
 !!------------------------------------------------------------------------------
 !! Objetos con rutinas react_before:

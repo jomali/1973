@@ -12,8 +12,8 @@
 !!	Language:		ES (Castellano)
 !!	System:			Inform, INFSP 6
 !!	Platform:		Z-Machine / Glulx
-!!	Version:		4.1
-!!	Released:		2013/03/25
+!!	Version:		4.2
+!!	Released:		2013/04/02
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -34,6 +34,25 @@
 !!	<http://www.gnu.org/licenses/>.
 !!
 !!------------------------------------------------------------------------------
+!!
+!!	Estilos:
+!!
+!!	*	emph
+!!	*	bold
+!!	*	preformatted
+!!	*	fixed
+!!	*	header
+!!	*	subheader
+!!	*	alert
+!!	*	reverse
+!!	*	note
+!!	*	underline
+!!	*	block
+!!	*	input
+!!	*	user 1
+!!	*	user 2
+!!
+!!------------------------------------------------------------------------------
 System_file;
 
 Constant _RST_	= 0;
@@ -41,47 +60,66 @@ Constant _IST_	= 1;
 Constant _MST_	= 2;
 Constant _BST_	= 3;
 
-Default	EMPHASIS_STYLE	_IST_;
-Default	STRONG_STYLE	_BST_;
-Default	CODE_STYLE		_MST_;
 Default PARSER_STYLE	_RST_;
-Default	PARSER_MSG1		"";
-Default PARSER_MSG2		"";
+Default	PARSER_PREFIX	"";
+Default PARSER_SUFIX	"";
+
+Global	current_style = _RST_;
 
 !!==============================================================================
 !!	Selección de estilo de texto
 !!------------------------------------------------------------------------------
 
-#Ifdef	TARGET_ZCODE;
-[ roman_style;	font on; style roman; ];		! Estilo: romana
-[ italic_style;	font on; style underline; ];	! Estilo: italica
-[ bold_style;	font on; style bold; ];			! Estilo: negrita
-[ monospaced_style; font off; ];				! Estilo: monoespaciada
-#Ifnot;	! TARGET_GLULX;
-[ roman_style;	glk($0086, 0); ];				! Estilo: romana
-[ italic_style;	glk($0086, 1); ];				! Estilo: italica
-[ bold_style;	glk($0086, 3); ];				! Estilo: negrita
-[ monospaced_style; glk($0086, 2); ];			! Estilo: monoespaciada
-#Endif; ! TARGET_
+[ roman_style;
+	#Ifdef	TARGET_ZCODE;
+	font on; style roman;
+	#Ifnot;	! TARGET_GLULX;
+	glk($0086, 0);
+	#Endif;	! TARGET_
+	current_style = _RST_;
+];
 
-!! Estilo de mensajes del parser:
+[ italic_style;
+	#Ifdef	TARGET_ZCODE;
+	font on; style underline;
+	#Ifnot;	! TARGET_GLULX;
+	glk($0086, 1);
+	#Endif;	! TARGET_
+	current_style = _IST_;
+];
 
-[ parser_style;
+[ bold_style;
+	#Ifdef	TARGET_ZCODE;
+	font on; style bold;
+	#Ifnot;	! TARGET_GLULX;
+	glk($0086, 3);
+	#Endif;	! TARGET_
+	current_style = _BST_;
+];
+
+[ monospaced_style;
+	#Ifdef	TARGET_ZCODE;
+	font off;
+	#Ifnot;	! TARGET_GLULX;
+	glk($0086, 2);
+	#Endif;	! TARGET_
+	current_style = _MST_;
+];
+
+[ start_parser_style;
 	switch (PARSER_STYLE) {
 	_RST_:	roman_style();
 	_IST_:	italic_style();
 	_BST_:	bold_style();
 	_MST_:	monospaced_style();
 	}
-];
-
-[ start_parser_style;
-	parser_style();
-	if (PARSER_MSG1 ~= 0) print (string) PARSER_MSG1;
+	if (PARSER_PREFIX ~= 0)
+		print (string) PARSER_PREFIX;
 ];
 
 [ end_parser_style;
-	if (PARSER_MSG2 ~= 0) print (string) PARSER_MSG2;
+	if (PARSER_SUFIX ~= 0)
+		print (string) PARSER_SUFIX;
 	roman_style();
 ];
 
@@ -89,58 +127,75 @@ Default PARSER_MSG2		"";
 !!	Imprimir texto en diferentes estilos
 !!------------------------------------------------------------------------------
 
-[ emph text;
+[ emph text st;
 	if (text == 0) return false;
-	switch (EMPHASIS_STYLE) {
+	st = current_style;
+	switch (st) {
+	_RST_:	italic_style();
+	_IST_:	roman_style();
+	_BST_:	roman_style();
+	_MST_:	italic_style();
+	}
+	print (string) text;
+	switch (st) {
 	_RST_:	roman_style();
 	_IST_:	italic_style();
 	_BST_:	bold_style();
 	_MST_:	monospaced_style();
 	}
-	print (string) text;
-	roman_style();
 	return true;
 ];
 
-[ strong text;
+[ strong text st;
 	if (text == 0) return false;
-	switch (STRONG_STYLE) {
+	st = current_style;
+	switch (st) {
+	_RST_:	bold_style();
+	_IST_:	bold_style();
+	_BST_:	italic_style();
+	_MST_:	bold_style();
+	}
+	print (string) text;
+	switch (st) {
 	_RST_:	roman_style();
 	_IST_:	italic_style();
 	_BST_:	bold_style();
 	_MST_:	monospaced_style();
 	}
-	print (string) text;
-	roman_style();
 	return true;
 ];
 
-[ code text;
+[ code text st;
 	if (text == 0) return false;
-	switch (CODE_STYLE) {
+	st = current_style;
+	switch (st) {
+	_RST_:	monospaced_style();
+	_IST_:	monospaced_style();
+	_BST_:	monospaced_style();
+	_MST_:	italic_style();
+	}
+	print (string) text;
+	switch (st) {
 	_RST_:	roman_style();
 	_IST_:	italic_style();
 	_BST_:	bold_style();
 	_MST_:	monospaced_style();
 	}
-	print (string) text;
-	roman_style();
 	return true;
 ];
 
-[ parser text;
+[ parser text st;
 	if (text == 0) return false;
-	parser_style();
-	print (string) text;
-	roman_style();
-	return true;
-];
-
-[ parser_line text;
-	if (text == 0) return false;
+	st = current_style;
 	start_parser_style();
 	print (string) text;
 	end_parser_style();
+	switch (st) {
+	_RST_:	roman_style();
+	_IST_:	italic_style();
+	_BST_:	bold_style();
+	_MST_:	monospaced_style();
+	}
 	return true;
 ];
 

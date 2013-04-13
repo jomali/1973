@@ -59,10 +59,12 @@ Constant MAX_CARRIED = 3;		! Máx. de objetos que se pueden llevar en mano
 Constant SACK_OBJECT = ropa;	! Contenedor principal para la librería
 
 Constant PARSER_STYLE _IST_;	! Selecciona estilo de los mensajes del parser
-Constant PARSER_MSG1 "[";		! Define texto inicial de mensajes del parser
-Constant PARSER_MSG2 "]";		! Define texto final de mensajes del parser
+Constant PARSER_PREFIX "[";		! Define texto inicial de mensajes del parser
+Constant PARSER_SUFIX "]";		! Define texto final de mensajes del parser
 
-Global flowers;					! Tipo de flor seleccionado (ver NOTA #1)
+Global flowers;					! Tipo de flor destacado en el relato (NOTA #1)
+Global say_switch = true;		! Interruptor de la función say()
+Global next_track;				! Siguiente pista de audio a reproducir
 
 
 !!==============================================================================
@@ -85,7 +87,7 @@ Replace VersionSub;				! Créditos detallados de la aplicación
 
 
 !!==============================================================================
-!!	Librerías y extensiones (Parte 1 de 2)
+!!	Librerías y extensiones (Parte 1 de 3)
 !!------------------------------------------------------------------------------
 
 #Ifdef TARGET_GLULX;
@@ -102,16 +104,33 @@ Include "gwincls.h";			! GWindows; Window Class Framework
 
 
 !!==============================================================================
-!! Puntos de entrada para Glk (sólo Glulx)
+!!	Puntos de entrada para Glk (sólo Glulx)
 !!------------------------------------------------------------------------------
 
-#Ifdef	TARGET_GLULX;
-[ GWindowsGlkEvent ev;
+#Ifdef TARGET_GLULX;
+[ GWindowsGlkEvent ev context abortres;
+	!! Se notifica el efecto de fade de Tiempo Real
 	Damusix.NotificarFade(ev);
-	if (ev-->0 == 1) ! evtype_Timer
+	!! Se gestiona el evento glk:
+	switch (ev-->0) {
+	0:	! evtype_None        - none
+	1:	! evtype_Timer       - event repeated at fixed intervals
 		AimingManager.run();
+	2:	! evtype_CharInput   - keystroke input in a window
+	3:	! evtype_LineInput   - full line of input in a window
+	4:	! evtype_MouseInput  - mouse input in a window
+	5:	! evtype_Arrange     - some windows sizes have changed
+	6:	! evtype_Redraw      - graphic windows need redrawing
+	7:	! evtype_SoundNotify - sound finished playing
+		if (next_track ~= 0) {
+			Damusix.Tocar(next_track, 1);
+			next_track = 0;
+		}
+	8:	! evtype_Hyperlink   - selection of a hyperlink in a window
+	}
+	ev = context + abortres; ! (para evitar alertas del compilador)
 ];
-#Endif;	! TARGET_GLULX;
+#Endif; ! TARGET_GLULX;
 
 
 !!==============================================================================
@@ -119,62 +138,48 @@ Include "gwincls.h";			! GWindows; Window Class Framework
 !!------------------------------------------------------------------------------
 
 #Ifdef TARGET_GLULX;
-Include "gwindows.h";			! GWindows: Remplazos de la librería
 Include "damusix.h";			! Administrador unificado de sonido en Glulx
-Include ">1973.bli";			! Recursos multimedia
+Include "gwindows.h";			! GWindows: Remplazos de la librería
+Include ">1973.bli";			! Recursos multimedia de la aplicación
 Include ">1973_gui.inf";		! Definición de la interfaz gráfica
 #Endif; ! TARGET_GLULX;
 
-Include "VerbLib.h";			! Define cómo trabajan las acciones
-
 Include "aimAndFire.h";			! Sistema de apuntado y disparo QTE
-!Include "GlulxBox.h";			! Comando box multiplataforma
-!Include "gtalk.h";				! Sistema de conversación por menús
 Include "receptacles.h";		! Contenedores (con capacidad limitada)
 Include "topicInventory.h";		! Sistema de conversación con inv. de temas
 Include "types.h";				! Rutinas para modificar estilo de los textos
-				
 
-!!==============================================================================
-!!	Definición de atributos, clases y objetos
-!!------------------------------------------------------------------------------
-
-Include ">1973_escena0.inf";	! Prólogo: El Limbo
-Include ">1973_escena1.inf";	! Escena 1: Habitación de Gabriel
-Include ">1973_escena2.inf";	! Escena 2: Café Blanca Florida
-Include ">1973_escena3.inf";	! Escena 3: Calles de Santiago
-Include ">1973_escena4.inf";	! Escena 4: Encuentro con Luz
-Include ">1973_escena5.inf";	! Escena 5: Flores para un joven difunto
+Include "VerbLib.h";			! Define cómo trabajan las acciones
 
 
 !!==============================================================================
 !!	Puntos de entrada y otras rutinas
 !!------------------------------------------------------------------------------
 
+!!------------------------------------------------------------------------------
+!! Inicialización del relato
+!!------------------------------------------------------------------------------
 [ Initialise;
-	lookmode = 2;
-
 	EraseWindow();
 	SelectFlowerType();
-	SelectScene(3, 1);
+	lookmode = 2;
+	location = HABITACION;
+
+	#Ifdef TARGET_GLULX;
+	if (~~Damusix.TestAudio()) {
+		box	""
+			"AVISO: Esta aplicación incluye contenidos gráficos y "
+			"de audio, pero tu intérprete GLULX no los soporta    "
+			"adecuadamente. El programa se iniciará con parte o   "
+			"la totalidad de sus recursos multimedia desactivados."
+			"";
+		print (parser) "Pulsa una tecla para continuar";
+		PressAnyKey();
+		EraseWindow();
+	}
+	#Endif; ! TARGET_GLULX;
 
 	return 2;
-];
-
-!!------------------------------------------------------------------------------
-!!	Selección de escena
-!!------------------------------------------------------------------------------
-[ SelectScene scene x;
-	switch (scene) {
-	1:
-		PlayerTo(HABITACION, x);
-	2:
-		PlayerTo(CAFE, x);
-	3:
-		PlayerTo(TAXI, x);
-	default:
-		PlayerTo(LIMBO, x);
-	}
 ];
 
 !!------------------------------------------------------------------------------
@@ -186,34 +191,13 @@ Include ">1973_escena5.inf";	! Escena 5: Flores para un joven difunto
 !! Foco del jugador
 !!------------------------------------------------------------------------------
 [ InScope person item;
-	!!-------------------
-	if ( person==player && location==thedark ) {
-		objectloop( item in parent(player) )
-			if ( item has moved ) PlaceInScope( item );
+	!! En la oscuridad, se mueven al foco del jugador todos aquellos objetos 
+	!! que hayan sido ya manipulados previamente por el personaje
+	if ( person == player && location == thedark ) {
+		objectloop(item in parent(player))
+			if (item has moved) PlaceInScope(item);
 	}
-	!!-------------------
 	return false;
-];
-
-!!------------------------------------------------------------------------------
-!!	Espera una pulsación de tecla para continuar. Retorna verdadero si la tecla 
-!!	pulsada es 'q' o 'Q', falso en caso contrario.
-!!------------------------------------------------------------------------------
-![ PressAnyKey tenths;
-!	#Ifdef	TARGET_GLULX;
-!	#Ifdef	USAR_GWINDOWS;
-!	!! Si hay un Fade activo de Damusix se fuerza espera "no-temporizada"
-!	if (Damusix.EnFade()) { tenths = 0; }
-!	#Endif;	! USAR_GWINDOWS;
-!	#Endif;	! TARGET_GLULX;
-!	if (tenths > 0) { return KeyDelay (tenths); }
-!	else { return KeyCharPrimitive(); }
-!];
-[ PressAnyKey flag char;
-	if (flag) return true;
-	char = KeyCharPrimitive();
-	if (char == 'q' or 'Q') return true;
-	else return false;
 ];
 
 !!------------------------------------------------------------------------------
@@ -227,9 +211,34 @@ Include ">1973_escena5.inf";	! Escena 5: Flores para un joven difunto
 		glk($0024, gg_quotewin, 0); ! close_window
 		gg_quotewin = 0;
     }
-    glk($002A, gg_mainwin);  ! window_clear
+    glk($002A, gg_mainwin); ! window_clear
     if (gg_statuswin) glk($002A, gg_statuswin); ! window_clear
     #Endif;
+];
+
+!!------------------------------------------------------------------------------
+!!	Espera una pulsación de tecla o, si se introduce un valor, a que pase una 
+!!	cantidad delay de décimas de segundo antes de continuar. Retorna verdadero 
+!!	si la tecla pulsada es 'q' o 'Q', falso en caso contrario.
+!!------------------------------------------------------------------------------
+[ PressAnyKey delay char;
+	#Ifdef TARGET_GLULX;
+	if (Damusix.EnFade()) delay = 0;
+	#Endif; ! TARGET_GLULX;
+	if (delay > 0) char = KeyDelay(delay);
+	else char = KeyCharPrimitive();
+	if (char == 'q' or 'Q') return true;
+	else return false;
+];
+
+!!------------------------------------------------------------------------------
+!!	Imprime un mensaje text y, si el interruptor say_switch está activado, 
+!!	espera una pulsación de tecla para continuar.
+!!------------------------------------------------------------------------------
+[ Say text;
+	if (text ofclass String && text ~= 0) print (string) text;
+	if (say_switch) say_switch = PressAnyKey();
+	new_line;
 ];
 
 !!------------------------------------------------------------------------------
@@ -293,7 +302,7 @@ Object	violetas "violetas"
 
 !!------------------------------------------------------------------------------
 !!	Rutinas y definiciones requeridas para lanzar la acción ##Examine sobre un 
-!!	objeto tecleando únicamente su nombre. Solución propuesta en 
+!!	objeto tecleando únicamente su nombre. Sigue la implementación propuesta en 
 !!	<http://rec.arts.int-fiction.narkive.com/Cz9j184N/inform-6-parser-question>
 !!------------------------------------------------------------------------------
 [ UnknownVerb;
@@ -464,13 +473,27 @@ Verb meta 'gna'
 ];
 
 [ GNASub;
-	start_parser_style(); print "Objeto: ";
-	roman_style(); print (name) noun; 
-	parser_style(); print ". (", (The) noun," / ", (the) noun," / ", (a) noun, 
+	start_parser_style();
+	print "Objeto: ";
+	roman_style();
+	print (name) noun; 
+	parser_style();
+	print ". (", (The) noun," / ", (the) noun," / ", (a) noun, 
 	" / -", (o) noun, ")^GNA ", (GNA) noun;
 	end_parser_style();
 	new_line;
 ];
 #Endif; ! DEBUG;
+
+
+!!==============================================================================
+!!	Definición de atributos, clases y objetos
+!!------------------------------------------------------------------------------
+
+Include ">1973_escena0.inf";	! Prólogo: El Limbo
+Include ">1973_escena1.inf";	! Escena 1: Habitación de Gabriel
+Include ">1973_escena2.inf";	! Escena 2: Café Blanca Florida
+Include ">1973_escena3.inf";	! Escena 3: Calles de Santiago
+Include ">1973_escena4.inf";	! Escena 4: Flores para un joven difunto
 
 

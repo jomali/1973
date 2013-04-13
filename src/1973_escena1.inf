@@ -40,86 +40,118 @@
 !!==============================================================================
 !!	HABITACION: En la habitación
 !!------------------------------------------------------------------------------
+!!	1. Tocar TRACK_1_EXPOSITION, sin repeticiones, con FLAG_SOUND_NOTIFY:
+!!		Damusix.AsignarCanal(TRACK_1_EXPOSITION, 0, -1, 1);
+!!		Damusix.Tocar(TRACK_1_EXPOSITION, 1);
+!!	2. Tocar TRACK_1_ACTION, con repeticiones:
+!!		Damusix.AsignarCanal(TRACK_1_ACTION, 0, -1, -1);
+!!		Damusix.Tocar(TRACK_1_ACTION, 1);
+!!	3. Cambiar repeticiones de TRACK_1_ACTION):
+!!		Damusix.Repeticion(TRACK_1_ACTION, 1);
+!!	4. Tocar TRACK_1_DENOUEMENT, sin repeticiones, con FLAG_SOUND_NOTIFY:
+!!		Damusix.AsignarCanal(TRACK_1_DENOUEMENT, 0, -1, 1);
+!!		Damusix.Tocar(TRACK_1_DENOUEMENT, 1);
 
 Room	HABITACION "En la habitación"
- private
-		!! Indica si el objeto ha sido ya descrito al usuario o no
-		described false, 
  with
-		is_dark	true,
-		inhibit_object_list true, 
 		name	'habitacion' 'cuarto' 'dormitorio' 'estancia', 
 		short_name " ", 
 		initial [; if (self hasnt visited) {
-!			box	""
-!				" Te ha dolido, ¿verdad?, dijo el chico.           "
-!				" Si.                                              "
-!				" ¿Eres muy valiente?                              "
-!				" Regular.                                         "
-!				" ¿Qué es lo más valiente que has hecho?           "
-!				" Escupió en la carretera una flema sanguinolenta. "
-!				" Levantarme esta mañana, dijo.                    "
-!				""
-!				"                                   CORMAC MCCARTY "
-!				"                                   The Road, 2006 "
-!				"";
-!			PressAnyKey();
-!			EraseWindow();
-!			box	""
-!				" Te ha dolido, ¿verdad?, dijo el chico.           "
-!				" Si.                                              "
-!				" ¿Eres muy valiente?                              "
-!				" Regular.                                         "
-!				" ¿Qué es lo más valiente que has hecho?           "
-!				" Escupió en la carretera una flema sanguinolenta. "
-!				" Levantarme esta mañana, dijo.                    "
-!				""
-!				"                                   CORMAC MCCARTY "
-!				"                                   The Road, 2006 "
-!				"";
-!			print (parser) "Pulsa una tecla para empezar";
-!			PressAnyKey();
-!			EraseWindow();
-
-!! TODO: Cambio de imagen en la version grafica
-
+			!! Inicializaciones multimedia: ------------------------------------
+			#Ifdef TARGET_GLULX;
+			Damusix.AsignarCanal(WOUNDED_A, 0, -1, 1);
+			Damusix.AsignarCanal(WOUNDED_B, 1, -1, -1);
+			Damusix.AsignarCanal(WOUNDED_C, 2, -1, 1);
+			Damusix.Tocar(WOUNDED_A, 1);
+			next_track = WOUNDED_B;
+			#Endif; ! TARGET_GLULX;
+			!! Otra inicializaciones de la escena: -----------------------------
 			SetGrammaticalInflection(PRESENTE_TERCERA_PERSONA);
-print "No debió ser así. Eso es lo primero que el joven Gabriel Mistral piensa al abrir los ojos y despertar en la sofocante oscuridad de la habitación. Aún permanece unos minutos en la cama, tumbado con la mirada perdida entre las sombras del techo mientras las imágenes de los últimos días desfilan ante él en un tropel confuso. Una y otra vez ha repasado esas mismas imágenes últimamente. Y, una y otra vez, le han asaltado las mismas preguntas para las que sigue viéndose incapaz de encontrar respuesta: ¿cómo se podía haber torcido todo de esa manera? ¿dónde se habían equivocado?";
-			new_line; 
+			if (flowers == nothing) SelectFlowerType();
+			!! Introducción ----------------------------------------------------
+			box	""
+				" Te ha dolido, ¿verdad?, dijo el chico.           "
+				" Si.                                              "
+				" ¿Eres muy valiente?                              "
+				" Regular.                                         "
+				" ¿Qué es lo más valiente que has hecho?           "
+				" Escupió en la carretera una flema sanguinolenta. "
+				" Levantarme esta mañana, dijo.                    "
+				""
+				"                                   CORMAC MCCARTY "
+				"                                   The Road, 2006 "
+				"";
+			PressAnyKey();
+			EraseWindow();
+			box	""
+				" Te ha dolido, ¿verdad?, dijo el chico.           "
+				" Si.                                              "
+				" ¿Eres muy valiente?                              "
+				" Regular.                                         "
+				" ¿Qué es lo más valiente que has hecho?           "
+				" Escupió en la carretera una flema sanguinolenta. "
+				" Levantarme esta mañana, dijo.                    "
+				""
+				"                                   CORMAC MCCARTY "
+				"                                   The Road, 2006 "
+				"";
+			print (parser) "Pulsa una tecla para empezar";
+			PressAnyKey();
+			EraseWindow();
+print "No debió ser así. Eso es lo primero que el joven Gabriel Mistral piensa al abrir los ojos y despertar en la sofocante oscuridad de la habitación. Aún permanece unos minutos en la cama, tumbado con la mirada perdida entre las sombras del techo mientras las imágenes de los últimos días desfilan ante él en un tropel confuso. Una y otra vez ha repasado esas imágenes, obstinado, convencido de que había algo oculto en ellas que no podía ver, una clave secreta que necesitaba desentrañar para comprender lo ocurrido. Pero una y otra vez se ha encontrado incapaz de dar con ello. ¿Cómo se podía haber torcido todo de esa manera? ¿Dónde se habían equivocado?^";
 			new_line;
-print "Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flowers, " lo ocupa todo. Ella. Automáticamente tiende la mano a un lado, buscando a ciegas el tacto de su cuerpo. Pero lo único que encuentra son las sábanas, húmedas y pegajosas. No, claro que no está, recuerda. No aquí. La dejó durmiendo en el hotel antes de volverse a casa en mitad de la noche, solo de nuevo. Se dice que es mejor así, al fin y al cabo ahora tiene cosas más importantes de las que preocuparse. Deja escapar un largo suspiro de resignación y se obliga a incorporarse finalmente en el colchón.";
-			new_line; 
-			KeyCharPrimitive();
+print "Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flowers, " lo ocupa todo. Ella. Automáticamente tiende la mano a un lado, buscando a ciegas el tacto de su cuerpo, pero lo único que encuentra son las sábanas, húmedas y pegajosas. No, claro que no está, recuerda. No aquí. La dejó durmiendo en el hotel antes de volverse a casa en mitad de la noche, solo de nuevo. Decide que es mejor así, al fin y al cabo ahora tiene cosas más importantes de las que preocuparse. De modo que deja escapar un largo suspiro de resignación y se obliga a incorporarse finalmente en el colchón.^";
+			PressAnyKey();
 			new_line;
 			self.short_name = "En la habitación";
+			DrawStatusLine();
 			return true;
 		}],
 		description [;
-			if (~~self.described) {
+			if (~~self.is_dark)
+				"La intensa claridad del amanecer se cuela ahora por la ventana 
+				abierta, iluminando un caos de ropa, libros, papeles y otros 
+				trastos esparcidos por todo el dormitorio. Sólo su cama y el 
+				escritorio siguen aún en pie entre el tumulto.";
+			else if (self.described)
+				"Apenas una fina franja de luz logra colarse en la habitación 
+				por entre los resquicios que dejan las cortinas cerradas. 
+				Insuficiente todavía como para descorrer el telón de tinieblas 
+				que lo envuelve todo.";
+			else {
 				self.described = true;
 				"A su alrededor todo son penumbras. La escasa luz capaz de 
 				filtrarse a través de las cortinas cerradas sirve tan sólo para 
 				dibujar una estrecha franja blanca y zigzagueante sobre el 
 				suelo de la habitación.";
-			} else if (self.is_dark)
-				"Apenas una fina franja de luz logra colarse en la habitación 
-				por entre los resquicios que dejan las cortinas cerradas. 
-				Insuficiente todavía como para descorrer el telón de tinieblas 
-				que lo envuelve todo.";
-			else
-				"La intensa claridad del amanecer se cuela ahora por la ventana 
-				abierta, iluminando un caos de ropa, libros, papeles y otros 
-				trastos esparcidos por todo el dormitorio. Sólo su cama y el 
-				escritorio siguen aún en pie entre el tumulto.";
-		],
+			}
+		], 
+		before [;
+			Listen:
+				print "Desde el exterior llega el eco";
+				if (self.is_dark) print " distante y apagado";
+				" de motores.";
+			Smell:
+				if (~~self.is_dark)
+					"El aire que se cuela por la ventana es fresco y fragante.";
+				else if (self.smelled)
+					"Huele al sudor empapado entre las sábanas.";
+				else {
+					self.smelled = true;
+					"Durante unos instantes permanece suspendido entre las 
+					tinieblas el perfume de ", (the) flowers, ". Sin embargo 
+					está sólo en su memoria y se desvanece enseguida. Aquí y 
+					ahora el único aroma que hay es el acre del sudor que 
+					empapa las sábanas.";
+				}
+		], 
 		e_to [;
 !! TODO: comprobaciones
 !! XXX
-print "Gabriel se detiene a echar un último vistazo a la habitación y tuerce la boca en una media sonrisa al pensar que se parece mucho a su propia vida; puesta toda patas arriba, llena de sueños rotos, pisoteados y tirados por el suelo. Al cabo de un momento, sin más, le da la espalda al pasado y sale con paso decidido por la puerta abierta.";
+print "Gabriel se detiene a echar un último vistazo a la habitación y tuerce la boca en una media sonrisa al pensar que se parece mucho a su propia vida; puesta toda patas arriba, llena de sueños rotos, pisoteados y tirados por el suelo. Al cabo de un momento, sin más, le da la espalda al pasado y sale con paso decidido por la puerta abierta.^";
+			PressAnyKey();
 			new_line;
-			KeyCharPrimitive();
-			new_line;
-			SelectScene(2); !! Fin de la escena
+			PlayerTo(CAFE);	! FIN DE LA ESCENA
 			return true;
 		],
 		out_to [;
@@ -128,6 +160,13 @@ print "Gabriel se detiene a echar un último vistazo a la habitación y tuerce la 
 		cant_go
 			"No puede ir por ahí. La puerta es la única salida de la 
 			habitación.", 
+		is_dark	true,
+		inhibit_object_list true, 
+ private
+		!! Indica si el objeto ha sido ya descrito al usuario o no
+		described false, 
+		!! Indica si ha sido olido o no
+		smelled false, 
 ;
 
 !!------------------------------------------------------------------------------
@@ -141,10 +180,9 @@ Atrezzo	"puerta" HABITACION
 		adjectives 'madera' 'pintada' 'blanco' 'blanca' 'sencilla' 'cerrada' 
 			'abierta', 
 		description [;
-			print "De madera pintada en blanco, tiene colgado un colorido 
-			calendario de pared.";
-			if (self has open) " Está abierta de par en par.";
-			else " Está cerrada.";
+			if (self has open) "Está abierta de par en par.";
+			"De madera pintada en blanco. Ahora que está cerrada deja ver el 
+			colorido calendario de pared que tiene colgado por detrás.";
 		], 
 		after [;
 			Close:
@@ -169,6 +207,13 @@ Atrezzo	-> -> "calendario de pared"
 			grandes números: ", (emph) "1973", ".";
 		], 
 		before [;
+			Examine:
+				if (parent(self) has open) {
+					give parent(self) ~open;
+					print "Cierra la puerta para ver mejor el calendario que 
+					está colgado detrás.^";
+					new_line;
+				}
 			Close, Open:
 				"Ya está bien como está.";
 			Pull, Push, PushDir, Take:
@@ -183,11 +228,7 @@ Atrezzo	-> -> "calendario de pared"
 !! Items:
 
 Item	maleta "maleta de viaje" HABITACION
- private
-		!! Indica si el objeto ha sido ya descrito al usuario o no
-		described false, 
  with
-		size 5, 
 		name_m	'equipaje' 'maleton', 
 		name_f	'maleta',
 		gender	G_FEMENINO, 
@@ -229,6 +270,10 @@ Item	maleta "maleta de viaje" HABITACION
 				if (self hasnt moved) 
 					"Recoge la maleta del suelo."; 
 		],
+		size 5, 
+ private
+		!! Indica si el objeto ha sido ya descrito al usuario o no
+		described false, 
  has
 		female openable;
 

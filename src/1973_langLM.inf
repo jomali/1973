@@ -1315,7 +1315,6 @@ Default GRAMMATICAL_INFLECTION 2;
 				5:	"^¡Te quedaste a oscuras!";
 				6:	"^¡Se quedó a oscuras!";
 				}
-!! TODO: comprobar que se ejecuten daemons
 			10:
 				!! Mensaje cuando el jugador introduce una linea en blanco.
 				!! -- "¿Perdón?";
@@ -1340,14 +1339,16 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! parser no recordaba ninguna palabra mal. Ejmplo de uso del 
 				!! comando EEPA:
 				!!		> SACA MAZANA VERDE DE LA CESTA
-				!!		No veo eso por aquí.
+				!!		No vqeo eso por aquí.
 				!!		> EEPA MANZANA
 				!!		Sacas la manzana verde de la cesta de mimbre.
 				!! -- "Lo siento, eso no puede corregirse.";
 				print_ret (parser) "Eso no puede corregirse.";
 			15:
+!! XXX
 				!! Se usa EEPA sin especificar la palabra corregida.
-				print_ret (parser) "No te preocupes.";
+				print_ret (parser) "Un fallo lo tiene cualquiera, no te 
+				preocupes.";
 			16:
 				!! Si el jugador pone EEPA seguido de dos o más palabras.
 				print_ret (parser) "~Eepa~ sólo puede corregir una 
@@ -2749,8 +2750,8 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! -- "No estoy seguro de a qué se refiere ~", 
 				!! -- (address) pronoun_word, "~.";
 				start_parser_style();
-				print "No está claro a qué te refieres con '", 
-				(address) pronoun_word ,"'.";
+				print "No está claro a qué te refieres con ~", 
+				(address) pronoun_word ,"~.";
 				end_parser_style();
 				new_line;
 				return true;
@@ -2803,7 +2804,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! pronombre se refiere a un objeto que ya no está visible. 
 				start_parser_style();
 				print "Ahora mismo no puedes ver lo que representa el pronombre 
-				'", (address) pronoun_word ,"' (", (the) pronoun_obj ,").";
+				~", (address) pronoun_word ,"~ (", (the) pronoun_obj ,").";
 				end_parser_style();
 				new_line;
 				return true;

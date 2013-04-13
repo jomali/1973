@@ -51,12 +51,22 @@ Room	TAXI "Dentro del taxi"
  with
 		name	'taxi' 'coche' 'vehiculo' 'automovil' 'auto', 
 		initial [; if (self hasnt visited) {
+			!! Inicializaciones multimedia: ------------------------------------
+			#Ifdef TARGET_GLULX;
+			Damusix.AsignarCanal(SATIATE_PERCUSSION, 0, 0, -1);
+			Damusix.AsignarCanal(SATIATE_STRINGS, 1, 10, -1);
+			Damusix.AsignarCanal(TRAFFIC_ENVIRONMENT, 2, 50, -1);
+			Damusix.AsignarCanal(STREET_ENVIRONMENT, 3, 50, -1);
+			Damusix.Tocar(SATIATE_PERCUSSION);
+			Damusix.Tocar(SATIATE_STRINGS);
+			Damusix.Tocar(TRAFFIC_ENVIRONMENT);
+			#Endif; ! TARGET_GLULX;
+			!! Otra inicializaciones de la escena: -----------------------------
 			SetGrammaticalInflection(PRESENTE_TERCERA_PERSONA);
 			move maleta to self;
-!! TODO: ajustar temporizador
-			StartTimer(self, 5);
-print "Siente en la mano el frío peso del revólver un instante antes de comprender que lleva un rato jugueteando con él, absorto. Inmediatamente lo vuelve a guardar en uno de los bolsillos del abrigo y mira alarmado al taxista; éste, por suerte, tiene toda su atención puesta en la carretera y no parece prestar demasiada atención a nada más. No da señas de haber reparado en el arma, al menos. Con el susto aún en el cuerpo, Gabriel respira hondo y se recuesta mejor en el asiento, posando la mirada sobre la ciudad que se va esfumando poco a poco tras las ventanillas. Intentando alejar los recuerdos de su cabeza.";
-			new_line;
+			StartTimer(self, 5); !! TODO: ajustar temporizador
+			!! Introducción ----------------------------------------------------
+print "Siente el frío peso del revólver en la mano un instante antes de comprender que juguetea con él, absorto, desde hace un rato, e inmediatamente lo vuelve a guardar en uno de los bolsillos del abrigo. Por suerte, el taxista tiene la atención puesta en la carretera y no parece prestar demasiada atención a nada más. No da señas de haber reparado en el arma, al menos. Gabriel respira hondo y se recuesta mejor en el asiento, intentando ahuyentar los recuerdos fijándose en los detalles de la ciudad que se va esfumando poco a poco tras las ventanillas.^";
 			new_line;
 			return true;
 		}],
@@ -68,11 +78,10 @@ print "Siente en la mano el frío peso del revólver un instante antes de comprend
 				detenida también ha quedado la ciudad tras las ventanillas, 
 				como una última intantánea para el recuerdo.";
 			else
-!! XXX
 				"El taxi avanza lentamente a través de las congestionadas 
-				calles de Santiago. Desde su asiento en la parte de atrás, 
-				Gabriel ve cómo desfilan, quizá por última vez, las calles, los 
-				edificios y las gentes de la que ha sido su ciudad hasta hoy.";
+				calles de Santiago. Desde su asiento en la parte de atrás ve 
+				cómo desfilan, quizá por última vez, las calles, los edificios 
+				y las gentes de la ciudad en la que ha vivido hasta hoy.";
 		],
 		before [;
 			!! TODO Jump:
@@ -124,6 +133,11 @@ print "Siente en la mano el frío peso del revólver un instante antes de comprend
 				new_line;
 				new_line;
 			}
+			#Ifdef TARGET_GLULX;
+			Damusix.Volumen(TRAFFIC_ENVIRONMENT, 0);
+			!Damusix.Tocar(STREET_ENVIRONMENT);
+			Damusix.FadeIn(SATIATE_PERCUSSION, 1000, 50);
+			#Endif; ! TARGET_GLULX;
 			give puerta_taxi open;
 			return puerta_taxi;
 		],
@@ -153,46 +167,51 @@ print "Siente en la mano el frío peso del revólver un instante antes de comprend
 		],
 		!! Avanza al estado: 1
 		crosses_neftali_basoalto [ flag;
+			#Ifdef TARGET_GLULX;
+			Damusix.FadeIn(SATIATE_STRINGS, 500, 20);
+			#Endif; ! TARGET_GLULX;
 !! TODO: ajustar temporizador
 			StartTimer(self, 5);
 			self.state = 1;
-!! XXX
-print "El coche da una ligera sacudida al cambiar de calle. Gabriel advierte que acaban de doblar por Neftalí Basoalto, y al momento le vienen a la mente los Juegos Florales que aquí se celebraron hace unos meses. Él participó, pues siempre ha adorado la poesía. Se presentó con un breve poemario: ~Luces de Medianoche~, del que recuerda unos versos en especial:^";
+print "El coche da una ligera sacudida de pronto al cambiar de calle. Gabriel advierte que acaban de doblar por Neftalí Basoalto, y al momento le vienen a la mente los Juegos Florales que aquí se celebraron hace unos meses. Él participó, pues siempre ha adorado la poesía. Se presentó con un breve poemario: ~Luces de Medianoche~, del que recuerda unos versos en especial:^";
 			new_line;
 print (em) "@<<Las mareas susurran al incierto / oscuro cielo estrellado, / lamentos y lloros amargos / grandes duelos y sueños aciagos. / Pues no conocen de mayor acierto / ni peor sino marcado, / el fin de la noche amante, / de su rostro fresco, siempre radiante. / Con el amanecer a cielo abierto / el Sol brilla asombrado, / de ver su noche desnuda / a los pies ya muerta y siempre muda.@>>^";
 			new_line;
 			print "---Eso es muy bonito, ¿es suyo?^";
 			flag = PressAnyKey(flag);
 			new_line;
-			print "Siente cómo la sangre le salta de repente a la cara. No se 
-			había dado cuenta de que recitaba en voz alta.";
-			new_line;
+			print "Siente cómo la sangre le salta repentinamente a la cara; no 
+			se había dado cuenta de que recitaba en voz alta.^";
 			new_line;
 			ConversationManager.start(conversacion_taxista_1);
 			return true;
 		],
 		!! Avanza al estado: 2
-		gets_stuck [;
+		gets_stuck [ flag;
+			#Ifdef TARGET_GLULX;
+			Damusix.FadeIn(SATIATE_STRINGS, 500, 50);
+			#Endif; ! TARGET_GLULX;
 			self.state = 2;
-!! XXX
-print "Gabriel ve cómo se iluminan las luces de freno del coche que tienen delante y un instante después ellos mismos empiezan a frenar hasta detenerse por completo.";
+			print "Ven cómo se iluminan las luces de freno de los coches que 
+			tienen delante y acto seguido ellos mismos tienen que frenar hasta 
+			quedar completamente detenidos.^";
 			new_line;
+			print "El taxista suspira largamente y gira levemente la cabeza 
+			hacia Gabriel.^";
 			new_line;
-			print "---¿Va todo bien?";
-			new_line;
-			new_line;
-!! XXX
-print "---En este país no va bien una mierda últimamente. Han cortado una calle un poco más atrás y todo ese tráfico pasa ahora por aquí. Así que se montan unos pifostios de... ---deja la frase en el aire, tal vez porque no es capaz de encontrar una palabra lo suficientemente malsonante. Después gira la cabeza hacia atrás, mirando a Gabriel por encima del hombro ---¿tiene mucha prisa";
+			print "---¿Tiene mucha prisa";
 			if (taxista.k_poetry) print ", señor poeta";
-			print "?";
+			print "?^";
+			flag = PressAnyKey(flag);
 			new_line;
+			print "---Necesito estar en San Antonio para eso de las cuatro.^";
+			flag = PressAnyKey(flag);
 			new_line;
-			print "---Tengo que estar en San Antonio sobre las 16:15. Mejor 
-			antes.";
+			print "Los ojos del hombre se desvían hacia la maleta durante un 
+			instante antes de volver a fijarse en los de Gabriel. Su tono de 
+			voz desenfadado suena serio de pronto:^";
 			new_line;
-			new_line;
-			print "---De modo que está huyendo, ¿eh?";
-			new_line;
+			print "---Va a huir del país, ¿eh?^";
 			new_line;
 			ConversationManager.start(conversacion_taxista_2);
 			return true;
@@ -214,10 +233,10 @@ NPC		taxista "taxista" TAXI
 		description [;
 			print "Se trata de un hombre de mediana edad, con los brazos 
 			desnudos bronceados por el sol. Mordisquea el extremo de un largo 
-			puro apagado mientras observa concentrado el estado del tráfico";
+			cigarro apagado mientras observa concentrado el estado del tráfico";
 			if (~~self.described) {
 				self.described = true;
-				", como un experimentado jugador de ajedrez que, erguido sobre 
+				", como un jugador de ajedrez experimentado que, erguido sobre 
 				el tablero, estudia la disposición de las fichas antes de 
 				ejecutar su siguiente movimiento.";
 			}
@@ -226,9 +245,9 @@ NPC		taxista "taxista" TAXI
 		before [;
 			TalkTo:
 				if (~~ConversationManager.is_running())
-					"El taxista permanece en silencio, absorto en la carretera 
-					y en sus pensamientos. Gabriel decide no interrumpirle y 
-					centrarse en los suyos propios.";
+					"El taxista permanece en silencio, ensimismado en la 
+					carretera y en sus pensamientos. Gabriel decide no 
+					interrumpirle y centrarse en los suyos propios.";
 				switch (self.last_topic) {
 				0:
 					print "---Eso que ha recitado, ---insiste el conductor, 
@@ -255,38 +274,30 @@ TI_Conversation	conversacion_taxista_1
 
 TI_Topic	op01
  with	entry [;
-			print (strong) "responder", (em) " a la pregunta";
-			italic_style();
+			print (strong) "responder", " a la pregunta";
 		],
 		keys	'responder,' 'reponderle,' 'responde,' 'pregunta',
-!! XXX
-		reply [ flag;
-			print "---Si. Es... es algo que escribí yo.^";
-			flag = PressAnyKey(flag);
+		reply [;
+			Say ("---Pues si. Es... es algo que escribí yo.^");
+			Say ("---¡Vaya! Así que es usted poeta, ¿eh?^");
+			Say ("---Si, supongo que si. Pero de los malos, me temo. No 
+			conseguí ningún premio.^");
+			Say ("---¿Cómo dice?^");
+			print "---Esos... eso que he recitado. Son unos versos que presenté 
+			a concurso. Aquí al lado, hace unos meses. No gané nada. ---Aunque 
+			sí se sintió bastante satisfecho con su obra.";
+			if (ventanilla.is_described())
+				print " Juzgaba que había mejorado mucho desde los pareados 
+				grabados a punta de navaja en los árboles.";
 			new_line;
-			print "---Vaya. De modo que es usted poeta, ¿eh?^";
-			flag = PressAnyKey(flag);
-			new_line;
-			print "---Si... supongo. De los malos, me temo. No conseguí ningún 
-			premio.^";
-			flag = PressAnyKey(flag);
-			new_line;
-			print "---¿Cómo dice?^";
-			flag = PressAnyKey(flag);
-			new_line;
-			print "---Presenté esos versos a un concurso. Aquí al lado, hace 
-			unos meses. No gané nada. ---Aunque sí se sintió bastante 
-			satisfecho de su obra.^";
-			flag = PressAnyKey(flag);
-			new_line;
-			print "---Lástima. Bueno, la próxima vez será.^";
-			flag = PressAnyKey(flag);
-			new_line;
-			print "Lo duda mucho. Estaba seguro de que abandonaría Chile para 
-			regresar algún día, cuando todo fuese seguro otra vez. ¿Pero qué 
-			sentido tiene volver? No deja nada atrás, salvo recuerdos, y no hay 
-			forma de regresar al pasado. ¿Por qué iba a regresar aquí?^";
-			new_line;
+			Say();
+			Say ("---Lástima. Bueno, ya habrá mejor suerte la próxima vez.^");
+			Say ("Duda mucho que haya una próxima vez. Hasta ahora estaba 
+			seguro de que si abandonaba Chile sería para regresar algún día, 
+			más tarde o más temprano, cuando todo fuese seguro otra vez. Pero, 
+			¿y si Pablo tenía razón? ¿Qué sentido tenía volver? No dejaba atrás 
+			más que recuerdos, y no hay forma de regresar al pasado. ¿Por qué 
+			motivo iba a regresar aquí?^");
 			print "Afortunadamente, en esta ocasión tiene cuidado de guardarse 
 			esos pensamientos para sí mismo y no expresarlos en voz alta.^";
 		], 
@@ -299,11 +310,9 @@ TI_Topic	op01
 
 TI_Topic	op02
  with	entry [;
-			print (em) "hablar sobre el ", (strong) "estado del tráfico";
-			italic_style();
+			print "hablar sobre el ", (strong) "estado del tráfico";
 		],
 		keys	'estado' 'trafico' 'coches' 'atasco' 'carretera', 
-!! XXX
 		reply [ flag;
 			print "---No es habitual que se forme un atasco así a estas horas, 
 			¿no es cierto?";
@@ -313,9 +322,10 @@ TI_Topic	op02
 			flag = PressAnyKey(flag);
 			new_line;
 			print "---No, no es habitual. ¿Pero qué hay de habitual 
-			últimamente? Deja que yo se lo diga: una mierda hay de habitual. 
-			Han cortado una calle ahí al lado y todo ese tráfico pasa ahora por 
-			aquí. Por eso estos pifostios de... ---deja la frase en el aire, 
+			últimamente? Ocurre que han cortado un par de calles allí atrás y 
+			han reconducido todo ese tráfico por aquí. No sé cuándo demonios 
+			terminará de volver todo a la normalidad. Todos todos los puñeteros 
+			días montan estos pifostios de... ---deja la frase en el aire, 
 			incapaz tal vez de dar con una palabra lo suficientemente 
 			malsonante.^";
 		], 
@@ -328,11 +338,9 @@ TI_Topic	op02
 
 TI_Topic	op03
  with	entry [;
-			print (em) "hablar sobre el ", (strong) "golpe contra el gobierno";
-			italic_style();
+			print "hablar sobre el ", (strong) "golpe contra el gobierno";
 		],
 		keys	'golpe' 'contra' 'gobierno' 'estado' 'sublevacion' 'militar', 
-!! XXX
 		reply [ flag;
 			print "---¿Puedo preguntarle una cosa?";
 			if (taxista.last_topic == 0 && ~~taxista.k_poetry)
@@ -343,15 +351,18 @@ TI_Topic	op03
 			print "---Claro. Adelante.^";
 			flag = PressAnyKey(flag);
 			new_line;
-			print "¿Qué opinión tiene de todo lo que ha ocurrido? Ya sabe, 
+			print "---¿Qué opinión tiene de todo lo que ha ocurrido? Ya sabe, 
 			el... eh... la caída de Allende y... y todo eso.^";
 			flag = PressAnyKey(flag);
 			new_line;
-			print "---Pues qué quiere que le diga. Yo no meto el hocico donde 
-			no me llaman, ¿sabe? Además, ¿qué sé yo? Yo sólo soy un taxista. 
-			Entiendo de motores, de cuáles son los lugares donde suele haber 
-			alguien necesitando que le lleven. Y ya. Las cosas de política para 
-			quienes sepan de política.^";
+			print "---Qué quiere que le diga. Yo no meto el hocico donde no me 
+			llaman, ¿sabe? Además, ¿qué sé yo? Sólo soy un taxista. Yo entiendo 
+			de motores, de en qué lugares suele haber clientes necesitando que 
+			les lleven y de esas cosas. Nada más. Prefiero dejar la política 
+			para quienes sepan de política, si me comprende usted.^";
+			flag = PressAnyKey(flag);
+			new_line;
+			print "---Si, desde luego.^";
 		], 
 		reaction [;
 			parent(self).remove_topic(op01);
@@ -367,7 +378,6 @@ TI_Topic	op04
  with	keys	'ser,' 'se,' 'contestar,' 'contesta,' 'sincero' 'sinceridad', 
 		entry [;
 			print (strong) "ser sincero";
-			italic_style();
 		],
 		reply [;
 			print "---Si. Voy a escapar de Chile en barco.";
@@ -384,7 +394,6 @@ TI_Topic	op05
  with	keys	'mentir,' 'miente,' 'mentira', 
 		entry [;
 			print (strong) "mentir";
-			italic_style();
 		],
 		reply [;
 			print "---¿Que si voy a huir? ¡Qué va! Qué va... vaya tontería...";
@@ -401,7 +410,6 @@ TI_Topic	op06
  with	keys	'guardar,' 'guarda,' 'silencio', 
 		entry [;
 			print (strong) "guardar silencio";
-			italic_style();
 		], 
 		reply [;
 print "Al ver que Gabriel no contesta, el taxista se inclina a un lado para abrir la guantera y descubre un pequeño alijo de estuches de cerillas en el interior del receptáculo. Coge uno, y utiliza la llama de un fósforo para encenderse el cigarro.";
@@ -458,10 +466,7 @@ Atrezzo	puerta_taxi "puerta" TAXI
 !! TODO:
 !!	<>	abrir / cerrar ventanilla
 Atrezzo	ventanilla "ventanilla" TAXI
- private
-		!! Si está activado, se imprime una descripción reducida del objeto
-		described false, 
- with	counter 0, 
+ with
 		name_m	'cristal' 'vidrio', 
 		name_f	'ventanilla' 'ventana' 'luna', 
 		name_mp	'cristales' 'vidrios', 
@@ -469,27 +474,36 @@ Atrezzo	ventanilla "ventanilla" TAXI
 		gender	G_FEMENINO, 
 		adjectives 'lateral' 'laterales' 'puerta' 'puertas', 
 		description [; 
-			if (TAXI.get_state() == 2)
+			if (TAXI.get_state() == 3) {
+!! XXX
+				"Descripción de la calle con el coche parado.";
+			} else if (TAXI.get_state() == 2) {
 				<<Go out_obj>>;
-			else if (~~self.described) {
+			} else if (~~self.described) {
 				self.described = true;
 				"Al mirar por la ventanilla reconoce un parquecillo con árboles 
 				a lo lejos. En otra época, cuando eran poco más que niños, 
-				recuerda utilizar aquellos troncos para grabar primerizas 
-				declaraciones de amor adolescente con ayuda de alguna pequeña 
-				navaja. Aunque las muchachas nunca encontraron aquellos 
-				garabatos especialmente románticos. A él, ciertamente, nunca le 
-				funcionaron.";
+				recuerda grabar rudimentarias declaraciones de amor sobre las 
+				cortezas de aquellos árboles. Aunque a él, en realidad, los 
+				corazones asaeteados y los pareados empalagosos nunca le 
+				funcionaron para ligar.";
+			} else {
+				"Pierde la mirada entre los detalles de la ciudad que se 
+				desvanece tras las ventanillas, sin fijarse realmente en nada.";
 			}
-			else
-				"Su mirada se pierde entre los detalles de la ciudad que se va 
-				desvaneciendo poco a poco tras las ventanillas.";
 		],
 		before [;
 			Search: 
 				<<Examine self>>; 
 		], 
- has	female;
+		is_described [;
+			return self.described;
+		], 
+ private
+		!! Si está activado, se imprime una descripción reducida del objeto
+		described false, 
+ has
+		female;
 
 
 !!==============================================================================

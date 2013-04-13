@@ -13,7 +13,7 @@
 !!	Language:		ES (Castellano)
 !!	System:			Inform-INFSP 6
 !!	Platform:		Z-Machine / Glulx
-!!	Version:		1.3
+!!	Version:		1.4
 !!	Released:		2013/04/01
 !!
 !!------------------------------------------------------------------------------
@@ -343,28 +343,41 @@ Object ConversationManager
 					size++;
 			return size;
 		], 
+		!! Mensaje del narrador:
+!		show_topic_inventory [;
+!			#Ifdef	TARGET_ZCODE;		!!
+!			font on; style underline;	!!
+!			#Ifnot;	! TARGET_GLULX;		!! Itálica
+!			glk($0086, 1);				!!
+!			#Endif; ! TARGET_			!!
+!			switch (GRAMMATICAL_INFLECTION) {
+!			1:	print "(Puedo ";
+!			2:	print "(Puedes ";
+!			3:	print "(Puede ";
+!			4:	print "(Podía ";
+!			5:	print "(Podías ";
+!			6:	print "(Podía ";
+!			}
+!			if (self.topic_inventory_size() > 1) print "escoger entre ";
+!			self.current_conversation.show_topic_list();
+!			print ".)^";
+!			#Ifdef	TARGET_ZCODE;		!!
+!			font on; style roman;		!!
+!			#Ifnot;	! TARGET_GLULX;		!! Romana
+!			glk($0086, 0);				!!
+!			#Endif; ! TARGET_			!!
+!			return true;
+!		], 
+		!! Mensaje del parser (requiere la extensión types.h)
 		show_topic_inventory [;
-			#Ifdef	TARGET_ZCODE;		!!
-			font on; style underline;	!!
-			#Ifnot;	! TARGET_GLULX;		!! Itálica
-			glk($0086, 1);				!!
-			#Endif; ! TARGET_			!!
-			switch (GRAMMATICAL_INFLECTION) {
-			1:	print "(Puedo ";
-			2:	print "(Puedes ";
-			3:	print "(Puede ";
-			4:	print "(Podía ";
-			5:	print "(Podías ";
-			6:	print "(Podía ";
-			}
+			start_parser_style();
+			print "Puedes ";
+			if (self.topic_inventory_size() > 1)
+				print "escoger entre ";
 			self.current_conversation.show_topic_list();
-			print ".)^";
-			#Ifdef	TARGET_ZCODE;		!!
-			font on; style roman;		!!
-			#Ifnot;	! TARGET_GLULX;		!! Romana
-			glk($0086, 0);				!!
-			#Endif; ! TARGET_			!!
-			return true;
+			print ".";
+			end_parser_style();
+			new_line;
 		], 
 		try [ o o_tmp_hits;
 			if (self.current_conversation) {
