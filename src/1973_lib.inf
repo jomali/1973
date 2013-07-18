@@ -174,6 +174,18 @@ Global	GRAMMATICAL_INFLECTION = PRESENTE_SEGUNDA_PERSONA;
 		print (string) Story;
 		glk($0086, 0); ! set normal style
 		#Endif; ! TARGET_
+		#Ifdef TEST_SCENE1;
+		print (emph) " -- Pruebas de la ESCENA 1";
+		#Endif; ! TEST_SCENE1;
+		#Ifdef TEST_SCENE2;
+		print (emph) " -- Pruebas de la ESCENA 2";
+		#Endif; ! TEST_SCENE2;
+		#Ifdef TEST_SCENE3;
+		print (emph) " -- Pruebas de la ESCENA 3";
+		#Endif; ! TEST_SCENE3;
+		#Ifdef TEST_SCENE4;
+		print (emph) " -- Pruebas de la ESCENA 4";
+		#Endif; ! TEST_SCENE4;
 		new_line;
 	}
 	if (Headline ~= 0) {

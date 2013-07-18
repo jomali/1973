@@ -50,6 +50,7 @@ Constant Story "PROYECTO 1973";
 Release 0;
 
 Constant ALPHA_RELEASE;
+Constant TEST_SCENE1;
 
 Constant MANUAL_PRONOUNS;		! Los pronoms. refieren a objetos ya mencionados
 Constant NO_PLACES;				! Acciones LUGARES Y OBJETOS desactivadas
@@ -182,7 +183,7 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 	new_line;
 	italic_style();
 	print (emph) "AVISO: ", (string) Story, " se encuentra aún en fase temprana 
-	de desarrollo. Los contenidos (especialmente los textuales) mostrados a 
+	de desarrollo. Los contenidos (en especial los textos) mostrados a 
 	continuación pueden no ajustarse necesariamente al resultado final.^";
 	roman_style();
 	new_line;

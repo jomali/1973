@@ -1,5 +1,5 @@
 ! GWindows Core module                 L. Ross Raszewski
-! 1.0b                                 2002
+! 1.0                                  2002
 !
 ! This is the very core of GWindows; it controls the loading of independent
 ! GWindows Modules.
@@ -40,56 +40,49 @@ Class GWin_Module;
  give GWin_Core general;
 ];
 
-!!==============================================================================
-!! Créditos generales de la aplicación
-!!------------------------------------------------------------------------------
-[ Banner;
-	InstallCore();
-	if (Story ~= 0) {
-		glk($0086, 3); ! set header style
-		print (string) Story;
-		glk($0086, 0); ! set normal style
-		new_line;
-	}
-	if (Headline ~= 0) {
-		print (string) Headline;
-		new_line;
-	}
-	print "Release ";
-	PrintVersionNumber();
-	print " / Serial number ";
-	PrintSerialNumber();
-	print " / Inform v"; inversion;
-	print " Library ", (string) LibRelease;
-	#Ifdef DEBUG;
-	print " ";
-	#Endif; ! DEBUG;
-	#Ifdef STRICT_MODE;
-	print "S";
-	#Endif; ! STRICT_MODE
-	#Ifdef INFIX;
-	print "X";
-	#Endif; ! INFIX
-	#Ifdef DEBUG;
-	print "D";
-	#Endif; ! DEBUG
-	new_line;
-	AnnounceModule();
+[ Banner i j;
+   InstallCore();
+   if (Story ~= 0)
+   {
+   glk($0086, 3); ! set header style
+   print (string) Story;
+   glk($0086, 0); ! set normal style
+   }
+   if (Headline ~= 0)
+       print (string) Headline;
+   print "Release ";
+   @aloads 52 0 i;
+   print i;
+   print " / Serial number ";
+   for (i=0:i<6:i++) print (char) 54->i;
+   print " / Inform v"; inversion;
+   print " Library ", (string) LibRelease;
 
-! objectloop(i in GWin_Core)
-! if (i hasnt general)
-! {
-!  j++;
-!  print " / ";
-!  AnnounceModule(i);
-! }
-! if (j==0) {
-! print " / ";
-! AnnounceModule(GWin_Core);
-! }
-! new_line;
+#ifdef DEBUG;
+ print " ";
+#endif;
+#ifdef STRICT_MODE;
+   print "S";
+#endif;
+#ifdef INFIX;
+   print "X";
+#endif;
+#ifdef DEBUG;
+   print "D";
+#endif;
+ objectloop(i in GWin_Core)
+ if (i hasnt general)
+ {
+  j++;
+  print " / ";
+  AnnounceModule(i);
+ }
+ if (j==0) {
+ print " / ";
+ AnnounceModule(GWin_Core);
+ }
+ new_line;
 ];
-
 [ InitGlkWindow x o w i;
    InstallCore();
  objectloop(o in GWin_Core)

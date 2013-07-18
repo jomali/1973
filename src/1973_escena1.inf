@@ -61,6 +61,9 @@
 !!	*	mensaje nuevo para acción *sleep* mientras esté en la HABITACION
 !!	*	mensaje nuevo para acción *swim*
 !!	*	mensaje nuevo para acción *wake*
+!!	*	objeto luz (rayos de luz, interruptor de luz,...) con el que el 
+!!		interlector pueda interactuar (enciende la luz, o examina la luz).
+!!	*	objeto polvo (se menciona al mirar bajo la cama)
 
 Room	HABITACION
  with	name	'alcoba' 'alojamiento' 'apartamento' 'aposento' 'casa' 'cuarto' 
@@ -189,7 +192,7 @@ Room	HABITACION
 			if (~~self.light_flag)
 				"Con la habitación a oscuras no acierta a alcanzar ", 
 				(the) puerta_habitacion, ".";
-			if (~~IndirectlyContains(player, ropa) || ropa hasnt worn)
+			if (ropa notin player || ropa hasnt worn)
 				"Será mejor que se vista antes. No tiene ninguna intención de 
 				pasearse por ahí desnudo.";
 			if (~~IndirectlyContains(player, maleta)) {
@@ -226,12 +229,14 @@ Room	HABITACION
 				move oscuridad to LIMBO;
 				give cama ~concealed;
 				self.light_flag = true;
+				self.inhibit_object_list = false;
 			}
 			if (status == false) {
 				give cama concealed;
 				move oscuridad to HABITACION;
 				give oscuridad ~general;
 				self.light_flag = false;
+				self.inhibit_object_list = true;
 			}
 		], 
  private
@@ -244,8 +249,8 @@ Room	HABITACION
 !! Objetos con rutinas react_before:
 
 Furniture	cama "cama" HABITACION
- with	name_m	'mueble' 'mobiliario' 'moblaje' 'colchon' 'jergon' 'somier' 
-				'lecho' 'catre' 'camastro',
+ with	name_m	'camastro' 'catre' 'colchon' 'jergon' 'lecho' 'mobilario' 
+				'moblaje' 'mueble' 'somier', 
 		name_f	'cama' 'piltra',
 		name_mp	'muebles',
 		gender	G_FEMENINO,
@@ -293,11 +298,7 @@ Furniture	cama "cama" HABITACION
 !! TODO - comportamiento de after
  private
 		description_flag false,	! indica si el objeto ha sido descrito
- has	female enterable supporter concealed;
-
-
-!!------------------------------------------------------------------------------
-!! Atrezzo:
+ has	concealed enterable female supporter;
 
 !!	-	*oscuridad.general* se activa para evitar las comprobaciones 
 !!		contempladas en la rutina react_before del objeto
@@ -365,7 +366,6 @@ with	name_f	'lobreguez' 'negrura' 'oscuridad' 'penumbra' 'tenebrosisdad',
 					return false;
 				if (IndirectlyContains(player, noun))
 					return false;
-!! TODO - probar
 				if (second ~= nothing && IndirectlyContains(player, second))
 					return false;
 				"Con la habitación a oscuras no acierta a dar con ", 
@@ -396,6 +396,7 @@ with	name_f	'lobreguez' 'negrura' 'oscuridad' 'penumbra' 'tenebrosisdad',
 				if (IndirectlyContains(player, noun))
 					return false;
 				"No acierta a dar con ", (the) noun, " en la oscuridad.";
+!! TODO - modificar texto
 			Swing:
 				"Decide que no es buena idea andar columpiándose por ningún 
 				lado con la habitación a oscuras.";
@@ -407,12 +408,16 @@ with	name_f	'lobreguez' 'negrura' 'oscuridad' 'penumbra' 'tenebrosisdad',
 		],
  has	female;
 
+
+!!------------------------------------------------------------------------------
+!! Atrezzo:
+
 !!	-	*cortinas.general* se activa al abrir el objeto por primera vez
 Atrezzo	cortinas "cortinas" HABITACION
- with	name_m	'visillo' 'cortinaje' 'ventanal',
-		name_mp	'visillos' 'cortinajes',
-		name_f	'cortina' 'ventana' 'colgadura' 'persiana',
-		name_fp	'cortinas' 'colgaduras' 'persianas',
+ with	name_m	'cortinaje' 'ventanal' 'visillo',
+		name_mp	'cortinajes' 'visillos', 
+		name_f	'colgadura' 'cortina' 'persiana' 'ventana', 
+		name_fp	'colgaduras' 'cortinas' 'persianas', 
 		gender	G_FEMENINO + G_PLURAL,
 		adjectives 'abierto' 'abiertos' 'abierta' 'abiertas' 'cerrado' 
 			'cerrados' 'cerrada' 'cerradas' 'tela',
@@ -466,7 +471,7 @@ Atrezzo	cortinas "cortinas" HABITACION
 						"Descorre las cortinas de nuevo.^", 
 						"Abre las cortinas.^", 
 						"Abre las cortinas otra vez.^", 
-				);
+					);
 					new_line;
 					<<Look>>;
 				}
@@ -494,11 +499,11 @@ Atrezzo	cortinas "cortinas" HABITACION
 		],
 		time_left 1, 
 		time_out [; give self ~on; ], 
- has	female pluralname openable;
+ has	female openable pluralname;
 
 Atrezzo	puerta_habitacion "puerta" HABITACION
 !! TODO - nombres y adjetivos
- with	name_f	'puerta' 'entrada' 'salida', 
+ with	name_f	'entrada' 'puerta' 'salida', 
 		gender	G_FEMENINO, 
 		adjectives 'madera' 'pintada' 'blanco' 'blanca' 'sencilla' 'cerrada' 
 			'abierta', 
@@ -514,7 +519,29 @@ Atrezzo	puerta_habitacion "puerta" HABITACION
 			Open:
 				"La puerta se abre con un ligero crujir de goznes.";
 		],
- has	female openable ~open transparent;
+		door_dir out_to, 
+		door_to [;
+!! TODO - hacer que Gabriel dude antes de salir de la habitación
+			print "Gabriel se detiene a echar un último vistazo a la habitación 
+			y tuerce la boca en una media sonrisa al pensar en lo mucho que se 
+			parece a su propia vida; puesta toda patas arriba, llena de sueños 
+			rotos, pisoteados y tirados por el suelo. Pero ya no hay tiempo 
+			para pensar en ello. Así que al cabo de un momento, sin más, le da 
+			la espalda al pasado y sale con paso decidido por la puerta 
+			abierta.^";
+			PressAnyKey();
+
+			#Ifdef TEST_SCENE1;
+			new_line;
+			print (parser) "Fin de la escena 1.";
+			PressAnyKey();
+			@restart; L__M(##Restart, 2);
+			#Endif; ! TEST_SCENE1;
+
+			new_line;
+			return CAFE;
+		], 
+ has	door female ~open openable transparent;
 
 Atrezzo	"calendario de pared" puerta_habitacion
 !! TODO - nombres y adjectivos
@@ -602,8 +629,8 @@ Furniture	cajon "cajón" HABITACION
 !!------------------------------------------------------------------------------
 !! Items:
 
+!!	-	*ropa.general* se activa al vestir el objeto por primera vez
 Item	ropa "ropa" cama
-!! ropa.general se activa al vestir el objeto por primera vez
  class	Receptacle
  with	name_m	'atuendo' 'vestuario' 'pantalon' 'tejano' 'vaquero' 'abrigo'
 				'gaban' 'sobretodo' 'chaqueton' 'bolsillo',
@@ -614,140 +641,154 @@ Item	ropa "ropa" cama
 		gender	G_FEMENINO,
 		article	"su", 
 !! TODO - adjetivos
-		parse_name [ w;
-			w = NextWord();
-			if ( w == 'pantalon' or 'pantalones' or 'tejano' or 'tejanos' or 
-				'vaquero' or 'vaqueros' ) {
-				self.trousers_flag = true;
-				self.shirt_flag = false;
-				self.coat_flag = false;
-			}
-			else if ( w == 'camisa' or 'camiseta' ) {
-				self.trousers_flag = false;
-				self.shirt_flag = true;
-				self.coat_flag = false;
-			}
-			else if ( w == 'abrigo' or 'chaqueta' or 'cubretodo' or 'bolsillo' 
-					or 'bolsillos' ) {
-				self.trousers_flag = false;
-				self.shirt_flag = false;
+		parse_name [ word;
+			word = NextWord();
+			if (word == 'abrigo' or 'bolsillo' or 'bolsillos' or 'chaqueta' or 
+				'chaqueton' or 'faltriquera' or 'faltriqueras' or 'gaban' or 
+				'pelliza' or 'sobretodo')
 				self.coat_flag = true;
-			}
+			if (word == 'camisa' or 'camiseta' or 'camisola')
+				self.shirt_flag = true;
+			if (word == 'pantalon' or 'pantalones' or 'tejano' or 'tejanos' or 
+				'vaquero' or 'vaqueros')
+				self.trousers_flag = true;
 			wn--;
 			return -1;
 		], 
 		description [;
-			if (self.trousers_flag)
-!! XXX - modificar texto
-				"Son unos pantalones negros algo desgastados ya por las 
-				rodillas y los bajos.";
-			if (self.shirt_flag)
-!! XXX - modificar texto
-				"Una sencilla camisa de algodón blanca.";
-			if (self.coat_flag) {
-!! XXX - modificar texto
-				print "Se trata de un gran abrigo oscuro de tela basta, largo 
-				hasta las rodillas y con dos profundos bolsillos a lo lados";
-				if (child(self) && self in player && self has worn) {
-					print ".^^En los bolsillos hay ";
+			if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA) {
+				if (self.coat_flag) {
+!! TODO - modificar texto
+					print "Se trata de un gran abrigo oscuro de tela basta, 
+					largo hasta las rodillas y con dos profundos bolsillos a 
+					los lados.";
+					if (self in player && self has worn && child(self)) {
+						print "^^En los bolsillos hay ";
+						WriteListFrom(child(self), 
+							ENGLISH_BIT + RECURSE_BIT + FULLINV_BIT);
+						".";
+					}
+					new_line;
+					return true;
+				} 
+				if (self.shirt_flag)
+!! TODO - modificar texto
+					"Una sencilla camisa de algodón blanca.";
+				if (self.trousers_flag)
+!! TODO - modificar texto
+					"Son unos pantalones negros, algo desgastados ya por el 
+					uso.";
+!! TODO - modificar texto
+				print "Siempre ha vestido ropa barata y discreta. Estos son 
+				unos pantalones negros, camisa blanca de algodón, y un gran 
+				abrigo gris de tela basta, largo hasta las rodillas y de 
+				profundos bolsillos.";
+				if (self in cama) " Está hecha un rebujo sobre la cama.";
+				if (self in real_location) " Está hecha un rebujo en el suelo.";
+				if (self in player && self has worn && child(self)) {
+					print "^^En los bolsillos del abrigo hay ";
 					WriteListFrom(child(self), 
 						ENGLISH_BIT + RECURSE_BIT + FULLINV_BIT);
+					".";
 				}
-				".";
+				new_line;
+				return true;
 			}
-!! XXX - modificar texto
-			print "Siempre ha vestido ropa barata y discreta. Estos son unos 
-			pantalones negros, algo desgastados por el uso, camisa blanca de 
-			algodón, y un gran abrigo gris de tela basta, largo hasta las 
-			rodillas y de profundos bolsillos.";
-			if (self in cama) " Yace hecha un rebujo sobre la cama.";
-			if (self in real_location) " Yace hecha un rebujo en el suelo.";
-			if (child(self) && self in player && self has worn) {
-				print "^^En los bolsillos del abrigo hay ";
-				WriteListFrom(child(self), 
-					ENGLISH_BIT + RECURSE_BIT + FULLINV_BIT);
+			else {
+				if (self.coat_flag) {
+!! TODO - modificar texto
+					print "Se trataba de un gran abrigo oscuro de tela basta, 
+					largo hasta las rodillas y con dos profundos bolsillos a 
+					los lados.";
+					if (self in player && self has worn && child(self)) {
+						print "^^En los bolsillos había ";
+						WriteListFrom(child(self), 
+							ENGLISH_BIT + RECURSE_BIT + FULLINV_BIT);
+						".";
+					}
+					new_line;
+					return true;
+				} 
+				if (self.shirt_flag)
+!! TODO - modificar texto
+					"Una camisa a cuadros verde y gris.";
+				if (self.trousers_flag)
+!! TODO - modificar texto
+					"Eran una pantalones vaqueros azules.";
+!! TODO - modificar texto
+				print "Siempre ha vestido ropa barata y discreta. Ese día 
+				llevaba unos vaqueros, camisa a cuadros de color verde y gris, 
+				y su gran abrigo gris de tela basta.";
+				if (self in player && self has worn && child(self)) {
+					print "^^En los bolsillos del abrigo había ";
+					WriteListFrom(child(self), 
+						ENGLISH_BIT + RECURSE_BIT + FULLINV_BIT);
+					".";
+				}
+				new_line;
+				return true;
 			}
-			new_line;
-			return true;
 		], 
-		before [ i obj;
+		before [;
+!! TODO - mensajes diferentes para diferentes prendas del objeto
 			Disrobe:
 				if (self hasnt worn)
 					return false;
 				if (real_location == HABITACION)
 					return false;
-				"No piensa pasearse por ahí desnudo.";
-			Receive: ! XXX - sobreescribe a Receptacle
-				!! Se comprueba el peso (si su capacidad no es infinita):
-				if (CapacityWeightOf(self) ~= INFINITE_CAPACITY) {
-					if (WeightOf(noun) > CapacityWeightOf(self))
-						print_ret (The) noun ," ", (es) noun ," demasiado 
-						pesad", (o) noun ," como para guardarlo en un 
-						bolsillo.";
-					!! Se calcula el peso de todo el contenido
-					i = 0; objectloop (obj in self) i = i + WeightOf(obj);
-					if ((i + WeightOf(noun)) > CapacityWeightOf(self))
-						"Los bolsillos del abrigo no soportan ya más peso.";
-				}
-				!! Se comprueba el volumen (si su capacidad no es infinita):
-				if (CapacityVolumeOf(self) ~= INFINITE_CAPACITY) {
-					if (VolumeOf(noun) > CapacityVolumeOf(self))
-						print_ret (The) noun ," no cabe", (n) noun ," dentro 
-						del bolsillo.";
-					!! Se calcula el volumen de todo el contenido
-					i = 0; objectloop(obj in self) i = i + VolumeOf(obj);
-					if ((i + VolumeOf(noun)) > CapacityVolumeOf(self))
-						"En los bolsillos del abrigo no queda hueco para nada 
-						más.";
-				}
-				!! Se comprueba el tamaño (si su capacidad no es infinita):
-				if (CapacitySizeOf(self) ~= INFINITE_CAPACITY) {
-					if (SizeOf(noun) > CapacitySizeOf(self)) {
-						print_ret (The) noun, " ", (es) noun, " demasiado 
-						grande", (s) noun, " como para guardarl", (o) noun, 
-						" en uno de los bolsillos del abrigo.";
-					}
-				}
-				!! Se comprueba el número (si su capacidad no es infinita):
-				if (CapacityNumberOf(self) ~= INFINITE_CAPACITY) {
-					i = 0; objectloop(obj in self) i++;
-					if ((i+1) > CapacityNumberOf(self))
-						"En el bolsillo no entran ya más cosas.";
-				}
-				return false;
+				if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					"No piensa pasearse por ahí desnud", (o) player, ".";
+				else
+					"No pensaba pasearse por ahí desnud", (o) player, ".";
 			Search:
-				if (self hasnt worn)
+				if (self hasnt worn) {
 !! XXX - modificar texto
-					"Es más sencillo rebuscar en los bolsillos con la ropa 
-					puesta.";
-				if (child(self) == nothing)
-					"No lleva nada en los bolsillos.";
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+						"No encuentra nada interesante entre la ropa.";
+					else
+						"No encontró nada interesante entre la ropa.";
+				}
 				print "En los bolsillos lleva ";
-				WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT);
+				WriteListFrom(child(self),
+					ENGLISH_BIT + RECURSE_BIT + FULLINV_BIT); 
 				".";
 		], 
 		after [;
-			self.trousers_flag = false;
-			self.shirt_flag = false;
+			!! Se reestablecen las variables de objetivo de la descripción:
 			self.coat_flag = false;
+			self.shirt_flag = false;
+			self.trousers_flag = false;
+!! TODO - vaciar los bolsillos del abrigo al quitárselo
 			Disrobe:
-				move revolver to LIMBO;
 				give self ~open;
 				give self ~container;
-				"Se quita ", (the) self, ".";
+				if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					"Se quita ", (the) self, ".";
+				else
+					"Se quitó ", (the) self, ".";
 			LetGo:
-				if (~~keep_silent)
-					"Saca ", (the) noun, " de dentro del bolsillo.";
+				if (~~keep_silent) {
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+						"Saca ", (the) noun, " de dentro del bolsillo.";
+					else
+						"Sacó ", (the) noun, " de dentro del bolsillo.";
+				}
 			Receive:
-				if (~~keep_silent)
-					"Mete ", (the) noun, " dentro de uno de los bolsillos del 
-					abrigo.";
+				if (~~keep_silent) {
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+						"Mete ", (the) noun, " dentro de uno de los bolsillos 
+						del abrigo.";
+					else
+						"Metió ", (the) noun, " dentro de uno de los bolsillos 
+						del abrigo.";
+				}
+!! TODO - si se vacían los bolsillo al desvestir, volver a llenarlos 
 			Wear:
 				give self container;
 				give self open;
-				move revolver to self;
 				if (self hasnt general) {
 					give self general;
+					move revolver to self;
 					"Comienza a vestirse lentamente, con las imágenes de la 
 					noche anterior dando vueltas aún en su cabeza: la última y 
 					solitaria cena en en restaurante cercano... el bar... ella 
@@ -766,14 +807,71 @@ Item	ropa "ropa" cama
 					del revólver. Un escalofrío le recorre la espalda; el arma 
 					sigue ahí. Frío. Pesado. Aterradoramente real.";
 				}
+				return false;
 		], 
-		size 4, 
+		!! Mensajes de error. Se producen al intentar meter en el contenedor 
+		!! un objeto que viola alguno de los límites de capacidad definidos
+		error_messages [ id obj;
+			switch(id) {
+				1:	!! Se intenta meter en el bolsillo un objeto cuyo peso 
+					!! supera el límite permitido:
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+						print_ret (The) obj, " ", (es) obj, " demasiado pesad", 
+						(o) obj, " como para guardarlo", (o) obj, " en uno de 
+						los bolsillos del abrigo.";
+					else
+						print_ret (The) obj, " era", (n) obj, " demasiado 
+						pesad", (o) obj, " como para guardarl", (o) obj, " en 
+						uno de los bolsillos del abrigo.";
+				2:	!! Se intenta meter en el bolsillo un objeto cuyo peso,
+					!! en conjunto con el del resto de objetos que hay ya en el 
+					!! bolsillo, supera el límite permitido:
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+						"Los bolsillos del abrigo ya no soportan más peso.";
+					else
+						"Los bolsillos del abrigo ya no soportaban más peso.";
+				3:	!! Se intenta meter en el bolsillo un objeto cuyo volumen 
+					!! supera el límite permitido:
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+						print_ret (The) obj, " no cabe", (n) obj, " dentro del  
+						bolsillo."; 
+					else
+						print_ret (the) obj, " no cabía", (n) obj, " dentro del 
+						bolsillo.";
+				4:	!! Se intenta meter en el bolsillo un objeto cuyo volumen, 
+					!! en conjunto con el del resto de objetos que hay ya en el 
+					!! bolsillo, supera el límite permitivo:
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+						"En los bolsillos ya no queda hueco suficiente como 
+						para meter ", (the) obj, ".";
+					else
+						"En los bolsillos ya no quedaba hueco suficiente como 
+						para meter ", (the) obj, ".";
+				5:	!! Se intenta meter en el bolsillo un objeto cuto tamaño 
+					!! supera el límite permitido:
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+						print_ret (The) obj, " ", (es) obj, " demasiado 
+						grande", (s) obj, " como para guardarl", (o) obj, " en 
+						uno de los bolsillos del abrigo.";
+					else
+						print_ret (The) obj, " era", (n) obj, " demasiado 
+						grande", (s) obj, " como para guardarl", (o) obj, " en 
+						uno de los bolsillos del abrigo.";
+				6:	!! Se intenta meter en el bolsillo un objeto tras haber 
+					!! alcanzado el límite de objetos permitido:
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+						"En el bolsillo ya no entran más cosas.";
+					else
+						"En el bolsillo ya no entraban más cosas.";
+			}
+		], 
 		capacity_size 3, 
+		size 4, 
  private
-		trousers_flag false, 
-		shirt_flag false, 
 		coat_flag false, 
- has	female clothing container open;
+		shirt_flag false, 
+		trousers_flag false, 
+ has	clothing container female open;
 
 !! TODO - terminar implementación
 Item	revolver "revólver" LIMBO
@@ -846,7 +944,7 @@ Item	maleta "maleta de viaje" HABITACION
 		description_flag false,	! indica si el objeto ha sido descrito
  has	female openable ~open container;
 
-Item	libro_bolsillo "librito de poemas" LIMBO
+Item	libro_bolsillo "librito de poemas" cajon
  with	name_m	'libro' 'librito' 'tomo' 'volumen' 'ejemplar',
 		gender	G_MASCULINO,
 		adjectives 'pequeno' 'encuadernado' 'negro' 'bolsillo' 'tapas',
@@ -890,7 +988,7 @@ Item	billete LIMBO
 		adjectives 'trozo' 'pedazo' 'barcaza' 'san' 'antonio',
 		description [;
 			if (~~self.description_flag) {
-				self.described = true;
+				self.description_flag = true;
 				print "Si, es él. ";
 			}
 			print "Es el billete para una barcaza que sale del puerto de San 
