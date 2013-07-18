@@ -142,6 +142,12 @@ Global	GRAMMATICAL_INFLECTION = PRESENTE_SEGUNDA_PERSONA;
 !! Imprime el número de versión
 [ PrintVersionNumber i;
 	i = 0;  ! shut up compiler warning
+	#Ifdef ALPHA_RELEASE;
+	print "ALFA_";
+	#Endif;
+	#Ifdef BETA_RELEASE;
+	print "BETA_";
+	#endif;
 	#Ifdef	TARGET_ZCODE;
 	print (HDR_GAMERELEASE-->0) & $03ff;
 	#Ifnot;	! TARGET_GLULX;
@@ -170,23 +176,28 @@ Global	GRAMMATICAL_INFLECTION = PRESENTE_SEGUNDA_PERSONA;
 		#Endif; ! TARGET_
 		new_line;
 	}
-	if (Headline ~= 0) { print (string) Headline; new_line; }
+	if (Headline ~= 0) {
+		print (string) Headline;
+		new_line;
+	}
 	print "Release ";
 	PrintVersionNumber();
 	print " / Serial number ";
 	PrintSerialNumber();
 	print " / Inform v"; inversion;
-	print " Library ", (string) LibRelease, " ";
+	print " Library ", (string) LibRelease;
+	#Ifdef DEBUG;
+	print " ";
+	#Endif; ! DEBUG;
 	#Ifdef STRICT_MODE;
 	print "S";
 	#Endif; ! STRICT_MODE
 	#Ifdef INFIX;
 	print "X";
-	#Ifnot;
+	#Endif; ! INFIX
 	#Ifdef DEBUG;
 	print "D";
 	#Endif; ! DEBUG
-	#Endif; ! INFIX
 	new_line;
 ];
 
@@ -384,7 +395,7 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 !! Redefinición de los 'lookmode': Breve, Largo y Superbreve
 !!------------------------------------------------------------------------------
 [ LMode1Sub; lookmode = 1; L__M( ##LMode1 ); ];	! Breve
-[ LMode2Sub; lookmode = 2; L__M( ##LMode2 ); ];	! Largo (por defecto)
+[ LMode2Sub; lookmode = 2; L__M( ##LMode2 ); ];	! Largo (ahora por defecto)
 [ LMode3Sub; lookmode = 3; L__M( ##LMode3 ); ];	! Superbreve
 
 
@@ -476,7 +487,7 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 		3, 9:	print "os";
 		4, 10:	print "as";
 	}
-]; 
+];
 
 
 !!==============================================================================

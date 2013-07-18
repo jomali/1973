@@ -9,6 +9,9 @@ Picture	FRAME_BOTTOM		resources/FRAME_X.png
 Picture	FRAME_LEFT			resources/FRAME_Y.png
 Picture	FRAME_RIGHT			resources/FRAME_Y.png
 
+Picture PIC_1_01			resources/escena1_01.png
+Picture PIC_1_02			resources/escena1_02.png
+
 Sound WOUNDED_A				resources/wounded_a.ogg
 Sound WOUNDED_B				resources/wounded_b.ogg
 Sound WOUNDED_C				resources/wounded_c.ogg

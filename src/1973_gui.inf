@@ -13,7 +13,7 @@
 !!	System:			Inform/INFSP 6
 !!	Platform:		Máquina-Z / Glulx
 !!	Version:		1.0
-!!	Released:		2012/01/22
+!!	Released:		2013/04/16
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -41,135 +41,162 @@
 !!	Librerías
 !!------------------------------------------------------------------------------
 
-Include	"gimage.h";				! GWindows; Image Window Widget
-!Include	"gquote.h";				! GWindows; Quote Box Widget
+Include "gimage.h";				! GWindows; Image Window Widget
+!Include "gquote.h";				! GWindows; Quote Box Widget
 Include "gstatusX.h";			! GWindows; Status Window Module
-Include	"gtile.h";				! GWindows; Tiled Image Windows
+Include "gtile.h";				! GWindows; Tiled Image Windows
+
+Constant MARGIN_WIDTH 8;		! Ancho del margen interior
+Constant FRAME_WIDTH 56;		! Ancho del marco
+Constant GRAPHIC_WIN_WIDTH 28;	! Ancho de la ventana de imágenes
 
 
 !!==============================================================================
-!!	Definición de la interfaz
+!!	Definición de la interfaz #2
 !!------------------------------------------------------------------------------
 !!
 !!	+---+---------------------------+---+
-!!	| Ñ |             M             | N |	(A) - textWindow: TextBuffer
-!!	+---+---------------------------+---+	(B) - statusBar: GStatusXWin
-!!	|	|             G             |   |	(C) - imageWindow: GImageWin
-!!	|   +---+-----++------------+---+   |	(D) - rightMargin: GraphWin
-!!	|	|   |     ||     B      |   |   |	(E) - leftMargin: GraphWin
-!!	|	|   |     ||------------+   |   |	(F) - bottomMargin: GraphWin
-!!	|	|   |     ||            |   |   |	(G) - topMargin: GraphWin
-!!	|	| E |  C  ||            | D |   |	(H) - rightSide: GVTileWin
-!!	| I |   |     ||     A      |   | H |	(I) - leftSide: GVTileWin
-!!	|	|   |     ||            |   |   |	(J) - bottomSide: GHTileWin
-!!	|	|   |     ||            |   |   |	(K) - bottomRightCorner: GImageWin
-!!	|   +---+-----++------------+---+   |	(L) - bottomLeftCorner: GImageWin
-!!	|	|             F             |   |	(M) - topSide: GHTileWin
-!!	+---+---------------------------+---+	(N) - topRightCorner: GImageWin
-!!	| L |             J             | K |	(Ñ) - topLeftCorner: GImageWin
+!!	| O |             M             | N |
+!!	+---+---------------------------+---+	(A) - textWindow: TextBuffer
+!!	|   |             G             |   |	(B) - graphicWindow: GImageWin
+!!	|   +---------------------------+   |	(C) - rightMargin: GraphWin
+!!	|   |             F             |   |	(D) - leftMargin: GraphWin
+!!	|   +---+-----+-------------+---+   |	(E) - bottomMargin: GraphWin
+!!	|   |   |     |             |   |   |	(F) - topMargin: GraphWin
+!!	|   |   |     |             |   |   |	(G) - statusBar: GStatusXWin
+!!	|   |   |     |             |   |   |	(H) - rightSide: GVTileWin
+!!	| I | D |  B  |      A      | C | H |	(I) - leftSide: GVTileWin
+!!	|   |   |     |             |   |   |	(J) - bottomSide: GHTileWin
+!!	|   |   |     |             |   |   |	(K) - bottomRightCorner: GImageWin
+!!	|   |   |     |             |   |   |	(L) - bottomLeftCorner: GImageWin
+!!	|   +---+-----+-------------+---+   |	(M) - topSide: GHTileWin
+!!	|   |             E             |   |	(N) - topRightCorner: GImageWin
+!!	+---+---------------------------+---+	(O) - topLeftCorner: GImageWin
+!!	| L |             J             | K |
 !!	+---+---------------------------+---+
 !!
 !!------------------------------------------------------------------------------
 WindowPair rootUI;
-  WindowPair -> bottomCentralArea;											!1
-	WindowPair -> -> centralArea;											!2
-	  WindowPair -> -> -> centralSecondaryArea;								!3
-		!! Área interior
-		WindowPair -> -> -> -> prueba;
+  WindowPair -> bottomCentralArea;
+    WindowPair -> -> centralArea;
+      WindowPair -> -> -> centralSecondaryArea;
+        WindowPair -> -> -> -> interiorArea;
+          WindowPair -> -> -> -> -> bottomCentralInteriorArea;
+            WindowPair -> -> -> -> -> -> centralInteriorArea;
+              WindowPair -> -> -> -> -> -> -> centralSecondaryInteriorArea;
+                WindowPair -> -> -> -> -> -> -> -> mainArea;
 
-		WindowPair -> -> -> -> -> interiorArea;								!4
-		  WindowPair -> -> -> -> -> -> bottomCentralInteriorArea;				!5
-			WindowPair -> -> -> -> -> -> -> centralInteriorArea;				!6
-			  WindowPair -> -> -> -> -> -> -> -> centralInteriorSecondaryArea;	!7
-
-!!------------------------------------------------------------------------------
-!				!! Área principal (con barra de estado y ventana de imágenes)
-!				WindowPair -> -> -> -> -> -> -> -> mainArea;				!8
-!				  WindowPair -> -> -> -> -> -> -> -> -> Z;					!9
-!					WindowPair -> -> -> -> -> -> -> -> -> -> secondaryMainArea;
-!					  !! A !!
-!					  TextBuffer -> -> -> -> -> -> -> -> -> -> -> textWindow;
-!					  !! B !!
-!					  GStatusXWin -> -> -> -> -> -> -> -> -> -> -> statusBar
-!						with split_dir winmethod_Above;
-!					GraphWin -> -> -> -> -> -> -> -> -> -> Xmargin			!10
-!					  with split 5, split_dir winmethod_Left;
-!				  !! C !!
-!				  GImageWin -> -> -> -> -> -> -> -> -> imageWindow			!9
-!					with split 30, split_dir winmethod_Left;
-!
-!!------------------------------------------------------------------------------
-!				!! Área principal (con barra de estado)
-!				WindowPair -> -> -> -> -> -> -> -> mainArea;				!8
-!				  !! A !!
-!				  TextBuffer -> -> -> -> -> -> -> -> -> textWindow;			!9
-!				  !! C !!
-!				  GStatusXWin -> -> -> -> -> -> -> -> -> statusBar			!9
-!					with split_dir winmethod_Above;
-!
-!!------------------------------------------------------------------------------
-				!! Área principal (sin barra de estado)
-				!! A !!
-				TextBuffer -> -> -> -> -> -> -> -> -> textWindow;				!8
+                  WindowPair -> -> -> -> -> -> -> -> -> X;
+                   WindowPair -> -> -> -> -> -> -> -> -> -> Z;
+                     !! A
+                     TextBuffer -> -> -> -> -> -> -> -> -> -> ->  textWindow;
+                     GraphWin -> -> -> -> -> -> -> -> -> -> -> interiorMargin 
+                       with split 0, split_dir winmethod_Left;
+                !! B
+                GImageWin -> -> -> -> -> -> -> -> -> -> graphicWindow
+                  with split 0, split_dir winmethod_Left;
 
 !!------------------------------------------------------------------------------
-!! Definición de los márgenes interiores
+!!	Definición de márgenes interiores
 !!------------------------------------------------------------------------------
-				!! D !!
-				GraphWin -> -> -> -> -> -> -> -> -> rightMargin				!8
-				  with split 8, split_dir winmethod_Right;
-			  !! E !!
-			  GraphWin -> -> -> -> -> -> -> -> leftMargin						!7
-				with split 8, split_dir winmethod_Left;
-			!! F !!
-			GraphWin -> -> -> -> -> -> -> bottomMargin							!6
-			  with split 8, split_dir winmethod_Below;
-		  !! G !!
-		  GraphWin -> -> -> -> -> -> topMargin									!5
-			with split 8, split_dir winmethod_Above;
+                  !! C
+                  GraphWin -> -> -> -> -> -> -> -> -> rightMargin
+                    with split MARGIN_WIDTH, split_dir winmethod_Right;
+                !! D
+                GraphWin -> -> -> -> -> -> -> -> leftMargin
+                  with split MARGIN_WIDTH, split_dir winmethod_Left;
+              !! E
+              GraphWin -> -> -> -> -> -> -> bottomMargin
+                with split MARGIN_WIDTH, split_dir winmethod_Below;
+            !! F
+            GraphWin -> -> -> -> -> -> topMargin
+              with split MARGIN_WIDTH / 2, split_dir winmethod_Above;
+          !! G
+          GStatusXWin -> -> -> -> -> statusBar
+            with split_dir winmethod_Above;
 
-	GStatusXWin -> -> -> -> -> statusBar
-	  with split_dir winmethod_Above;
-
 !!------------------------------------------------------------------------------
-!! Definición del marco
+!!	Definición del marco
 !!------------------------------------------------------------------------------
-		!! H !!
-		GVTileWin -> -> -> -> rightSide										!4
-		  with split 56, split_dir winmethod_Right, image FRAME_RIGHT,
+        !! H
+		GVTileWin -> -> -> -> rightSide
+		  with split FRAME_WIDTH, split_dir winmethod_Right, 
+               image FRAME_RIGHT,
 		  has abssplit;
-	  !! I !!
-	  GVTileWin -> -> -> leftSide											!3
-		with split 56, split_dir winmethod_Left, image FRAME_LEFT,
+      !! I
+	  GVTileWin -> -> -> leftSide
+		with split FRAME_WIDTH, split_dir winmethod_Left, 
+             image FRAME_LEFT,
 		has abssplit;
-	WindowPair -> -> bottomArea;											!2
-	  WindowPair -> -> -> bottomSecondaryArea;								!3
-		!! J !!
-		GHTileWin -> -> -> -> bottomSide									!4
-		  with split 56, split_dir winmethod_Below, image FRAME_BOTTOM,
+    WindowPair -> -> bottomArea;
+	  WindowPair -> -> -> bottomSecondaryArea;
+        !! J
+		GHTileWin -> -> -> -> bottomSide
+		  with split FRAME_WIDTH, split_dir winmethod_Below, 
+               image FRAME_BOTTOM,
 		  has abssplit;
-		!! K !!
-		GImageWin -> -> -> -> bottomRightCorner								!4
-		  with split 56, split_dir winmethod_Right, image FRAME_BOTTOM_RIGHT,
+        !! K
+		GImageWin -> -> -> -> bottomRightCorner
+		  with split FRAME_WIDTH, split_dir winmethod_Right, 
+               image FRAME_BOTTOM_RIGHT,
 		  has aspected abssplit;
-	  !! L !!
-	  GImageWin -> -> -> bottomLeftCorner									!3
-		with split 56, split_dir winmethod_Left, image FRAME_BOTTOM_LEFT,
+      !! L
+	  GImageWin -> -> -> bottomLeftCorner
+		with split FRAME_WIDTH, split_dir winmethod_Left, 
+             image FRAME_BOTTOM_LEFT,
 		has aspected abssplit;
-  WindowPair -> topArea;													!1
-	WindowPair -> -> topSecondaryArea;										!2
-	  !! M !!
-	  GHTileWin -> -> -> topSide											!3
-		with split 56, split_dir winmethod_Above, image FRAME_TOP,
+  WindowPair -> topArea;
+    WindowPair -> -> topSecondaryArea;
+      !! M
+	  GHTileWin -> -> -> topSide
+		with split FRAME_WIDTH, split_dir winmethod_Above, 
+             image FRAME_TOP,
 		has abssplit;
-	  !! N !!
-	  GImageWin -> -> -> topRightCorner										!3
-		with split 56, split_dir winmethod_Right, image FRAME_TOP_RIGHT,
+      !! N
+	  GImageWin -> -> -> topRightCorner
+		with split FRAME_WIDTH, split_dir winmethod_Right, 
+             image FRAME_TOP_RIGHT,
 		has aspected abssplit;
-	!! Ñ !!
-	GImageWin -> -> topLeftCorner											!2
-	  with split 56, split_dir winmethod_Left, image FRAME_TOP_LEFT,
+    !! O
+	GImageWin -> -> topLeftCorner
+	  with split FRAME_WIDTH, split_dir winmethod_Left, 
+           image FRAME_TOP_LEFT,
 	  has aspected abssplit;
+
+
+!!==============================================================================
+!!	Funciones de utilidad
+!!------------------------------------------------------------------------------
+
+[ ShowGraphicWindow;
+	!! Se redimensiona la ventana gráfica:
+	glk_window_set_arrangement(parent(graphicWindow).winid, 
+		winmethod_Left|winmethod_Proportional, 
+		GRAPHIC_WIN_WIDTH, 
+		graphicWindow.winid);
+	graphicWindow.split = GRAPHIC_WIN_WIDTH;
+	!! Se redimensiona el margen interior:
+	glk_window_set_arrangement(parent(interiorMargin).winid, 
+		winmethod_Left|winmethod_Proportional, 
+		MARGIN_WIDTH + 2, 
+		interiorMargin.winid);
+	interiorMargin.split = MARGIN_WIDTH + 2;
+];
+
+[ HideGraphicWindow;
+	!! Se redimensiona la ventana gráfica:
+	glk_window_set_arrangement(parent(graphicWindow).winid, 
+		winmethod_Left|winmethod_Proportional, 
+		0, 
+		graphicWindow.winid);
+	graphicWindow.split = 0;
+	!! Se redimensiona el margen interior:
+	glk_window_set_arrangement(parent(interiorMargin).winid, 
+		winmethod_Left|winmethod_Proportional, 
+		0, 
+		interiorMargin.winid);
+	interiorMargin.split = 0;
+];
 
 
 !!==============================================================================

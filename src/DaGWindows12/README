@@ -3,7 +3,8 @@
 
   <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <>
 
- Distribucion DA-Gwindows v1.2  /  Por: Eliuk Blau (DreamBytes Adventures)
+ Distribucion DA-Gwindows v1.2b  /  Por: Eliuk Blau (DreamBytes Adventures)
+ Modificaciones por J. Francisco Martín
 ===========================================================================
 
 ---------------------------------------------------------------------------
@@ -15,6 +16,12 @@ LISTA DE CAMBIOS:
      'NOTA DE ELIUK BLAU' luego del comentario de cabecera y tambien
      en los comentarios dentro del codigo concreto, encabezados por
      el nombre "Eliuk".
+
+  * Version 1.2b - Modificada rutina Banner en gcore.h. Sería preferible  
+    (2013/07/17)   sobreescribir exclusivamente la rutina desde alguna 
+                   parte del código de la aventura en lugar de tener que
+                   modificar archivos de la librería, pero al no 
+                   encontrar el modo se ha optado por hacerlo así.
 
   * Version 1.2  - Actualizacion "tonta" :) No se actualiza realmente
     (2009/01/15)   ningun archivo de GWindows, sino que se incluye una

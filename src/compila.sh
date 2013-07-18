@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 
 # Script para compilar y ejecutar relatos interactivos programados en Inform 6.
 # Herramientas utilizadas:

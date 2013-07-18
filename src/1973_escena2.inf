@@ -42,8 +42,7 @@
 !!------------------------------------------------------------------------------
 
 Room	CAFE "Café Blanca Florida"
- with
-		name	'cafe' 'blanca' 'florida' 'cafeteria' 'bar' 'local' 'taberna' 
+ with	name	'cafe' 'blanca' 'florida' 'cafeteria' 'bar' 'local' 'taberna' 
 				'meson' 'tasca' 'establecimiento',
 		initial [; if (self hasnt visited) {
 			!! Inicializaciones multimedia: ------------------------------------

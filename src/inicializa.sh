@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 
 # Rutas:
 fichero_sintaxis="/usr/share/gtksourceview-3.0/language-specs"

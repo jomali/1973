@@ -49,7 +49,7 @@ Constant Story "PROYECTO 1973";
 
 Release 0;
 
-Constant ALFA_RELEASE;
+Constant ALPHA_RELEASE;
 
 Constant MANUAL_PRONOUNS;		! Los pronoms. refieren a objetos ya mencionados
 Constant NO_PLACES;				! Acciones LUGARES Y OBJETOS desactivadas
@@ -108,6 +108,18 @@ Include "gwincls.h";			! GWindows; Window Class Framework
 !!------------------------------------------------------------------------------
 
 #Ifdef TARGET_GLULX;
+!!------------------------------------------------------------------------------
+!!	Rutina gancho encargada de reinicializar Damusix y recuperar los canales de 
+!!	audio. (Sin esta rutina, al reiniciar la aplicación la música se solapará 
+!!	con aquella que se estuviese reproduciendo durante la partida anterior).
+!!------------------------------------------------------------------------------
+[ GWindowsGlkIdentify phase type ref rock;
+	!! Se identifican todos los Objetos de Sonido gestionados por Damusix
+	Damusix.IdentificarSonidos(phase);
+	phase = type + ref + rock; ! (para evitar alertas del compilador)
+];
+
+!!------------------------------------------------------------------------------
 [ GWindowsGlkEvent ev context abortres;
 	!! Se notifica el efecto de fade de Tiempo Real
 	Damusix.NotificarFade(ev);
@@ -157,13 +169,27 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 !!------------------------------------------------------------------------------
 
 !!------------------------------------------------------------------------------
-!! Inicialización del relato
+!! Inicialización del relato.
 !!------------------------------------------------------------------------------
 [ Initialise;
 	EraseWindow();
-	SelectFlowerType();
+	flowers = GetFlowerType();
 	lookmode = 2;
 	location = HABITACION;
+
+	#Ifdef DEBUG;
+	VersionSub();
+	new_line;
+	italic_style();
+	print (emph) "AVISO: ", (string) Story, " se encuentra aún en fase temprana 
+	de desarrollo. Los contenidos (especialmente los textuales) mostrados a 
+	continuación pueden no ajustarse necesariamente al resultado final.^";
+	roman_style();
+	new_line;
+	print (parser) "Pulsa una tecla para continuar";
+	PressAnyKey();
+	EraseWindow();
+	#Endif; ! DEBUG;
 
 	#Ifdef TARGET_GLULX;
 	if (~~Damusix.TestAudio()) {
@@ -177,18 +203,22 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 		PressAnyKey();
 		EraseWindow();
 	}
+	ShowGraphicWindow();
+	graphicWindow.setImage(PIC_1_01);
 	#Endif; ! TARGET_GLULX;
 
 	return 2;
 ];
 
 !!------------------------------------------------------------------------------
-[ BeforeParsing; 
-	ConversationManager.try();
-];
+!!	Manipula la entrada del usuario antes de que sea analizada por la librería.
+!!------------------------------------------------------------------------------
+![ BeforeParsing; 
+!	ConversationManager.try();
+!];
 
 !!------------------------------------------------------------------------------
-!! Foco del jugador
+!!	Foco del jugador.
 !!------------------------------------------------------------------------------
 [ InScope person item;
 	!! En la oscuridad, se mueven al foco del jugador todos aquellos objetos 
@@ -201,7 +231,7 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 ];
 
 !!------------------------------------------------------------------------------
-!! Deja la ventana en blanco
+!!	Deja la ventana en blanco.
 !!------------------------------------------------------------------------------
 [ EraseWindow;
     #Ifdef TARGET_ZCODE;
@@ -232,7 +262,7 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 ];
 
 !!------------------------------------------------------------------------------
-!!	Imprime un mensaje text y, si el interruptor say_switch está activado, 
+!!	Imprime un mensaje text y, si el interruptor "say_switch" está activado, 
 !!	espera una pulsación de tecla para continuar.
 !!------------------------------------------------------------------------------
 [ Say text;
@@ -242,21 +272,21 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 ];
 
 !!------------------------------------------------------------------------------
-!! NOTA #1: Cada vez que se inicia el relato se selecciona, de manera aleatoria, 
-!! un tipo de flor de entre el siguiente conjunto de valores posibles: 
-!! {crisantemos, gladiolos, jazmines, madreselvas, narcisos, rosas, tulipanes, 
-!! violetas}. La variable "flowers" guarda el tipo de flor seleccionado.
+!!	Cada vez que se inicia el relato se selecciona de manera aleatoria un tipo 
+!!	de flor de entre el siguiente conjunto de valores posibles {crisantemos, 
+!!	gladiolos, jazmines, madreselvas, narcisos, rosas, tulipanes, violetas}. La 
+!!	variable global "flowers" (NOTA #1) guardará el tipo de flor seleccionado.
 !!------------------------------------------------------------------------------
-[ SelectFlowerType;
+[ GetFlowerType;
 	switch (random(8)) {
-		1:	flowers = crisantemos;
-		2:	flowers = gladiolos;
-		3:	flowers = jazmines;
-		4:	flowers = madreselvas;
-		5:	flowers = narcisos;
-		6:	flowers = rosas;
-		7:	flowers = tulipanes;
-		8:	flowers = violetas;
+		1:	return crisantemos;
+		2:	return gladiolos;
+		3:	return jazmines;
+		4:	return madreselvas;
+		5:	return narcisos;
+		6:	return rosas;
+		7:	return tulipanes;
+		8:	return violetas;
 	}
 ];
 
@@ -330,6 +360,18 @@ Include	"SpanishEG.h";		! Gramática española extendida
 
 !!------------------------------------------------------------------------------
 
+#Ifdef TARGET_GLULX;
+Verb meta 'audio' 'music' 'musica' 'sonido' 'sonidos'
+	*								-> Audio
+	* 'on' / 'si'					-> AudioOn
+	* 'encendido' / 'activado'		-> AudioOn
+	* 'off' / 'no'					-> AudioOff
+	* 'apagado' / 'desactivado'		-> AudioOff
+;
+VerboIrregular "establecer la reproducción de audio"
+	with imperativo 'audio';
+#Endif; ! TARGET_GLULX;
+
 Extend	'corre' replace
 	* noun							-> CloseX
 ;
@@ -366,6 +408,27 @@ Verb	meta 'temas' 't//'
 VerboIrregular "mostrar inventario de temas" with imperativo 'temas' 't//';
 
 !!------------------------------------------------------------------------------
+
+#Ifdef TARGET_GLULX;
+[ AudioSub;
+	if (Damusix.HayAudio()) <<AudioOff>>;
+	else <<AudioOn>>;
+];
+
+[ AudioOnSub;
+	if (Damusix.HayAudio())
+		print_ret (parser) "La reproducción de audio ya estaba activada.";
+	Damusix.ActivarAudio();
+	print_ret (parser) "Reproducción de audio activada.";
+];
+
+[ AudioOffSub;
+	if (~~Damusix.HayAudio())
+		print_ret (parser) "La reproducción de audio ya estaba desactivada.";
+	Damusix.DesactivarAudio();
+	print_ret (parser) "Reproducción de audio desactivada.";
+];
+#Endif; ! TARGET_GLULX;
 
 [ CloseXSub;
 	print (parser) "En lugar de ~correr~ el objeto, se intenta utilizar 
@@ -490,7 +553,7 @@ Verb meta 'gna'
 !!	Definición de atributos, clases y objetos
 !!------------------------------------------------------------------------------
 
-Include ">1973_escena0.inf";	! Prólogo: El Limbo
+Include ">1973_escena0.inf";	! Prólogo: Clases y objetos especiales
 Include ">1973_escena1.inf";	! Escena 1: Habitación de Gabriel
 Include ">1973_escena2.inf";	! Escena 2: Café Blanca Florida
 Include ">1973_escena3.inf";	! Escena 3: Calles de Santiago

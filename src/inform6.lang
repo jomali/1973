@@ -148,6 +148,7 @@
       <keyword>Prompt</keyword>
     </context>
 
+	<!-- Acciones definidas en la extensión SpanishEG.h -->
     <context id="custom_actions" style-ref="actions">
       <keyword>Dance</keyword>
       <keyword>GoDown</keyword>

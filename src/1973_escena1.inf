@@ -51,75 +51,108 @@
 !!	4. Tocar TRACK_1_DENOUEMENT, sin repeticiones, con FLAG_SOUND_NOTIFY:
 !!		Damusix.AsignarCanal(TRACK_1_DENOUEMENT, 0, -1, 1);
 !!		Damusix.Tocar(TRACK_1_DENOUEMENT, 1);
+!! TODO:
+!!	*	busca <objeto> como sinonimo de busca en <objeto>
+!!	*	> ir - ¿Qué quieres ir?
+!!	*	> comer - ¿Qué quieres comerse?
+!!	*	mensaje para llenar contenedores - "No puede llenarlo."
+!!	*	mensaje nuevo para acción *mild*
+!!	*	mensaje nuevo para acción *sing*
+!!	*	mensaje nuevo para acción *sleep* mientras esté en la HABITACION
+!!	*	mensaje nuevo para acción *swim*
+!!	*	mensaje nuevo para acción *wake*
 
-Room	HABITACION "En la habitación"
- with
-		name	'habitacion' 'cuarto' 'dormitorio' 'estancia', 
+Room	HABITACION
+ with	name	'alcoba' 'alojamiento' 'apartamento' 'aposento' 'casa' 'cuarto' 
+				'dormitorio' 'estancia' 'habitación' 'morada' 'vivienda', 
 		short_name " ", 
 		initial [; if (self hasnt visited) {
-			!! Inicializaciones multimedia: ------------------------------------
+			!! Inicializaciones de la escena -----------------------------------
+			SetGrammaticalInflection(PRESENTE_TERCERA_PERSONA);
+			if (flowers == nothing) flowers = GetFlowerType();
+			!! Inicializaciones multimedia -------------------------------------
 			#Ifdef TARGET_GLULX;
 			Damusix.AsignarCanal(WOUNDED_A, 0, -1, 1);
 			Damusix.AsignarCanal(WOUNDED_B, 1, -1, -1);
 			Damusix.AsignarCanal(WOUNDED_C, 2, -1, 1);
-			Damusix.Tocar(WOUNDED_A, 1);
+!			Damusix.Tocar(WOUNDED_A, 1);
 			next_track = WOUNDED_B;
 			#Endif; ! TARGET_GLULX;
-			!! Otra inicializaciones de la escena: -----------------------------
-			SetGrammaticalInflection(PRESENTE_TERCERA_PERSONA);
-			if (flowers == nothing) SelectFlowerType();
 			!! Introducción ----------------------------------------------------
-			box	""
-				" Te ha dolido, ¿verdad?, dijo el chico.           "
-				" Si.                                              "
-				" ¿Eres muy valiente?                              "
-				" Regular.                                         "
-				" ¿Qué es lo más valiente que has hecho?           "
-				" Escupió en la carretera una flema sanguinolenta. "
-				" Levantarme esta mañana, dijo.                    "
-				""
-				"                                   CORMAC MCCARTY "
-				"                                   The Road, 2006 "
-				"";
-			PressAnyKey();
-			EraseWindow();
-			box	""
-				" Te ha dolido, ¿verdad?, dijo el chico.           "
-				" Si.                                              "
-				" ¿Eres muy valiente?                              "
-				" Regular.                                         "
-				" ¿Qué es lo más valiente que has hecho?           "
-				" Escupió en la carretera una flema sanguinolenta. "
-				" Levantarme esta mañana, dijo.                    "
-				""
-				"                                   CORMAC MCCARTY "
-				"                                   The Road, 2006 "
-				"";
-			print (parser) "Pulsa una tecla para empezar";
-			PressAnyKey();
-			EraseWindow();
-print "No debió ser así. Eso es lo primero que el joven Gabriel Mistral piensa al abrir los ojos y despertar en la sofocante oscuridad de la habitación. Aún permanece unos minutos en la cama, tumbado con la mirada perdida entre las sombras del techo mientras las imágenes de los últimos días desfilan ante él en un tropel confuso. Una y otra vez ha repasado esas imágenes, obstinado, convencido de que había algo oculto en ellas que no podía ver, una clave secreta que necesitaba desentrañar para comprender lo ocurrido. Pero una y otra vez se ha encontrado incapaz de dar con ello. ¿Cómo se podía haber torcido todo de esa manera? ¿Dónde se habían equivocado?^";
+!			box	""
+!				" Te ha dolido, ¿verdad?, dijo el chico.           "
+!				" Si.                                              "
+!				" ¿Eres muy valiente?                              "
+!				" Regular.                                         "
+!				" ¿Qué es lo más valiente que has hecho?           "
+!				" Escupió en la carretera una flema sanguinolenta. "
+!				" Levantarme esta mañana, dijo.                    "
+!				""
+!				"                                   CORMAC MCCARTY "
+!				"                                   The Road, 2006 "
+!				"";
+!			PressAnyKey();
+!			EraseWindow();
+!			box	""
+!				" Te ha dolido, ¿verdad?, dijo el chico.           "
+!				" Si.                                              "
+!				" ¿Eres muy valiente?                              "
+!				" Regular.                                         "
+!				" ¿Qué es lo más valiente que has hecho?           "
+!				" Escupió en la carretera una flema sanguinolenta. "
+!				" Levantarme esta mañana, dijo.                    "
+!				""
+!				"                                   CORMAC MCCARTY "
+!				"                                   The Road, 2006 "
+!				"";
+!			print (parser) "Pulsa una tecla para empezar";
+!			PressAnyKey();
+!			EraseWindow();
+!! TODO - modificar texto
+			print "No debió ser así. Eso es lo primero que el joven Gabriel 
+			Mistral piensa al abrir los ojos y despertar en la sofocante 
+			oscuridad de la habitación. Aún permanece unos minutos en la cama, 
+			tumbado con la mirada perdida entre las sombras del techo mientras 
+			las imágenes se agolpan en su cabeza. Una y otra vez ha repasado 
+			esas imágenes últimamente, convencido de que tiene que haber algo 
+			oculto en ellas que no puede ver. Una clave secreta que tal vez 
+			pudiese utilizar para ayudarse a comprender lo ocurrido pero que 
+			por más que lo ha intentado, se ha visto incapaz de desentrañar. 
+			¿Cómo se podía haber torcido todo de esa manera? ¿Dónde se habían 
+			equivocado?^";
 			new_line;
-print "Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flowers, " lo ocupa todo. Ella. Automáticamente tiende la mano a un lado, buscando a ciegas el tacto de su cuerpo, pero lo único que encuentra son las sábanas, húmedas y pegajosas. No, claro que no está, recuerda. No aquí. La dejó durmiendo en el hotel antes de volverse a casa en mitad de la noche, solo de nuevo. Decide que es mejor así, al fin y al cabo ahora tiene cosas más importantes de las que preocuparse. De modo que deja escapar un largo suspiro de resignación y se obliga a incorporarse finalmente en el colchón.^";
+!! TODO - modificar texto
+			print "Vuelve a cerrar los ojos un momento y entonces el perfume 
+			de ", (the) flowers, " lo ocupa todo. Ella. Automáticamente tiende 
+			la mano a un lado, buscando a ciegas el tacto de su cuerpo, pero no 
+			está. Lo único que encuentra son las sábanas, húmedas y pegajosas. 
+			No, claro que no está, recuerda. No aquí. La dejó durmiendo en el 
+			hotel antes de volverse a casa en mitad de la noche, solo de 
+			nuevo... Seguramente sea mejor así, al fin y al cabo ahora tiene 
+			cosas más importantes de las que preocuparse. Deja escapar un largo 
+			suspiro de resignación y se obliga a incorporarse finalmente en el 
+			colchón.^";
 			PressAnyKey();
 			new_line;
 			self.short_name = "En la habitación";
 			DrawStatusLine();
 			return true;
-		}],
+		}], 
 		description [;
-			if (~~self.is_dark)
+			if (self.light_flag)
+!! TODO - modificar texto
 				"La intensa claridad del amanecer se cuela ahora por la ventana 
 				abierta, iluminando un caos de ropa, libros, papeles y otros 
 				trastos esparcidos por todo el dormitorio. Sólo su cama y el 
 				escritorio siguen aún en pie entre el tumulto.";
-			else if (self.described)
-				"Apenas una fina franja de luz logra colarse en la habitación 
-				por entre los resquicios que dejan las cortinas cerradas. 
-				Insuficiente todavía como para descorrer el telón de tinieblas 
-				que lo envuelve todo.";
+			else if (self.description_flag)
+!! TODO - modificar texto
+				"Las cortinas cerradas no dejan pasar más que una fina franja 
+				de luz. Insuficiente todavía como para alejar las sombras que 
+				envuelven la habitación.";
 			else {
-				self.described = true;
+				self.description_flag = true;
+!! TODO - modificar texto
 				"A su alrededor todo son penumbras. La escasa luz capaz de 
 				filtrarse a través de las cortinas cerradas sirve tan sólo para 
 				dibujar una estrecha franja blanca y zigzagueante sobre el 
@@ -129,72 +162,362 @@ print "Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flo
 		before [;
 			Listen:
 				print "Desde el exterior llega el eco";
-				if (self.is_dark) print " distante y apagado";
+				if (~~self.light_flag)
+					print " distante y apagado";
 				" de motores.";
 			Smell:
-				if (~~self.is_dark)
+				if (self.light_flag)
 					"El aire que se cuela por la ventana es fresco y fragante.";
-				else if (self.smelled)
+				else if (self.smell_flag)
 					"Huele al sudor empapado entre las sábanas.";
 				else {
-					self.smelled = true;
+					self.smell_flag = true;
+!! TODO - modificar texto
 					"Durante unos instantes permanece suspendido entre las 
-					tinieblas el perfume de ", (the) flowers, ". Sin embargo 
+					tinieblas el perfume de ", (the) flowers, ". Sin embargo, 
 					está sólo en su memoria y se desvanece enseguida. Aquí y 
 					ahora el único aroma que hay es el acre del sudor que 
 					empapa las sábanas.";
 				}
 		], 
 		e_to [;
-!! TODO: comprobaciones
-!! XXX
-print "Gabriel se detiene a echar un último vistazo a la habitación y tuerce la boca en una media sonrisa al pensar que se parece mucho a su propia vida; puesta toda patas arriba, llena de sueños rotos, pisoteados y tirados por el suelo. Al cabo de un momento, sin más, le da la espalda al pasado y sale con paso decidido por la puerta abierta.^";
-			PressAnyKey();
-			new_line;
-			PlayerTo(CAFE);	! FIN DE LA ESCENA
-			return true;
-		],
+			!! XXX - Se podrían llevar las siguientes comprobaciones, o parte 
+			!! de ellas, al código de los objetos involucrados (haciendo uso de 
+			!! sus rutinas react_before). Sin embargo, parece buena idea 
+			!! mantener juntas en el código restricciones similares, y además 
+			!! así se consigue más control sobre el orden en que se verifican.
+			if (~~self.light_flag)
+				"Con la habitación a oscuras no acierta a alcanzar ", 
+				(the) puerta_habitacion, ".";
+			if (~~IndirectlyContains(player, ropa) || ropa hasnt worn)
+				"Será mejor que se vista antes. No tiene ninguna intención de 
+				pasearse por ahí desnudo.";
+			if (~~IndirectlyContains(player, maleta)) {
+				PronounNotice(maleta);
+				"No puede dejarse la maleta aquí.";
+			}
+			if (puerta_habitacion hasnt open) {
+				<Open puerta_habitacion>;
+				new_line;
+			}
+!! TODO - modificar texto
+			if (~~IndirectlyContains(player, billete))
+				"Antes tiene que encontrar el billete. Lo necesita. No podrá 
+				llegar muy lejos sin él.";
+			!! Todas las restricciones han sido satisfechas:
+			return puerta_habitacion;
+		], 
 		out_to [;
 			return self.e_to();
 		],
 		cant_go
 			"No puede ir por ahí. La puerta es la única salida de la 
 			habitación.", 
-		is_dark	true,
 		inhibit_object_list true, 
+		!!----------------------------------------------------------------------
+		!! Establece si la habitación está o no iluminada, de forma que si no 
+		!! hay luz se restringe la libertad de acción del personaje jugador.
+		!! @param status (booleano)
+		!!		true para establecer la habitación como iluminada, false para 
+		!!		establecer lo contrario
+		set_light_flag [ status;
+			if (status == true) {
+				give oscuridad general;
+				move oscuridad to LIMBO;
+				give cama ~concealed;
+				self.light_flag = true;
+			}
+			if (status == false) {
+				give cama concealed;
+				move oscuridad to HABITACION;
+				give oscuridad ~general;
+				self.light_flag = false;
+			}
+		], 
  private
-		!! Indica si el objeto ha sido ya descrito al usuario o no
-		described false, 
-		!! Indica si ha sido olido o no
-		smelled false, 
+		description_flag false,	! indica si el objeto ha sido descrito
+		light_flag false, 		! indica si está iluminado
+		smell_flag false, 		! indica si ha sido olido
 ;
 
 !!------------------------------------------------------------------------------
 !! Objetos con rutinas react_before:
 
-!! TODO: nombres y adjetivos
-Atrezzo	"puerta" HABITACION
- with
-		name_f	'puerta' 'entrada' 'salida', 
+Furniture	cama "cama" HABITACION
+ with	name_m	'mueble' 'mobiliario' 'moblaje' 'colchon' 'jergon' 'somier' 
+				'lecho' 'catre' 'camastro',
+		name_f	'cama' 'piltra',
+		name_mp	'muebles',
+		gender	G_FEMENINO,
+		adjectives 'desecho' 'desecha' 'sin' 'hacer',
+		!! La propiedad *clarification* se encarga de imprimir un mensaje 
+		!! personalizado junto al título de la localidad cuando el jugador se 
+		!! encuentra en un objeto
+		clarification "sentado en la cama", 
+		describe [ obj i;
+			if (child(self) == nothing)
+				return true;
+			!! Listado de objetos que hay sobre la cama
+			objectloop(obj in self)
+				if (obj ~= player && obj hasnt scenery or concealed)
+					i++;
+			if (i == 0)
+				return true;
+			if (i == 1 && ropa in self)
+				"^Tiene la ropa hecha un rebujo sobre la cama.";
+			print "^Sobre la cama puede ver ";
+			WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT + PARTINV_BIT);
+			".";
+		], 
+		description [ obj i;
+			print "Tiene las sábanas arrugadas y empapadas en sudor.";
+			if (~~self.description_flag) {
+				self.description_flag = true;
+				print (emph) " Supongo que hoy no habrá ningún problema 
+				por que la deje sin hacer, ¿eh?";
+			}
+			!! Listado de objetos que hay sobre la cama
+			objectloop(obj in self)
+				if (obj ~= player && obj hasnt scenery or concealed)
+					i++;
+			if (i > 0) {
+				print " Sobre ella puede ver también ";
+				WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT);
+				print ".";
+			}
+			new_line;
+			return true;
+		], 
+!! TODO - comportamiento de react_before
+!! TODO - comportamiento de before
+!! TODO - comportamiento de after
+ private
+		description_flag false,	! indica si el objeto ha sido descrito
+ has	female enterable supporter concealed;
+
+
+!!------------------------------------------------------------------------------
+!! Atrezzo:
+
+!!	-	*oscuridad.general* se activa para evitar las comprobaciones 
+!!		contempladas en la rutina react_before del objeto
+Atrezzo	oscuridad "oscuridad" HABITACION
+with	name_f	'lobreguez' 'negrura' 'oscuridad' 'penumbra' 'tenebrosisdad', 
+		name_fp	'penumbra' 'sombras' 'tinieblas', 
+		gender	G_FEMENINO, 
+		article	"la", 
+!! TODO - adjetivos
+		description
+!! TODO - modificar texto
+			"La oscuridad es prácticamente impenetrable, rota tan solo por las 
+			estrechas franjas de luz que logran atravesar las cortinas 
+			cerradas.",
+		react_before [;
+			if (self has general)
+				return false;
+			Blow, Listen, Rub, SetTo, Smell, Taste, Touch:
+				if (noun == nothing or player or self)
+					return false;
+				if (IndirectlyContains(player, noun))
+					return false;
+				if (noun == cama)
+					return false;
+				if (noun == cortinas)
+					return false;
+				"No acierta a dar con ", (the) noun, " en la oscuridad.";
+			Close:
+				if (noun hasnt openable)
+					return false;
+				if (noun hasnt open)
+					"En la oscuridad de la habitación no es capaz de dar con ", 
+					(the) noun, ".";
+				if (noun == cortinas)
+					return false;
+				"Está todo tan oscuro que no es capaz de acertar a cerrar ", 
+				(the) noun, ".";
+			Consult, Examine, Look, LookUnder, Read, Search:
+				if (noun == nothing or player or self)
+					return false;
+				if (noun == HABITACION)
+					return false;
+				if (noun == cortinas)
+					return false;
+				print (string) random(
+					"Con la habitación a oscuras apenas se puede distinguir más 
+					que algunos bultos y siluetas. Necesita más luz para poder 
+					ver algo.", 
+					"No es capaz de ver nada en la oscuridad.", 
+					"La luz que se cuela por entre las cortinas cerradas no es 
+					suficiente para iluminar el cuarto. En esta oscuridad no 
+					se puede ver nada.", 
+					"Está todo demasiado oscuro como para poder ver algo más 
+					que formas vagas y la silueta de algún mueble.", 
+					"Todo cuanto puede distinguirse en la oscuridad son algunas 
+					formas y siluetas. Necesita luz para poder ver algo más.", 
+				);
+				new_line;
+				return true;
+			Dance:
+				"Decide que no es buena idea ponerse a bailar por la habitación 
+				a oscuras.";
+			Empty, EmptyT, Insert, PutOn, Remove, Transfer:
+				if (noun hasnt supporter or container)
+					return false;
+				if (IndirectlyContains(player, noun))
+					return false;
+!! TODO - probar
+				if (second ~= nothing && IndirectlyContains(player, second))
+					return false;
+				"Con la habitación a oscuras no acierta a dar con ", 
+				(the) noun, ".";
+			Jump, JumpOver:
+				"Decide que no es buena idea ponerse a saltar a oscuras.";
+			Lock, Unlock:
+				if (noun hasnt lockable)
+					return false;
+				if (IndirectlyContains(player, noun))
+					return false;
+				"A oscuras no es capaz de dar con ", (the) noun, ".";
+			Open:
+				if (noun hasnt openable)
+					return false;
+				if (noun has open)
+					"En la oscuridad de la habitación no es capaz de dar con ", 
+					(the) noun, ".";
+				if (noun == cortinas)
+					return false;
+				"Está todo tan oscuro que no es capaz de acertar a abrir ", 
+				(the) noun, ".";
+			Pull, Push, PushDir, Take:
+				if (noun has scenery or static)
+					return false;
+				if (noun == nothing or player)
+					return false;
+				if (IndirectlyContains(player, noun))
+					return false;
+				"No acierta a dar con ", (the) noun, " en la oscuridad.";
+			Swing:
+				"Decide que no es buena idea andar columpiándose por ningún 
+				lado con la habitación a oscuras.";
+		], 
+		before [;
+			Consult, Examine, Look:	return self.description();
+			!! No es necesario referirse a eso para terminar la historia
+			default: L__M(##Miscellany, 39); return true;
+		],
+ has	female;
+
+!!	-	*cortinas.general* se activa al abrir el objeto por primera vez
+Atrezzo	cortinas "cortinas" HABITACION
+ with	name_m	'visillo' 'cortinaje' 'ventanal',
+		name_mp	'visillos' 'cortinajes',
+		name_f	'cortina' 'ventana' 'colgadura' 'persiana',
+		name_fp	'cortinas' 'colgaduras' 'persianas',
+		gender	G_FEMENINO + G_PLURAL,
+		adjectives 'abierto' 'abiertos' 'abierta' 'abiertas' 'cerrado' 
+			'cerrados' 'cerrada' 'cerradas' 'tela',
+		description [;
+			if (self has open)
+!! TODO - modificar texto
+				"La luz del sol entra a raudales en la habitación ahora que 
+				las cortinas están descorridas.";
+			else {
+!! TODO - modificar texto
+				print (string) random(
+				"Cerradas, apenas dejan pasar la luz del amanecer al interior, 
+				con lo que el cuarto permanece en penumbras.", 
+				"Algunos finos haces de luz se cuelan por entre las rendijas 
+				que dejan las cortinas cerradas.", 
+				);
+				new_line;
+				return true;
+			}
+		], 
+		react_before [; 
+			Yes:
+				if (self has on)
+					<<Close self>>;
+		],
+		before [;
+			Close:
+				if (self hasnt open)
+					return false;
+				if (self hasnt on) {
+					StartTimer(self, 1);
+					give self on;
+					"¿Y dejar la habitación de nuevo a oscuras?";
+				}
+				return false;
+		], 
+		after [;
+			Close:
+				HABITACION.set_light_flag(false);
+				print (string) random(
+					"Corre las cortinas de nuevo.^", 
+					"Cierra las cortinas.^", 
+					"Cierra las cortinas otra vez.^", 
+				);
+				new_line;
+				<<Look>>;
+			Open:
+				HABITACION.set_light_flag(true);
+				if (self has general) {
+					print (string) random(
+						"Descorre las cortinas de nuevo.^", 
+						"Abre las cortinas.^", 
+						"Abre las cortinas otra vez.^", 
+				);
+					new_line;
+					<<Look>>;
+				}
+				else {
+					give self general;
+!! XXX - modificar texto
+					print "El entarimado está caliente y cruje bajo sus pies 
+					descalzos. Dando tumbos a través de la oscuridad, cruza el 
+					cuarto para descorrer las cortinas y abrir la ventana, 
+					dejando que los tibios y reconfortantes rayos del sol 
+					inunden la estancia. El olor es inconfundible; a mar y a 
+					montaña, a clavelinas y a malvas. Los perfumes de su hogar. 
+					Pero enseguida comprende que hay algo más. Una... una 
+					impresión desagradable acompañando a la caricia del sol. Un 
+					temblor imperceptible que recorre en secreto desde las 
+					tablas del suelo hasta las manos y los ojos infinitos de 
+					Gabriel. Y al girarse lo ve: todo el dormitorio está patas 
+					arriba, tal y como lo encontró al llegar a casa de 
+					madrugada. No había sido sólo un sueño. Era verdad. Al 
+					final le han encontrado.^";
+					PressAnyKey();
+					new_line;
+					<<Look>>;
+				}
+		],
+		time_left 1, 
+		time_out [; give self ~on; ], 
+ has	female pluralname openable;
+
+Atrezzo	puerta_habitacion "puerta" HABITACION
+!! TODO - nombres y adjetivos
+ with	name_f	'puerta' 'entrada' 'salida', 
 		gender	G_FEMENINO, 
 		adjectives 'madera' 'pintada' 'blanco' 'blanca' 'sencilla' 'cerrada' 
 			'abierta', 
 		description [;
 			if (self has open) "Está abierta de par en par.";
-			"De madera pintada en blanco. Ahora que está cerrada deja ver el 
-			colorido calendario de pared que tiene colgado por detrás.";
+			"De madera pintada en blanco. Tiene colgado un colorido calendario 
+			de pared que tiene colgado por detrás.";
 		], 
 		after [;
 			Close:
-				"La puerta se cierra con un ligero crujir de goznes.";
+				"Al cerrarla deja al descubierto un calendario que tiene 
+				colgado detrás.";
 			Open:
 				"La puerta se abre con un ligero crujir de goznes.";
-		], 
- has
-		female openable ~open transparent;
+		],
+ has	female openable ~open transparent;
 
-!! TODO: nombres y adjectivos
-Atrezzo	-> -> "calendario de pared"
+Atrezzo	"calendario de pared" puerta_habitacion
+!! TODO - nombres y adjectivos
  with	name_m	'calendario' 'anuario', 
 		gender	G_MASCULINO, 
 		adjectives 'pared' 'colorido', 
@@ -211,8 +534,9 @@ Atrezzo	-> -> "calendario de pared"
 				if (parent(self) has open) {
 					give parent(self) ~open;
 					print "Cierra la puerta para ver mejor el calendario que 
-					está colgado detrás.^";
+					tiene colgado detrás.^";
 					new_line;
+					return false;
 				}
 			Close, Open:
 				"Ya está bien como está.";
@@ -220,62 +544,6 @@ Atrezzo	-> -> "calendario de pared"
 				"Está enganchado a la puerta.";
 		], 
  has	male;
-
-!!------------------------------------------------------------------------------
-!! NPCs:
-
-!!------------------------------------------------------------------------------
-!! Items:
-
-Item	maleta "maleta de viaje" HABITACION
- with
-		name_m	'equipaje' 'maleton', 
-		name_f	'maleta',
-		gender	G_FEMENINO, 
-		adjectives 'viaje' 'cuero' 'gran' 'grande' 'desgastado' 'desgastada', 
-		invent [;
-			if (inventory_stage == 1 && self in HABITACION) {
-				print "su maleta de viaje, ya preparada y apoyada junto a la 
-				puerta";
-				return true;
-			}
-		],
-		describe [;
-			if (self in TAXI)
-				"^La maleta reposa sobre el asiento de al lado.";
-		],
-		description [;
-			print "Es un maletón de viaje forrado en cuero desgastado. Dentro 
-			lleva lo poco que guardará de la que ha sido su vida hasta ahora; 
-			algo de ropa y un par de libros. Nada más.";
-			if (~~self.described) {
-				self.described = true;
-				" Ningún recuerdo. Esos tendrá que dejárselos atrás.";
-			}
-			new_line;
-			return true;
-		],
-		before [;
-			Close:
-				"Ya está cerrada.";
-			Open, Receive:
-				if (location == HABITACION)
-					"Ya tiene dentro todo cuanto puede llevar consigo.";
-				else
-					"Ahora no necesita nada de lo que lleva dentro de la 
-					maleta.";
-		],
-		after [; 
-			Take: 
-				if (self hasnt moved) 
-					"Recoge la maleta del suelo."; 
-		],
-		size 5, 
- private
-		!! Indica si el objeto ha sido ya descrito al usuario o no
-		described false, 
- has
-		female openable;
 
 !!------------------------------------------------------------------------------
 !! Furniture:
@@ -315,8 +583,7 @@ Furniture	escritorio "escritorio" HABITACION
 
 Furniture	cajon "cajón" HABITACION
  class	Receptacle, 
- with	capacity_size 3,
-		name_m	'cajon' 'cajoncillo' 'compartimento', 
+ with	name_m	'cajon' 'cajoncillo' 'compartimento', 
 		name_f	'gaveta',
 		gender	G_MASCULINO, 
 		adjectives 'escritorio', 
@@ -329,9 +596,315 @@ Furniture	cajon "cajón" HABITACION
 			PushDir, Take, Turn:
 				"Forma parte del escritorio.";
 		],
+		capacity_size 3,
  has	male concealed container openable ~open;
 
 !!------------------------------------------------------------------------------
-!! Atrezzo:
+!! Items:
+
+Item	ropa "ropa" cama
+!! ropa.general se activa al vestir el objeto por primera vez
+ class	Receptacle
+ with	name_m	'atuendo' 'vestuario' 'pantalon' 'tejano' 'vaquero' 'abrigo'
+				'gaban' 'sobretodo' 'chaqueton' 'bolsillo',
+		name_f	'ropa' 'indumentaria' 'prenda' 'vestimenta' 'pelliza' 
+				'chaqueta' 'faltriquera' 'camisa' 'camisola' 'camiseta',
+		name_mp	'atuendos' 'pantalones' 'tejanos' 'vaqueros' 'bolsillos',
+		name_fp	'prendas' 'vestimentas' 'faltriqueras',
+		gender	G_FEMENINO,
+		article	"su", 
+!! TODO - adjetivos
+		parse_name [ w;
+			w = NextWord();
+			if ( w == 'pantalon' or 'pantalones' or 'tejano' or 'tejanos' or 
+				'vaquero' or 'vaqueros' ) {
+				self.trousers_flag = true;
+				self.shirt_flag = false;
+				self.coat_flag = false;
+			}
+			else if ( w == 'camisa' or 'camiseta' ) {
+				self.trousers_flag = false;
+				self.shirt_flag = true;
+				self.coat_flag = false;
+			}
+			else if ( w == 'abrigo' or 'chaqueta' or 'cubretodo' or 'bolsillo' 
+					or 'bolsillos' ) {
+				self.trousers_flag = false;
+				self.shirt_flag = false;
+				self.coat_flag = true;
+			}
+			wn--;
+			return -1;
+		], 
+		description [;
+			if (self.trousers_flag)
+!! XXX - modificar texto
+				"Son unos pantalones negros algo desgastados ya por las 
+				rodillas y los bajos.";
+			if (self.shirt_flag)
+!! XXX - modificar texto
+				"Una sencilla camisa de algodón blanca.";
+			if (self.coat_flag) {
+!! XXX - modificar texto
+				print "Se trata de un gran abrigo oscuro de tela basta, largo 
+				hasta las rodillas y con dos profundos bolsillos a lo lados";
+				if (child(self) && self in player && self has worn) {
+					print ".^^En los bolsillos hay ";
+					WriteListFrom(child(self), 
+						ENGLISH_BIT + RECURSE_BIT + FULLINV_BIT);
+				}
+				".";
+			}
+!! XXX - modificar texto
+			print "Siempre ha vestido ropa barata y discreta. Estos son unos 
+			pantalones negros, algo desgastados por el uso, camisa blanca de 
+			algodón, y un gran abrigo gris de tela basta, largo hasta las 
+			rodillas y de profundos bolsillos.";
+			if (self in cama) " Yace hecha un rebujo sobre la cama.";
+			if (self in real_location) " Yace hecha un rebujo en el suelo.";
+			if (child(self) && self in player && self has worn) {
+				print "^^En los bolsillos del abrigo hay ";
+				WriteListFrom(child(self), 
+					ENGLISH_BIT + RECURSE_BIT + FULLINV_BIT);
+			}
+			new_line;
+			return true;
+		], 
+		before [ i obj;
+			Disrobe:
+				if (self hasnt worn)
+					return false;
+				if (real_location == HABITACION)
+					return false;
+				"No piensa pasearse por ahí desnudo.";
+			Receive: ! XXX - sobreescribe a Receptacle
+				!! Se comprueba el peso (si su capacidad no es infinita):
+				if (CapacityWeightOf(self) ~= INFINITE_CAPACITY) {
+					if (WeightOf(noun) > CapacityWeightOf(self))
+						print_ret (The) noun ," ", (es) noun ," demasiado 
+						pesad", (o) noun ," como para guardarlo en un 
+						bolsillo.";
+					!! Se calcula el peso de todo el contenido
+					i = 0; objectloop (obj in self) i = i + WeightOf(obj);
+					if ((i + WeightOf(noun)) > CapacityWeightOf(self))
+						"Los bolsillos del abrigo no soportan ya más peso.";
+				}
+				!! Se comprueba el volumen (si su capacidad no es infinita):
+				if (CapacityVolumeOf(self) ~= INFINITE_CAPACITY) {
+					if (VolumeOf(noun) > CapacityVolumeOf(self))
+						print_ret (The) noun ," no cabe", (n) noun ," dentro 
+						del bolsillo.";
+					!! Se calcula el volumen de todo el contenido
+					i = 0; objectloop(obj in self) i = i + VolumeOf(obj);
+					if ((i + VolumeOf(noun)) > CapacityVolumeOf(self))
+						"En los bolsillos del abrigo no queda hueco para nada 
+						más.";
+				}
+				!! Se comprueba el tamaño (si su capacidad no es infinita):
+				if (CapacitySizeOf(self) ~= INFINITE_CAPACITY) {
+					if (SizeOf(noun) > CapacitySizeOf(self)) {
+						print_ret (The) noun, " ", (es) noun, " demasiado 
+						grande", (s) noun, " como para guardarl", (o) noun, 
+						" en uno de los bolsillos del abrigo.";
+					}
+				}
+				!! Se comprueba el número (si su capacidad no es infinita):
+				if (CapacityNumberOf(self) ~= INFINITE_CAPACITY) {
+					i = 0; objectloop(obj in self) i++;
+					if ((i+1) > CapacityNumberOf(self))
+						"En el bolsillo no entran ya más cosas.";
+				}
+				return false;
+			Search:
+				if (self hasnt worn)
+!! XXX - modificar texto
+					"Es más sencillo rebuscar en los bolsillos con la ropa 
+					puesta.";
+				if (child(self) == nothing)
+					"No lleva nada en los bolsillos.";
+				print "En los bolsillos lleva ";
+				WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT);
+				".";
+		], 
+		after [;
+			self.trousers_flag = false;
+			self.shirt_flag = false;
+			self.coat_flag = false;
+			Disrobe:
+				move revolver to LIMBO;
+				give self ~open;
+				give self ~container;
+				"Se quita ", (the) self, ".";
+			LetGo:
+				if (~~keep_silent)
+					"Saca ", (the) noun, " de dentro del bolsillo.";
+			Receive:
+				if (~~keep_silent)
+					"Mete ", (the) noun, " dentro de uno de los bolsillos del 
+					abrigo.";
+			Wear:
+				give self container;
+				give self open;
+				move revolver to self;
+				if (self hasnt general) {
+					give self general;
+					"Comienza a vestirse lentamente, con las imágenes de la 
+					noche anterior dando vueltas aún en su cabeza: la última y 
+					solitaria cena en en restaurante cercano... el bar... ella 
+					la desconocida que le observaba desde el otro extremo de la 
+					barra... y las copas juntos... y vagos fragmentos de 
+					conversación... y una barata habitación de hotel... y el 
+					jarrón con ", (name) flowers, " en la mesilla de noche. 
+					Recuerda el perfume de ", (the) flowers, ". Y recuerda 
+					también el sentimiento de culpa por dejarla allí, una vez 
+					se hubo dormido, para volverse a casa en mitad de la noche. 
+					Solo de nuevo. Sin una última palabra de despedida.
+					^^
+					Termina de abrocharse los pantalones y se coloca el abrigo. 
+					De inmediato nota el bulto en el bolsillo y, en un gesto 
+					inconsciente, desliza la mano dentro y acaricia el cañón 
+					del revólver. Un escalofrío le recorre la espalda; el arma 
+					sigue ahí. Frío. Pesado. Aterradoramente real.";
+				}
+		], 
+		size 4, 
+		capacity_size 3, 
+ private
+		trousers_flag false, 
+		shirt_flag false, 
+		coat_flag false, 
+ has	female clothing container open;
+
+!! TODO - terminar implementación
+Item	revolver "revólver" LIMBO
+ with	name_m	'revolver' 'tambor' 'barrilete' 'canon', 
+		name_f	'pistola' 'arma' 'cacha' 'culata', 
+		name_fp	'cachas', 
+		gender	G_MASCULINO, 
+!! TODO - adjetivos
+		adjectives 'frio' 'fria' 'pesado' 'pesada' 'metalico' 'metalica' 
+			'metal' 'brillante' 'amenazador' 'amenazadora' 'horrible' 'fuego',
+		description [;
+			switch(self.ammo) {
+				0: print "No le quedan balas";
+				1: print "Le queda una sola bala";
+				6: print "Tiene todas las balas ---las seis---";
+				default: print "Le quedan ", (number) self.ammo, " balas";
+			}
+			" en el tambor.";
+		], 
+		ammo 6, 
+		size 3, 
+ has	male;
+
+Item	maleta "maleta de viaje" HABITACION
+ with	name_m	'equipaje' 'maleton', 
+		name_f	'maleta',
+		gender	G_FEMENINO, 
+		adjectives 'viaje' 'cuero' 'gran' 'grande' 'desgastado' 'desgastada', 
+		invent [;
+			if (inventory_stage == 1 && self in HABITACION) {
+				print "su maleta de viaje, ya preparada y apoyada junto a la 
+				puerta";
+				return true;
+			}
+		],
+		describe [;
+			if (self in TAXI)
+				"^La maleta reposa sobre el asiento de al lado.";
+		],
+		description [;
+			print "Es un maletón de viaje forrado en cuero desgastado. Dentro 
+			lleva lo poco que guardará de la que ha sido su vida hasta ahora; 
+			algo de ropa y un par de libros. Nada más.";
+			if (~~self.description_flag) {
+				self.description_flag = true;
+				" Ningún recuerdo. Esos tendrá que dejárselos atrás.";
+			}
+			new_line;
+			return true;
+		],
+		before [;
+			Close:
+				"Ya está cerrada.";
+			Empty:
+				"No va a deshacer la maleta ahora.";
+			Open, Receive:
+				if (location == HABITACION)
+					"Ya tiene dentro todo cuanto puede llevar consigo.";
+				else
+					"Ahora no necesita nada de lo que lleva dentro de la 
+					maleta.";
+		],
+		after [; 
+			Take: 
+				if (self hasnt moved) 
+					"Recoge la maleta del suelo."; 
+		],
+		size 5, 
+ private
+		description_flag false,	! indica si el objeto ha sido descrito
+ has	female openable ~open container;
+
+Item	libro_bolsillo "librito de poemas" LIMBO
+ with	name_m	'libro' 'librito' 'tomo' 'volumen' 'ejemplar',
+		gender	G_MASCULINO,
+		adjectives 'pequeno' 'encuadernado' 'negro' 'bolsillo' 'tapas',
+		description
+			"Es un pequeño tomo de tapas negras sin apenas adornos, solo el 
+			título: ~POEMAS~, impreso en tinta dorada en la portada.",
+		react_before [;
+			if (noun == billete && second == self)
+				"Ya no necesita tenerlo ahí escondido.";
+			if (noun ~= billete && second == self)
+				"No se puede esconder algo así entre las páginas de un libro.";
+		], 
+		before [;
+			Close:
+				"Ya estaba cerrad", (o) self, ".";
+			Consult, Open, Read, Search:
+				print "Pasa algunas hojas al azar, sin detenerse ante ninguno 
+				de esos versos ya releídos que se deslizan antes sus ojos. 
+				Ahora no es el mejor momento para detenerse a leer poesía.^";
+				if (billete hasnt general) {
+					give billete general;
+					move billete to real_location;
+					"^De pronto, un pequeño trozo de papel se escurre de entre 
+					las páginas amarillentas y cae a los pies de Gabriel.";
+				}
+				return true;
+		], 
+		size 3, 
+ has	female container;
+
+!!	-	*billete.general* se activa al descubrir el billete escondido dentro 
+!!		del libro
+Item	billete LIMBO
+ with	short_name [;
+			if (self.description_flag) print "billete";
+			else print "trozo de papel";
+			return true;
+		], 
+		name_m	'billete' 'papel' 'pase', 
+		gender	G_MASCULINO, 
+		adjectives 'trozo' 'pedazo' 'barcaza' 'san' 'antonio',
+		description [;
+			if (~~self.description_flag) {
+				self.described = true;
+				print "Si, es él. ";
+			}
+			print "Es el billete para una barcaza que sale del puerto de San 
+			Antonio con fecha de hoy a las 16:30.";
+			if (real_location == HABITACION)
+				"Aún hay tiempo, pero no puede entretenerse. Tiene que salir 
+				de aquí.";
+		], 
+		size 1, 
+ private
+		description_flag false,	! indica si el objeto ha sido descrito
+ has	male;
+
+!!------------------------------------------------------------------------------
+!! NPCs:
 
 

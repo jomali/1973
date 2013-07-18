@@ -36,13 +36,10 @@
 !!
 !!------------------------------------------------------------------------------
 
-Default	GRAMMATICAL_INFLECTION 2;
-
 
 !!==============================================================================
 !!	Definición de atributos y clases
 !!------------------------------------------------------------------------------
-
 
 !!------------------------------------------------------------------------------
 Class	Room
@@ -126,12 +123,12 @@ Class	Atrezzo
 !! TODO: Crear clase atuendo (Attire) que implemente propiedad list_together
 
 !!------------------------------------------------------------------------------
-!! Hay algunas librerías para manejar conversaciones que definen una nueva 
-!! clase con la que representar personajes (por ejemplo "gtalk.h" de Greg 
-!! Boettcher, Krister Fundin y Mark J. Tilford para manejar conversaciones 
-!! por medio de menús, define la clase Character). Se puede reutilizar la 
-!! clase definida en una librería externa dentro de NPC convirtiendo esta 
-!! última en una subclase de aquella definida en la librería externa.
+!!	Hay algunas librerías para manejar conversaciones que definen una nueva 
+!!	clase con la que representar personajes (por ejemplo "gtalk.h" de Greg 
+!!	Boettcher, Krister Fundin y Mark J. Tilford para manejar conversaciones 
+!!	por medio de menús, define la clase Character). Se puede reutilizar la 
+!!	clase definida en una librería externa dentro de NPC convirtiendo esta 
+!!	última en una subclase de aquella definida en la librería externa.
 !!------------------------------------------------------------------------------
 Class	NPC
  class	Thing
@@ -144,11 +141,11 @@ Class	NPC
  has	animate;
 
 !!------------------------------------------------------------------------------
+!! TODO - repasar el conjunto completo de acciones de la librería para 
+!! determinar su comportamiento cuando el protagonista se encuentra dentro o 
+!! sobre un objeto SmartEnterable
 Class	SmartEnterable
- with	!! TODO: Repasar el conjunto completo de acciones de la librería para 
-		!! determinar su comportamiento cuando el protagonista se encuentra 
-		!! dentro o sobre un objeto SmartEnterable.
-		react_before [; if (player notin self) return false;
+ with	react_before [; if (player notin self) return false;
 			!! GROUP 2 ACTIONS: Usually work, given the right circumstances.
 			Close, Open:
 				if (noun hasnt openable)						return false;
@@ -284,23 +281,30 @@ Room	LIMBO "En algún lugar"
 			return true;
 		];
 
-Item	ropa "ropa" LIMBO
- with	name_m	'atuendo' 'vestuario' 'pantalon' 'tejano' 'vaquero' 'abrigo'
-				'gaban' 'sobretodo' 'chaqueton' 'bolsillo',
-		name_f	'ropa' 'indumentaria' 'prenda' 'vestimenta' 'pelliza' 
-				'chaqueta' 'faltriquera' 'camisa' 'camisola' 'camiseta',
-		name_mp	'atuendos' 'pantalones' 'tejanos' 'vaqueros' 'bolsillos',
-		name_fp	'prendas' 'vestimentas' 'faltriqueras',
-		gender	G_FEMENINO,
-		article	"su", 
-		!! TODO: adjectives
-		description [;
-		!! TODO:
-			print "Siempre ha vestido ropa barata y discreta. Estos son unos pantalones negros, algo desgastados por el uso, camisa blanca de algodón, y un gran abrigo gris de tela basta, largo hasta las rodillas y de profundos bolsillos.";
-			new_line;
-			return true;
-		],
-		!! TODO
- has	female clothing container open;
+!! TODO - repasar implementación
+Atrezzo	"paredes" 
+ with	found_in HABITACION CAFE, 
+		name_m	'muro',
+		name_mp	'muros',
+		name_f	'pared' 'esquina',
+		name_fp	'paredes' 'esquinas',
+		gender	G_FEMENINO + G_PLURAL,
+		adjectives 'blanco' 'blancos' 'blanca' 'blancas' 'amarillento' 
+			'amarillentos' 'amarillenta' 'amarillentas',
+		description [; switch ( GRAMMATICAL_INFLECTION ) {
+!! XXX - modificar texto
+			1,2,3: "No se observa nada digno de mención en ", (the) self, ".";
+			4,5,6: "No se observaba nada digno de mención en ", (the) self, ".";
+		}],
+		before [;
+			Examine:
+				return false;
+			default:
+				switch (GRAMMATICAL_INFLECTION) {
+					1, 2, 3: "No hace falta preocuparse por eso.";
+					4, 5, 6: "No hacía falta preocuparse por eso.";
+				}
+		], 
+ has	female pluralname;
 
 
