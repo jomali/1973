@@ -62,7 +62,7 @@ Room	TAXI "Dentro del taxi"
 			Damusix.Tocar(TRAFFIC_ENVIRONMENT);
 			#Endif; ! TARGET_GLULX;
 			!! Otra inicializaciones de la escena: -----------------------------
-			SetGrammaticalInflection(PRESENTE_TERCERA_PERSONA);
+			SetGrammaticalInflection(THIRD_PERSON_PRESENT);
 			move maleta to self;
 			StartTimer(self, 5); !! TODO: ajustar temporizador
 			!! Introducción ----------------------------------------------------
@@ -173,9 +173,20 @@ print "Siente el frío peso del revólver en la mano un instante antes de comprend
 !! TODO: ajustar temporizador
 			StartTimer(self, 5);
 			self.state = 1;
-print "El coche da una ligera sacudida de pronto al cambiar de calle. Gabriel advierte que acaban de doblar por Neftalí Basoalto, y al momento le vienen a la mente los Juegos Florales que aquí se celebraron hace unos meses. Él participó, pues siempre ha adorado la poesía. Se presentó con un breve poemario: ~Luces de Medianoche~, del que recuerda unos versos en especial:^";
+			print "El coche da una ligera sacudida de pronto al cambiar de 
+			calle. Gabriel advierte que acaban de doblar por Neftalí Basoalto, 
+			y al momento le vienen a la mente los Juegos Florales que aquí se 
+			celebraron hace unos meses. Él participó, pues siempre ha adorado 
+			la poesía. Se presentó con un breve poemario: ~Luces de 
+			Medianoche~, del que recuerda unos versos en especial:^";
 			new_line;
-print (em) "@<<Las mareas susurran al incierto / oscuro cielo estrellado, / lamentos y lloros amargos / grandes duelos y sueños aciagos. / Pues no conocen de mayor acierto / ni peor sino marcado, / el fin de la noche amante, / de su rostro fresco, siempre radiante. / Con el amanecer a cielo abierto / el Sol brilla asombrado, / de ver su noche desnuda / a los pies ya muerta y siempre muda.@>>^";
+			print (em) "@<<Las mareas susurran al incierto / oscuro cielo 
+			estrellado, / lamentos y lloros amargos / grandes duelos y sueños 
+			aciagos. / Pues no conocen de mayor acierto / ni peor sino marcado, 
+			/ el fin de la noche amante, / de su rostro fresco, siempre 
+			radiante. / Con el amanecer a cielo abierto / el Sol brilla 
+			asombrado, / de ver su noche desnuda / a los pies ya muerta y 
+			siempre muda.@>>^";
 			new_line;
 			print "---Eso es muy bonito, ¿es suyo?^";
 			flag = PressAnyKey(flag);

@@ -47,10 +47,11 @@
 
 Constant Story "PROYECTO 1973";
 
-Release 0;
-
 Constant ALPHA_RELEASE;
 Constant TEST_SCENE1;
+Constant Checking 1;
+!Release 0; Serial "130718";
+Release 1;
 
 Constant MANUAL_PRONOUNS;		! Los pronoms. refieren a objetos ya mencionados
 Constant NO_PLACES;				! Acciones LUGARES Y OBJETOS desactivadas
@@ -377,6 +378,11 @@ Extend	'corre' replace
 	* noun							-> CloseX
 ;
 
+Verb meta 'ayuda' 'pista' 'pistas' 'sos'
+	*								-> Help
+;
+VerboIrregular "mostrar ayuda" with imperativo 'ayuda';
+
 Extend only 'normal' replace
     *								-> LMode2
 ;
@@ -438,6 +444,10 @@ VerboIrregular "mostrar inventario de temas" with imperativo 'temas' 't//';
 	pueden abrir y cerrar.)";
 	new_line; new_line;
 	<<Close noun second>>;
+];
+
+[ HelpSub;
+	return HelpSystem.new_clue();
 ];
 
 [ OpenXSub;

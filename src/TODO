@@ -1,0 +1,33 @@
+
+# GENERAL
+
+	-	Refinar el sistema de ayuda
+	-	> busca <objeto> como sinónimo de > busca en <objeto>
+	-	Corregir mensajes: > ir: ¿Qué quieres ir?
+	-	Ídem: > comer: ¿Qué quieres comerse?
+	-	Corregir mensaje al intentar llenar un contenedor: No puede llenarlo.
+	-	Mensaje nuevo para acción *mild*
+	-	Ídem para *sing*
+	-	Ídem para *swim*
+
+
+# ESCENA 1
+
+	-	Oler cortinas
+	-	Mensaje nuevo para acción *sleep*
+	-	Ídem para *wake*
+	-	Contemplar luz (rayos de luz, interruptor de luz,...) con el que se 
+		pueda interactuar (examinar luz, encender luz...
+	-	Contemplar polvo (se menciona al mirar bajo la cama)
+	-	Contemplar bultos/siluetas
+	-	Contemplar rendijas
+	-	Nueva acción: *remember*
+
+
+# ESCENA 2
+
+# ESCENA 3
+
+# ESCENA 4
+
+

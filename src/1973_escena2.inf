@@ -51,9 +51,16 @@ Room	CAFE "Café Blanca Florida"
 			Damusix.Tocar(BAR_ENVIRONMENT);
 			#Endif; ! TARGET_GLULX;
 			!! Otra inicializaciones de la escena: -----------------------------
-			SetGrammaticalInflection(PASADO_TERCERA_PERSONA);
+			SetGrammaticalInflection(THIRD_PERSON_PAST);
 			!! Introducción ----------------------------------------------------
-print "Debe abandonar el país ahora que la situación se ha vuelto insostenible. Los militares se han hecho a la calle y todos los del partido están en peligro de ser prendidos o encarcelados. O algo peor, puesto que desde que cayó el gobierno se han sucedido las ejecuciones... entre ellas la de su amigo Pablo Ureta. Todavía siente cómo la frente se le perla con un sudor frío al pensar en que estuvieron juntos apenas horas antes de su asesinato, en un bar de la avenida Libertador Bernardo O'Higgins:^";
+			print "Debe abandonar el país ahora que la situación se ha vuelto 
+			insostenible. Los militares se han hecho a la calle y todos los del 
+			partido están en peligro de ser prendidos o encarcelados. O algo 
+			peor, puesto que desde que cayó el gobierno se han sucedido las 
+			ejecuciones... entre ellas la de su amigo Pablo Ureta. Todavía 
+			siente cómo la frente se le perla con un sudor frío al pensar en 
+			que estuvieron juntos apenas horas antes de su asesinato, en un bar 
+			de la avenida Libertador Bernardo O'Higgins:^";
 			new_line;
 			return true;
 		}],
@@ -114,9 +121,13 @@ NPC		-> Pablo "Pablo"
 		describe [;
 			if (self.first_description) {
 				self.first_description = false;
-
-"^Él ya se encontraba allí, tal y como habían quedado. Su rostro, apenas reconocible, estaba surcado por toda una colección de arrugas nuevas y marcado ferozmente por la tristeza y el cansancio. Pero seguía siendo su mismo rostro al fin y al cabo: duro, inteligente, familiar. Pablo bebía una cerveza en silencio, sentado solo en una de las mesas más alejadas.";
-
+				"^Él ya se encontraba allí, tal y como habían quedado. Su 
+				rostro, apenas reconocible, estaba surcado por toda una 
+				colección de arrugas nuevas y marcado ferozmente por la 
+				tristeza y el cansancio. Pero seguía siendo su mismo rostro al 
+				fin y al cabo: duro, inteligente, familiar. Pablo bebía una 
+				cerveza en silencio, sentado solo en una de las mesas más 
+				alejadas.";
 			}
 			else {
 				print "^Pablo estudiaba su cerveza en silencio, sentado";
@@ -128,9 +139,12 @@ NPC		-> Pablo "Pablo"
 			if (player notin silla)
 				print "Estaba sentado en una de las mesas del fondo, con la 
 				vista clavada en su botellín de cerveza. ";
-
-"En un par de días parecía haber envejecido años; su espesa barba negra estaba más salpicada de canas que nunca, varias arrugas nuevas surcaban su frente y el contorno de sus ojos y, si bien es cierto que parte de su pelo había empezado a esfumarse hacía ya tiempo, el claro de piel enrrojecida que se revelaba entre los rizos color carbón de la coronilla era cada vez mayor.";
-
+			"En un par de días parecía haber envejecido años; su espesa barba 
+			negra estaba más salpicada de canas que nunca, varias arrugas 
+			nuevas surcaban su frente y el contorno de sus ojos y, si bien es 
+			cierto que parte de su pelo había empezado a esfumarse hacía ya 
+			tiempo, el claro de piel enrrojecida que se revelaba entre los 
+			rizos color carbón de la coronilla era cada vez mayor.";
 		],
  has	male proper;
 

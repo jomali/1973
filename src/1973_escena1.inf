@@ -51,27 +51,14 @@
 !!	4. Tocar TRACK_1_DENOUEMENT, sin repeticiones, con FLAG_SOUND_NOTIFY:
 !!		Damusix.AsignarCanal(TRACK_1_DENOUEMENT, 0, -1, 1);
 !!		Damusix.Tocar(TRACK_1_DENOUEMENT, 1);
-!! TODO:
-!!	*	busca <objeto> como sinonimo de busca en <objeto>
-!!	*	> ir - ¿Qué quieres ir?
-!!	*	> comer - ¿Qué quieres comerse?
-!!	*	mensaje para llenar contenedores - "No puede llenarlo."
-!!	*	mensaje nuevo para acción *mild*
-!!	*	mensaje nuevo para acción *sing*
-!!	*	mensaje nuevo para acción *sleep* mientras esté en la HABITACION
-!!	*	mensaje nuevo para acción *swim*
-!!	*	mensaje nuevo para acción *wake*
-!!	*	objeto luz (rayos de luz, interruptor de luz,...) con el que el 
-!!		interlector pueda interactuar (enciende la luz, o examina la luz).
-!!	*	objeto polvo (se menciona al mirar bajo la cama)
 
 Room	HABITACION
  with	name	'alcoba' 'alojamiento' 'apartamento' 'aposento' 'casa' 'cuarto' 
-				'dormitorio' 'estancia' 'habitación' 'morada' 'vivienda', 
+				'dormitorio' 'estancia' 'habitacion' 'morada' 'vivienda', 
 		short_name " ", 
 		initial [; if (self hasnt visited) {
 			!! Inicializaciones de la escena -----------------------------------
-			SetGrammaticalInflection(PRESENTE_TERCERA_PERSONA);
+			SetGrammaticalInflection(THIRD_PERSON_PRESENT);
 			if (flowers == nothing) flowers = GetFlowerType();
 			!! Inicializaciones multimedia -------------------------------------
 			#Ifdef TARGET_GLULX;
@@ -117,12 +104,11 @@ Room	HABITACION
 			oscuridad de la habitación. Aún permanece unos minutos en la cama, 
 			tumbado con la mirada perdida entre las sombras del techo mientras 
 			las imágenes se agolpan en su cabeza. Una y otra vez ha repasado 
-			esas imágenes últimamente, convencido de que tiene que haber algo 
-			oculto en ellas que no puede ver. Una clave secreta que tal vez 
-			pudiese utilizar para ayudarse a comprender lo ocurrido pero que 
-			por más que lo ha intentado, se ha visto incapaz de desentrañar. 
-			¿Cómo se podía haber torcido todo de esa manera? ¿Dónde se habían 
-			equivocado?^";
+			esas imágenes últimamente, convencido de que hay algo oculto en 
+			ellas que no puedo ver. Una clave secreta de la que tal vez pudiese 
+			ayudarse para comprender lo ocurrido pero que por más que se 
+			esfuerza se ve incapaz de desentrañar. ¿Cómo se podía haber torcido 
+			todo de esa manera? ¿Dónde se habían equivocado?^";
 			new_line;
 !! TODO - modificar texto
 			print "Vuelve a cerrar los ojos un momento y entonces el perfume 
@@ -249,7 +235,7 @@ Room	HABITACION
 !! Objetos con rutinas react_before:
 
 Furniture	cama "cama" HABITACION
- with	name_m	'camastro' 'catre' 'colchon' 'jergon' 'lecho' 'mobilario' 
+ with	name_m	'camastro' 'catre' 'colchon' 'jergon' 'lecho' 'mobiliario' 
 				'moblaje' 'mueble' 'somier', 
 		name_f	'cama' 'piltra',
 		name_mp	'muebles',
@@ -329,11 +315,11 @@ with	name_f	'lobreguez' 'negrura' 'oscuridad' 'penumbra' 'tenebrosisdad',
 			Close:
 				if (noun hasnt openable)
 					return false;
+				if (noun == cortinas)
+					return false;
 				if (noun hasnt open)
 					"En la oscuridad de la habitación no es capaz de dar con ", 
 					(the) noun, ".";
-				if (noun == cortinas)
-					return false;
 				"Está todo tan oscuro que no es capaz de acertar a cerrar ", 
 				(the) noun, ".";
 			Consult, Examine, Look, LookUnder, Read, Search:
@@ -381,11 +367,11 @@ with	name_f	'lobreguez' 'negrura' 'oscuridad' 'penumbra' 'tenebrosisdad',
 			Open:
 				if (noun hasnt openable)
 					return false;
+				if (noun == cortinas)
+					return false;
 				if (noun has open)
 					"En la oscuridad de la habitación no es capaz de dar con ", 
 					(the) noun, ".";
-				if (noun == cortinas)
-					return false;
 				"Está todo tan oscuro que no es capaz de acertar a abrir ", 
 				(the) noun, ".";
 			Pull, Push, PushDir, Take:
@@ -510,7 +496,7 @@ Atrezzo	puerta_habitacion "puerta" HABITACION
 		description [;
 			if (self has open) "Está abierta de par en par.";
 			"De madera pintada en blanco. Tiene colgado un colorido calendario 
-			de pared que tiene colgado por detrás.";
+			de pared por detrás.";
 		], 
 		after [;
 			Close:
@@ -576,9 +562,9 @@ Atrezzo	"calendario de pared" puerta_habitacion
 !! Furniture:
 
 Furniture	escritorio "escritorio" HABITACION
- with	name_m	'mueble' 'mobiliario' 'moblaje' 'escritorio' 'pupitre',
-		name_mp	'muebles',
-		name_f	'mesa',
+ with	name_m	'escritorio' 'mobiliario' 'moblaje' 'mueble' 'pupitre', 
+		name_mp	'muebles', 
+		name_f	'mesa', 
 		gender	G_MASCULINO,
 		adjectives 'madera' 'pequeno' 'pequena' 'oscuro' 'oscura',
 		description [;
@@ -656,7 +642,7 @@ Item	ropa "ropa" cama
 			return -1;
 		], 
 		description [;
-			if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA) {
+			if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT) {
 				if (self.coat_flag) {
 !! TODO - modificar texto
 					print "Se trata de un gran abrigo oscuro de tela basta, 
@@ -736,14 +722,14 @@ Item	ropa "ropa" cama
 					return false;
 				if (real_location == HABITACION)
 					return false;
-				if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+				if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
 					"No piensa pasearse por ahí desnud", (o) player, ".";
 				else
 					"No pensaba pasearse por ahí desnud", (o) player, ".";
 			Search:
 				if (self hasnt worn) {
 !! XXX - modificar texto
-					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
 						"No encuentra nada interesante entre la ropa.";
 					else
 						"No encontró nada interesante entre la ropa.";
@@ -762,20 +748,20 @@ Item	ropa "ropa" cama
 			Disrobe:
 				give self ~open;
 				give self ~container;
-				if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+				if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
 					"Se quita ", (the) self, ".";
 				else
 					"Se quitó ", (the) self, ".";
 			LetGo:
 				if (~~keep_silent) {
-					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
 						"Saca ", (the) noun, " de dentro del bolsillo.";
 					else
 						"Sacó ", (the) noun, " de dentro del bolsillo.";
 				}
 			Receive:
 				if (~~keep_silent) {
-					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
 						"Mete ", (the) noun, " dentro de uno de los bolsillos 
 						del abrigo.";
 					else
@@ -815,7 +801,7 @@ Item	ropa "ropa" cama
 			switch(id) {
 				1:	!! Se intenta meter en el bolsillo un objeto cuyo peso 
 					!! supera el límite permitido:
-					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
 						print_ret (The) obj, " ", (es) obj, " demasiado pesad", 
 						(o) obj, " como para guardarlo", (o) obj, " en uno de 
 						los bolsillos del abrigo.";
@@ -826,13 +812,13 @@ Item	ropa "ropa" cama
 				2:	!! Se intenta meter en el bolsillo un objeto cuyo peso,
 					!! en conjunto con el del resto de objetos que hay ya en el 
 					!! bolsillo, supera el límite permitido:
-					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
 						"Los bolsillos del abrigo ya no soportan más peso.";
 					else
 						"Los bolsillos del abrigo ya no soportaban más peso.";
 				3:	!! Se intenta meter en el bolsillo un objeto cuyo volumen 
 					!! supera el límite permitido:
-					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
 						print_ret (The) obj, " no cabe", (n) obj, " dentro del  
 						bolsillo."; 
 					else
@@ -841,7 +827,7 @@ Item	ropa "ropa" cama
 				4:	!! Se intenta meter en el bolsillo un objeto cuyo volumen, 
 					!! en conjunto con el del resto de objetos que hay ya en el 
 					!! bolsillo, supera el límite permitivo:
-					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
 						"En los bolsillos ya no queda hueco suficiente como 
 						para meter ", (the) obj, ".";
 					else
@@ -849,7 +835,7 @@ Item	ropa "ropa" cama
 						para meter ", (the) obj, ".";
 				5:	!! Se intenta meter en el bolsillo un objeto cuto tamaño 
 					!! supera el límite permitido:
-					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
 						print_ret (The) obj, " ", (es) obj, " demasiado 
 						grande", (s) obj, " como para guardarl", (o) obj, " en 
 						uno de los bolsillos del abrigo.";
@@ -859,7 +845,7 @@ Item	ropa "ropa" cama
 						uno de los bolsillos del abrigo.";
 				6:	!! Se intenta meter en el bolsillo un objeto tras haber 
 					!! alcanzado el límite de objetos permitido:
-					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
 						"En el bolsillo ya no entran más cosas.";
 					else
 						"En el bolsillo ya no entraban más cosas.";

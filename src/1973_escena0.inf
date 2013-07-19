@@ -281,6 +281,236 @@ Room	LIMBO "En algún lugar"
 			return true;
 		];
 
+Object	HelpSystem
+ with	found_in [;
+			return true;
+		], 
+		react_before [;
+			Examine:
+				if (self.examine_flag && ~~self.examine_explained) {
+					self.examine_flag = false;
+					self.examine_explained = true;
+					self.examine_after();
+					new_line;
+				}
+			Go:
+				if (~~self.go_explained)
+					self.go_explained = true;
+				if (self.go_flag) {
+					self.go_flag = false;
+					self.go_after();
+					new_line;
+				}
+			Inv, InvTall, InvWide:
+				if (~~self.inventory_explained)
+					self.inventory_explained = true;
+				if (self.inventory_flag) {
+					self.inventory_flag = false;
+					self.inventory_after();
+					new_line;
+				}
+			Look:
+				if (self.look_flag && ~~self.look_explained) {
+					self.look_flag = false;
+					self.look_explained = true;
+					self.look_after();
+					new_line;
+				}
+!! TODO - probar
+			Open:
+				if (~~self.open_explained_1 && noun == cortinas)
+					self.open_explained_1 = true;
+				if (~~self.open_explained_2 && noun == cortinas)
+					self.open_explained_2 = true;
+			Take:
+				if (~~self.take_explained)
+					self.take_explained = true;
+				if (self.take_flag) {
+					self.take_flag = false;
+					self.take_after();
+					new_line;
+				}
+			Use:
+				self.use_after();
+				new_line;
+		], 
+		react_after [;
+			if (self.start_flag) {
+				self.start_flag = false;
+				new_line;
+				print_ret (parser) "Si lo necesitas puedes teclear AYUDA en 
+				cualquier momento.";
+			}
+		], 
+		new_clue [;
+			!! Acción LOOK:
+			if (~~self.look_explained) {
+				self.look_flag = true;
+				return self.look_before();
+			}
+			!! Acción EXAMINE:
+			if (~~self.examine_explained) {
+				self.examine_flag = true;
+				return self.examine_before();
+			}
+			!! Acción OPEN:
+			if (real_location == HABITACION && ~~self.open_explained_1) {
+				self.open_explained_1 = true;
+				return self.open_before_1();
+			}
+			if (real_location == HABITACION && ~~self.open_explained_2) {
+				self.open_explained_2 = true;
+				return self.open_before_2();
+			}
+			!! Acción TAKE:
+			if (~~self.take_explained) {
+				self.take_flag = true;
+				return self.take_before();
+			}
+			!! Acción INVENTORY:
+			if (~~self.inventory_explained) {
+				self.inventory_flag = true;
+				return self.inventory_before();
+			}
+			!! Acción GO:
+			if (~~self.go_explained) {
+				self.go_flag = true;
+				return self.go_before();
+			}
+			!! Meta-acciones:
+			if (~~self.meta_explained) {
+				self.meta_explained = true;
+				return self.meta_before();
+			}
+			!! Respuesta genérica:
+			return self.no_action();
+		], 
+ private
+		start_flag true,
+		no_action [;
+			print_ret (parser) "Hay muchas otras acciones que puedes intentar 
+			hacer para conocer más cosas sobre el protagonista y su entorno. No 
+			tengas miedo de experimentar con nuevas instrucciones.";
+		], 
+		!! Acción LOOK:
+		look_flag false, 
+		look_explained false, 
+		look_before [;
+			print_ret (parser) "Puedes volver a obtener una descripción de los 
+			alrededores tecleando MIRA A TU ALREDEDOR, o simplemente MIRA.";
+		], 
+		look_after [;
+			print_ret (parser) "En el futuro puedes usar indistintamente la 
+			intrucción MIRA, o limitarte a pulsar la tecla @<<intro@>> para 
+			leer de nuevo la descripción del lugar en que se encuentra Gabriel. 
+			Si te atascas y no sabes cómo continuar puedes volver a teclear 
+			AYUDA en cualquier momento.";
+		], 
+		!! Acción EXAMINE:
+		examine_flag false, 
+		examine_explained false, 
+		examine_before [;
+			print_ret (parser) "Los objetos tienen sus propias descripciones 
+			también. Puedes averiguar más cosas sobre un objeto en particular 
+			usando la instrucción EXAMINA. Prueba a examinar las cortinas, por 
+			ejemplo.";
+		], 
+		examine_after [;
+			print_ret (parser) "Dado que examinar objetos es una acción muy 
+			frecuente, puedes abreviar el comando y teclear EX, X o simplemente 
+			el nombre del objeto que quieras examinar. De este modo, la 
+			instrucción EXAMINA LAS CORTINAS es equivalente a escribir EX 
+			CORTINAS o CORTINAS a secas.";
+		], 
+		!! Acción OPEN:
+		open_explained_1 false,
+		open_explained_2 false,  
+		open_before_1 [;
+			print_ret (parser) "Con la escasa luz que hay en la habitación 
+			apenas puedes hacer nada. Intenta abrir las cortinas para dejar 
+			pasar la luz del exterior.";
+		], 
+		open_before_2 [;
+			print_ret (parser) "Para abrir las cortinas tienes que utilizar la 
+			instrucción ABRE CORTINAS.";
+		], 
+		!! Acción TAKE/DROP:
+		take_flag false, 
+		take_explained false, 
+		take_before [;
+			print_ret (parser) "A lo largo del relato te encontrarás con varios 
+			objetos que Gabriel podrá coger y llevar consigo. Prueba, por 
+			ejemplo, a recoger esa ropa que hay sobre la cama.";
+		], 
+		take_after [;
+			print_ret (parser) "De forma análoga, también podrás hacer que 
+			Gabriel suelte los objetos que lleva encima usando la instrucción 
+			DEJA <OBJETO>. Además, normalmente los objetos se pueden manipular 
+			de muchas otras maneras (ya has visto que se pueden intentar 
+			examinar, abrir y cerrar o coger y dejar, pero también vestir, 
+			tocar, oler, empujar, etc). Un mensaje te informará del efecto que 
+			tiene la acción sobre el objeto:";
+		], 
+		!! Acción INVENTORY:
+		inventory_flag false, 
+		inventory_explained false, 
+		inventory_before [;
+			print_ret (parser) "Cuando Gabriel coje un objeto, este deja de 
+			estar en el sitio que ocupaba antes y pasa a su poder. Puedes ver 
+			las cosas que Gabriel lleva encima en cualquier momento tecleando 
+			INVENTARIO.";
+		], 
+		inventory_after [;
+			print_ret (parser) "Comprobar cuáles son los objetos que lleva el 
+			protagonista es una acción muy habitual de forma que, al igual que 
+			muchas otras, también podrás abreviarla. INVENTARIO, INV o 
+			simplemente I harán que se imprima el siguiente listado:";
+		], 
+		!! Acción GO:
+		go_flag false, 
+		go_explained false, 
+		go_before [;
+			print_ret (parser) "Para hacer que Gabriel se desplace de una 
+			localidad a otra puedes teclear el nombre del punto cardinal en 
+			dirección al cuál quieres ir (NORTE, SUR, ESTE, OESTE, así como 
+			NORESTE, NOROESTE, etc). SAL, ENTRA, SUBE y BAJA son instrucciones 
+			de movimientos también posibles -- lee con atención las 
+			descripciones de cada localidad para hacerte una idea de en qué 
+			direcciones puedes intentar moverte.";
+		], 
+		go_after [;
+			print_ret (parser) "Los puntos cardinales se pueden abreviar por 
+			N, S, E, W, NE, NW y así sucesivamente.";
+		], 
+		!! Meta-acciones:
+		meta_explained false, 
+		meta_before [;
+			print_ret (parser) "Si quieres salir del relato, teclea TERMINAR. 
+			Para guardar tu posición actual, teclea GUARDAR. CARGAR te 
+			permitirá retomar una partida que hayas guardado previamente, y 
+			REINICIAR comenzará el relato de nuevo desde el principio. Además, 
+			si en algún momento quieres volver @<<un paso atrás@>>, teclea 
+			DESHACER.";
+		], 
+		!! Acción USE:
+		use_explained false, 
+		use_after [;
+			print_ret (parser) "Normalmente podrás intentar manipular los 
+			objetos con los que te encuentres a lo largo del relato de muchas 
+			formas distintas así que, existiendo tantas opciones diferentes, 
+			la instrucción USA resulta demasiado ambigua. Prueba a realizar una 
+			acción más concreta.";
+		], 
+		!! Muestras de duda:
+		hesitate_explained false, 
+		hesitate_after [;
+			print_ret (parser) "Cuando Gabriel muestra signos de duda es porque 
+			estás a punto de hacer algo que va a cambiar o a hacer avanzar el 
+			desarrollo de la historia. Asegúrate de que es así como quieres 
+			continuar y después repite la última instrucción.";
+		],
+ has	scenery;
+
 !! TODO - repasar implementación
 Atrezzo	"paredes" 
  with	found_in HABITACION CAFE, 

@@ -41,14 +41,14 @@
 !!	Constantes y variables globales de la librería
 !!------------------------------------------------------------------------------
 
-Constant PRESENTE_PRIMERA_PERSONA = 1;
-Constant PRESENTE_SEGUNDA_PERSONA = 2;
-Constant PRESENTE_TERCERA_PERSONA = 3;
-Constant PASADO_PRIMERA_PERSONA   = 4;
-Constant PASADO_SEGUNDA_PERSONA   = 5;
-Constant PASADO_TERCERA_PERSONA   = 6;
+Constant FIRST_PERSON_PRESENT	= 1;
+Constant SECOND_PERSON_PRESENT	= 2;
+Constant THIRD_PERSON_PRESENT	= 3;
+Constant FIRST_PERSON_PAST		= 4;
+Constant SECOND_PERSON_PAST		= 5;
+Constant THIRD_PERSON_PAST		= 6;
 
-Global	GRAMMATICAL_INFLECTION = PRESENTE_SEGUNDA_PERSONA;
+Global GRAMMATICAL_INFLECTION = SECOND_PERSON_PRESENT;
 
 
 !!==============================================================================
@@ -143,11 +143,12 @@ Global	GRAMMATICAL_INFLECTION = PRESENTE_SEGUNDA_PERSONA;
 [ PrintVersionNumber i;
 	i = 0;  ! shut up compiler warning
 	#Ifdef ALPHA_RELEASE;
-	print "ALFA_";
+	print "ALFA.";
 	#Endif;
 	#Ifdef BETA_RELEASE;
-	print "BETA_";
+	print "BETA.";
 	#endif;
+	print Checking, ".";
 	#Ifdef	TARGET_ZCODE;
 	print (HDR_GAMERELEASE-->0) & $03ff;
 	#Ifnot;	! TARGET_GLULX;
@@ -197,7 +198,7 @@ Global	GRAMMATICAL_INFLECTION = PRESENTE_SEGUNDA_PERSONA;
 	print " / Serial number ";
 	PrintSerialNumber();
 	print " / Inform v"; inversion;
-	print " Library ", (string) LibRelease;
+	print " Lib. ", (string) LibRelease;
 	#Ifdef DEBUG;
 	print " ";
 	#Endif; ! DEBUG;
@@ -668,8 +669,8 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 !!------------------------------------------------------------------------------
 [ SetGrammaticalInflection gi;
 	switch (gi) {
-	PRESENTE_PRIMERA_PERSONA:
-		GRAMMATICAL_INFLECTION = PRESENTE_PRIMERA_PERSONA;
+	FIRST_PERSON_PRESENT:
+		GRAMMATICAL_INFLECTION = FIRST_PERSON_PRESENT;
 		FORMER__TX		= "mi antiguo ~yo~";
 		CANTGO__TX		= "No puedo ir por ahí.";
 		IS__TX			= " veo";
@@ -684,8 +685,8 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 		} else {
 			YOURSELF__TX	= "mi mismo";
 		}
-	PRESENTE_SEGUNDA_PERSONA:
-		GRAMMATICAL_INFLECTION = PRESENTE_SEGUNDA_PERSONA;
+	SECOND_PERSON_PRESENT:
+		GRAMMATICAL_INFLECTION = SECOND_PERSON_PRESENT;
 		FORMER__TX		= "tu antiguo ~yo~";
 		CANTGO__TX		= "No puedes ir por ahí.";
 		IS__TX			= " ves";
@@ -700,8 +701,8 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 		} else {
 			YOURSELF__TX	= "ti mismo";
 		}
-	PRESENTE_TERCERA_PERSONA:
-		GRAMMATICAL_INFLECTION = PRESENTE_TERCERA_PERSONA;
+	THIRD_PERSON_PRESENT:
+		GRAMMATICAL_INFLECTION = THIRD_PERSON_PRESENT;
 		FORMER__TX    = "su antiguo ~yo~";
 		CANTGO__TX    = "No puede ir por ahí.";
 		IS__TX        = " ve";
@@ -717,8 +718,8 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 			YOURSELF__TX  = "si mismo";
 			YOU__TX       = "Él";
 		}
-	PASADO_PRIMERA_PERSONA:
-		GRAMMATICAL_INFLECTION = PASADO_PRIMERA_PERSONA;
+	FIRST_PERSON_PAST:
+		GRAMMATICAL_INFLECTION = FIRST_PERSON_PAST;
 		FORMER__TX		= "mi antiguo ~yo~";
 		CANTGO__TX		= "No podía ir por ahí.";
 		IS__TX			= " veía";
@@ -733,8 +734,8 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 		} else {
 			YOURSELF__TX	= "mi mismo";
 		}
-	PASADO_SEGUNDA_PERSONA:
-		GRAMMATICAL_INFLECTION = PASADO_TERCERA_PERSONA;
+	SECOND_PERSON_PAST:
+		GRAMMATICAL_INFLECTION = THIRD_PERSON_PAST;
 		FORMER__TX		= "tu antiguo ~yo~";
 		CANTGO__TX		= "No podías ir por ahí.";
 		IS__TX			= " veías";
@@ -749,8 +750,8 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 		} else {
 			YOURSELF__TX	= "ti mismo";
 		}
-	PASADO_TERCERA_PERSONA:
-		GRAMMATICAL_INFLECTION = PASADO_TERCERA_PERSONA;
+	THIRD_PERSON_PAST:
+		GRAMMATICAL_INFLECTION = THIRD_PERSON_PAST;
 		FORMER__TX    = "su antiguo ~yo~";
 		CANTGO__TX    = "No podía ir por ahí.";
 		IS__TX        = " veía";
@@ -784,28 +785,28 @@ Verb	meta 'gramatica'
 [ GramaticaSub;
 	start_parser_style();
 	switch (noun) {
-		1:	SetGrammaticalInflection( PRESENTE_PRIMERA_PERSONA); 
+		1:	SetGrammaticalInflection( FIRST_PERSON_PRESENT); 
 			print "Cambio de flexión gramatical: ";
-		2:	SetGrammaticalInflection( PRESENTE_SEGUNDA_PERSONA );
+		2:	SetGrammaticalInflection( SECOND_PERSON_PRESENT );
 			print "Cambio de flexión gramatical: ";
-		3:	SetGrammaticalInflection( PRESENTE_TERCERA_PERSONA); 
+		3:	SetGrammaticalInflection( THIRD_PERSON_PRESENT); 
 			print "Cambio de flexión gramatical: ";
-		4:	SetGrammaticalInflection( PASADO_PRIMERA_PERSONA ); 
+		4:	SetGrammaticalInflection( FIRST_PERSON_PAST ); 
 			print "Cambio de flexión gramatical: ";
-		5:	SetGrammaticalInflection( PASADO_SEGUNDA_PERSONA ); 
+		5:	SetGrammaticalInflection( SECOND_PERSON_PAST ); 
 			print "Cambio de flexión gramatical: ";
-		6:	SetGrammaticalInflection( PASADO_TERCERA_PERSONA ); 
+		6:	SetGrammaticalInflection( THIRD_PERSON_PAST ); 
 			print "Cambio de flexión gramatical: ";
 		default:
 			print "Flexión gramatical actual: ";
 	}
 	switch ( GRAMMATICAL_INFLECTION ) {
-		PRESENTE_PRIMERA_PERSONA:	print "(1) presente 1a persona";
-		PRESENTE_SEGUNDA_PERSONA:	print "(2) presente 2a persona";
-		PRESENTE_TERCERA_PERSONA:	print "(3) presente 3a persona";
-		PASADO_PRIMERA_PERSONA:		print "(4) pasado 1a persona";
-		PASADO_SEGUNDA_PERSONA:		print "(5) pasado 2a persona";
-		PASADO_TERCERA_PERSONA:		print "(6) pasado 3a persona";
+		FIRST_PERSON_PRESENT:	print "(1) presente 1a persona";
+		SECOND_PERSON_PRESENT:	print "(2) presente 2a persona";
+		THIRD_PERSON_PRESENT:	print "(3) presente 3a persona";
+		FIRST_PERSON_PAST:		print "(4) pasado 1a persona";
+		SECOND_PERSON_PAST:		print "(5) pasado 2a persona";
+		THIRD_PERSON_PAST:		print "(6) pasado 3a persona";
 	}
 	print ".";
 	end_parser_style();
