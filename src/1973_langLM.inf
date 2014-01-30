@@ -2356,19 +2356,15 @@ Default GRAMMATICAL_INFLECTION 2;
 			!! -- "(colocas ", (the) x1, " en ", (the) SACK_OBJECT,
 			!! -- " para hacer sitio)"
 			13:	switch (GRAMMATICAL_INFLECTION) {
-				1:	"(Meto ", (the) x1, " en uno de los bolsillos del abrigo 
-					para hacer sitio.)";
-				2:	"(Metes ", (the) x1, " en uno de los bolsillos del abrigo 
-					para hacer sitio.)";
-				3:	"(Mete ", (the) x1, " en uno de los bolsillos del abrigo 
-					para hacer sitio.)";
-				4:	"(Metí ", (the) x1, " en uno de los bolsillos del abrigo 
-					para hacer sitio.)";
-				5:	"(Metiste ", (the) x1, " en uno de los bolsillos del abrigo 
-					para hacer sitio.)";
-				6:	"(Metió ", (the) x1, " en uno de los bolsillos del abrigo 
-					para hacer sitio.)";
+				1:	print "Primero meto ", (the) x1;
+				2:	print "Primero metes ", (the) x1;
+				3:	print "Primero mete ", (the) x1;
+				4:	print "Primero metí ", (the) x1;
+				5:	print "Primero metiste ", (the) x1;
+				6:	print "Primero metió ", (the) x1;
 				}
+				" en uno de los bolsillos del abrigo para dejar una mano 
+				libre.";
 		}
 
 	Taste:

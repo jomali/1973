@@ -79,17 +79,18 @@ Global next_track;				! Siguiente pista de audio a reproducir
 
 Replace AttemptToTakeObject;	! Intento de transferir un objeto al jugador
 Replace Banner;					! Créditos generales de la aplicación
+Replace DisrobeSub;				! Rutina para la acción #Disrobe
 Replace DrawStatusLine;			! Dibuja la barra de estado
 Replace GetGNAOfObject;			! Rutina para obtener el GNA de un objeto
-!Replace Box__Routine;			! Comando box para escribir texto enmarcado
 Replace InvSub;					! Rutinas para tomar INVENTARIO del personaje
 Replace InvTallSub;				! Rutinas para tomar INVENTARIO del personaje
 Replace InvWideSub;				! Rutinas para tomar INVENTARIO del personaje
 Replace LMode1Sub;				! Lookmode 1: Breve
 Replace LMode2Sub;				! Lookmode 2: Largo (establecido por defecto)
 Replace LMode3Sub;				! Lookmode 3: Superbreve
-Replace LookSub;				! Rutina para la acción MIRAR
+Replace LookSub;				! Rutina para la acción #Look
 Replace VersionSub;				! Créditos detallados de la aplicación
+Replace WearSub;				! Rutina para la acción #Wear
 
 
 !!==============================================================================
@@ -551,12 +552,20 @@ Verb meta 'audio' 'music' 'musica' 'sonido' 'sonidos'
 	* 'apagado' / 'desactivado'		-> AudioOff
 ;
 VerboIrregular "establecer la reproducción de audio"
-	with imperativo 'audio';
+	with imperativo 'audio' 'music' 'musica' 'sonido' 'sonidos';
 #Endif; ! TARGET_GLULX;
 
 Extend	'corre' replace
 	* noun							-> CloseX
 ;
+
+Verb	'desnuda' 'desviste'
+	*								-> Disrobe
+	* '-te'/'-me'					-> Disrobe
+	* noun							-> Disrobe
+	* '-te'/'-me' noun				-> Disrobe
+;
+VerboIrregular "desvestir" with imperativo 'desnuda' 'desviste';
 
 Verb	'apunta' 'dispara' 'tirotea'
 	*								-> FireAt
@@ -568,14 +577,15 @@ Verb	'apunta' 'dispara' 'tirotea'
 	* 'con' held 'a//'/'hacia' noun	-> FireAt reverse
 ;
 
-Verb meta 'tutorial' 'ayuda' 'ayudas' 'pista' 'pistas' 'sos'
+Verb meta 'ayuda' 'ayudas' 'pista' 'pistas' 'sos' 'tutorial'
 	*								-> HelpOn
 	* 'on' / 'si'					-> HelpOn
 	* 'encendido' / 'activado'		-> HelpOn
 	* 'off' / 'no'					-> HelpOff
 	* 'apagado' / 'desactivado'		-> HelpOff
 ;
-VerboIrregular "mostrar ayuda" with imperativo 'ayuda';
+VerboIrregular "mostrar ayuda" with imperativo 
+	'ayuda' 'ayudas' 'pista' 'pistas' 'sos' 'tutorial';
 
 Extend only 'normal' replace
     *								-> LMode2
@@ -588,6 +598,7 @@ Verb	'descorre'
 Verb	meta 'objetos' 'objs'
 	*								-> RemarkableObjects
 ;
+VerboIrregular "mostrar objetos clave" with imperativo 'objetos' 'objs';
 
 Extend	'habla' replace
 	* noun							-> TalkTo
@@ -611,6 +622,20 @@ Verb	meta 'temas' 't//'
 	*								-> TopicInventory
 ;
 VerboIrregular "mostrar inventario de temas" with imperativo 'temas' 't//';
+
+Extend	'ponte' replace
+	*								-> Wear
+	* noun							-> Wear
+	* 'con' noun					-> Wear
+;
+
+Extend	only 'vistete' 'vestirse' 'vestirte' 'vestirme' 'visteme' replace
+	*								-> WearX
+	* noun							-> WearX
+	* 'con' noun					-> WearX
+;
+VerboIrregular "vestir" with imperativo 
+	'vistete' 'vestirse' 'vestirte' 'vestirme' 'visteme';
 
 !!------------------------------------------------------------------------------
 
@@ -642,6 +667,18 @@ VerboIrregular "mostrar inventario de temas" with imperativo 'temas' 't//';
 	pueden abrir y cerrar.)";
 	new_line; new_line;
 	<<Close noun second>>;
+];
+
+!! Basada en la implementación de "verblibm.h":
+[ DisrobeSub;
+	if (noun == nothing)
+		print_ret (parser) "Tienes que indicar qué quieres quitarte.";
+	if (ObjectIsUntouchable(noun)) return;
+	if (noun hasnt worn) return L__M(##Disrobe, 1, noun);
+	give noun ~worn;
+	if (AfterRoutines() == 1) rtrue;
+	if (keep_silent == 1) rtrue;
+	L__M(##Disrobe, 2, noun);
 ];
 
 [ FireAtSub;
@@ -779,6 +816,26 @@ VerboIrregular "mostrar inventario de temas" with imperativo 'temas' 't//';
 	} else {
 		print_ret (parser) "No hay conversaciones activas en este momento.";
 	}
+];
+
+!! Basada en la implementación de "verblibm.h":
+[ WearSub;
+	if (noun == nothing)
+		print_ret (parser) "Tienes que indicar con qué quieres vestirte.";
+	if (ObjectIsUntouchable(noun)) return;
+	if (noun hasnt clothing)    return L__M(##Wear, 1, noun);
+	if (parent(noun) ~= player)
+		if (AttemptToTakeObject(noun))
+			return true;
+	if (noun has worn)          return L__M(##Wear, 3, noun);
+	give noun worn;
+	if (AfterRoutines() == 1) rtrue;
+	if (keep_silent == 1) rtrue;
+	L__M(##Wear, 4, noun);
+];
+
+[ WearXSub;
+	<<Wear noun>>;
 ];
 
 !!------------------------------------------------------------------------------

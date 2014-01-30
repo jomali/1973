@@ -515,6 +515,10 @@ with	name_f	'lobreguez' 'negrura' 'oscuridad' 'penumbra' 'tenebrosisdad',
 			Swing:
 				"Decide que no es buena idea andar columpiándose por ningún 
 				lado con la habitación a oscuras.";
+			Wear:
+				if (noun == ropa)
+					"Intenta ponerse la ropa, pero no acierta a dar con ella 
+					en la oscuridad.";
 		], 
 		before [;
 			Consult, Examine, Look:	return self.description();
@@ -754,10 +758,6 @@ Atrezzo	"calendario de pared" puerta_habitacion
 		fire_count 0, 
  has	male;
 
-!!	<>	TODO - Convertir los papeles en un objeto aparte vinculado al desorden. 
-!!		De forma que cuando se abra el cajon desvelando un monton de papeles, 
-!!		el objeto vinculado al desorden desaparezca. Volverá a aparecer si el 
-!!		montón de papeles de dentro del cajón siguen ahí y el jugador lo cierra.
 Atrezzo	"desorden absoluto" HABITACION
  with	name_m	'alboroto' 'bartulo' 'barullo' 'caos' 'cisco' 'desastre' 
 				'desbarajuste' 'desconcierto' 'desorden' 'follon' 'jaleo' 
@@ -1073,7 +1073,6 @@ Item	papeles_cajon "montón desordenado de papeles" LIMBO
 !! Items:
 
 !!	<>	El atributo 'general' se activa al vestir el objeto por primera vez.
-!!	<>	TODO - vestir -> coger la ropa y ponersela automaticamente
 !!	<>	TODO - Cuando la ropa está quitada
 Item	ropa "ropa" cama
  class	Receptacle
@@ -1167,7 +1166,7 @@ Item	ropa "ropa" cama
 			}
 		], 
 		react_before [;
-			Wear:
+			WearX:
 				if (noun == nothing)
 					<<Wear self>>;
 		], 
@@ -1401,32 +1400,29 @@ Item	maleta "maleta de viaje" HABITACION
 		size 5, 
  private
 		description_flag false,	! indica si el objeto ha sido descrito
- has	female openable ~open container;
+ has	female openable ~open;
 
-Item	libro_bolsillo "librito de poemas" LIMBO
- with	name_m	'ejemplar' 'librito' 'libro' 'tomo' 'volumen',
+Item	libro_bolsillo "librito de poemas" HABITACION
+ with	name_m	'ejemplar' 'librito' 'libro' 'poemario' 'tomo' 'volumen',
 		gender	G_MASCULINO,
-		adjectives 'bolsillo' 'encuadernado' 'negro' 'pequeno' 'tapas',
-		description
-			"Es un pequeño tomo de tapas negras sin más adorno que el título: 
-			@<<POEMAS@>>, impreso en tinta dorada en la portada.",
-		react_before [;
-			Insert:
-				if (noun == self or player && second == self)
-					"Eso no tiene sentido.";
-				if (noun == billete && second == self)
-					"Ya no necesita tenerlo ahí escondido.";
-				if (noun ~= billete && second == self)
-					"No se puede esconder algo así entre las páginas de un 
-					libro.";
-		], 
+		adjectives
+			'bolsillo' 'encuadernado' 'negra' 'negras' 'negro' 'pequeno' 
+			'poemas' 'poesia' 'tapa' 'tapas',
+		description [;
+			"Es un pequeño tomo de tapas negras sin más adorno que el título: ",
+			(em) "@<<POEMAS@>>", ", impreso en tinta dorada en la portada.";
+		],
 		before [;
 			Close:
 				"Ya estaba cerrad", (o) self, ".";
 			Consult, Open, Read, Search:
-				!! TODO
-				if (self notin player)
-					if (AttemptToTakeObject(self)) return true;
+				!! Si no lo tiene encima, antes se fuerza al protagonista a 
+				!! coger el objeto. Si el intento de coger el libro falla, 
+				!! AttemptToTakeObject() imprime un mensaje de error y la 
+				!! acción finaliza sin llegar a ejecutarse.
+				if (parent(self) ~= player)
+					if (AttemptToTakeObject(self))
+						return true;
 				print "Pasa algunas hojas al azar, sin detenerse ante ninguno 
 				de esos versos ya releídos que se deslizan antes sus ojos. 
 				Ahora no es el mejor momento para detenerse a leer poesía.^";
@@ -1437,9 +1433,17 @@ Item	libro_bolsillo "librito de poemas" LIMBO
 					las páginas amarillentas y cae a los pies de Gabriel.";
 				}
 				return true;
+			Receive:
+				if (noun == self or player && second == self)
+					"Eso no tiene sentido.";
+				if (noun == billete && second == self)
+					"Ya no necesita tenerlo ahí escondido.";
+				if (noun ~= billete && second == self)
+					"No se puede esconder algo así entre las páginas de un 
+					libro.";
 		], 
 		size 3, 
- has	female container;
+ has	female;
 
 !!	<>	El atributo 'general' se activa al descubrir el billete.
 !!	<>	TODO - huele el billete
@@ -1464,7 +1468,7 @@ Item	billete LIMBO
 				de aquí.";
 			".";
 		], 
-		size 1, 
+		size 1,
  private
 		description_flag false,	! indica si el objeto ha sido descrito
  has	male;

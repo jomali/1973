@@ -18,19 +18,19 @@
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	#NOTAS:
+!!	# NOTAS:
 !!
 !!	Basada en "ExpertGrammar.h", de Emily Short (emshort@mindspring.com) 
 !!	y en su traducción al castellano "GramaticaExperta.h", de Mapache.
 !!
-!!	#DERECHOS:
+!!	# DERECHOS:
 !!
 !!	Esta librería puede tratarse como de dominio público. Puede incluirse 
 !!	con o sin citar al autor original. Puede ser modificada a discreción 
 !!	por el usuario. Se puede distribuir libremente. Pueden extraerse 
 !!	fragmentos de la librería.
 !!
-!!	#INSTALACIÓN:
+!!	# INSTALACIÓN:
 !!
 !!	Incluye "SpanishEG.h" después de SpanishG en tu archivo de juego.
 !!
@@ -42,7 +42,7 @@
 !!	GRAMMATICAL_INFLECTION, la librería interpreta que se usa el valor 2: los 
 !!	mensajes de "SpanishEG.h" se imprimen en presente y segunda persona.
 !!
-!!	#NUEVAS ACCIONES:
+!!	# NUEVAS ACCIONES:
 !!
 !!	Dance
 !!	GoDown
