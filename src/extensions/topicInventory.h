@@ -13,13 +13,13 @@
 !!	Language:		ES (Castellano)
 !!	System:			Inform-INFSP 6
 !!	Platform:		Z-Machine / Glulx
-!!	Version:		1.4
-!!	Released:		2013/04/01
+!!	Version:		1.7
+!!	Released:		2014/01/29
 !!
 !!------------------------------------------------------------------------------
 !!
 !!	Copyright (c) 2009, Mastodon
-!!	Copyright (c) 2013, J. Francisco Martín
+!!	Copyright (c) 2014, J. Francisco Martín
 !!
 !!	Este programa es software libre: usted puede redistribuirlo y/o 
 !!	modificarlo bajo los términos de la Licencia Pública General GNU 
@@ -139,8 +139,10 @@ System_file;
 !! Vector para guardar palabras temporalmente:
 Array tmp_text -> 64;
 
-!! Flexión gramatical utilizada por defecto: Presente 2ª persona
-Default GRAMMATICAL_INFLECTION 2;
+Default CONVERSATION_STYLE	1;
+Default CONVERSATION_PREFIX	"(Puedes ";
+Default CONVERSATION_SUFIX	".)";
+Default CONVERSATION_CHOOSE	"escoger entre ";
 
 !!==============================================================================
 !!	Funciones de depuración
@@ -231,13 +233,12 @@ Default GRAMMATICAL_INFLECTION 2;
 !!	función reaction() se le quita el atributo "visited". Ej:
 !!
 !!		Object	topic
-!!		 class	TI_Topic
-!!		 with
-!!				[...]
+!!		 class	ConversationEntry
+!!		 with	[...]
 !!				reaction [; give self ~visited; ];
 !!------------------------------------------------------------------------------
 
-Class TI_Topic
+Class	ConversationEntry
  with	compare_prompt [i j;
 			self.hits = 0;
 			for (i = 0 : i < self.#keys/WORDSIZE : i++) {
@@ -248,18 +249,19 @@ Class TI_Topic
 				}
 			}
 		],
+		!! Número de coincidencias de la entrada del usuario con el tema
+		hits 0,
 		!! Descripción del tema
 		entry 0, 
 		!! Desarrollo del tema
 		reply 0, 
 		!! Acciones a ejecutar después de tratar el tema
-		reaction 0,
-		!! Número de coincidencias de la entrada del usuario con el tema
-		hits 0,
+		reaction null,
+		!! Lista de subtemas que añadir a la conversacion tras tratar este tema
+		subtopics null, 
 		!! Establecer a 'true' para forzar que el turno en que se trata este 
 		!! tema finalice mostrando el inventario de temas disponibles
-		append_topic_inventory false,
-;
+		append_topic_inventory false;
 
 !!==============================================================================
 !!	Representa una conversación que tiene una lista de temas que pueden ser 
@@ -267,7 +269,7 @@ Class TI_Topic
 !!	manipular la lista de temas disponible
 !!------------------------------------------------------------------------------
 
-Class	TI_Conversation
+Class	Conversation
  with	!! Mueve un tema a la conversación (si no está marcado como ya tratado)
 		add_topic [ topic;
 			if (topic hasnt visited)
@@ -275,8 +277,11 @@ Class	TI_Conversation
 		],
 		!! Mueve a la conversación los subtemas de 'topic'
 		add_subtopics [ topic i;
-			for (i = 0 : i < topic.#subtopics/WORDSIZE : i++)
-				self.add_topic(topic.&subtopics-->i);
+			if (topic.subtopics ~= nothing or null) {
+				for (i = 0 : i < topic.#subtopics/WORDSIZE : i++) {
+					self.add_topic(topic.&subtopics-->i);
+				}
+			}
 		],
 		!! Elimina un tema de la conversación
 		remove_topic [ topic;
@@ -302,31 +307,34 @@ Class	TI_Conversation
 			!! se inicializa la lista de temas de la conversación:
 			for (i = 0 : i < self.#topics/WORDSIZE : i++)
 				self.add_topic(self.&topics-->i);
-		],
-;
+		];
 
 !!==============================================================================
 !!	Objeto gestor del sistema de conversación. Cuenta con el siguiente conjunto 
-!!	de funciones que pueden ser utilizadas por un programador de relatos 
-!!	interactivos para manejar conversaciones:
+!!	de funciones que pueden ser utilizadas por un autor de relatos interactivos 
+!!	para manejar conversaciones:
 !!
-!!	*	start(conversation) : Activa en el gestor la conversación pasada como 
-!!		argumento.
-!!	*	end() : Quita la conversación activa del gestor.
-!!	*	is_running() : Indica si hay una conversación activa en el gestor. 
+!!	*	start(conversacion:Conversation) - Inicia y deja activa en el gestor 
+!!		la conversación pasada como parámetro.
+!!
+!!	*	end() - Quita del gestor la conversación activa.
+!!
+!!	*	is_running() - Indica si hay una conversación activa en el gestor. 
 !!		Retorna verdadero si es así, o falso en caso contrario.
-!!	*	topic_inventory_size() : Retorna el número de temas disponibles en la 
+!!
+!!	*	topic_inventory_size() - Retorna el número de temas disponibles en la 
 !!		conversación activa.
-!!	*	show_topic_inventory() : Muestra el inventario de temas disponibles.
-!!	*	try() : Función principal del gestor. Comprueba si la entrada de 
+!!
+!!	*	show_topic_inventory() - Muestra el inventario de temas disponibles.
+!!
+!!	*	try() - Función principal del gestor. Comprueba si la entrada de 
 !!		usuario se refiere a alguno de los temas disponibles y lanza la acción 
 !!		adecuada para tratarlo si es así. Debe invocarse desde el punto de 
-!!		entrada "BeforeParsing()" del relato.
+!!		entrada *BeforeParsing()*.
 !!------------------------------------------------------------------------------
 
-Object ConversationManager
- with		!! INTERFAZ DEL GESTOR
-		start [ conversation;
+Object ConversationManager "(Conversation Manager)"
+ with	start [ conversation;
 			self.current_conversation = conversation;
 			self.current_conversation.initiate();
 			self.show_topic_inventory();
@@ -342,25 +350,44 @@ Object ConversationManager
 				objectloop (o in self.current_conversation)
 					size++;
 			return size;
-		], 
-		!! Mensaje del narrador:
+		],
+!		!! Mensaje del narrador:
+!		!! (descomentar para usar en lugar del mensaje del parser)
 !		show_topic_inventory [;
-!			#Ifdef	TARGET_ZCODE;		!!
-!			font on; style underline;	!!
-!			#Ifnot;	! TARGET_GLULX;		!! Itálica
-!			glk($0086, 1);				!!
-!			#Endif; ! TARGET_			!!
-!			switch (GRAMMATICAL_INFLECTION) {
-!			1:	print "(Puedo ";
-!			2:	print "(Puedes ";
-!			3:	print "(Puede ";
-!			4:	print "(Podía ";
-!			5:	print "(Podías ";
-!			6:	print "(Podía ";
+!			switch (CONVERSATION_STYLE) {
+!			0:	!! Estilo: Romana
+!				#Ifdef TARGET_ZCODE;
+!				font_on; style roman;
+!				#Ifnot; ! TARGET_GLULX;
+!				glk($0086, 0);
+!				#Endif;	! TARGET_
+!			1:	!! Estilo: Itálica
+!				#Ifdef	TARGET_ZCODE;
+!				font on; style underline;
+!				#Ifnot;	! TARGET_GLULX;
+!				glk($0086, 1);
+!				#Endif;	! TARGET_
+!			2:	!! Estilo: Negrita
+!				#Ifdef	TARGET_ZCODE;
+!				font on; style bold;
+!				#Ifnot;	! TARGET_GLULX;
+!				glk($0086, 3);
+!				#Endif;	! TARGET_
+!			3:	!! Estilo: Monoespaciada
+!				#Ifdef	TARGET_ZCODE;
+!				font off;
+!				#Ifnot;	! TARGET_GLULX;
+!				glk($0086, 2);
+!				#Endif;	! TARGET_
 !			}
-!			if (self.topic_inventory_size() > 1) print "escoger entre ";
+!			if (CONVERSATION_PREFIX ~= 0)
+!				print (string) CONVERSATION_PREFIX;
+!			if (self.topic_inventory_size() > 1 && CONVERSATION_CHOOSE ~= 0)
+!				print (string) CONVERSATION_CHOOSE;
 !			self.current_conversation.show_topic_list();
-!			print ".)^";
+!			if (CONVERSATION_SUFIX ~= 0)
+!				print (string) CONVERSATION_SUFIX;
+!			new_line;
 !			#Ifdef	TARGET_ZCODE;		!!
 !			font on; style roman;		!!
 !			#Ifnot;	! TARGET_GLULX;		!! Romana
@@ -371,9 +398,8 @@ Object ConversationManager
 		!! Mensaje del parser (requiere la extensión types.h)
 		show_topic_inventory [;
 			start_parser_style();
-			print "Puedes ";
-			if (self.topic_inventory_size() > 1)
-				print "escoger entre ";
+			if (self.topic_inventory_size() > 1) print "Escoge entre ";
+			else print "Puedes ";
 			self.current_conversation.show_topic_list();
 			print ".";
 			end_parser_style();
@@ -453,11 +479,10 @@ Object ConversationManager
 			!! la entrada del usuario
 			return false;
 		], 
-			!! OTRAS FUNCIONES DE APOYO
 		get_topic_inventory_flag [;
 			return self.topic_inventory_flag;
 		],
- private	!! PROPIEDADES PRIVADAS
+ private
 		!! Tema con mayor porcentaje de coincidencias hasta el momento
 		topic 0,
 		!! Número de coincidencias del tema con más coincidencias de la 
@@ -467,13 +492,12 @@ Object ConversationManager
 		current_conversation 0, 
 		!! Indica si hay que mostrar el inventario de temas al terminar de 
 		!! desarrollar uno de los temas de la conversación actual
-		topic_inventory_flag false, 
-;
+		topic_inventory_flag false;
 
 !!==============================================================================
 !!	Definición de la acción de apoyo (y su gramática) que se lanza si se 
 !!	reconoce en la entrada de usuario un intento de seguir con alguno de los 
-!!	temas de la conversación activa en el gestor
+!!	temas de la conversación activa en el gestor.
 !!------------------------------------------------------------------------------
 
 Verb	'npc.talk'

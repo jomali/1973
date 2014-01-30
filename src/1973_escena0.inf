@@ -12,12 +12,12 @@
 !!	Languague:		ES (Castellano)
 !!	System:			Inform, INFSP 6
 !!	Platform:		Z-Machine / GLULX
-!!	Version:		0.0
-!!	Released:		0000/00/00
+!!	Version:		0.1
+!!	Released:		2014/01/27
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	Copyright (c) 2013, J. Francisco Martín
+!!	Copyright (c) 2014, J. Francisco Martín
 !!
 !!	This file is part of PROYECTO 1973.
 !!
@@ -32,7 +32,7 @@
 !!	GNU General Public License for more details.
 !!
 !!	You should have received a copy of the GNU General Public License 
-!!	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+!!	along with PROYECTO 1973. If not, see <http://www.gnu.org/licenses/>.
 !!
 !!------------------------------------------------------------------------------
 
@@ -41,6 +41,10 @@
 !!	Definición de atributos y clases
 !!------------------------------------------------------------------------------
 
+Attribute	remarkable;			! Marca un objeto como destacado
+
+!!------------------------------------------------------------------------------
+!! Representa un objeto localidad dentro del modelo de mundo.
 !!------------------------------------------------------------------------------
 Class	Room
  with	description [;
@@ -58,6 +62,13 @@ Class	Room
 		inhibit_object_list false,
  has	light;
 
+!!------------------------------------------------------------------------------
+!! Representa un objeto físico no localidad dentro del modelo de mundo, con un 
+!! tamaño, volumen y peso específicos, así como diferentes valores de capacidad 
+!! como potencial contenedor para otros objetos. Ideado como una suerte de 
+!! clase abstracta sobre la que definir otras subclases de objetos más 
+!! concretas; es decir, no está pensada para implementar directamente objetos 
+!! 'Thing' dentro del relato.
 !!------------------------------------------------------------------------------
 Class	Thing
  with	size	0,			! Tamaño
@@ -79,6 +90,9 @@ Class	Thing
 			"nada especial en ", (the) self, ".";
 		];
 
+!!------------------------------------------------------------------------------
+!! Representa un objeto simple dentro del modelo de mundo sobre el que 
+!! inicialmente no se aplican restricciones de ningún tipo.
 !!------------------------------------------------------------------------------
 Class	Item
  class	Thing
@@ -102,6 +116,9 @@ Class	Item
 		];
 
 !!------------------------------------------------------------------------------
+!! Representa un objeto estático dentro del modelo de mundo. Se aplica la 
+!! restricción 'static' definida por la librería Inform.
+!!------------------------------------------------------------------------------
 Class	Furniture
  class	Thing,
  with	before [;
@@ -115,24 +132,35 @@ Class	Furniture
  has	static;
 
 !!------------------------------------------------------------------------------
+!! Representa un objeto decorado dentro del modelo de mundo. Se aplica la 
+!! restricción 'scenery' definida por la librería Inform.
+!!------------------------------------------------------------------------------
 Class	Atrezzo
  class	Thing
  has	scenery;
 
 !!------------------------------------------------------------------------------
-!! TODO: Crear clase atuendo (Attire) que implemente propiedad list_together
+!! TODO: Crear clase atuendo (Attire) que implemente propiedad list_together, 
+!! para representar prendas de vestir.
+!!------------------------------------------------------------------------------
 
 !!------------------------------------------------------------------------------
-!!	Hay algunas librerías para manejar conversaciones que definen una nueva 
-!!	clase con la que representar personajes (por ejemplo "gtalk.h" de Greg 
-!!	Boettcher, Krister Fundin y Mark J. Tilford para manejar conversaciones 
-!!	por medio de menús, define la clase Character). Se puede reutilizar la 
-!!	clase definida en una librería externa dentro de NPC convirtiendo esta 
-!!	última en una subclase de aquella definida en la librería externa.
+!! Representa un personaje no jugador. Hay algunas librerías para manejar 
+!! conversaciones que definen una nueva clase con la que representar personajes 
+!! (por ejemplo "gtalk.h" de Greg Boettcher, Krister Fundin y Mark J. Tilford 
+!! para manejar conversaciones por medio de menús, define la clase 'Character'). 
+!! Se puede reutilizar la clase definida en una librería externa dentro de NPC 
+!! convirtiendo esta última en una subclase de aquella definida en la librería 
+!! externa. Por ejemplo:
+!!
+!!		Class NPC
+!!			class Thing
+!!			class Character ! Definida en la librería "gtalk.h"
+!!			[...]
+!!		;
 !!------------------------------------------------------------------------------
 Class	NPC
  class	Thing
-! class	Character	! Definida en la librería "gtalk.h"
  with	life [;
 			Answer, Ask, AskFor, Order, Tell:
 				print_ret (parser) "Para iniciar una conversación usa 
@@ -141,9 +169,13 @@ Class	NPC
  has	animate;
 
 !!------------------------------------------------------------------------------
+!! Representa un objeto al que el personaje jugador pueden entrar o subirse 
+!! encima.
+!!
 !! TODO - repasar el conjunto completo de acciones de la librería para 
-!! determinar su comportamiento cuando el protagonista se encuentra dentro o 
-!! sobre un objeto SmartEnterable
+!! determinar su comportamiento cuando el personaje jugador se encuentra dentro 
+!! o sobre un objeto 'SmartEnterable'.
+!!------------------------------------------------------------------------------
 Class	SmartEnterable
  with	react_before [; if (player notin self) return false;
 			!! GROUP 2 ACTIONS: Usually work, given the right circumstances.
@@ -169,17 +201,17 @@ Class	SmartEnterable
 				if (ObjectIsUntouchable(noun, 1)) return false;
 				if (self.out_of_reach(second)) { <Exit self>; new_line; }
 				return false;
-!Enter
+			! Enter:
 			Exit:
 				if (noun == nothing) <<Exit self>>;
-!GetOff
-!Give
+			! GetOff:
+			! Give:
 			Go:
 				if (noun == nothing or player or self)			return false;
 				if (~~(noun ofclass CompassDirection))			return false;
 				<Exit self>; new_line;
 				return false;
-!GoIn
+			! GoIn:
 			Insert, PutOn:
 				if ((second == d_obj) || (player in second)) <<Drop noun>>;
 				if (self.out_of_reach(second)) { <Exit self>; new_line; }
@@ -188,8 +220,8 @@ Class	SmartEnterable
 				if (noun hasnt lockable)						return false;
 				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
 				return false;
-!Order
-!Show
+			! Order:
+			! Show:
 			SwitchOff, SwitchOn:
 				if (noun hasnt switchable)						return false;
 				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
@@ -198,60 +230,60 @@ Class	SmartEnterable
 				if (noun notin player)							return false;
 				return false;
 			!! GROUP 3 ACTIONS: Output a message and stop at the "before" stage.
-!Answer
-!Ask
-!AskFor
+			! Answer:
+			! Ask:
+			! AskFor:
 			Attack, Blow, LookUnder, Smell, Squeeze, Taste, Touch:
 				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
 				return false;
 			Burn:
 				!! TODO: comprobaciones de noun y second
 				return false;
-!Buy
+			! Buy:
 			Climb:
 				if (noun has enterable) {
 					if (self.out_of_reach(noun)) { <Exit self>; new_line; }
 				}
 				return false;
-!Consult
-!Fill
-!Jump
-!JumpOver
-!Kiss
-!LetGo
-!Listen
-!Mild
-!No
-!Pray
-			Pull, Push, Turn: !! TODO:
+			! Consult:
+			! Fill:
+			! Jump:
+			! JumpOver:
+			! Kiss:
+			! LetGo:
+			! Listen:
+			! Mild:
+			! No:
+			! Pray:
+			Pull, Push, Turn: !! TODO: Comprobar funcionamiento
 				! if (noun has scenery or static or concealed)	return false;
 				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
 				return false;
-!PushDir
-!Receive
-!Rub
-!Set
-!SetTo
-!Swim
-!Swing
-!Tell
-!Wake
-!WakeOther
-!Wave
-!WaveHands
-!! CUSTOM ACTIONS
-!Dance
-!GoDown
-!GoUp
-!KnockOn
-!Masturbate
-!Sit
-!SleepWith
+			! PushDir
+			! Receive
+			! Rub
+			! Set
+			! SetTo
+			! Swim
+			! Swing
+			! Tell
+			! Wake
+			! WakeOther
+			! Wave
+			! WaveHands
+			!! CUSTOM ACTIONS
+			! Dance:
+			! GoDown:
+			! GoUp:
+			! KnockOn:
+			! Masturbate:
+			! Sit:
+			! SleepWith:
 			StandUp:
 				if (noun == nothing) <<Exit self>>;
-!TalkTo
-!Untie
-!Use
+			! TalkTo:
+			! Untie:
+			! Use:
 		],
 		out_of_reach [ obj;
 			if (obj == nothing or player or self)	return false;
@@ -281,237 +313,416 @@ Room	LIMBO "En algún lugar"
 			return true;
 		];
 
-Object	HelpSystem
- with	found_in [;
+!!	<>	El atributo 'general' se activa tras imprimir el primer mensaje en la 
+!!		rutina 'react_after'.
+Object	HelpSystem "(Help System)"
+ with	!! Indica si el tutorial está activado
+		is_active [; return self.on_flag; ], 
+		!! Activa el tutorial
+		activate [; 
+			self.activate_next_flag();
+			self.on_flag = true;
+		], 
+		!! Desactiva el tutorial
+		deactivate [; self.on_flag = false; ], 
+		!! Cambia el estado del tutorial
+		toggle_state [; 
+			if (self.is_active()) self.deactivate();
+			else self.activate();
+		], 
+		!! Indica si el tutorial ha terminado o no
+		has_ended [; return self.end_flag; ], 
+		!! Imprime el mensaje por defecto
+		print_default_clue [; return self.default_clue_a(); ], 
+		found_in [;
 			return true;
 		], 
+		each_turn [ flag;
+			if (self hasnt on || ~~self.is_active()) {
+				return false;
+			}
+			!! Inicio del tutorial
+			if (self.start_clue_flag && ~~self.start_clue_printed) {
+				self.start_clue_flag = false;
+				self.start_clue_printed = true;
+				self.activate_next_flag();
+				if (~~flag) new_line;
+				return self.start_clue_a();
+			}
+			!! Acción ##LOOK
+			if (self.look_clue_flag && ~~self.look_clue_printed) {
+				if (~~flag) new_line;
+				return self.look_clue_a();
+			}
+			!! Acción ##REMARKABLE_OBJECTS
+			if (self.remarkableObjs_clue_flag
+				&& ~~self.remarkableObjs_clue_printed) {
+				self.remarkableObjs_clue_flag = false;
+				self.remarkableObjs_clue_printed = true;
+				self.activate_next_flag();
+				give self ~on;
+				StopTimer(self);
+				StartTimer(self, 2);
+				if (~~flag) new_line;
+				return self.remarkableObjs_clue_a();
+			}
+			!! Acción ##EXAMINE
+			if (self.examine_clue_flag && ~~self.examine_clue_printed) {
+				if (~~flag) new_line;
+				if (HABITACION.has_light_flag()) {
+					return self.examine_clue_a(ropa);
+				} else {
+					return self.examine_clue_a(cortinas);
+				}
+			}
+			!! Acción ##OPEN
+			if (self.open_clue_a_flag && ~~self.open_clue_a_printed) {
+				if (~~flag) new_line;
+				return self.open_clue_a();
+			}
+			if (self.open_clue_b_flag && ~~self.open_clue_b_printed) {
+				if (~~flag) new_line;
+				return self.open_clue_b();
+			}
+			!! Acción ##TAKE
+			if (self.take_clue_flag && ~~self.take_clue_printed) {
+				if (~~flag) new_line;
+				return self.take_clue_a(ropa);
+			}
+			!! Acción #INV
+			if (self.inv_clue_flag && ~~self.inv_clue_printed) {
+				if (~~flag) new_line;
+				return self.inv_clue_a();
+			}
+			!! Acción #GO
+			if (self.go_clue_flag && ~~self.go_clue_printed) {
+				if (~~flag) new_line;
+				return self.go_clue_a();
+			}
+			!! Meta acciones
+			if (self.meta_clue_flag && ~~self.meta_clue_printed) {
+				self.meta_clue_flag = false;
+				self.meta_clue_printed = true;
+				self.end_flag = true; !! XXX - Marca el final del tutorial
+				if (~~flag) new_line;
+				return self.meta_clue_a();
+			}
+		], 
 		react_before [;
+			if (~~self.is_active()) {
+				return false;
+			}
 			Examine:
-				if (self.examine_flag && ~~self.examine_explained) {
-					self.examine_flag = false;
-					self.examine_explained = true;
-					self.examine_after();
+				if (~~self.examine_clue_printed) {
+					self.examine_clue_printed = true;
+					self.examine_clue_b();
 					new_line;
+				}
+				if (self.examine_clue_flag) {
+					self.examine_clue_flag = false;
+					self.activate_next_flag();
+					give self ~on;
+					StopTimer(self);
+					StartTimer(self, 3);
 				}
 			Go:
-				if (~~self.go_explained)
-					self.go_explained = true;
-				if (self.go_flag) {
-					self.go_flag = false;
-					self.go_after();
+				if (~~self.go_clue_printed) {
+					self.go_clue_printed = true;
+					self.go_clue_b();
 					new_line;
 				}
-			Inv, InvTall, InvWide:
-				if (~~self.inventory_explained)
-					self.inventory_explained = true;
-				if (self.inventory_flag) {
-					self.inventory_flag = false;
-					self.inventory_after();
+				if (self.go_clue_flag) {
+					self.go_clue_flag = false;
+					self.activate_next_flag();
+					give self ~on;
+					StopTimer(self);
+					StartTimer(self, 3);
+				}
+			Inv:
+				if (~~self.inv_clue_printed) {
+					self.inv_clue_printed = true;
+					self.inv_clue_b();
 					new_line;
+				}
+				if (self.inv_clue_flag) {
+					self.inv_clue_flag = false;
+					self.activate_next_flag();
+					give self ~on;
+					StopTimer(self);
+					StartTimer(self, 3);
 				}
 			Look:
-				if (self.look_flag && ~~self.look_explained) {
-					self.look_flag = false;
-					self.look_explained = true;
-					self.look_after();
+				if (~~self.look_clue_printed) {
+					self.look_clue_printed = true;
+					self.look_clue_b();
 					new_line;
 				}
-!! TODO - probar
-			Open:
-				if (~~self.open_explained_1 && noun == cortinas)
-					self.open_explained_1 = true;
-				if (~~self.open_explained_2 && noun == cortinas)
-					self.open_explained_2 = true;
+				if (self.look_clue_flag) {
+					self.look_clue_flag = false;
+					self.activate_next_flag();
+					give self ~on;
+					StopTimer(self);
+					StartTimer(self, 3);
+				}
+			Open: 
+				if (noun == cortinas) {
+					if (~~self.open_clue_a_printed) 
+						self.open_clue_a_printed = true;
+					if (~~self.open_clue_b_printed)
+						self.open_clue_b_printed = true;
+					if (self.open_clue_a_flag || self.open_clue_b_flag) {
+						self.open_clue_a_flag = false;
+						self.open_clue_b_flag = false;
+						self.activate_next_flag();
+						give self ~on;
+						StopTimer(self);
+						StartTimer(self, 3);
+					}
+				}
 			Take:
-				if (~~self.take_explained)
-					self.take_explained = true;
-				if (self.take_flag) {
-					self.take_flag = false;
-					self.take_after();
+				if (~~self.take_clue_printed) {
+					self.take_clue_printed = true;
+					self.take_clue_b();
 					new_line;
+				}
+				if (self.take_clue_flag) {
+					self.take_clue_flag = false;
+					self.activate_next_flag();
+					give self ~on;
+					StopTimer(self);
+					StartTimer(self, 3);
 				}
 			Use:
-				self.use_after();
-				new_line;
+				if (~~self.use_clue_printed) {
+					self.use_clue_printed = true;
+					self.use_clue_a();
+					new_line;
+				}
 		], 
 		react_after [;
-			if (self.start_flag) {
-				self.start_flag = false;
+			if (self hasnt general) {
+				give self general;
 				new_line;
 				print_ret (parser) "Si lo necesitas puedes teclear AYUDA en 
 				cualquier momento.";
 			}
 		], 
-		new_clue [;
-			!! Acción LOOK:
-			if (~~self.look_explained) {
-				self.look_flag = true;
-				return self.look_before();
-			}
-			!! Acción EXAMINE:
-			if (~~self.examine_explained) {
-				self.examine_flag = true;
-				return self.examine_before();
-			}
-			!! Acción OPEN:
-			if (real_location == HABITACION && ~~self.open_explained_1) {
-				self.open_explained_1 = true;
-				return self.open_before_1();
-			}
-			if (real_location == HABITACION && ~~self.open_explained_2) {
-				self.open_explained_2 = true;
-				return self.open_before_2();
-			}
-			!! Acción TAKE:
-			if (~~self.take_explained) {
-				self.take_flag = true;
-				return self.take_before();
-			}
-			!! Acción INVENTORY:
-			if (~~self.inventory_explained) {
-				self.inventory_flag = true;
-				return self.inventory_before();
-			}
-			!! Acción GO:
-			if (~~self.go_explained) {
-				self.go_flag = true;
-				return self.go_before();
-			}
-			!! Meta-acciones:
-			if (~~self.meta_explained) {
-				self.meta_explained = true;
-				return self.meta_before();
-			}
-			!! Respuesta genérica:
-			return self.no_action();
-		], 
+		time_left, 
+		time_out [; give self on; ], 
+		print_hesitate_clue [;
+			if (self.hesitate_clue_printed) return true;
+			self.hesitate_clue_printed = true;
+			new_line;
+			self.hesitate_clue_a();
+		],
  private
-		start_flag true,
-		no_action [;
-			print_ret (parser) "Hay muchas otras acciones que puedes intentar 
-			hacer para conocer más cosas sobre el protagonista y su entorno. No 
-			tengas miedo de experimentar con nuevas instrucciones.";
+		!! Atributo que indica si el tutorial está activado
+		on_flag false, 
+		!! Atributo que indica si el tutorial ha terminado
+		end_flag false, 
+		!! Activa la siguiente señal de pista no mostrada del tutorial
+		activate_next_flag [;
+			if (~~self.start_clue_printed) {
+				self.start_clue_flag = true;
+				return true;
+			}
+			if (~~self.look_clue_printed) {
+				self.look_clue_flag = true;
+				return true;
+			}
+			if (~~self.remarkableObjs_clue_printed) {
+				self.remarkableObjs_clue_flag = true;
+				return true;
+			}
+			if (~~self.examine_clue_printed) {
+				self.examine_clue_flag = true;
+				return true;
+			}
+			if (~~self.open_clue_a_printed) {
+				self.open_clue_a_flag = true;
+				return true;
+			}
+			if (~~self.open_clue_b_printed) {
+				self.open_clue_b_flag = true;
+				return true;
+			}
+			if (~~self.take_clue_printed) {
+				self.take_clue_flag = true;
+				return true;
+			}
+			if (~~self.inv_clue_printed) {
+				self.inv_clue_flag = true;
+				return true;
+			}
+			if (~~self.go_clue_printed) {
+				self.go_clue_flag = true;
+				return true;
+			}
+			if (~~self.meta_clue_printed) {
+				self.meta_clue_flag = true;
+				return true;
+			}
 		], 
-		!! Acción LOOK:
-		look_flag false, 
-		look_explained false, 
-		look_before [;
+		!! Inicio del tutorial
+		start_clue_printed false, 
+		start_clue_flag false, 
+		start_clue_a [;
+			print_ret (parser) "En un relato interactivo como éste, a cada 
+			pequeño fragmento de texto le acompaña el símbolo '>', que señala 
+			que la historia aguarda tu reacción antes de continuar. Puedes 
+			indicar cómo deseas proseguir con la narración por medio de 
+			sencillas instrucciones de texto. Por ejemplo, puedes volver a 
+			obtener una descripción de los alrededores tecleando MIRA A TU 
+			ALREDEDOR, o simplemente MIRA. (Si lo deseas, puedes desactivar el 
+			tutorial tecleando AYUDA NO).";
+		], 
+		!! Acción ##LOOK
+		look_clue_printed false, 
+		look_clue_flag false, 
+		look_clue_a [;
 			print_ret (parser) "Puedes volver a obtener una descripción de los 
 			alrededores tecleando MIRA A TU ALREDEDOR, o simplemente MIRA.";
 		], 
-		look_after [;
+		look_clue_b [;
 			print_ret (parser) "En el futuro puedes usar indistintamente la 
-			intrucción MIRA, o limitarte a pulsar la tecla @<<intro@>> para 
-			leer de nuevo la descripción del lugar en que se encuentra Gabriel. 
-			Si te atascas y no sabes cómo continuar puedes volver a teclear 
-			AYUDA en cualquier momento.";
+			instrucción MIRA, o limitarte a pulsar la tecla @<<intro@>> para 
+			leer de nuevo la descripción del lugar en que se encuentra 
+			Gabriel.";
 		], 
-		!! Acción EXAMINE:
-		examine_flag false, 
-		examine_explained false, 
-		examine_before [;
-			print_ret (parser) "Los objetos tienen sus propias descripciones 
-			también. Puedes averiguar más cosas sobre un objeto en particular 
-			usando la instrucción EXAMINA. Prueba a examinar las cortinas, por 
-			ejemplo.";
+		!! Acción #REMARKABLE_OBJECTS
+		remarkableObjs_clue_printed false, 
+		remarkableObjs_clue_flag false, 
+		remarkableObjs_clue_a [;
+			print_ret (parser) "Hay instrucciones como MIRA, ESCUCHA o AYUDA, 
+			por ejemplo, que funcionan por ellas mismas sin necesidad de nada 
+			más. Sin embargo, muchas otras pueden realizarse sobre los objetos 
+			presentes en el relato. Puedes utilizar la instrucción OBJETOS para 
+			obtener un listado de objetos clave con los que Gabriel puede 
+			interactuar en cada momento.";
 		], 
-		examine_after [;
+		!! Acción ##EXAMINE
+		examine_clue_printed false, 
+		examine_clue_flag false, 
+		examine_clue_a [ obj; 
+			start_parser_style();
+			print "Además de las localidades, los objetos tienen sus propias 
+			descripciones también. Puedes averiguar más cosas sobre un objeto 
+			en particular usando la instrucción EXAMINA. Prueba a examinar ", 
+			(the) obj, ", por ejemplo.";
+			end_parser_style();
+			new_line;
+			return true;
+		], 
+		examine_clue_b [; 
 			print_ret (parser) "Dado que examinar objetos es una acción muy 
-			frecuente, puedes abreviar el comando y teclear EX, X o simplemente 
-			el nombre del objeto que quieras examinar. De este modo, la 
-			instrucción EXAMINA LAS CORTINAS es equivalente a escribir EX 
-			CORTINAS o CORTINAS a secas.";
+			frecuente, puedes abreviar el comando y teclear EX, X, o 
+			simplemente el nombre del objeto que quieras examinar. De este 
+			modo, la instrucción EXAMINA LAS CORTINAS es equivalente a escribir 
+			EX CORTINAS, o simplemente CORTINAS.";
 		], 
-		!! Acción OPEN:
-		open_explained_1 false,
-		open_explained_2 false,  
-		open_before_1 [;
+		!! Acción ##OPEN
+		open_clue_a_printed false, 
+		open_clue_a_flag false, 
+		open_clue_a [; 
 			print_ret (parser) "Con la escasa luz que hay en la habitación 
 			apenas puedes hacer nada. Intenta abrir las cortinas para dejar 
 			pasar la luz del exterior.";
 		], 
-		open_before_2 [;
+		open_clue_b_printed false, 
+		open_clue_b_flag false, 
+		open_clue_b [;
 			print_ret (parser) "Para abrir las cortinas tienes que utilizar la 
 			instrucción ABRE CORTINAS.";
 		], 
-		!! Acción TAKE/DROP:
-		take_flag false, 
-		take_explained false, 
-		take_before [;
-			print_ret (parser) "A lo largo del relato te encontrarás con varios 
-			objetos que Gabriel podrá coger y llevar consigo. Prueba, por 
-			ejemplo, a recoger esa ropa que hay sobre la cama.";
+		!! Acción ##TAKE/##DROP
+		take_clue_printed false, 
+		take_clue_flag false, 
+		take_clue_a [ obj; 
+			start_parser_style();
+			print "A lo largo del relato te encontrarás con varios objetos que 
+			Gabriel podrá coger y llevar consigo. Prueba, por ejemplo, a 
+			coger ", (the) obj, ".";
+			end_parser_style();
+			new_line;
+			return true;
 		], 
-		take_after [;
+		take_clue_b [; 
 			print_ret (parser) "De forma análoga, también podrás hacer que 
 			Gabriel suelte los objetos que lleva encima usando la instrucción 
 			DEJA <OBJETO>. Además, normalmente los objetos se pueden manipular 
 			de muchas otras maneras (ya has visto que se pueden intentar 
-			examinar, abrir y cerrar o coger y dejar, pero también vestir, 
-			tocar, oler, empujar, etc). Un mensaje te informará del efecto que 
+			examinar, abrir y cerrar, o coger y dejar, pero también tocar, 
+			oler, vestir, empujar, etc). Un mensaje te informará del efecto que 
 			tiene la acción sobre el objeto:";
 		], 
-		!! Acción INVENTORY:
-		inventory_flag false, 
-		inventory_explained false, 
-		inventory_before [;
-			print_ret (parser) "Cuando Gabriel coje un objeto, este deja de 
+		!! Acción ##INV
+		inv_clue_printed false, 
+		inv_clue_flag false, 
+		inv_clue_a [; 
+			print_ret (parser) "Cuando Gabriel coje un objeto, éste deja de 
 			estar en el sitio que ocupaba antes y pasa a su poder. Puedes ver 
 			las cosas que Gabriel lleva encima en cualquier momento tecleando 
 			INVENTARIO.";
 		], 
-		inventory_after [;
+		inv_clue_b [; 
 			print_ret (parser) "Comprobar cuáles son los objetos que lleva el 
-			protagonista es una acción muy habitual de forma que, al igual que 
-			muchas otras, también podrás abreviarla. INVENTARIO, INV o 
+			protagonista es una acción muy frecuente de forma que, al igual que 
+			muchas otras, también podrás abreviarla. INVENTARIO, INV, o 
 			simplemente I harán que se imprima el siguiente listado:";
 		], 
-		!! Acción GO:
-		go_flag false, 
-		go_explained false, 
-		go_before [;
+		!! Acción ##GO
+		go_clue_printed false, 
+		go_clue_flag false, 
+		go_clue_a [; 
 			print_ret (parser) "Para hacer que Gabriel se desplace de una 
 			localidad a otra puedes teclear el nombre del punto cardinal en 
 			dirección al cuál quieres ir (NORTE, SUR, ESTE, OESTE, así como 
-			NORESTE, NOROESTE, etc). SAL, ENTRA, SUBE y BAJA son instrucciones 
-			de movimientos también posibles -- lee con atención las 
-			descripciones de cada localidad para hacerte una idea de en qué 
-			direcciones puedes intentar moverte.";
+			NORESTE, NOROESTE, SURESTE y SUROESTE). SAL, ENTRA, SUBE y BAJA son 
+			instrucciones para movimientos también posibles. Lee con atención 
+			las descripciones de cada localidad para hacerte una idea de en 
+			qué direcciones puedes intentar moverte.";
 		], 
-		go_after [;
-			print_ret (parser) "Los puntos cardinales se pueden abreviar por 
-			N, S, E, W, NE, NW y así sucesivamente.";
+		go_clue_b [; 
+			print_ret (parser) "Los puntos cardinales se pueden abreviar por N, 
+			S, E, W, NE, NW, SE y SW.";
 		], 
-		!! Meta-acciones:
-		meta_explained false, 
-		meta_before [;
+		!! Muestras de duda
+		hesitate_clue_printed false, 
+		hesitate_clue_a [; 
+			print_ret (parser) "Cuando Gabriel muestra signos de duda es porque 
+			la acción introducida puede cambiar o hacer avanzar la historia. 
+			Asegúrate de que es así como quieres continuar el relato y después 
+			repite la última instrucción introducida.";
+		], 
+		!! Meta-acciones
+		meta_clue_printed false, 
+		meta_clue_flag false, 
+		meta_clue_a [; 
 			print_ret (parser) "Si quieres salir del relato, teclea TERMINAR. 
 			Para guardar tu posición actual, teclea GUARDAR. CARGAR te 
 			permitirá retomar una partida que hayas guardado previamente, y 
 			REINICIAR comenzará el relato de nuevo desde el principio. Además, 
-			si en algún momento quieres volver @<<un paso atrás@>>, teclea 
-			DESHACER.";
+			si en algún momento quieres volver un paso atrás, teclea DESHACER.";
 		], 
-		!! Acción USE:
-		use_explained false, 
-		use_after [;
+		!! Acción ##USE
+		use_clue_printed false, 
+		use_clue_a [; 
 			print_ret (parser) "Normalmente podrás intentar manipular los 
-			objetos con los que te encuentres a lo largo del relato de muchas 
-			formas distintas así que, existiendo tantas opciones diferentes, 
-			la instrucción USA resulta demasiado ambigua. Prueba a realizar una 
-			acción más concreta.";
+			objetos con los que te encuentres de varias formas distintas, por 
+			lo que la instrucción USA suele resultar demasiado ambigua. Si 
+			Gabriel no encuentra la forma de usar un objeto prueba a realizar 
+			una acción más concreta.";
 		], 
-		!! Muestras de duda:
-		hesitate_explained false, 
-		hesitate_after [;
-			print_ret (parser) "Cuando Gabriel muestra signos de duda es porque 
-			estás a punto de hacer algo que va a cambiar o a hacer avanzar el 
-			desarrollo de la historia. Asegúrate de que es así como quieres 
-			continuar y después repite la última instrucción.";
-		],
- has	scenery;
+		!! Final del tutorial
+		default_clue_a [; 
+			print_ret (parser) "Ya has visto todas las instrucciones básicas 
+			que deberás utilizar para avanzar en la historia hasta el final, 
+			sin embargo hay muchas otras acciones que puedes intentar hacer 
+			para conocer más cosas sobre el protagonista y su entorno. No 
+			temas experimentar con nuevas instrucciones.";
+		], 
+ has	on scenery;
 
-!! TODO - repasar implementación
 Atrezzo	"paredes" 
  with	found_in HABITACION CAFE, 
 		name_m	'muro',
@@ -519,10 +730,10 @@ Atrezzo	"paredes"
 		name_f	'pared' 'esquina',
 		name_fp	'paredes' 'esquinas',
 		gender	G_FEMENINO + G_PLURAL,
-		adjectives 'blanco' 'blancos' 'blanca' 'blancas' 'amarillento' 
-			'amarillentos' 'amarillenta' 'amarillentas',
+		adjectives
+			'amarillenta' 'amarillentas' 'amarillento' 'amarillentos' 'blanca' 
+			'blancas' 'blanco' 'blancos',
 		description [; switch ( GRAMMATICAL_INFLECTION ) {
-!! XXX - modificar texto
 			1,2,3: "No se observa nada digno de mención en ", (the) self, ".";
 			4,5,6: "No se observaba nada digno de mención en ", (the) self, ".";
 		}],

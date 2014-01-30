@@ -13,11 +13,11 @@
 !!	System:			Inform, INFSP 6
 !!	Platform:		Z-Machine / GLULX
 !!	Version:		1.0
-!!	Released:		2013/01/16
+!!	Released:		2014/01/28
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	Copyright (c) 2013, J. Francisco Martín
+!!	Copyright (c) 2014, J. Francisco Martín
 !!
 !!	This file is part of PROYECTO 1973.
 !!
@@ -32,7 +32,7 @@
 !!	GNU General Public License for more details.
 !!
 !!	You should have received a copy of the GNU General Public License 
-!!	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+!!	along with PROYECTO 1973. If not, see <http://www.gnu.org/licenses/>.
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -73,7 +73,7 @@ Default GRAMMATICAL_INFLECTION 2;
 		6:	"Su soplido no produjo ningún efecto.";
 		}
 
-! TODO: Personalizar mensaje
+! TODO - Personalizar mensaje
 	Burn:
 		!! -- "Con esa peligrosa acción no lograrías nada.";
 		switch (GRAMMATICAL_INFLECTION) {
@@ -243,7 +243,7 @@ Default GRAMMATICAL_INFLECTION 2;
 			4:	"Dejad", (o) x1, ".";
 		}
 
-!! TODO: personalizar mensaje
+!! TODO - personalizar mensaje
 	Eat:
 		!!	1:	Error, el objeto no tiene el atributo "comestible".
 		!!	2:	Éxito. [NOTA: la librería permite por defecto comerse
@@ -309,7 +309,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				}
 		}
 
-!! TODO: Probar acción
+!! TODO - Probar acción
 	Enter: ! [infsp] GoIn (Meterse) se cambio por Enter.
 		!! CUIDADO. La acción Meterse se genera en muy diversas
 		!! circunstancias: VETE HACIA EL PUENTE, VETE AL PUENTE, VETE POR
@@ -557,7 +557,7 @@ Default GRAMMATICAL_INFLECTION 2;
 		6:	"No podía llenar", (lo) x1, ".";
 		}
 
-!! TODO: mensaje del parser
+!! TODO - mensaje del parser
 	FullScore:
 		!! Puntuación en modo "explicativo". Puede activarse porque el
 		!! jugador lo pida con el verbo "PUNTUACION LARGA" o porque el
@@ -1253,7 +1253,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				5:	print " Moriste ";
 				6:	print " Murió ";
 				}
-!! TODO: probar
+!! TODO - probar
 			4:
 				!! Mensaje de fin del relato. Victoria.
 				! TextoLlamativo(" Has ganado ");
@@ -1265,7 +1265,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				5:	print " Ganaste ";
 				6:	print " Ganó ";
 				}
-!! TODO: mensaje del parser
+!! TODO - mensaje del parser
 			5:
 				!! Mensaje a mostrar tras el fin del juego, para pedir al 
 				!! jugador si quiere reniciar, recuperar, anular, puntuación, 
@@ -1303,7 +1303,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! mensaje [Miscellany,5]
 				print_ret (parser) "Por favor, da una de las respuestas 
 				anteriores.";
-!! TODO: cambiar mensaje
+!! TODO - cambiar mensaje
 			9:
 				!! Mensaje cuando se detecta, al final del turno, que ya no hay 
 				!! una fuente de luz en la localidad actual.
@@ -1447,7 +1447,7 @@ Default GRAMMATICAL_INFLECTION 2;
 			! 42:	!! manejado por ParserError.
 			! 43:	!! manejado por ParserError.
 
-!! TODO: cambiar mensaje
+!! TODO - cambiar mensaje
 			44:
 				!! El jugador ha intentado objetos múltiples usando TODO 
 				!! pero el parser no ha encontrado ninguno. Por ejemplo, COGE 
@@ -1465,7 +1465,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				}
 				LanguageVerb(verb_word);
 				".";
-!! TODO: mensaje del parser
+!! TODO - mensaje del parser
 			45:
 				!! El jugador ha nombrado un PNJ ambiguo (hay más de noun con 
 				!! el mismo name cerca). El parser le pide aclaración. Este 
@@ -1477,7 +1477,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				PreguntaCualExactamente=1;
 				ImprimirListaDudosos("o");
 				!print "?^";
-!! TODO: mensaje del parser
+!! TODO - mensaje del parser
 			46:
 				!! El jugador ha nombrado un objeto ambiguo (hay más de objeto 
 				!! con el mismo nombre cerca). El parser le pide aclaración. 
@@ -1489,7 +1489,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				PreguntaCualExactamente=1;
 				ImprimirListaDudosos("o");
 				!print "?^";
-!! TODO: mensaje del parser
+!! TODO - mensaje del parser
 			47:
 				!! El jugador ha respondido "TODOS" o "AMBOS" a una pregunta 
 				!! aclaratoria como la anterior, pero el verbo no admite 
@@ -1497,7 +1497,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				print "Lo siento, sólo puedes referirte a un objeto aquí. ¿Cuál 
 				exactamente?^";
 				PreguntaCualExactamente=1;
-!! TODO: Tienes que indicar a quien tiene que/quieres <comando>...
+!! TODO - Tienes que indicar a quien tiene que/quieres <comando>...
 			48:
 				!! El jugador ha escrito una frase u orden a PSI incompleta, 
 				!! como BESA (verbo aplicado sobre PSIs normalmente). El parser 
@@ -1512,7 +1512,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				print "?";
 				end_parser_style();
 				new_line;
-!! TODO: Tienes que indicar qué tiene que/quieres <comando>...
+!! TODO - Tienes que indicar qué tiene que/quieres <comando>...
 			49:
 				!! El jugador ha escrito una frase u orden incompleta, como 
 				!! COGE (verbo aplicado sobre objetos normalmente). El parser 
@@ -1528,7 +1528,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				end_parser_style();
 				new_line;
 			!#IFNDEF NO_PUNTUACION;
-!! TODO: mensaje del parser
+!! TODO - mensaje del parser
 			50:
 				!! El jugador acaba de realizar una acción que puntúa (la 
 				!! librería ha detectado que la variable score ha cambiado de 
@@ -1587,7 +1587,7 @@ Default GRAMMATICAL_INFLECTION 2;
 	NotifyOff:
 		print_ret (parser) "Notificación de puntuación desactivada.";
 
-!!TODO: Mensaje del parser (parser_style)
+!!TODO - Mensaje del parser (parser_style)
 	Objects:
 		!! Ante el verbo "OBJETOS" se genera esta acción, que muestra una 
 		!! lista de todos los objetos que el jugador ha manipulado a lo largo 
@@ -1607,16 +1607,16 @@ Default GRAMMATICAL_INFLECTION 2;
 		switch (n) {
 			1:	"Objetos que has manejado:^";
 			2:	"Ninguno.";
-!! TODO: usar x1
+!! TODO - usar x1
 			3:	print "   (puesto)";
 			4:	print "   (contigo)";
-!! TODO: usar x1
+!! TODO - usar x1
 			5:	print "   (dejado con alguien)";
 			6:	print "   (ahora en ", (name) x1, ")";
 			7:	print "   (ahora en ", (the) x1, ")";
 			8:	print "   (ahora dentro ", (del) x1, ")";
 			9:	print "   (ahora en ", (the) x1, ")";
-!! TODO: usar x1
+!! TODO - usar x1
 			10:	print "   (perdido)";
 		}
 
@@ -1639,7 +1639,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				4,5,6:	"Estaba", (n) x1, " cerrad", (o) x1, " con llave.";
 				}
 			3:	"Ya estaba", (n) x1, " abiert", (o) x1, ".";
-!! TODO: cambiar mensaje cuando no hay nada en el objeto al abrirlo
+!! TODO - cambiar mensaje cuando no hay nada en el objeto al abrirlo
 			4:	switch (GRAMMATICAL_INFLECTION) {
 				1:	print "Abro ";	2: print "Abres ";		3:	print "Abre ";
 				4:	print "Abrí ";	5: print "Abriste ";	6:	print "Abrió ";
@@ -1664,7 +1664,7 @@ Default GRAMMATICAL_INFLECTION 2;
 !!		4,5,6:	print_ret (The) x1," tenía", (n) x1," mejores cosas que hacer.";
 !!		}
 
-!! TODO: probar. mensaje del parser
+!! TODO - probar. mensaje del parser
 	Places: 
 		!! El verbo "LUGARES" muestra un listado de los lugares que el jugador 
 		!! ha visitado. Aquí debemos escribir el texto introductorio a esa 
@@ -1674,7 +1674,7 @@ Default GRAMMATICAL_INFLECTION 2;
 			2:  print ".^";
 		}
 
-!! TODO: cambiar mensaje
+!! TODO - cambiar mensaje
 	Pray:
 		switch (GRAMMATICAL_INFLECTION) {
 		1:	"No obtengo nada práctico de mis oraciones.";
@@ -1858,7 +1858,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				4,5,6:	"Poner cosas sobre ", (the) x1, " no hubiese servido 
 						de nada.";
 				}
-!! TODO: cambiar mensaje
+!! TODO - cambiar mensaje
 			4:	switch (GRAMMATICAL_INFLECTION) {
 				1:	"Me falta destreza.";
 				2:	"Te falta destreza.";
@@ -1900,7 +1900,7 @@ Default GRAMMATICAL_INFLECTION 2;
 		}
 		return true;
 
-!! TODO: repasar mensajes
+!! TODO - repasar mensajes
 	Remove:
 		!!	1:	El recipiente que contiene el objeto que el jugador quiere
 		!!		sacar, está cerrado. (x1 apunta al objeto, no al recipiente, 
@@ -1996,7 +1996,7 @@ Default GRAMMATICAL_INFLECTION 2;
 		!!		del juego obtenido de la constante Historia).
 		switch (n) {
 			1:	print_ret (parser) "La transcripción ya estaba activada.";
-!! TODO: probar
+!! TODO - probar
 			2:	print_ret (parser) "Iniciando la transcripción de:";
 			3:	print_ret (parser) "Intento fallido de comienzo de la 
 				transcripción.";
@@ -2025,7 +2025,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				1,2,3:	"No hay nada sobre ", (the) x1, ".";
 				4,5,6:	"No había nada sobre ", (the) x1, ".";
 				}
-!! TODO: comprobar funcionamiento
+!! TODO - comprobar funcionamiento
 			3:	print "Sobre ", (the) x1;
 				WriteListFrom(child(x1), 
 					TERSE_BIT + ENGLISH_BIT + ISARE_BIT + CONCEAL_BIT);
@@ -2064,7 +2064,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				".";
 		}
 
-!! TODO: personalizar mensaje
+!! TODO - personalizar mensaje
 	Set:
 		!! Set sale ante la frase FIJA OBJETO o AJUSTA OBJETO
 		switch (GRAMMATICAL_INFLECTION) {
@@ -2106,7 +2106,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				}
 		}
 
-!! TODO: Personalizar mensaje
+!! TODO - Personalizar mensaje
 	Sing:
 		switch (GRAMMATICAL_INFLECTION) {
 		1:	"Canto fatal.";
@@ -2136,7 +2136,7 @@ Default GRAMMATICAL_INFLECTION 2;
 		6:	"No olía nada extraño.";
 		}
 
-!! TODO:
+!! TODO -
 	Sorry:
 		!! Esta acción se genera si el jugador pone "LO SIENTO",
 		!! "PERDONA" o cosas similares.
@@ -2165,13 +2165,13 @@ Default GRAMMATICAL_INFLECTION 2;
 				}
 		}
 
-!! TODO: Recomendar AYUDA
+!! TODO - Recomendar AYUDA
 	Strong:
 		!! Respuesta si se usa como primera palabra algún taco.
 		!! "Los verdaderos aventureros no usan ese vocabulario.";
 		print_ret (parser) "No vas a conseguir nada poniéndote hosco.";
 
-!! TODO: Dar una respuesta más apropiada
+!! TODO - Dar una respuesta más apropiada
 	Swim:
 		switch (GRAMMATICAL_INFLECTION) {
 		1,2,3:	"No hay agua suficiente en la que nadar.";
@@ -2652,20 +2652,6 @@ Default GRAMMATICAL_INFLECTION 2;
 !! NAME de la localidad actual) provocados por una operación de tipo EXAMINAR, 
 !! se lanza la acción ##Look que imprime una descripción de la localidad.
 !!------------------------------------------------------------------------------
-!! Versión de la rutina extraída de <scenic.h>:
-![ Handle_SCENERY_PE;
-!	if ( action_to_be == ##Examine or ##Search or ##Consult ) {
-!		if ( location.describe ~= NULL ) RunRoutines(location, describe);
-!		else {
-!			if ( location.description == 0 ) RunTimeError(11, location);
-!			else PrintOrRun(location, description);
-!		}
-!		InformLibrary.end_turn_sequence();
-!		return true;
-!	}
-!	print_ret (parser) "No es necesario referirse a eso para terminar 
-!	la historia.";
-!];
 [ Handle_SCENERY_PE;
 	if (action_to_be == ##Examine or ##Search or ##Consult) {
 		<Look>; 
@@ -2703,7 +2689,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				print_ret (parser) "No se pudo comprender ese número.";
 		CANTSEE_PE:
 				!! #30: El parser no ha comprendido el nombre del objeto al que 
-				!! se refiere el player, o ese objeto no está aquí.
+				!! se refiere el jugador, o ese objeto no está aquí. 
 				!! -- "No veo eso que dices.";
 				print_ret (parser) "Te has referido a algo con lo que 
 				no se puede interactuar en este momento.";
@@ -2730,7 +2716,7 @@ Default GRAMMATICAL_INFLECTION 2;
 				!! #33: El jugador ha intentado usar objetos múltiples (o 
 				!! "TODO") con un verbo que en su gramática no lo admite.
 				!! -- "No puedes especificar objetos múltiples con ese verbo.";
-!! TODO: probar
+				!! TODO - probar
 				start_parser_style();
 				print "No se pueden especificar objetos múltiples con '", 
 				(address) verb_word ,"'.";
@@ -2783,22 +2769,13 @@ Default GRAMMATICAL_INFLECTION 2;
 				end_parser_style();
 				new_line;
 				return true;
-!				#Ifdef	TARGET_ZCODE;
-!				print "La acción '";
-!				for (j = 0: j < parse->4: j++)
-!					print (char) buffer->(parse->(4+1)+j);
-!				print "' no está definida.";
-!				#Ifnot;	! TARGET_GLULX
-!				j = 0;	! shut up compiler warning
-!				print "La acción introducida no está definida.";
-!				#Endif;
 		SCENERY_PE:
 				!! #39: El jugador intenta actiones sobre las palabras que 
 				!! están en la propiedad "irrelevante" de la localidad.
 				!! -- "Eso no es importante.";
 				return Handle_SCENERY_PE();
-!				print_ret (parser) "No es necesario referirse a eso 
-!				para terminar la historia.";
+				!! print_ret (parser) "No es necesario referirse a eso 
+				!! para terminar la historia.";
 		ITGONE_PE:
 				!! #40: El jugador ha usado un proname, como EXAMINALO, pero el 
 				!! pronombre se refiere a un objeto que ya no está visible. 

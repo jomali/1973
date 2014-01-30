@@ -1,5 +1,6 @@
 Code 1973.ulx
 
+# IMÁGENES DEL MARCO:
 Picture	FRAME_TOP_LEFT		resources/FRAME_CORNER.png
 Picture	FRAME_TOP_RIGHT		resources/FRAME_CORNER.png
 Picture	FRAME_BOTTOM_LEFT	resources/FRAME_CORNER.png
@@ -9,9 +10,10 @@ Picture	FRAME_BOTTOM		resources/FRAME_X.png
 Picture	FRAME_LEFT			resources/FRAME_Y.png
 Picture	FRAME_RIGHT			resources/FRAME_Y.png
 
+# ILUSTRACIONES DE LA HISTORIA:
 Picture PIC_1_01			resources/escena1_01.png
-Picture PIC_1_02			resources/escena1_02.png
 
+# SONIDOS:
 Sound WOUNDED_A				resources/wounded_a.ogg
 Sound WOUNDED_B				resources/wounded_b.ogg
 Sound WOUNDED_C				resources/wounded_c.ogg

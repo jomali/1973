@@ -12,12 +12,12 @@
 !!	Languague:		ES (Castellano)
 !!	System:			Inform, INFSP 6
 !!	Platform:		Z-Machine / GLULX
-!!	Version:		0.0
-!!	Released:		0000/00/00
+!!	Version:		0.1
+!!	Released:		2014/01/20
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	Copyright (c) 2013, J. Francisco Martín
+!!	Copyright (c) 2014, J. Francisco Martín
 !!
 !!	This file is part of PROYECTO 1973.
 !!
@@ -32,7 +32,7 @@
 !!	GNU General Public License for more details.
 !!
 !!	You should have received a copy of the GNU General Public License 
-!!	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+!!	along with PROYECTO 1973. If not, see <http://www.gnu.org/licenses/>.
 !!
 !!------------------------------------------------------------------------------
 
@@ -48,8 +48,7 @@
 !!	<>	acción gritar
 
 Room	TAXI "Dentro del taxi"
- with
-		name	'taxi' 'coche' 'vehiculo' 'automovil' 'auto', 
+ with	name	'taxi' 'coche' 'vehiculo' 'automovil' 'auto', 
 		initial [; if (self hasnt visited) {
 			!! Inicializaciones multimedia: ------------------------------------
 			#Ifdef TARGET_GLULX;
@@ -72,7 +71,6 @@ print "Siente el frío peso del revólver en la mano un instante antes de comprend
 		}],
 		description [;
 			if (self.state == 2)
-!! XXX
 				"El humo blanquecino del cigarro flota pesadamente en el 
 				interior del vehículo. Están detenidos en mitad de un atasco. Y 
 				detenida también ha quedado la ciudad tras las ventanillas, 
@@ -93,7 +91,6 @@ print "Siente el frío peso del revólver en la mano un instante antes de comprend
 					return self.next_state();
 			!! TODO: Sit
 			Smell:
-!! XXX
 				if (self.state == 2) "El olor del cigarro ocupa el vehículo.";
 				else "Humo viejo, viejo perfume, viejo sudor.";
 			!! TODO StandUp:
@@ -111,7 +108,6 @@ print "Siente el frío peso del revólver en la mano un instante antes de comprend
 		], 
 		e_to [;
 			if (self.state == 0 || self.state == 1) {
-!! XXX
 				"No puede abandonar el taxi en marcha.";
 			}
 			if (self.state == 2) {
@@ -280,7 +276,7 @@ NPC		taxista "taxista" TAXI
  has
 		male concealed;
 
-TI_Topic	topic_1_1
+ConversationEntry topic_1_1
  with	entry [; print (strong) "responder", " a la pregunta"; ], 
 		keys 'responder,' 'responderle,' 'responde,' 'pregunta', 
 		reply [;
@@ -316,10 +312,10 @@ TI_Topic	topic_1_1
 
 
 
-TI_Conversation	conversacion_taxista_1
+Conversation conversacion_taxista_1
  with	topics op03 op02 op01;
 
-TI_Topic	op01
+ConversationEntry op01
  with	entry [;
 			print (strong) "responder", " a la pregunta";
 		],
@@ -355,7 +351,7 @@ TI_Topic	op01
 		],
 ;
 
-TI_Topic	op02
+ConversationEntry op02
  with	entry [;
 			print "hablar sobre el ", (strong) "estado del tráfico";
 		],
@@ -383,7 +379,7 @@ TI_Topic	op02
 		], 
 ;
 
-TI_Topic	op03
+ConversationEntry op03
  with	entry [;
 			print "hablar sobre el ", (strong) "golpe contra el gobierno";
 		],
@@ -418,10 +414,10 @@ TI_Topic	op03
 		], 
 ;
 
-TI_Conversation	conversacion_taxista_2
+Conversation conversacion_taxista_2
  with	topics op06 op05 op04;
 
-TI_Topic	op04
+ConversationEntry op04
  with	keys	'ser,' 'se,' 'contestar,' 'contesta,' 'sincero' 'sinceridad', 
 		entry [;
 			print (strong) "ser sincero";
@@ -437,7 +433,7 @@ TI_Topic	op04
 		],
 		subtopics op02 op03;
 
-TI_Topic	op05
+ConversationEntry op05
  with	keys	'mentir,' 'miente,' 'mentira', 
 		entry [;
 			print (strong) "mentir";
@@ -453,7 +449,7 @@ TI_Topic	op05
 		],
 		subtopics op02 op03;
 
-TI_Topic	op06
+ConversationEntry op06
  with	keys	'guardar,' 'guarda,' 'silencio', 
 		entry [;
 			print (strong) "guardar silencio";

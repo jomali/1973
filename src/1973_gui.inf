@@ -3,7 +3,7 @@
 !!==============================================================================
 !!
 !!	PROYECTO 1973
-!!	Definición de la interfaz gráfica (sólo GLULX)
+!!	Definición de la interfaz gráfica (sólo en GLULX)
 !!
 !!==============================================================================
 !!
@@ -32,19 +32,14 @@
 !!	GNU General Public License for more details.
 !!
 !!	You should have received a copy of the GNU General Public License 
-!!	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+!!	along with PROYECTO 1973. If not, see <http://www.gnu.org/licenses/>.
 !!
 !!------------------------------------------------------------------------------
 
 
 !!==============================================================================
-!!	Librerías
+!!	Constantes
 !!------------------------------------------------------------------------------
-
-Include "gimage.h";				! GWindows; Image Window Widget
-!Include "gquote.h";				! GWindows; Quote Box Widget
-Include "gstatusX.h";			! GWindows; Status Window Module
-Include "gtile.h";				! GWindows; Tiled Image Windows
 
 Constant MARGIN_WIDTH 8;		! Ancho del margen interior
 Constant FRAME_WIDTH 56;		! Ancho del marco
@@ -52,7 +47,17 @@ Constant GRAPHIC_WIN_WIDTH 28;	! Ancho de la ventana de imágenes
 
 
 !!==============================================================================
-!!	Definición de la interfaz #2
+!!	Librerías
+!!------------------------------------------------------------------------------
+
+Include "gimage.h";				! GWindows; Image Window Widget
+!Include "gquote.h";			! GWindows; Quote Box Widget
+Include "gstatusX.h";			! GWindows; Status Window Module
+Include "gtile.h";				! GWindows; Tiled Image Windows
+
+
+!!==============================================================================
+!!	Definición de la interfaz
 !!------------------------------------------------------------------------------
 !!
 !!	+---+---------------------------+---+

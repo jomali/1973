@@ -1,4 +1,3 @@
-! Inform / INFSP 6
 
 
 !!==============================================================================
@@ -7,7 +6,6 @@
 !!
 !!==============================================================================
 !!
-!!
 !!	File:			SpanishEG.inf
 !!	Author(s):		Emily Short (emshort@mindspring.com)
 !!					J. Francisco Martín (jfm.lisaso@gmail.com)
@@ -15,40 +13,36 @@
 !!	Language:		ES (Castellano)
 !!	System:			Inform/INFSP 6
 !!	Platform:		Máquina-Z / Glulx
-!!	Version:		12.05 (2012/05/29)
-!!
+!!	Version:		3.1
+!!	Released:		2014/01/28
 !!
 !!------------------------------------------------------------------------------
 !!
+!!	#NOTAS:
 !!
-!!	NOTES:
+!!	Basada en "ExpertGrammar.h", de Emily Short (emshort@mindspring.com) 
+!!	y en su traducción al castellano "GramaticaExperta.h", de Mapache.
 !!
-!!	Based on "ExpertGrammar.h", by Emily Short (emshort@mindsping.com)
-!!	and on its spanish translation "GramaticaExperta.h", by Mapache.
+!!	#DERECHOS:
 !!
+!!	Esta librería puede tratarse como de dominio público. Puede incluirse 
+!!	con o sin citar al autor original. Puede ser modificada a discreción 
+!!	por el usuario. Se puede distribuir libremente. Pueden extraerse 
+!!	fragmentos de la librería.
 !!
-!!	RIGHTS:
+!!	#INSTALACIÓN:
 !!
-!!	This library file may be trated as public domain. It may be 
-!!	included with or without credit to the original author. It may be 
-!!	modified at the user's discretion. It may be freely distributed.
-!!	Parts may be extracted.
+!!	Incluye "SpanishEG.h" después de SpanishG en tu archivo de juego.
 !!
-!!
-!!	INSTALLATION:
-!!
-!!	Include "SpanishEG.h" after SpanishG in your gamefile.
-!!
-!!	Se puede definir una variable GRAMMATICAL_INFLECTION en el archivo de 
-!!	juego que puede tomar los valores: 1 (PRESENTE 1ª PERSONA), 2 (PRESENTE 2ª 
+!!	Se puede definir la variable GRAMMATICAL_INFLECTION en el archivo de juego, 
+!!	que puede tomar los valores: 1 (PRESENTE 1ª PERSONA), 2 (PRESENTE 2ª 
 !!	PERSONA), 3 (PRESENTE 3ª PERSONA), 4 (PASADO 1ª PERSONA), 5 (PASADO 2ª 
 !!	PERSONA) o 6 (PASADO 3ª PERSONA) para modificar la conjugación gramatical 
-!!	de los mensajes de la librería. Si no se define esta variable, la librería 
-!!	interpreta que se usa el valor 2 con lo que los mensajes se imprimen en 
-!!	presente y segunda persona.
+!!	de los mensajes de la librería. Si no se define ninguna 
+!!	GRAMMATICAL_INFLECTION, la librería interpreta que se usa el valor 2: los 
+!!	mensajes de "SpanishEG.h" se imprimen en presente y segunda persona.
 !!
-!!
-!!	NEW ACTIONS:
+!!	#NUEVAS ACCIONES:
 !!
 !!	Dance
 !!	GoDown
@@ -110,19 +104,21 @@ Verb	'muerde'
 !	* 'a' animate					-> Attack
 ; VerboIrregular "morder" with imperativo 'muerde';
 
-
 Verb	'desciende'
 	*								-> GoDown
 	* noun							-> Enter
 	* 'por' noun					-> Enter
 ; VerboIrregular "descender" with imperativo 'desciende';
 
-
 Verb	'asciende'
 	*								-> GoUp
 	* noun							-> Enter
 	* 'por' noun					-> Enter
 ; VerboIrregular "ascender" with imperativo 'asciende';
+
+Verb	'plancha' 'estira' 'desarruga'
+	* noun							-> Iron
+;
 
 Extend	'salta'
 	* 'en' noun						-> JumpOver
@@ -176,6 +172,13 @@ Extend    'sienta' replace
 	* '-te' / '-me'	'en' noun		-> Sit
 ; VerboIrregular "sentar" with imperativo 'sientate';
 
+Extend	'duerme'
+	* '-te'/'-me'					-> Sleep
+	* noun							-> Sleep
+	* '-te'/'-me' noun				-> Sleep
+	* 'en' noun						-> Sleep
+	* '-te'/'-me' 'en' noun			-> Sleep
+;
 
 Verb	'folla' 'copula'
 	* animate						-> SleepWith
@@ -184,23 +187,19 @@ Verb	'folla' 'copula'
 	* '-te' / '-me' 'a' animate		-> SleepWith
 ;
 
-
 Extend	only 'jode' first
 	* animate						-> SleepWith
 	* 'a//' / 'con' animate			-> SleepWith
 ;
-
 
 Verb	'ten'
 	* 'sexo' 'con' animate			-> SleepWith
 	* 'coito' 'con' animate			-> SleepWith
 ;
 
-
 Verb	'haz'
 	* 'el' 'amor' 'con' animate		-> SleepWith
 ;
-
 
 Extend	only 'levantate' 'levantarse' 'levantarte' first
 	*								-> StandUp
@@ -211,7 +210,6 @@ Verb    'levanta' 'incorpora'
     * 'de' noun 					-> StandUp
 	* '-te' / '-me' 'de//' noun		-> StandUp
 ;
-
 
 Verb	'desata' 'libera' 'desune' 'desenchufa'
 	* noun							-> Untie
@@ -265,13 +263,20 @@ Verb	'xyzzy' 'plugh' 'plover' 'abracadabra'
 	<<Go u_obj>>;
 ];
 
+[ IronSub;
+	switch (GRAMMATICAL_INFLECTION) {
+	1,2,3:	"No tiene sentido intentar hacer algo así.";
+	4,5,6:	"No tenía sentido intentar hacer algo así.";
+	}
+];
+
 [ KnockOnSub;
 	switch (GRAMMATICAL_INFLECTION) {
 	1,2,3:
-		if ( noun has door) "Nadie contesta.";
+		if (noun has door) "Nadie contesta.";
 		"No ocurre nada.";
 	4,5,6:
-		if ( noun has door) "Nadie contestó.";
+		if (noun has door) "Nadie contestó.";
 		"No ocurrió nada.";
 	}
 ];
@@ -318,14 +323,14 @@ Verb	'xyzzy' 'plugh' 'plover' 'abracadabra'
 ];
 
 [ SleepWithSub;
-	if ( noun == player ) <<Masturbate>>;
+	if (noun == player) <<Masturbate>>;
 	switch (GRAMMATICAL_INFLECTION) {
 	1:	"No creo que deba.";
 	2:	"En realidad no crees que debas.";
 	3:	"No cree que deba.";
-	4:	"No creo que algo así se me pasase por la cabeza siquiera.";
-	5:	"En realidad no crees que algo así se te pasase por la cabeza siquiera.";
-	6:	"No cree que algo así se le pasase por la cabeza siquiera.";
+	4:	"No se me hubiese pasado por la cabeza algo así en aquel momento.";
+	5:	"No se te hubiese pasado por la cabeza algo así en aquel momento.";
+	6:	"No se le hubiese pasado por la cabeza algo así en aquel momento.";
 	}
 ];
 

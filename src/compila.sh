@@ -1,10 +1,12 @@
 #! /bin/sh
 
+#===============================================================================
 # Script para compilar y ejecutar relatos interactivos programados en Inform 6.
 # Herramientas utilizadas:
 #	<>	inform:			Compilador Inform 6
-#	<>	bresc:			Blorb resource compiler (solo GLULX)
+#	<>	bresc:			Blorb resource compiler (sólo GLULX)
 #	<>	gargoyle-free:	Intérprete multi-plataforma
+#-------------------------------------------------------------------------------
 
 bresc_location=~/bin
 zcode_interpreter=gargoyle-free;
@@ -30,7 +32,9 @@ else
 	echo " "
 fi
 
+#===============================================================================
 # Compilar el relato para GLULX
+#-------------------------------------------------------------------------------
 if [ "$op" = "2" ]; then
 	echo "============================================="
 	echo "COMPILANDO PARA GLULX..."
@@ -52,7 +56,9 @@ if [ "$op" = "2" ]; then
 	cd .. 
 	$glulx_interpreter $gameFile.blb
 
+#===============================================================================
 # Compilar el relato para MÁQUINA-Z
+#-------------------------------------------------------------------------------
 else
 	echo "============================================="
 	echo "COMPILANDO PARA MÁQUINA-Z..."
@@ -69,7 +75,6 @@ else
 	fi
 	cd ..
 	$zcode_interpreter $gameFile.z5
-
 fi
 
 exit 0;

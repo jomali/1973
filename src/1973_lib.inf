@@ -12,12 +12,12 @@
 !!	Languague:		ES (Castellano)
 !!	System:			Inform, INFSP 6
 !!	Platform:		Z-Machine / GLULX
-!!	Version:		1.0
-!!	Released:		2013/01/16
+!!	Version:		0.1
+!!	Released:		2014/01/21
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	Copyright (c) 2013, J. Francisco Martín
+!!	Copyright (c) 2014, J. Francisco Martín
 !!
 !!	This file is part of PROYECTO 1973.
 !!
@@ -32,7 +32,7 @@
 !!	GNU General Public License for more details.
 !!
 !!	You should have received a copy of the GNU General Public License 
-!!	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+!!	along with PROYECTO 1973. If not, see <http://www.gnu.org/licenses/>.
 !!
 !!------------------------------------------------------------------------------
 
@@ -105,9 +105,9 @@ Global GRAMMATICAL_INFLECTION = SECOND_PERSON_PRESENT;
 			j = 0;
 			objectloop (k in player) 
 				if (k ~= SACK_OBJECT && k hasnt worn && k hasnt light 
-					!! XXX: Se comprueba además si el objeto cabe dentro o sobre 
-					!! SACK_OBJECT de forma que, si no lo hace, no se intenta 
-					!! introducirlo automáticamente. La rutina 
+					!! XXX - Se comprueba además si el objeto cabe dentro o 
+					!! sobre SACK_OBJECT de forma que, si no lo hace, no se 
+					!! intenta introducirlo automáticamente. La rutina 
 					!! CheckIfObjectFits(receiver, obj) está definida dentro de 
 					!! la extensión "receptacles.h".
 					&& CheckIfObjectFits(SACK_OBJECT, k)) j = k;
@@ -136,18 +136,21 @@ Global GRAMMATICAL_INFLECTION = SECOND_PERSON_PRESENT;
 
 
 !!==============================================================================
-!! Créditos generales de la aplicación
-!! TODO: Traducir
+!! Créditos generales de la aplicación.
+!! TODO - Traducir al castellano
 !!------------------------------------------------------------------------------
 !! Imprime el número de versión
 [ PrintVersionNumber i;
 	i = 0;  ! shut up compiler warning
+	#Ifdef DEMO_RELEASE;
+	print "D";
+	#Endif; ! DEMO_RELEASE;
 	#Ifdef ALPHA_RELEASE;
-	print "ALFA.";
-	#Endif;
+	print "ALFA ";
+	#Endif; ! ALPHA_RELEASE;
 	#Ifdef BETA_RELEASE;
-	print "BETA.";
-	#endif;
+	print "BETA ";
+	#endif; ! BETA_RELEASE;
 	print Checking, ".";
 	#Ifdef	TARGET_ZCODE;
 	print (HDR_GAMERELEASE-->0) & $03ff;
@@ -175,6 +178,9 @@ Global GRAMMATICAL_INFLECTION = SECOND_PERSON_PRESENT;
 		print (string) Story;
 		glk($0086, 0); ! set normal style
 		#Endif; ! TARGET_
+		#Ifdef DEMO_RELEASE;
+		print (emph) " -- Demostración";
+		#Endif; ! DEMO_RELEASE;
 		#Ifdef TEST_SCENE1;
 		print (emph) " -- Pruebas de la ESCENA 1";
 		#Endif; ! TEST_SCENE1;
@@ -247,9 +253,9 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
     width = ScreenWidth();
     spaces width;
 
-    ! Primero calculamos la posición inicial para imprimir centrado.
-    ! XXX: Si se cambia el nombre o el tamaño del buffer de texto temporal, se 
-	! deben cambiar también los dos primeros argumentos de PrintToBuffer().
+    !! Primero calculamos la posición inicial para imprimir centrado.
+    !! XXX - Si se cambia el nombre o el tamaño del buffer de texto temporal, 
+	!! se deben cambiar también los dos primeros argumentos de PrintToBuffer().
     pos = (width - PrintToBuffer(_AlmacenDeTexto_, 160, PrintLocationName)) / 2;
     MoveCursor(1, pos); 	! se mueve el cursor a la posición calculada
 	PrintLocationName();	! se imprime el nombre de la localidad
@@ -314,8 +320,8 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 		}
 	}
 
-	!! XXX: La rutina ParseNoun (tanto la rutina original de SpanishG.h como la 
-	!! versión utilizada aquí) puede modificar temporalmente los atributos 
+	!! XXX - La rutina ParseNoun (tanto la rutina original de SpanishG.h como 
+	!! la versión utilizada aquí) puede modificar temporalmente los atributos 
 	!! female y pluralname de un objeto en función del nombre que haya 
 	!! utilizado el interlector para referirse a él, con lo que su GNA cambia. 
 	!! Esto podía provocar un resultado inadecuado en la primera línea del 
@@ -334,7 +340,7 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 			6:	print "Llevaba puest",	(_o) first_worn, " ";
 		}
 
-		!! XXX: Observar que no se toma inventario de los objetos que pueda 
+		!! XXX - Observar que no se toma inventario de los objetos que pueda 
 		!! haber dentro de aquellos que el protagonista lleva puestos.
 		WriteListFrom(child(player), ENGLISH_BIT + WORKFLAG_BIT);
 
@@ -832,8 +838,8 @@ Verb	meta 'gramatica'
 
 
 !!==============================================================================
-!! Créditos detallados de la aplicación
-!! TODO: traducir al castellano
+!! Créditos detallados de la aplicación.
+!! TODO - Traducir al castellano
 !!------------------------------------------------------------------------------
 [ VersionSub ix;
 	new_line; Banner();

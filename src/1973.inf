@@ -16,12 +16,12 @@
 !!	Languague:		ES (Castellano)
 !!	System:			Inform, INFSP 6
 !!	Platform:		Z-Machine / GLULX
-!!	Version:		0.0
-!!	Released:		0000/00/00
+!!	Version:		0.1
+!!	Released:		2014/01/27
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	Copyright (c) 2013, J. Francisco Martín
+!!	Copyright (c) 2014, J. Francisco Martín
 !!
 !!	This file is part of PROYECTO 1973.
 !!
@@ -36,7 +36,7 @@
 !!	GNU General Public License for more details.
 !!
 !!	You should have received a copy of the GNU General Public License 
-!!	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+!!	along with PROYECTO 1973. If not, see <http://www.gnu.org/licenses/>.
 !!
 !!------------------------------------------------------------------------------
 
@@ -46,12 +46,16 @@
 !!------------------------------------------------------------------------------
 
 Constant Story "PROYECTO 1973";
+Constant Headline "Un relato interactivo de J. Francisco Martín, 2014";
 
-Constant ALPHA_RELEASE;
-Constant TEST_SCENE1;
-Constant Checking 1;
-!Release 0; Serial "130718";
-Release 1;
+!Constant ALPHA_RELEASE;		! Fase de desarrollo ALFA
+!Constant TEST_SCENE1;			! Escena en pruebas
+!Constant Checking 1;			! Código de la versión del relato
+!Release 0; Serial "130918";
+
+Constant DEMO_RELEASE;			! Versión de demostración
+Constant Checking 1;			! Código de la versión del relato
+Release 0; Serial "140120";		! 1.0 - 2014/01/20
 
 Constant MANUAL_PRONOUNS;		! Los pronoms. refieren a objetos ya mencionados
 Constant NO_PLACES;				! Acciones LUGARES Y OBJETOS desactivadas
@@ -89,7 +93,7 @@ Replace VersionSub;				! Créditos detallados de la aplicación
 
 
 !!==============================================================================
-!!	Librerías y extensiones (Parte 1 de 3)
+!!	Librerías y extensiones (Parte 1 de 2)
 !!------------------------------------------------------------------------------
 
 #Ifdef TARGET_GLULX;
@@ -106,7 +110,7 @@ Include "gwincls.h";			! GWindows; Window Class Framework
 
 
 !!==============================================================================
-!!	Puntos de entrada para Glk (sólo Glulx)
+!!	Puntos de entrada para Glk (sólo en Glulx)
 !!------------------------------------------------------------------------------
 
 #Ifdef TARGET_GLULX;
@@ -121,6 +125,8 @@ Include "gwincls.h";			! GWindows; Window Class Framework
 	phase = type + ref + rock; ! (para evitar alertas del compilador)
 ];
 
+!!------------------------------------------------------------------------------
+!! Controlador de eventos Glk con la librería GWindows.
 !!------------------------------------------------------------------------------
 [ GWindowsGlkEvent ev context abortres;
 	!! Se notifica el efecto de fade de Tiempo Real
@@ -174,50 +180,126 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 !! Inicialización del relato.
 !!------------------------------------------------------------------------------
 [ Initialise;
-	EraseWindow();
-	flowers = GetFlowerType();
-	lookmode = 2;
-	location = HABITACION;
+	EraseWindow();				! Borra la ventana
+	flowers = GetFlowerType();	! Tipo de flor destacado a lo largo de relato
+	lookmode = 2;				! Modo de las descripciones de localidad autom.
 
-	#Ifdef DEBUG;
-	VersionSub();
-	new_line;
-	italic_style();
-	print (emph) "AVISO: ", (string) Story, " se encuentra aún en fase temprana 
-	de desarrollo. Los contenidos (en especial los textos) mostrados a 
-	continuación pueden no ajustarse necesariamente al resultado final.^";
-	roman_style();
-	new_line;
-	print (parser) "Pulsa una tecla para continuar";
-	PressAnyKey();
-	EraseWindow();
-	#Endif; ! DEBUG;
-
+	!! Comprobaciones multimedia:
 	#Ifdef TARGET_GLULX;
+	HideGraphicWindow();
 	if (~~Damusix.TestAudio()) {
-		box	""
-			"AVISO: Esta aplicación incluye contenidos gráficos y "
-			"de audio, pero tu intérprete GLULX no los soporta    "
-			"adecuadamente. El programa se iniciará con parte o   "
-			"la totalidad de sus recursos multimedia desactivados."
-			"";
+		print (strong) "AVISO:", " Esta aplicación incluye contenidos gráficos 
+		y de audio, pero tu intérprete GLULX no los soporta adecuadamente. El 
+		programa se iniciará con parte o la totalidad de sus recursos 
+		multimedia desactivados.^";
+		new_line;
 		print (parser) "Pulsa una tecla para continuar";
 		PressAnyKey();
 		EraseWindow();
 	}
-	ShowGraphicWindow();
-	graphicWindow.setImage(PIC_1_01);
 	#Endif; ! TARGET_GLULX;
+
+	!! Advertencia de la demostración:
+	#Ifdef DEBUG;
+	#Ifdef DEMO_RELEASE;
+	print (strong) "AVISO:", " Esta aplicación es una versión de demostración 
+	de un relato interactivo pendiente de publicar. Los contenidos (en especial 
+	los textos) mostrados a continuación pueden no ajustarse necesariamente a 
+	los de la versión final.^";
+	new_line;
+	print (parser) "Pulsa una tecla para continuar";
+	PressAnyKey();
+	EraseWindow();
+	#Endif; ! DEMO_RELEASE;
+	#Endif; ! DEBUG;
+
+	location = MainMenu();		! Menú principal. Establece la localidad inicial
 
 	return 2;
 ];
 
 !!------------------------------------------------------------------------------
+!!	Menú principal.
+!!------------------------------------------------------------------------------
+[ MainMenu i key initialLocation;
+	EraseWindow();
+	Banner();
+	new_line;
+	HorizontalRule();
+	new_line;
+	monospaced_style();
+	print "  Empezar la demostración  ";
+		for (i=0 : i<(ScreenWidth() - 1 - 40) : i++) print ".";
+		print "  [ESPACIO]  ^";
+	print "  Ir al índice de escenas  ";
+		for (i=0 : i<(ScreenWidth() - 1 - 40) : i++) print ".";
+		print "      I      ^";
+	print "  Recuperar partida guardada  ";
+		for (i=0 : i<(ScreenWidth() - 1 - 43) : i++) print ".";
+		print "      R      ^";
+	print "  Salir de la aplicación  ";
+		for (i=0 : i<(ScreenWidth() - 1 - 39) : i++) print ".";
+		print "      Q      ^";
+	roman_style();
+
+	key = KeyCharPrimitive();
+	switch (key) {
+		'I', 'i': initialLocation = IndexMenu();
+		'R', 'r': EraseWindow(); print "Cargando partida...^"; <<Restore>>;
+		'Q', 'q': quit;
+		default: initialLocation = cama;
+	}
+
+	EraseWindow();
+	return initialLocation;
+];
+
+!!------------------------------------------------------------------------------
+!!	Menú con el índice de escenas.
+!!	TODO - Activar escenas no disponibles
+!!------------------------------------------------------------------------------
+[ IndexMenu i key initialLocation; 
+	EraseWindow();
+	monospaced_style();
+	print "  ÍNDICE  ^";
+	new_line;
+	print "  Escena 1: Habitación de Gabriel  ";
+		for (i=0 : i<(ScreenWidth() - 1 - 48) : i++) print ".";
+		print "      1      ^";
+	print "  Escena 2: Café Blanca Florida (no disponible)  ";
+		for (i=0 : i<(ScreenWidth() - 1 - 62) : i++) print ".";
+		print "      -      ^";
+	print "  Escena 3: Calles de Santiago  ";
+		for (i=0 : i<(ScreenWidth() - 1 - 45) : i++) print ".";
+		print "      3      ^";
+	print "  Escena 4: San Antonio (no disponible)  ";
+		for (i=0 : i<(ScreenWidth() - 1 - 54) : i++) print ".";
+		print "      -      ^";
+	new_line;
+	print "  Volver al menú principal  ";
+		for (i=0 : i<(ScreenWidth() - 1 - 41) : i++) print ".";
+		print "      I      ^";
+	roman_style();
+
+	key = KeyCharPrimitive();
+	switch (key) {
+		'1': initialLocation = cama;
+!		'2': initialLocation = CAFE;
+		'3': initialLocation = TAXI;
+!		'4': initialLocation = SAN_ANTONIO;
+		default: return MainMenu();
+	}
+
+	EraseWindow();
+	return initialLocation;
+];
+
+!!------------------------------------------------------------------------------
 !!	Manipula la entrada del usuario antes de que sea analizada por la librería.
 !!------------------------------------------------------------------------------
-![ BeforeParsing; 
-!	ConversationManager.try();
-!];
+[ BeforeParsing; 
+	ConversationManager.try();
+];
 
 !!------------------------------------------------------------------------------
 !!	Foco del jugador.
@@ -261,6 +343,16 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 	else char = KeyCharPrimitive();
 	if (char == 'q' or 'Q') return true;
 	else return false;
+];
+
+!!------------------------------------------------------------------------------
+!!	Imprime una regla horizontal centrada en pantalla.
+!!------------------------------------------------------------------------------
+[ HorizontalRule;
+	monospaced_style();
+	spaces (ScreenWidth()-1-7) / 2;
+	print "*  *  *^";
+	roman_style();
 ];
 
 !!------------------------------------------------------------------------------
@@ -335,15 +427,31 @@ Object	violetas "violetas"
 !!------------------------------------------------------------------------------
 !!	Rutinas y definiciones requeridas para lanzar la acción ##Examine sobre un 
 !!	objeto tecleando únicamente su nombre. Sigue la implementación propuesta en 
-!!	<http://rec.arts.int-fiction.narkive.com/Cz9j184N/inform-6-parser-question>
+!!	<http://rec.arts.int-fiction.narkive.com/Cz9j184N/inform-6-parser-question> 
+!!	con modificaciones para que sólo se intente lanzar la acción sobre objetos 
+!!	que realmente existen y están presentes dentro del foco del jugador. De 
+!!	otra forma, siempre se intentaría lanzar la acción ##Examine, aún cuando la 
+!!	intención del jugador no fuese examinar un objeto si no utilizar una acción 
+!!	que no está definida.
 !!------------------------------------------------------------------------------
-[ UnknownVerb;
-	verb_wordnum = 0;
-	return 'no.verb';
+[ UnknownVerb word obj;
+	objectloop(obj) {
+		if (TestScope(obj, player)) {
+			if ((WordInProperty(word, obj, name)) 
+				|| (WordInProperty(word, obj, name_m))
+				|| (WordInProperty(word, obj, name_f))
+				|| (WordInProperty(word, obj, name_mp))
+				|| (WordInProperty(word, obj, name_fp))) {
+				verb_wordnum = 0;
+				return 'no.verb';
+			}
+		}
+	}
+	return false;
 ];
 
-[ PrintVerb v;
-	if (v == 'no.verb') {
+[ PrintVerb word;
+	if (word == 'no.verb') {
 		print "hacer algo con";
 		return true;
 	}
@@ -351,6 +459,78 @@ Object	violetas "violetas"
 ];
 
 Verb 'no.verb' * noun -> Examine;
+
+!!------------------------------------------------------------------------------
+!!	Rutinas utilizadas por la acción ##RemarkableObjects para imprimir listado 
+!!	de objetos destacados del foco del jugador.
+!!------------------------------------------------------------------------------
+Global remarkableObjectsCount;
+[ CountRemarkableObjects obj; 
+	if (obj has remarkable) remarkableObjectsCount++;
+];
+[ PrintRemarkableObjects obj;
+	if (obj has remarkable) {
+		PronounNotice(obj);
+		print " ", (the) obj;
+		remarkableObjectsCount--;
+		if (remarkableObjectsCount > 1) print ",";
+		else if (remarkableObjectsCount == 1) print " y";
+	}
+];
+
+!!------------------------------------------------------------------------------
+!!	Comprueba que se cumplan las condiciones bajo las que se puede hacer un 
+!!	disparo con el revólver. Retorna verdadero si se el revólver está en 
+!!	condiciones de disparar, o falso en caso contrario.
+!!------------------------------------------------------------------------------
+[ CheckFireAtConditions obj;
+	!! El único objeto con el que se puede disparar es el revólver:
+	if (obj ~= nothing or revolver) {
+		switch (GRAMMATICAL_INFLECTION) {
+			1:	"Necesito un arma para hacer algo así.^";
+			2:	"Necesitas un arma para hacer algo así.^";
+			3:	"Necesita un arma para hacer algo así.^";
+			4:	"Necesitaba un arma para hacer algo así.^";
+			5:	"Necesitabas un arma para hacer algo así.^";
+			6:	"Necesitaba un arma para hacer algo así.^";
+		}
+		return false;
+	}
+	!! Gabriel tiene que tener el revolver en las manos para hacer el disparo:
+	if (obj == nothing && revolver notin player) {
+		switch (GRAMMATICAL_INFLECTION) {
+			1:	print "Primero trato de coger ", (the) revolver, ":^";
+			2:	print "Primero tratas de coger ", (the) revolver, ":^";
+			3:	print "Primero trata de coger ", (the) revolver, ":^";
+			4:	print "Primero traté de coger ", (the) revolver, ":^";
+			5:	print "Primero trataste de coger ", (the) revolver, ":^";
+			6:	print "Primero trató de coger ", (the) revolver, ":^";
+		}
+		<Take revolver>;
+		if (revolver notin player) return false;
+		else new_line;
+	}
+	!! El revólver tiene que tener balas:
+	if (revolver.out_of_ammo()) {
+		switch (GRAMMATICAL_INFLECTION) {
+		1:	print (The) revolver, " está", (n) revolver, " descargad", 
+			(o) revolver, ". No puedo disparar.^";
+		2:	print (The) revolver, " está", (n) revolver, " descargad", 
+			(o) revolver, ". No puedes disparar.^";
+		3:	print (The) revolver, " está", (n) revolver, " descargad", 
+			(o) revolver, ". No puede disparar.^";
+		4:	print (The) revolver, " estaba", (n) revolver, " descargad",
+			(o) revolver, ". No podía disparar.^";
+		5:	print (The) revolver, " estaba", (n) revolver, " descargad",
+			(o) revolver, ". No podías disparar.^";
+		6:	print (The) revolver, " estaba", (n) revolver, " descargad",
+			(o) revolver, ". No podía disparar.^";
+		}
+		return false;
+	}
+	!! Se cumplen todas las condiciones. Retorna verdadero:
+	return true;
+];
 
 
 !!==============================================================================
@@ -378,8 +558,22 @@ Extend	'corre' replace
 	* noun							-> CloseX
 ;
 
-Verb meta 'ayuda' 'pista' 'pistas' 'sos'
-	*								-> Help
+Verb	'apunta' 'dispara' 'tirotea'
+	*								-> FireAt
+	* noun							-> FireAt
+	* 'a//'/'hacia' noun			-> FireAt
+	* 'a//'/'hacia' noun 'con' held	-> FireAt
+	* noun 'con' held				-> FireAt
+	* held 'a//'/'hacia' noun		-> FireAt reverse
+	* 'con' held 'a//'/'hacia' noun	-> FireAt reverse
+;
+
+Verb meta 'tutorial' 'ayuda' 'ayudas' 'pista' 'pistas' 'sos'
+	*								-> HelpOn
+	* 'on' / 'si'					-> HelpOn
+	* 'encendido' / 'activado'		-> HelpOn
+	* 'off' / 'no'					-> HelpOff
+	* 'apagado' / 'desactivado'		-> HelpOff
 ;
 VerboIrregular "mostrar ayuda" with imperativo 'ayuda';
 
@@ -389,6 +583,10 @@ Extend only 'normal' replace
 
 Verb	'descorre'
 	* noun							-> OpenX
+;
+
+Verb	meta 'objetos' 'objs'
+	*								-> RemarkableObjects
 ;
 
 Extend	'habla' replace
@@ -446,8 +644,55 @@ VerboIrregular "mostrar inventario de temas" with imperativo 'temas' 't//';
 	<<Close noun second>>;
 ];
 
-[ HelpSub;
-	return HelpSystem.new_clue();
+[ FireAtSub;
+	if (second == revolver 
+		|| (second == nothing && IndirectlyContains(player, revolver))) {
+		if (revolver.out_of_ammo()) {
+			if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
+				print_ret (The) revolver, " está", (n) revolver, " descargad", 
+				(o) revolver, ". No puede disparar.";
+			print_ret (The) revolver, " estaba", (n) revolver, " descargad",
+			(o) revolver, ". No podía disparar.";
+		}
+		if (noun == nothing or revolver) {
+			if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
+				"Frustrado, siente ganas de disparar sobre algo. Aunque 
+				ponerse a disparar al aire probablemente no sea muy buena 
+				idea.";
+			"Frustrado, sentía ganas de disparar sobre algo. Aunque ponerse a 
+			disparar al aire probablemente no hubiese sido muy buena idea.";
+		}
+		if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
+			"Frustrado, siente ganas de disparar sobre algo. Aunque pegar un 
+			tiro ", (al) noun, " probablemente no sea muy buena idea.";
+		"Frustrado, sentía ganas de disparar sobre algo. Aunque pegar un 
+		tiro ", (al) noun, " probablemente no hubiese sido muy buena idea.";
+	}
+	if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
+		"Necesita un arma para hacer algo así.";
+	"Necesitaba un arma para hacer algo así.";
+];
+
+[ HelpOnSub;
+	if (HelpSystem.has_ended()) {
+		return HelpSystem.print_default_clue();
+	}
+	if (HelpSystem has on) {
+		HelpSystem.activate();
+		return HelpSystem.each_turn(true);
+	}
+	if (HelpSystem.is_active()) {
+		print_ret (parser) "El sistema de ayuda ya estaba activado.";
+	}
+	HelpSystem.activate();
+	print_ret (parser) "Sistema de ayuda activado.";
+];
+
+[ HelpOffSub;
+	if (~~HelpSystem.is_active())
+		print_ret (parser) "El sistema de ayuda ya estaba desactivado.";
+	HelpSystem.deactivate();
+	print_ret (parser) "Sistema de ayuda desactivado.";
 ];
 
 [ OpenXSub;
@@ -457,6 +702,21 @@ VerboIrregular "mostrar inventario de temas" with imperativo 'temas' 't//';
 	pueden abrir y cerrar.)";
 	new_line; new_line;
 	<<Open noun second>>;
+];
+
+[ RemarkableObjectsSub;
+	remarkableObjectsCount = 0;
+	LoopOverScope(CountRemarkableObjects);
+	if (remarkableObjectsCount == 0)
+		print_ret (parser) "No hay objetos destacables con los que puedas 
+		interactuar.";
+	start_parser_style();
+	print "Puedes interactuar con";
+	LoopOverScope(PrintRemarkableObjects);
+	print ".";
+	end_parser_style();
+	new_line;
+	return true;
 ];
 
 [ TalkOnSub;

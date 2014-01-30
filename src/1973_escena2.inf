@@ -12,12 +12,12 @@
 !!	Languague:		ES (Castellano)
 !!	System:			Inform, INFSP 6
 !!	Platform:		Z-Machine / GLULX
-!!	Version:		0.0
-!!	Released:		0000/00/00
+!!	Version:		0.1
+!!	Released:		2014/01/20
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	Copyright (c) 2013, J. Francisco Martín
+!!	Copyright (c) 2014, J. Francisco Martín
 !!
 !!	This file is part of PROYECTO 1973.
 !!
@@ -32,7 +32,7 @@
 !!	GNU General Public License for more details.
 !!
 !!	You should have received a copy of the GNU General Public License 
-!!	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+!!	along with PROYECTO 1973. If not, see <http://www.gnu.org/licenses/>.
 !!
 !!------------------------------------------------------------------------------
 
@@ -45,22 +45,23 @@ Room	CAFE "Café Blanca Florida"
  with	name	'cafe' 'blanca' 'florida' 'cafeteria' 'bar' 'local' 'taberna' 
 				'meson' 'tasca' 'establecimiento',
 		initial [; if (self hasnt visited) {
-			!! Inicializaciones multimedia: ------------------------------------
+			!! Inicializaciones de la escena -----------------------------------
+			SetGrammaticalInflection(THIRD_PERSON_PAST);
+!! TODO - contenidos de la ropa
+			!! Inicializaciones multimedia -------------------------------------
 			#Ifdef TARGET_GLULX;
 			Damusix.AsignarCanal(BAR_ENVIRONMENT, 0, 50, -1);
 			Damusix.Tocar(BAR_ENVIRONMENT);
 			#Endif; ! TARGET_GLULX;
-			!! Otra inicializaciones de la escena: -----------------------------
-			SetGrammaticalInflection(THIRD_PERSON_PAST);
 			!! Introducción ----------------------------------------------------
 			print "Debe abandonar el país ahora que la situación se ha vuelto 
 			insostenible. Los militares se han hecho a la calle y todos los del 
 			partido están en peligro de ser prendidos o encarcelados. O algo 
 			peor, puesto que desde que cayó el gobierno se han sucedido las 
 			ejecuciones... entre ellas la de su amigo Pablo Ureta. Todavía 
-			siente cómo la frente se le perla con un sudor frío al pensar en 
-			que estuvieron juntos apenas horas antes de su asesinato, en un bar 
-			de la avenida Libertador Bernardo O'Higgins:^";
+			siente cómo la frente se le perla de un sudor frío al pensar que 
+			estuvieron juntos apenas horas antes de su asesinato en un bar de 
+			la avenida Libertador Bernardo O'Higgins:^";
 			new_line;
 			return true;
 		}],
@@ -108,19 +109,25 @@ Atrezzo	-> silla "silla"
  has	female enterable supporter transparent;
 
 !!------------------------------------------------------------------------------
+!! Atrezzo:
+
+!!------------------------------------------------------------------------------
+!! Furniture:
+
+!!------------------------------------------------------------------------------
+!! Items:
+
+!!------------------------------------------------------------------------------
 !! NPCs:
 
-!! Objetos referenciados:
-!!		<>	silla
-NPC		-> Pablo "Pablo"
- with	first_description true, 
-	name_m	'pablo' 'ureta' 'amigo' 'hombre', 
+NPC		Pablo "Pablo" CAFE
+ with	name_m	'pablo' 'ureta' 'amigo' 'hombre', 
 		name_f	'persona', 
 		gender	G_MASCULINO, 
 		!! TODO: adjectives
 		describe [;
-			if (self.first_description) {
-				self.first_description = false;
+			if (~~self.description_flag) {
+				self.description_flag = true;
 				"^Él ya se encontraba allí, tal y como habían quedado. Su 
 				rostro, apenas reconocible, estaba surcado por toda una 
 				colección de arrugas nuevas y marcado ferozmente por la 
@@ -146,15 +153,55 @@ NPC		-> Pablo "Pablo"
 			tiempo, el claro de piel enrrojecida que se revelaba entre los 
 			rizos color carbón de la coronilla era cada vez mayor.";
 		],
+		before [;
+			TalkTo:
+				print "Atravesó el local hasta la mesa en que se encontraba 
+				Pablo.^";
+				new_line;
+				print "---Ahí estás. Llegas tarde, chico.^";
+				new_line;
+				ConversationManager.start(conversacion_pablo);
+				return true;
+		], 
+ private
+		description_flag false,	! indica si el objeto ha sido descrito
  has	male proper;
 
 !!------------------------------------------------------------------------------
-!! Items:
+!! Conversations:
 
-!!------------------------------------------------------------------------------
-!! Furniture:
+Conversation conversacion_pablo
+ with	topics e2_02 e2_01;
 
-!!------------------------------------------------------------------------------
-!! Atrezzo:
+ConversationEntry e2_01
+ with	entry [;
+			print (strong) "pedir disculpas", " por el retraso";
+		], 
+		keys
+			'disculparse' 'pedir' 'pide' 'disculpa' 'disculpas' 'disculpate'
+			'lo' 'siento', 
+		reply [;
+			"---Lo sé, lo sé. Lo siento. Hay soldados por todas partes. He 
+			venido dando un rodeo.";
+		], 
+		reaction [;
+			parent(self).remove_topic(e2_02);
+		];
+
+ConversationEntry e2_02
+ with	entry [;
+			print (strong) "llamar loco", " a Pablo por cirtarle allí en un 
+			momento como aquel";
+		], 
+		keys
+			'llamarle' 'loco' 'citarle' 'alli' 'momento' 'aquel', 
+		reply [;
+			"---¿Es que estás loco, Pablo? ¿Cómo se te ha ocurrido pedirme que 
+			me reúna contigo aquí? ¿No sabes que la ciudad está llena de 
+			soldados?";
+		], 
+		reaction [;
+			parent(self).remove_topic(e2_01);
+		];
 
 

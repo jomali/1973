@@ -4,8 +4,8 @@
 
  File:			inform6.lang
  Author(s):		J. Francisco Martín <jfm.lisaso@gmail.com>
- Version:		1.2
- Released:		2013/03/26
+ Version:		1.3
+ Released:		2014/01/20
 
  Para instalar este resaltado parcial de sintaxis de Inform 6 en GtkSourceView 
  (utilizado entre otros por los editores de texto gedit y Anjuta), copia este 
@@ -153,6 +153,7 @@
       <keyword>Dance</keyword>
       <keyword>GoDown</keyword>
       <keyword>GoUp</keyword>
+      <keyword>Iron</keyword>
       <keyword>KnockOn</keyword>
       <keyword>Masturbate</keyword>
       <keyword>Read</keyword>
@@ -199,6 +200,8 @@
       <keyword>visited</keyword>
       <keyword>workflag</keyword>
       <keyword>worn</keyword>
+	  <!-- Custom attributes -->
+	  <keyword>remarkable</keyword>
     </context>
 
     <context id="boolean" style-ref="boolean">

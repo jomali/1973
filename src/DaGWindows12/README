@@ -3,7 +3,8 @@
 
   <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <> <>
 
- Distribucion DA-Gwindows v1.2  /  Por: Eliuk Blau (DreamBytes Adventures)
+ Distribucion DA-Gwindows v1.3  /  Por: Eliuk Blau (DreamBytes Adventures)
+                                        J. Francisco Martín
 ===========================================================================
 
 ---------------------------------------------------------------------------
@@ -15,6 +16,10 @@ LISTA DE CAMBIOS:
      'NOTA DE ELIUK BLAU' luego del comentario de cabecera y tambien
      en los comentarios dentro del codigo concreto, encabezados por
      el nombre "Eliuk".
+
+  * Version 1.3  - Eliminación de la Banner(), porque puede entrar en 
+    (2014/01/21)   conflicto con otras implementaciones de la función. 
+                   Archivos modificados: gcdefs.h, gcore.h
 
   * Version 1.2  - Actualizacion "tonta" :) No se actualiza realmente
     (2009/01/15)   ningun archivo de GWindows, sino que se incluye una
