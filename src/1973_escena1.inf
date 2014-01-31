@@ -1166,6 +1166,9 @@ Item	ropa "ropa" cama
 			}
 		], 
 		react_before [;
+			DisrobeX:
+				if (noun == nothing)
+					<<Disrobe self>>;
 			WearX:
 				if (noun == nothing)
 					<<Wear self>>;
