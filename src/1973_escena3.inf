@@ -12,8 +12,8 @@
 !!	Languague:		ES (Castellano)
 !!	System:			Inform, INFSP 6
 !!	Platform:		Z-Machine / GLULX
-!!	Version:		0.1
-!!	Released:		2014/01/20
+!!	Version:		1.0
+!!	Released:		2014/02/01
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -65,21 +65,13 @@ Room	TAXI "Dentro del taxi"
 			move maleta to self;
 			StartTimer(self, 5); !! TODO: ajustar temporizador
 			!! Introducción ----------------------------------------------------
-print "Siente el frío peso del revólver en la mano un instante antes de comprender que juguetea con él, absorto, desde hace un rato, e inmediatamente lo vuelve a guardar en uno de los bolsillos del abrigo. Por suerte, el taxista tiene la atención puesta en la carretera y no parece prestar demasiada atención a nada más. No da señas de haber reparado en el arma, al menos. Gabriel respira hondo y se recuesta mejor en el asiento, intentando ahuyentar los recuerdos fijándose en los detalles de la ciudad que se va esfumando poco a poco tras las ventanillas.^";
+			O__M(self, 1);
 			new_line;
 			return true;
 		}],
 		description [;
-			if (self.state == 2)
-				"El humo blanquecino del cigarro flota pesadamente en el 
-				interior del vehículo. Están detenidos en mitad de un atasco. Y 
-				detenida también ha quedado la ciudad tras las ventanillas, 
-				como una última intantánea para el recuerdo.";
-			else
-				"El taxi avanza lentamente a través de las congestionadas 
-				calles de Santiago. Desde su asiento en la parte de atrás ve 
-				cómo desfilan, quizá por última vez, las calles, los edificios 
-				y las gentes de la ciudad en la que ha vivido hasta hoy.";
+			if (self.state == 2) return O__M(self, 3);
+			else return O__M(self, 2);
 		],
 		before [;
 			!! TODO Jump:
@@ -112,21 +104,7 @@ print "Siente el frío peso del revólver en la mano un instante antes de comprend
 			}
 			if (self.state == 2) {
 				self.state = 3;
-				print "Distraído, posa los ojos sobre la gente que pasea por la 
-				acera esta mañana. Y de repente, durante apenas un instante, 
-				vuelve a su mente el intenso perfume de ", (the) flowers 
-				,". ¡Ella! Allí, a tan sólo un puñado de metros, ve a Luz 
-				Acosta caminando sinuosa por la calle. Alta, cabello negro 
-				largo, vestido rojo, piernas rectas que castigan el suelo a 
-				cada paso y una mirada capaz de derribar montañas. Luz 
-				Acosta... la mujer que conoció anoche.";
-				new_line;
-				new_line;
-				print "---¡Pare! ¡Pare! ¡Espere aquí un momento! ---Abre 
-				apresuradamente la puerta del taxi y sale a su encuentro, casi 
-				a la carrera. Perfectamente consciente del tremendo riesgo que 
-				podía conllevar ser visto.";
-				new_line;
+				O_M(self, 4);
 				new_line;
 			}
 			#Ifdef TARGET_GLULX;

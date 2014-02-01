@@ -12,8 +12,8 @@
 !!	Languague:		ES (Castellano)
 !!	System:			Inform, INFSP 6
 !!	Platform:		Z-Machine / GLULX
-!!	Version:		0.1
-!!	Released:		2014/01/27
+!!	Version:		1.0
+!!	Released:		2014/02/01
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -302,11 +302,7 @@ Room	LIMBO "En algún lugar"
  with	name	'limbo' 'lugar' 'sueno' 'vacio',
 		clarification "",
 		description [;
-			print "Más allá de la barrera casi insuperable que separa la 
-			realidad de todo lo demás. Un lugar etéreo, donde la vida, la 
-			materia y la vitalidad no son necesariamente constantes; un lugar 
-			donde el tiempo y el espacio no existen tal y como los capta 
-			nuestro ser despierto...";
+			O__M(self, 1);
 			if (self hasnt visited)
 				print (emph) " ¿Qué? ¿Cómo?... ¿cómo he llegado aquí?";
 			new_line;
@@ -659,7 +655,7 @@ Object	HelpSystem "(Help System)"
 		inv_clue_printed false, 
 		inv_clue_flag false, 
 		inv_clue_a [; 
-			print_ret (parser) "Cuando Gabriel coje un objeto, éste deja de 
+			print_ret (parser) "Cuando Gabriel coge un objeto, éste deja de 
 			estar en el sitio que ocupaba antes y pasa a su poder. Puedes ver 
 			las cosas que Gabriel lleva encima en cualquier momento tecleando 
 			INVENTARIO.";

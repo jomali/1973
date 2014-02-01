@@ -12,8 +12,15 @@
 !!	Languague:		ES (Castellano)
 !!	System:			Inform, INFSP 6
 !!	Platform:		Z-Machine / GLULX
-!!	Version:		0.1
-!!	Released:		2014/01/27
+!!	Version:		1.0
+!!	Released:		2014/02/01
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	TODO:
+!!
+!!	<>	reproducción de audio de la escena
+!!	<>	objeto: amanecer
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -56,9 +63,6 @@
 !!	4.	Tocar TRACK_1_DENOUEMENT, sin repeticiones, con FLAG_SOUND_NOTIFY:
 !!		Damusix.AsignarCanal(TRACK_1_DENOUEMENT, 0, -1, 1);
 !!		Damusix.Tocar(TRACK_1_DENOUEMENT, 1);
-!!
-!!	TODO:
-!!	<>	EXAMINAR AMANECER
 !!------------------------------------------------------------------------------
 
 Room	HABITACION
@@ -126,27 +130,7 @@ Room	HABITACION
 			graphicWindow.setImage(PIC_1_01);
 			#Endif; ! TARGET_GLULX;
 			!! Introducción ----------------------------------------------------
-			print "No debió ser así. Eso es lo primero que el joven Gabriel 
-			Mistral piensa al abrir los ojos y despertar en la sofocante 
-			oscuridad de la habitación. Aún permanece unos minutos en la cama, 
-			tumbado con la mirada perdida entre las sombras del techo mientras 
-			los recuerdos se agolpan en su cabeza. Una y otra vez ha repasado 
-			esas imágenes últimamente, convencido de que hay algo oculto en 
-			ellas que no puede ver. Una clave secreta de la que tal vez se 
-			pudiese ayudar para comprender lo ocurrido, pero que por más que se 
-			esfuerza es incapaz de desentrañar. ¿Cómo se podía haber torcido 
-			todo de esa manera? ¿Dónde se habían equivocado?^";
-			new_line;
-			print "Vuelve a cerrar los ojos un momento y entonces el perfume 
-			de ", (the) flowers, " lo ocupa todo. Ella. Automáticamente tiende 
-			la mano a un lado, buscando a ciegas el tacto de su cuerpo, pero no 
-			está. Lo único que encuentra son las sábanas, húmedas y pegajosas. 
-			No, claro que no está, se dice. No aquí. La dejó durmiendo en el 
-			hotel antes de volverse a casa en mitad de la noche, solo de 
-			nuevo... Seguramente sea mejor así, al fin y al cabo ahora tiene 
-			cosas más importantes de las que preocuparse. Deja escapar un largo 
-			suspiro de resignación y se obliga a incorporarse finalmente en el 
-			colchón.^";
+			O__M(self, 1);
 			PressAnyKey();
 			new_line;
 			self.short_name = "En la habitación";
@@ -155,20 +139,12 @@ Room	HABITACION
 		}], 
 		description [;
 			if (self.light_flag)
-				"La intensa claridad del amanecer se cuela ahora por la ventana 
-				abierta, iluminando un caos de ropa, libros, papeles y otros 
-				trastos esparcidos por todo el dormitorio. Sólo su cama y el 
-				escritorio siguen aún en pie entre el tumulto.";
+				return O__M(self, 4);
 			else if (self.description_flag)
-				"Las cortinas cerradas no dejan pasar más que una fina franja 
-				de luz. Insuficiente todavía como para alejar las sombras que 
-				envuelven la habitación.";
+				return O__M(self, 3);
 			else {
 				self.description_flag = true;
-				"A su alrededor todo son penumbras. La escasa luz capaz de 
-				filtrarse a través de las cortinas cerradas sirve tan sólo para 
-				dibujar una estrecha franja blanca y zigzagueante sobre el 
-				suelo de la habitación.";
+				return O__M(self, 2);
 			}
 		], 
 		before [;
@@ -184,11 +160,7 @@ Room	HABITACION
 					"Huele al sudor empapado entre las sábanas.";
 				else {
 					self.smell_flag = true;
-					"Durante unos instantes permanece suspendido entre las 
-					tinieblas el perfume de ", (the) flowers, ". Sin embargo, 
-					es sólo un residuo de su memoria y se desvanece enseguida. 
-					Aquí y ahora el único aroma que hay es el acre del sudor 
-					que empapa las sábanas.";
+					return O__M(self, 5);
 				}
 		], 
 		e_to [;
@@ -214,13 +186,7 @@ Room	HABITACION
 			if (~~IndirectlyContains(player, billete)) {
 				if (~~self.exit_flag) {
 					self.exit_flag = true;
-					!! TODO - repasar texto
-					"Está a punto de atravesar el umbral cuando algo le hace 
-					detenerse en seco, justo en el último momento. ¡Casi lo 
-					olvida! El billete. Automáticamente busca en el bolsillo, 
-					aunque ahí no está, desde luego. No, lo escondió en alguna 
-					parte. Maldice por lo bajo. Tiene que encontrarlo; no podrá 
-					llegar muy lejos sin él.";
+					return O__M(self, 6);
 				}
 				!! TODO - repasar texto
 				print_ret (string) random (
@@ -355,21 +321,7 @@ Furniture	cama "cama" HABITACION
 				if (~~self.jumpOver_flag) {
 					self.jumpOver_flag = true;
 					move player to parent(self);
-					"Por algún motivo, recuerda de pronto un juego infantil que 
-					creía haber olvidado mucho tiempo atrás. Era algo que 
-					tenían absolutamente prohibido, de modo que, 
-					inevitablemente, saltar y columpiarse sobre las camas del 
-					orfanato se convirtió enseguida en uno de sus juegos 
-					favoritos. A pesar de la amenza del castigo si los 
-					descubrían haciéndolo. O mejor dicho, seguramente por culpa 
-					de ello ---piensa mientras se palpa una vieja cicatriz de 
-					la espalda---, pues siempre ha habido algo atractivo en la 
-					sensación de peligro. Una extraña satisfacción en desafiar 
-					las normas impuestas...
-					^^
-					En cualquier caso, esta vez no hay tiempo para juegos 
-					---quita entonces la mano de encima de la cicatriz---. 
-					Tiene que ponerse en camino tan pronto como sea posible.";
+					return O__M(self, 1);
 				}
 				"Ahora no hay tiempo para juegos. Tiene que salir de aquí.";
 			LookUnder:
@@ -425,10 +377,9 @@ with	name_f	'lobreguez' 'negrura' 'oscuridad' 'penumbra' 'tenebrosisdad',
 			'absoluta' 'absolutas' 'densa' 'densas' 'espesa' 'espesas' 
 			'impenetrable' 'impenetrables' 'inescrutable' 'inescrutables' 
 			'insondable' 'insondables', 
-		description
-			"La habitación está completamente a oscuras. Una oscuridad rota tan 
-			sólo por la estrecha franja de luz que atraviesa las cortinas 
-			cerradas y se recorta, zigzagueante y blanca, sobre el suelo.",
+		description [;
+			return O__M(self, 1);
+		], 
 		react_before [;
 			if (self has general)
 				return false;
@@ -459,21 +410,7 @@ with	name_f	'lobreguez' 'negrura' 'oscuridad' 'penumbra' 'tenebrosisdad',
 					return false;
 				if (noun == cortinas)
 					return false;
-				print (string) random(
-					"Con la habitación a oscuras apenas se puede distinguir más 
-					que algunos bultos y siluetas. Necesita más luz para poder 
-					ver algo.", 
-					"No es capaz de ver nada en la oscuridad.", 
-					"La luz que se cuela por entre las cortinas cerradas no es 
-					suficiente para iluminar el cuarto. En esta oscuridad no 
-					se puede ver nada.", 
-					"Está todo demasiado oscuro como para poder ver algo más 
-					que formas vagas y la silueta de algún mueble.", 
-					"Todo cuanto puede distinguirse en la oscuridad son algunas 
-					formas y siluetas. Necesita luz para poder ver algo más.", 
-				);
-				new_line;
-				return true;
+				return O__M(self, 2);
 			Dance:
 				"Decide que no es buena idea ponerse a bailar por la habitación 
 				a oscuras.";
@@ -542,19 +479,8 @@ Atrezzo	cortinas "cortinas" HABITACION
 			'abierta' 'abiertas' 'abierto' 'abiertos' 'cerrada' 'cerradas' 
 			'cerrado' 'cerrados' 'tela',
 		description [;
-			if (self has open)
-				"La luz del sol entra a raudales en la habitación ahora que 
-				las cortinas están descorridas.";
-			else {
-				print (string) random(
-				"Cerradas, apenas dejan pasar la luz del amanecer al interior, 
-				con lo que el cuarto permanece en penumbras.", 
-				"Algunos finos haces de luz se cuelan por entre las rendijas 
-				que dejan las cortinas cerradas.", 
-				);
-				new_line;
-				return true;
-			}
+			if (self has open) return O__M(self, 2);
+			else return O__M(self, 1);
 		], 
 		react_before [; 
 			Yes:
@@ -596,20 +522,7 @@ Atrezzo	cortinas "cortinas" HABITACION
 				}
 				else {
 					give self general;
-					print "El entarimado está caliente y cruje bajo sus pies 
-					descalzos. Dando tumbos a través de la oscuridad, cruza el 
-					cuarto para descorrer las cortinas y abrir la ventana, 
-					dejando que los tibios y reconfortantes rayos del sol 
-					inunden la estancia. El olor es inconfundible; a mar y a 
-					montaña, a clavelinas y a malvas. Los perfumes de su hogar. 
-					Pero hay algo más. Una... una impresión desagradable 
-					acompañando a la caricia del sol. Un temblor imperceptible 
-					que recorre en secreto desde las tablas del suelo hasta las 
-					manos y los ojos infinitos de Gabriel. Y al girarse lo ve: 
-					todo el dormitorio está completamente patas arriba, tal y 
-					como lo encontró al llegar a casa de madrugada. No había 
-					sido sólo un sueño. Era verdad. Al final le han 
-					encontrado.^";
+					O__M(self, 3);
 					PressAnyKey();
 					new_line;
 					!! XXX
@@ -657,20 +570,11 @@ Atrezzo	puerta_habitacion "puerta" HABITACION
 			if (self hasnt on) {
 				StartTimer(self, 3);
 				give self on;
-				!! TODO - Repasar texto
-				print "Gabriel se detiene a echar un último vistazo a la 
-				habitación y tuerce la boca en una media sonrisa al pensar en 
-				lo mucho que se parece a su propia vida; puesta toda patas 
-				arriba, llena de sueños rotos, pisoteados y tirados por el 
-				suelo... duda que tenga fuerzas suficiente para seguir adelante 
-				con ello.^";
+				O__M(self, 1);
 				HelpSystem.print_hesitate_clue();
 				return true;
 			}
-			!! TODO - Repasar texto
-			print "Ya no hay tiempo para dudar. Así que al cabo de un momento, 
-			sin más, le da la espalda al pasado y sale con paso decidido por la 
-			puerta abierta.^";
+			O__M(self, 2);
 			PressAnyKey();
 			!!------------------------------------------------------------------
 			!! TODO - Quitar de la versión final
@@ -691,7 +595,7 @@ Atrezzo	puerta_habitacion "puerta" HABITACION
  has	door female ~open openable transparent;
 
 !! TODO - nombres y adjetivos
-Atrezzo	"calendario de pared" puerta_habitacion
+Atrezzo	calendario "calendario de pared" puerta_habitacion
  with	name_m	'almanaque' 'anuario' 'calendario' 'cuadro' 'dibujo' 'bodegon', 
 		name_f	'pintura', 
 		name_mp	'claveles', 
@@ -700,12 +604,7 @@ Atrezzo	"calendario de pared" puerta_habitacion
 		adjectives
 			'colorida' 'colorido' 'floral' 'pared', 
 		description [;
-			print "En su mitad superior hay una copia a color de una pintura de 
-			Van Gogh: un bodegón floral de tonos cálidos en el que varios 
-			claveles anaranjados comparten jarra con otros blanquecinos de 
-			tallo más largo. La mitad inferior del calendario está ocupada por 
-			la cuadrícula ordenada de los días de septiembre y al final, en 
-			grandes números: ", (emph) "1973", ".^";
+			O__M(self, 1);
 			!! TODO - Eliminar de la versión final
 			if (self.fire_count == 1)
 				"^Tiene un agujero de bala.";
@@ -758,7 +657,7 @@ Atrezzo	"calendario de pared" puerta_habitacion
 		fire_count 0, 
  has	male;
 
-Atrezzo	"desorden absoluto" HABITACION
+Atrezzo	desorden "desorden absoluto" HABITACION
  with	name_m	'alboroto' 'bartulo' 'barullo' 'caos' 'cisco' 'desastre' 
 				'desbarajuste' 'desconcierto' 'desorden' 'follon' 'jaleo' 
 				'trasto' 'tumulto' 'vidrio',
@@ -774,15 +673,9 @@ Atrezzo	"desorden absoluto" HABITACION
 		description [;
 			if (~~self.description_flag) {
 				self.description_flag = true;
-				"Han dejado todo patas arriba. Por un instante se pregunta qué 
-				habría ocurrido de haber estado en casa anoche, a lo que le 
-				responde una repentina sensación de vértigo. Pero no sirve de 
-				nada pensar en lo que pudo ser. Ahora saben dónde vive. Tiene 
-				que salir de aquí cuanto antes.";
+				return O__M(self, 1);
 			}
-			"Lo han dejado todo hecho un desastre... ya no puede perder más 
-			tiempo. Tiene que ponerse en marcha antes de que decidan volver a 
-			por él.";
+			return O__M(self, 2);
 		], 
 		before [;
 			Examine:
@@ -1044,9 +937,9 @@ Item	papeles_cajon "montón desordenado de papeles" LIMBO
 			'arrugadas' 'arrugados' 'desordenadas' 'desordenado' 'desordenados' 
 			'esparcidas' 'esparcidos' 'inservible' 'inservibles' 'monton' 
 			'montones' 'pila' 'pilas' 'tiradas' 'tirados',
-		description
-			"Es difícil saber si han revuelto el interior del cajón o no. 
-			Siempre ha tenido ese mismo aspecto.",
+		description [;
+			return O__M(self, 1);
+		], 
 		react_before [;
 			Search:
 				if (noun == cajon)
@@ -1061,8 +954,7 @@ Item	papeles_cajon "montón desordenado de papeles" LIMBO
 				move self to LIMBO;
 				move papeles_habitacion to HABITACION;
 				move libro_bolsillo to cajon;
-				"Agarra un puñado de papeles del cajón y lo deja caer sobre el 
-				suelo. Al hacerlo, encuentra dentro un librito de bolsillo.";
+				return O__M(self, 2);
 			default:
 				"Ya no tiene sentido seguir preocupándose por eso. Tiene que 
 				ponerse en marcha cuanto antes.";
@@ -1102,9 +994,7 @@ Item	ropa "ropa" cama
 		description [;
 			if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT) {
 				if (self.coat_flag) {
-					print "Se trata de un gran abrigo oscuro de tela basta, 
-					largo hasta las rodillas y con dos profundos bolsillos a 
-					los lados.";
+					O__M(self, 3);
 					if (self in player && self has worn && child(self)) {
 						print "^^En los bolsillos hay ";
 						WriteListFrom(child(self), 
@@ -1115,14 +1005,10 @@ Item	ropa "ropa" cama
 					return true;
 				} 
 				if (self.shirt_flag)
-					"Una sencilla camisa de algodón blanca.";
+					return O__M(self, 5);
 				if (self.trousers_flag)
-					"Son unos pantalones negros, algo desgastados ya por el 
-					uso.";
-				print "Siempre ha vestido ropa barata y discreta. Estos son 
-				unos pantalones negros, camisa blanca de algodón, y un gran 
-				abrigo gris de tela basta, largo hasta las rodillas y de 
-				profundos bolsillos.";
+					return O__M(self, 7);
+				O__M(self, 1);
 				if (self in cama) " Está hecha un rebujo sobre la cama.";
 				if (self in real_location) " Está hecha un rebujo en el suelo.";
 				if (self in player && self has worn && child(self)) {
@@ -1136,9 +1022,7 @@ Item	ropa "ropa" cama
 			}
 			else {
 				if (self.coat_flag) {
-					print "Se trataba de un gran abrigo oscuro de tela basta, 
-					largo hasta las rodillas y con dos profundos bolsillos a 
-					los lados.";
+					O__M(self, 4);
 					if (self in player && self has worn && child(self)) {
 						print "^^En los bolsillos había ";
 						WriteListFrom(child(self), 
@@ -1149,12 +1033,10 @@ Item	ropa "ropa" cama
 					return true;
 				} 
 				if (self.shirt_flag)
-					"Una camisa a cuadros verde y gris.";
+					return O__M(self, 6);
 				if (self.trousers_flag)
-					"Eran una pantalones vaqueros azules.";
-				print "Siempre ha vestido ropa barata y discreta. Ese día 
-				llevaba unos vaqueros, camisa a cuadros de color verde y gris, 
-				y su gran abrigo gris de tela basta.";
+					return O__M(self, 8);
+				O__M(self, 2);
 				if (self in player && self has worn && child(self)) {
 					print "^^En los bolsillos del abrigo había ";
 					WriteListFrom(child(self), 
@@ -1242,23 +1124,7 @@ Item	ropa "ropa" cama
 				if (self hasnt general) {
 					give self general;
 					move revolver to self;
-					"Comienza a vestirse lentamente, con las imágenes de la 
-					noche anterior dando vueltas aún en su cabeza. La última y 
-					solitaria cena en un restaurante cercano. El bar. Ella, la 
-					desconocida que le observaba desde el otro extremo de la 
-					barra. Y las copas juntos. Y vagos fragmentos de 
-					conversación. Y una barata habitación de hotel. Y el jarrón 
-					con ", (name) flowers, " en la mesilla de noche. Recuerda 
-					el perfume de ", (the) flowers, ". Y recuerda también el 
-					sentimiento de culpa por dejarla allí, una vez se hubo 
-					dormido, para volverse a casa en mitad de la noche. Solo de 
-					nuevo. Sin una última palabra de despedida.
-					^^
-					Termina de abrocharse los pantalones y se coloca el abrigo. 
-					De inmediato nota el bulto en el bolsillo y, en un gesto 
-					inconsciente, desliza la mano dentro y acaricia el cañón 
-					del revólver. Un escalofrío le recorre la espalda; el arma 
-					sigue ahí. Frío. Pesado. Aterradoramente real.";
+					return O__M(self, 9);
 				}
 				return false;
 		], 
@@ -1373,9 +1239,7 @@ Item	maleta "maleta de viaje" HABITACION
 				"^La maleta reposa sobre el asiento de al lado.";
 		],
 		description [;
-			print "Es un maletón de viaje forrado en cuero desgastado. Dentro 
-			lleva lo poco que guardará de la que ha sido su vida hasta ahora; 
-			algo de ropa y un par de libros. Nada más.";
+			O__M(self, 1);
 			if (~~self.description_flag) {
 				self.description_flag = true;
 				" Ningún recuerdo. Esos tendrá que dejárselos atrás.";
@@ -1412,8 +1276,7 @@ Item	libro_bolsillo "librito de poemas" HABITACION
 			'bolsillo' 'encuadernado' 'negra' 'negras' 'negro' 'pequeno' 
 			'poemas' 'poesia' 'tapa' 'tapas',
 		description [;
-			"Es un pequeño tomo de tapas negras sin más adorno que el título: ",
-			(em) "@<<POEMAS@>>", ", impreso en tinta dorada en la portada.";
+			return O__M(self, 1);
 		],
 		before [;
 			Close:
@@ -1426,14 +1289,12 @@ Item	libro_bolsillo "librito de poemas" HABITACION
 				if (parent(self) ~= player)
 					if (AttemptToTakeObject(self))
 						return true;
-				print "Pasa algunas hojas al azar, sin detenerse ante ninguno 
-				de esos versos ya releídos que se deslizan antes sus ojos. 
-				Ahora no es el mejor momento para detenerse a leer poesía.^";
+				O__M(self, 2);
 				if (billete hasnt general) {
 					give billete general;
 					move billete to real_location;
-					"^De pronto, un pequeño trozo de papel se escurre de entre 
-					las páginas amarillentas y cae a los pies de Gabriel.";
+					new_line;
+					return O__M(self, 3);
 				}
 				return true;
 			Receive:
@@ -1464,12 +1325,12 @@ Item	billete LIMBO
 				self.description_flag = true;
 				print "Si, es él. ";
 			}
-			print "Es el billete para una barcaza que sale del puerto de San 
-			Antonio con fecha de hoy a las 16:30";
+			O__M(self, 1);
 			if (real_location == HABITACION)
-				". Aún hay tiempo, pero no puede entretenerse. Tiene que salir 
+				" Aún hay tiempo, pero no puede entretenerse. Tiene que salir 
 				de aquí.";
-			".";
+			new_line;
+			return true;
 		], 
 		size 1,
  private

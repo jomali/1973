@@ -1,0 +1,278 @@
+
+
+!!==============================================================================
+!!
+!!	PROYECTO 1973
+!!	Mensajes de los objetos
+!!
+!!==============================================================================
+!!
+!!	File:			1973_langOM.inf
+!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Languague:		ES (Castellano)
+!!	System:			Inform, INFSP 6
+!!	Platform:		Z-Machine / GLULX
+!!	Version:		1.0
+!!	Released:		2014/02/01
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Copyright (c) 2014, J. Francisco Martín
+!!
+!!	This file is part of PROYECTO 1973.
+!!
+!!	PROYECTO 1973 is free software: you can redistribute it and/or modify 
+!!	it under the terms of the GNU General Public License as published by 
+!!	the Free Software Foundation, either version 3 of the License, or 
+!!	(at your option) any later version.
+!!
+!!	PROYECTO 1973 is distributed in the hope that it will be useful, 
+!!	but WITHOUT ANY WARRANTY; without even the implied warranty of 
+!!	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+!!	GNU General Public License for more details.
+!!
+!!	You should have received a copy of the GNU General Public License 
+!!	along with PROYECTO 1973. If not, see <http://www.gnu.org/licenses/>.
+!!
+!!------------------------------------------------------------------------------
+
+[ LanguageOM obj n x1;
+	switch (obj) {
+
+
+!!==============================================================================
+!!	PRÓLOGO: Atributos, clases y objetos especiales
+!!------------------------------------------------------------------------------
+
+LIMBO: switch (n) {
+1:	! description
+print "Más allá de la barrera casi insuperable que separa la realidad de todo lo demás. Un lugar etéreo, donde la vida, la materia y la vitalidad no son necesariamente constantes; un lugar donde el tiempo y el espacio no existen tal y como los capta nuestro ser despierto...";
+}
+
+HelpSystem: switch (n) {
+1:	! start_clue_a
+"En un relato interactivo como éste, a cada pequeño fragmento de texto le acompaña el símbolo '>', que señala que la historia aguarda tu reacción antes de continuar. Puedes indicar cómo deseas proseguir con la narración por medio de sencillas instrucciones de texto. Por ejemplo, puedes volver a obtener una descripción de los alrededores del protagonista tecleando MIRA A TU ALREDEDOR, o simplemente MIRA. (Si lo deseas, puedes desactivar el tutorial tecleando AYUDA NO).";
+2:	! look_clue_a
+"Puedes volver a obtener una descripción de los alrededores tecleando MIRA A TU ALREDEDOR, o simplemente MIRA.";
+3:	! look_clue_b
+"En un futuro puedes usar indistintamente la instrucción MIRA, o limitarte a pulsar la tecla @<<intro@>> para leer de nuevo la descripción del lugar en que se encuentra Gabriel.";
+4:	! remarkableObjs_clue_a
+"Hay instrucciones como MIRA, ESCUCHA o AYUDA, por ejemplo, que funcionan por ellas mismas sin necesidad de nada más. Sin embargo, muchas otras pueden realizarse sobre objetos presentes en el relato. Puedes utilizar la instrucción OBJETOS para obtener un listado de objetos clave con los que Gabriel puede interactuar en cada momento.";
+5:	! remarkableObjs_clue_b
+6:	! examine_clue_a
+"Además de las localidades, los objetos tienen sus propias descripciones también. Puedes averiguar más cosas sobre un objeto en partiicular usando la instrucción EXAMINA. Prueba a examinar ", (the) x1, ", por ejemplo.";
+7:	! examine_clue_b
+"Dado que examinar objetos es una acción muy frecuente, puedes abreviar el comando y teclear EX, X, o simplemente el nombre del objeto que quieras examinar. De este modo, la instrucción EXAMINA LAS CORTINAS es equivalente a escribir EX CORTINAS, o simplemente CORTINAS.";
+8:	! open_clue_a
+"Con la escasa luz que hay en la habitación apenas puedes hacer nada. Intenta abrir las cortinas para dejar pasar la luz del exterior.";
+9:	! open_clue_b
+"Para abrir las cortinas tienes que utilizar la instrucción ABRE CORTINAS.";
+10:	! take_clue_a
+"A lo largo del relato te encontrarás con varios objetos que Gabriel podrá coger y llevar consigo. Prueba, por ejemplo, a coger ", (the) x1, ".";
+11:	! take_clue_b
+"De forma análoga, también podrás hacer que Gabriel suelte los objetos que lleva encima usando la instrucción DEJA <OBJETO>. Además, normalmente los objetos se pueden manipular de muchas otras maneras (ya has visto que se pueden intentar examinar, abrir y cerrar, o coger y dejar, pero también tocar, oler, vestir, empujar, etc). Un mensaje te informará del efecto que tiene la acción sobre el objeto:";
+12:	! inv_clue_a
+"Cuando Gabriel coge un objeto, éste deja de estar en el sitio que ocupaba antes y pasa a su poder. Puedes ver las cosas que Gabriel lleva encima en cualquier momento tecleando INVENTARIO.";
+13:	! inv_clue_b
+"Comprobar cuáles son los objetos que lleva el protagonista es una acción muy frecuente de forma que, al igual que muchas otras, también podrás abreviarla. INVENTARIO, INV, o simplemente I harán que se imprima el siguiente listado:";
+14:	! go_clue_a
+"Para hacer que Gabriel se desplace de una localidad a otra puedes teclear el nombre del punto cardinal en dirección al cuál quieres ir (NORTE, SUR, ESTE, OESTE, así como NORESTE, NOROESTE, SURESTE y SUROESTE). SAL, ENTRA, SUBE y BAJA son instrucciones para movimientos también posibles. Lee con atención las descripciones de cada localidad para hacerte una idea de en qué direcciones puedes intentar moverte.";
+15:	! go_clue_b
+"Los puntos cardinales se pueden abreviar por N, S, E, W, NE, NW, SE y SW.";
+16:	! hesitate_clue_a
+"Cuando Gabriel muestra signos de duda es porque la acción introducida puede cambiar o hacer avanzar la historia. Asegúrate de que es así como quieres continuar el relato y después repite la última instrucción introducida.";
+17:	! meta_clue_a
+"Si quieres salir del relato, teclea TERMINAR. Para guardar tu posición actual, teclea GUARDAR. CARGAR te permitirá retomar una partida que hayas guardado previamente, y REINICIAR comenzará el relato de nuevo desde el principio. Además, si en algún momento quieres volver un paso atrás, teclea DESHACER.";
+18:	! use_clue_a
+"Normalmente podrás manipular los objetos con los que te encuentres de varias formas distintas, por lo que la instrucción USA suele resultar demasiado ambigua. Si Gabriel no encuentra la forma de usar un objeto prueba a realizar una acción más concreta.";
+19:	! default_clue_a
+"Ya has visto todas las instrucciones básicas que deberás utilizar para avanzar en la historia hasta el final, sin embargo hay muchas otras acciones que puedes intentar hacer para conocer más cosas sobre el protagonista y su entorno. No temas experimentar con nuevas instrucciones.";
+}
+
+
+!!==============================================================================
+!!	ESCENA 1: Habitación de Gabriel
+!!------------------------------------------------------------------------------
+
+HABITACION: switch (n) {
+1:	! initial
+"No debió ser así. Eso es lo primero que el joven Gabriel Mistral piensa al abrir los ojos y despertar en la sofocante oscuridad de la habitación. Aún permanece unos minutos en la cama, tumbado con la mirada perdida entre las sombras del techo mientras los recuerdos se agolpan en su cabeza. Una y otra vez ha repasado esas imágenes últimamente, convencido de que hay algo oculto en ellas que no puede ver. Una clave secreta de la que tal vez se pudiese ayudar para comprender lo ocurrido, pero que por más que se esfuerza es incapaz de desentrañar. ¿Cómo se podía haber torcido todo de esa manera? ¿Dónde se habían equivocado?
+^^
+Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flowers, " lo ocupa todo. Ella. Automáticamente tiende la mano a un lado, buscando a ciegas el tacto de su cuerpo, pero no está. Lo único que encuentra son las sábanas, húmedas y pegajosas. No, claro que no está, se dice. No aquí. La dejó durmiendo en el hotel antes de volverse a casa en mitad de la noche, solo de nuevo... Seguramente sea mejor así, al fin y al cabo ahora tiene cosas más importantes de las que preocuparse. Deja escapar un largo suspiro de resignación y se obliga a incorporarse finalmente en el colchón.";
+2:	! description
+"A su alrededor todo son penumbras. La escasa luz capaz de filtrarse a través de las cortinas cerradas sirve tan sólo para dibujar una estrecha franja blanca y zigzagueante sobre el suelo de la habitación.";
+3:	! description
+"Las cortinas cerradas no dejan pasar más que una fina franja de luz. Insuficiente todavía como para alejar las sombras que envuelven la habitación.";
+4:	! description
+"La intensa claridad del amanecer se cuela ahora por la ventana abierta, iluminando el caos de ropa, libros, papeles y otros trastos esparcidos por todo el dormitorio. Sólo su cama y el escritorio siguen aún en pie entre el tumulto.";
+5:	! before: Smell
+"Durante unos instantes permanece suspendido entre las tinieblas el perfume de ", (the) flowers, ". Sin embargo, es sólo un residuo de su memoria y se desvanece enseguida. Aquí y ahora el único aroma que hay es el acre del sudor que empapa las sábanas.";
+6:	! e_to	TODO
+"Está a punto de atravesar el umbral cuando algo le hace detenerse en seco, justo en el último momento. ¡Casi lo olvida! El billete. Automáticamente busca en el bolsillo, aunque ahí no está, desde luego. No, lo escondió en alguna parte. Maldice por lo bajo. Tiene que encontrarlo; no podrá llegar muy lejos sin él.";
+7:	! e_to TODO
+print_ret (string) random (
+"Antes tiene que encontrar el billete. Lo necesita. Sin él no podrá llegar muy lejos.", 
+"Necesita el billete. Sabe que lo escondió por aquí, en alguna parte. Tiene que encontrarlo antes de ponerse en camino.", );
+}
+
+cama: switch (n) {
+1:	! before: JumpOver
+"Por algún motivo, recuerda de pronto un juego infantil que creía haber olvidado mucho tiempo atrás. Era algo que tenían absolutamente prohibido, de modo que, inevitablemente, saltar y columpiarse sobre las camas del orfanato se convirtió enseguida en uno de sus juegos favoritos. A pesar de la amenaza del castigo si los descubrían haciéndolo. O mejor dicho, seguramente por culpa de ello ---piensa mientras se palpa una vieja cicatriz de la espalda---, pues siempre ha habido algo de atractivo en la sensación de peligro. Una extraña satisfacción en desafiar las normas impuestas...
+^^
+En cualquier caso, esta vez no hay tiempo para juegos ---quita entonces la mano de encima de la cicatriz---. Tiene que ponerse en marcha tan pronto como sea posible.";
+}
+
+oscuridad: switch (n) {
+1:	! description
+"La habitación está completamente a oscuras. Una oscuridad rota tan sólo por la estrecha franja de luz que atraviesa las cortinas cerradas y se recorta, zigzagueante y blanca, sobre el suelo.";
+2:	! react_before: Consult, Examine, Look, LookUnder, Read, Search
+print_ret (string) random(
+"Con la habitación a oscuras apenas se puede distinguir más que algunos bultos y siluetas. Necesita más luz para poder ver algo.", 
+"No es capaz de ver nada en la oscuridad.", 
+"La luz que se cuela por entre las cortinas cerradas no es suficiente para iluminar el cuarto. En esta oscuridad no se puede ver nada.", 
+"Está todo demasiado oscuro como para poder ver algo más que formas vagas y la silueta de algún mueble.", 
+"Todo cuanto puede distinguirse en la oscuridad son algunas formas y siluetas. Necesita luz para poder ver algo más.", );
+}
+
+cortinas: switch (n) {
+1:	! description
+print_ret (string) random(
+"Cerradas, apenas dejan pasar la luz del amanecer al interior, con lo que el cuarto permanece en penumbras.", 
+"Algunos finos haces de luz se cuelan por entre las rendijas que dejan las cortinas cerradas.", );
+2:	! description
+"La luz del sol entra a raudales en la habitación ahora que las cortinas están descorridas.";
+3:	! before: Open
+"El entarimado está caliente y cruje bajo sus pies descalzos. Dando tumbos a través de la oscuridad, cruza el cuarto para descorrer las cortinas y abrir la ventana, dejando que los tibios y reconfortantes rayos del sol inunden la estancia. El olor es inconfundible; a mar y a montaña, a clavelinas y a malvas. Los perfumes de su hogar. Pero hay algo más. Una... una impresión desagradable acompañando a la caricia del sol. Un temblor imperceptible que recorre en secreto desde las tablas del suelo hasta las manos y los ojos infinitos de Gabriel. Y al girarse lo ve: todo el dormitorio está completamente patas arriba, tal y como lo encontró al llegar a casa de madrugada. No había sido sólo un sueño. Era verdad. Al final le han encontrado.";
+}
+
+puerta_habitacion: switch (n) {
+1:	! door_to TODO
+"Gabriel se detiene a echar un último vistazo a la habitación y tuerce la boca en una media sonrisa al pensar en lo mucho que se parece a su propia vida; puesta toda patas arriba, llena de sueños rotos, pisoteados y tirados por el suelo... duda que tenga fuerzas para seguir adelante con aquello.";
+2:	! door_to TODO
+"Ya no hay tiempo para dudar. Así que al cabo de un momento, sin más, le da la espalda al pasado y sale con paso decidido por la puerta abierta.";
+}
+
+calendario: switch (n) {
+1:	! description
+"En su mitad superior hay una copia a color de una pintura de Van Gogh: un bodegón floral de tonos cálidos en el que varios claveles anaranjados comparten jarra con otros blanquecinos de tallo más largo. La mitad inferior del calendario está ocupada por la cuadrícula ordenada de los días de septiembre y al final, en grandes números: ", (emph) "1973", ".";
+}
+
+desorden: switch (n) {
+1:	! description
+"Han dejado todo patas arriba. Por un instante se pregunta qué habría ocurrido de haber estado en casa anoche, a lo que le responde una repentina sensación de vértigo. Pero no sirve de nada pensar en lo que pudo ser. Ahora saben dónde vive. Tiene que salir de aquí cuanto antes.";
+2:	! description
+"Lo han dejado todo hecho un desastre... ya no puede perder más el tiempo. Tiene que ponerse en marcha antes de que decidan volver a por él.";
+}
+
+papeles_cajon: switch (n) {
+1:	! description
+"Es difícil saber si han revuelto el interior del cajón o no. Siempre ha tenido ese mismo aspecto.";
+2:	! before: Take, Transfer
+"Agarra un puñado de papeles del cajón y lo deja caer sobre el suelo. Al hacerlo, encuentra dentro un librito de bolsillo.";
+}
+
+ropa: switch (n) {
+1:	! description
+print "Siempre ha vestido ropa barata y discreta. Estos son unos pantalones negros, camisa blanca de algodón, y un gran abrigo gris de tela basta, largo hasta las rodillas y de profundos bolsillos.";
+2:	! description
+print "Siempre ha vestido ropa barata y discreta. Ese día llevaba unos vaqueros, camisa a cuadros de color verde y gris, y su gran abrigo gris de tela basta.";
+3:	! description: coat
+print "Se trata de un gran abrigo oscuro de tela basta, largo hasta las rodillas y con dos profundos bolsillos a los lados.";
+4:	! description: coat
+print "Se trataba de un gran abrigo oscuro de tela basta, largo hasta las rodillas y con dos profundos bolsillos a los lados.";
+5:	! description: shirt
+"Una sencilla camisa de algodón blanca.";
+6:	! description: shirt
+"Una camisa a cuadros verde y gris.";
+7:	! description: trousers
+"Son unos pantalones negros, algo desgastados ya por el uso.";
+8:	! description: trousers
+"Eran unos pantalones vaqueros azules.";
+9:	! before: Wear
+"Comienza a vestirse lentamente, con las imágenes de la noche anterior dando vueltas aún en su cabeza. La última y solitaria cena en un restaurante cercano. El bar. Ella, la desconocida que le observaba desde el otro extremo de la barra. Y las copas juntos. Y vagos fragmentos de conversación. Y una barata habitación de hotel. Y el jarrón con ", (name) flowers, " en la mesilla de noche. Recuerda el perfume de ", (the) flowers, ". Y recuerda también el sentimiento de culpa por dejarla allí, una vez se hubo dormido, para volverse a casa en mitad de la noche. Sólo de nuevo. Sin una última palabra de despedida.
+^^
+Termina de abrocharse los pantalones y se coloca el abrigo. De inmediato nota el bulto en el bolsillo y, en un gesto inconsciente, desliza la mano dentro y acaricia el cañón del revólver. Un escalofrío le recorre la espalda; el arma sigue ahí. Frío. Pesado. Aterradoramente real.";
+}
+
+revolver: switch(n) {
+}
+
+maleta: switch (n) {
+1:	! description
+print "Es un maletón de viaje forrado en cuero desgastado. Dentro lleva lo poco que guardará de la que ha sido su vida hasta ahora; algo de ropa y un par de libros. Nada más.";
+}
+
+libro_bolsillo: switch (n) {
+1:	! description
+"Es un pequeño tomo de tapas negras sin más adorno que el título: ", (emph) "@<<POEMAS@>>", ", impreso en tinta dorada en la portada.";
+2:	! before: Consult, Open, Read, Search
+"Pasa algunas hojas al azar, sin detenerse ante ninguno de esos versos ya releídos que se deslizan ante sus ojos. Ahora no es el mejor momento para detenerse a leer poesía.";
+3:	! before: Consult, Open, Read, Search
+"De pronto, un pequeño trozo de papel se escurre de entre las páginas amarillentas y cae a los pies de Gabriel.";
+}
+
+billete: switch (n) {
+1:	! description
+print "Es el billete para una barcaza que sale del puerto de San Antonio con fecha de hoy a las 16:30.";
+}
+
+
+!!==============================================================================
+!!	ESCENA 2: Café Blanca Florida
+!!------------------------------------------------------------------------------
+
+CAFE: switch(n) {
+1:	! initial
+"Debe abandonar el país ahora que la situación se ha vuelto insostenible. Los militares se han hecho a la calle y todos los del partido están en peligro de ser prendidos o encarcelados. O algo peor, puesto que desde que cayó el gobierno se han sucedido las ejecuciones... entre ellas la de su amigo Pablo Ureta. Todavía siente cómo la frente se le perla de un sudor frío al pensar que estuvieron juntos apenas horas antes de su asesinato, en un bar de la avenida Libertador Bernardo O'Higgins:";
+2:	! description
+print "Las aspas de un gran ventilador giraban lentamente en el techo, removiendo el humo de tabaco y los ecos de casi una veintena de voces que se enroscaban y retorcían en el aire antes de terminar empotradas contra las amarillentas paredes del café. Tras la barra,";
+if (obj hasnt visited) print " una"; else print " la";
+print " camarera pasaba";
+if (obj hasnt visited) print " el"; else print " un";
+" trapo a los vasos sucios mientras los clientes repartidos por el local charlaban, fumaban y daban cuenta de sus bebidas.";
+!! TODO - "Al fondo puede ver una diana de dardos."
+}
+
+Pablo: switch(n) {
+1:	! describe
+"Él ya se encontraba allí, tal y como habían quedado. Su rostro, apenas reconocible, estaba surcado por toda una colección de arrugas nuevas y marcado ferozmente por la tristeza y el cansancio. Pero seguía siendo su mismo rostro al fin y al cabo: duro, inteligente, familiar. Pablo bebía una cerveza en silencio, sentado solo en una de las mesas más alejadas.";
+2:	! description
+"En un par de días parecía haber envejecido años; su espesa barba negra estaba más salpicada de canas que nunca, varias arrugas nuevas surcaban su frente y el contorno de sus ojos y, si bien es cierto que parte de su pelo había empezado a esfumarse hacía ya tiempo, el claro de piel enrrojecida que se revelaba entre los rizos color carbón de la coronilla era cada vez mayor.";
+}
+
+!!==============================================================================
+!!	ESCENA 3: Calles de Santiago
+!!------------------------------------------------------------------------------
+
+TAXI: switch(n) {
+1:	! initial
+"Siente el frío peso del revólver en la mano un instante antes de comprender que juguetea con él, absorto, desde hace un rato, e inmediatamente lo vuelve a guardar en uno de los bolsillos del abrigo. Por suerte, el taxista tiene la atención puesta en la carretera y no parece prestar demasiada atención a nada más. No da señales de haber reparado en el arma, al menos. Gabriel respira hondo y se recuesta mejor en el asiento, intentando ahuyentar los recuerdos fijándose en los detalles de la ciudad que se va esfumando poco a poco tras las ventanillas.";
+2:	! description
+"El taxi avanza lentamente a través de las congestionadas calles de Santiago. Desde su asiento en la parte de atrás ve cómo desfilan, quizá por última vez, las calles, los edificios y las gentes de la ciudad en la que ha vivido hasta ahora.";
+3:	! description
+"El humo blanquecino del cigarro flota pesadamente en el interior del vehículo. Están detenidos en mitad de un atasco. Y detenida también ha quedado la ciudad tras las ventanillas, como una última instantánea para el recuerdo.";
+4:	! e_to TODO - ¿citar las flores en este punto o no?
+"Distraído, posa los ojos sobre la gente que pasea por la acera esta mañana. Y de repente, durante apenas un instante, vuelve a su mente el intenso perfume de ", (the) flowers, ". ¡Ella! Allí, a tan sólo un puñado de metros, ve a Luz Acosta caminando sinuosa por la calle. Alta, cabello negro largo, vestido rojo, piernas rectas que castigan el suelo a cada paso y una mirada capaz de derribar montañas. Luz Acosta... la mujer que conoció anoche.
+^^
+---¡Pare! ¡Pare! ¡Espere aquí un momento! ---Abre apresuradamente la puerta del taxi y sale a su encuentro, casi a la carrera. Perfectamente consciente del tremendo riesgo que podía conllevar ser visto.";
+}
+
+
+!!==============================================================================
+!!	ESCENA 4: Flores para un joven difunto
+!!------------------------------------------------------------------------------
+
+	}
+];
+
+
+!!==============================================================================
+!!	Rutina para imprimir los mensajes de los objetos
+!!------------------------------------------------------------------------------
+
+[ O__M obj n x1;
+	if (n == 0) n = 1;
+	LanguageOM(obj, n, x1);
+];
+
+

@@ -17,11 +17,7 @@
 !!	System:			Inform, INFSP 6
 !!	Platform:		Z-Machine / GLULX
 !!	Version:		0.1
-!!	Released:		2014/01/27
-!!
-!!	TODO
-!!	<>	> quitate : ¿Qué quieres quitarse?
-!!	<>	> ponte : ¿Qué quieres ponerse?
+!!	Released:		2014/01/30
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -107,6 +103,7 @@ Include "gwindefs.h";			! GWindows: Definiciones
 Include "Parser.h";				! Decodifica la entrada del teclado
 Include ">1973_lib.inf";		! Personalizaciones de la librería Inform
 Include ">1973_langLM.inf";		! Mensajes de la librería
+Include ">1973_texts.inf";		! Textos del relato
 
 #Ifdef TARGET_GLULX;
 Include "gwincls.h";			! GWindows; Window Class Framework
@@ -891,7 +888,7 @@ Verb meta 'gna'
 !!	Definición de atributos, clases y objetos
 !!------------------------------------------------------------------------------
 
-Include ">1973_escena0.inf";	! Prólogo: Clases y objetos especiales
+Include ">1973_escena0.inf";	! Prólogo: Atributos, clases y objs. especiales
 Include ">1973_escena1.inf";	! Escena 1: Habitación de Gabriel
 Include ">1973_escena2.inf";	! Escena 2: Café Blanca Florida
 Include ">1973_escena3.inf";	! Escena 3: Calles de Santiago
