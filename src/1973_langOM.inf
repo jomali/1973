@@ -46,46 +46,76 @@
 
 LIMBO: switch (n) {
 1:	! description
-print "Más allá de la barrera casi insuperable que separa la realidad de todo lo demás. Un lugar etéreo, donde la vida, la materia y la vitalidad no son necesariamente constantes; un lugar donde el tiempo y el espacio no existen tal y como los capta nuestro ser despierto...";
+print "Más allá de la barrera casi insuperable que separa la realidad de todo lo demás. Un lugar etéreo, donde la vida, la materia y la vitalidad no son necesariamente constantes; un lugar donde el tiempo y el espacio no existen tal y como los capta nuestro ser despierto..."; 
+if (obj hasnt visited) print (emph) " ¿Qué? ¿Cómo?... ¿cómo he llegado aquí?";
+new_line;
+return true;
 }
 
 HelpSystem: switch (n) {
-1:	! start_clue_a
+1:
+print_ret (parser) 
+"Si lo deseas puedes teclear AYUDA en cualquier momento.";
+2:	! start_clue_a
+print_ret (parser)
 "En un relato interactivo como éste, a cada pequeño fragmento de texto le acompaña el símbolo '>', que señala que la historia aguarda tu reacción antes de continuar. Puedes indicar cómo deseas proseguir con la narración por medio de sencillas instrucciones de texto. Por ejemplo, puedes volver a obtener una descripción de los alrededores del protagonista tecleando MIRA A TU ALREDEDOR, o simplemente MIRA. (Si lo deseas, puedes desactivar el tutorial tecleando AYUDA NO).";
-2:	! look_clue_a
+3:	! look_clue_a
+print_ret (parser) 
 "Puedes volver a obtener una descripción de los alrededores tecleando MIRA A TU ALREDEDOR, o simplemente MIRA.";
-3:	! look_clue_b
+4:	! look_clue_b
+print_ret (parser) 
 "En un futuro puedes usar indistintamente la instrucción MIRA, o limitarte a pulsar la tecla @<<intro@>> para leer de nuevo la descripción del lugar en que se encuentra Gabriel.";
-4:	! remarkableObjs_clue_a
+5:	! remarkableObjs_clue_a
+print_ret (parser) 
 "Hay instrucciones como MIRA, ESCUCHA o AYUDA, por ejemplo, que funcionan por ellas mismas sin necesidad de nada más. Sin embargo, muchas otras pueden realizarse sobre objetos presentes en el relato. Puedes utilizar la instrucción OBJETOS para obtener un listado de objetos clave con los que Gabriel puede interactuar en cada momento.";
-5:	! remarkableObjs_clue_b
-6:	! examine_clue_a
-"Además de las localidades, los objetos tienen sus propias descripciones también. Puedes averiguar más cosas sobre un objeto en partiicular usando la instrucción EXAMINA. Prueba a examinar ", (the) x1, ", por ejemplo.";
-7:	! examine_clue_b
+6:	! remarkableObjs_clue_b
+7:	! examine_clue_a
+start_parser_style();
+print "Además de las localidades, los objetos tienen sus propias descripciones también. Puedes averiguar más cosas sobre un objeto en partiicular usando la instrucción EXAMINA. Prueba a examinar ", (the) x1, ", por ejemplo.";
+end_parser_style();
+new_line;
+return true;
+8:	! examine_clue_b
+print_ret (parser) 
 "Dado que examinar objetos es una acción muy frecuente, puedes abreviar el comando y teclear EX, X, o simplemente el nombre del objeto que quieras examinar. De este modo, la instrucción EXAMINA LAS CORTINAS es equivalente a escribir EX CORTINAS, o simplemente CORTINAS.";
-8:	! open_clue_a
+9:	! open_clue_a
+print_ret (parser) 
 "Con la escasa luz que hay en la habitación apenas puedes hacer nada. Intenta abrir las cortinas para dejar pasar la luz del exterior.";
-9:	! open_clue_b
+10:	! open_clue_b
+print_ret (parser) 
 "Para abrir las cortinas tienes que utilizar la instrucción ABRE CORTINAS.";
-10:	! take_clue_a
-"A lo largo del relato te encontrarás con varios objetos que Gabriel podrá coger y llevar consigo. Prueba, por ejemplo, a coger ", (the) x1, ".";
-11:	! take_clue_b
+11:	! take_clue_a
+start_parser_style();
+print "A lo largo del relato te encontrarás con varios objetos que Gabriel podrá coger y llevar consigo. Prueba, por ejemplo, a coger ", (the) x1, ".";
+end_parser_style();
+new_line;
+return true;
+12:	! take_clue_b
+print_ret (parser) 
 "De forma análoga, también podrás hacer que Gabriel suelte los objetos que lleva encima usando la instrucción DEJA <OBJETO>. Además, normalmente los objetos se pueden manipular de muchas otras maneras (ya has visto que se pueden intentar examinar, abrir y cerrar, o coger y dejar, pero también tocar, oler, vestir, empujar, etc). Un mensaje te informará del efecto que tiene la acción sobre el objeto:";
-12:	! inv_clue_a
+13:	! inv_clue_a
+print_ret (parser) 
 "Cuando Gabriel coge un objeto, éste deja de estar en el sitio que ocupaba antes y pasa a su poder. Puedes ver las cosas que Gabriel lleva encima en cualquier momento tecleando INVENTARIO.";
-13:	! inv_clue_b
+14:	! inv_clue_b
+print_ret (parser) 
 "Comprobar cuáles son los objetos que lleva el protagonista es una acción muy frecuente de forma que, al igual que muchas otras, también podrás abreviarla. INVENTARIO, INV, o simplemente I harán que se imprima el siguiente listado:";
-14:	! go_clue_a
+15:	! go_clue_a
+print_ret (parser) 
 "Para hacer que Gabriel se desplace de una localidad a otra puedes teclear el nombre del punto cardinal en dirección al cuál quieres ir (NORTE, SUR, ESTE, OESTE, así como NORESTE, NOROESTE, SURESTE y SUROESTE). SAL, ENTRA, SUBE y BAJA son instrucciones para movimientos también posibles. Lee con atención las descripciones de cada localidad para hacerte una idea de en qué direcciones puedes intentar moverte.";
-15:	! go_clue_b
+16:	! go_clue_b
+print_ret (parser) 
 "Los puntos cardinales se pueden abreviar por N, S, E, W, NE, NW, SE y SW.";
-16:	! hesitate_clue_a
+17:	! hesitate_clue_a
+print_ret (parser) 
 "Cuando Gabriel muestra signos de duda es porque la acción introducida puede cambiar o hacer avanzar la historia. Asegúrate de que es así como quieres continuar el relato y después repite la última instrucción introducida.";
-17:	! meta_clue_a
+18:	! meta_clue_a
+print_ret (parser) 
 "Si quieres salir del relato, teclea TERMINAR. Para guardar tu posición actual, teclea GUARDAR. CARGAR te permitirá retomar una partida que hayas guardado previamente, y REINICIAR comenzará el relato de nuevo desde el principio. Además, si en algún momento quieres volver un paso atrás, teclea DESHACER.";
-18:	! use_clue_a
+19:	! use_clue_a
+print_ret (parser) 
 "Normalmente podrás manipular los objetos con los que te encuentres de varias formas distintas, por lo que la instrucción USA suele resultar demasiado ambigua. Si Gabriel no encuentra la forma de usar un objeto prueba a realizar una acción más concreta.";
-19:	! default_clue_a
+20:	! default_clue_a
+print_ret (parser) 
 "Ya has visto todas las instrucciones básicas que deberás utilizar para avanzar en la historia hasta el final, sin embargo hay muchas otras acciones que puedes intentar hacer para conocer más cosas sobre el protagonista y su entorno. No temas experimentar con nuevas instrucciones.";
 }
 
@@ -98,7 +128,7 @@ HABITACION: switch (n) {
 1:	! initial
 "No debió ser así. Eso es lo primero que el joven Gabriel Mistral piensa al abrir los ojos y despertar en la sofocante oscuridad de la habitación. Aún permanece unos minutos en la cama, tumbado con la mirada perdida entre las sombras del techo mientras los recuerdos se agolpan en su cabeza. Una y otra vez ha repasado esas imágenes últimamente, convencido de que hay algo oculto en ellas que no puede ver. Una clave secreta de la que tal vez se pudiese ayudar para comprender lo ocurrido, pero que por más que se esfuerza es incapaz de desentrañar. ¿Cómo se podía haber torcido todo de esa manera? ¿Dónde se habían equivocado?
 ^^
-Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flowers, " lo ocupa todo. Ella. Automáticamente tiende la mano a un lado, buscando a ciegas el tacto de su cuerpo, pero no está. Lo único que encuentra son las sábanas, húmedas y pegajosas. No, claro que no está, se dice. No aquí. La dejó durmiendo en el hotel antes de volverse a casa en mitad de la noche, solo de nuevo... Seguramente sea mejor así, al fin y al cabo ahora tiene cosas más importantes de las que preocuparse. Deja escapar un largo suspiro de resignación y se obliga a incorporarse finalmente en el colchón.";
+Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) x1, " lo ocupa todo. Ella. Automáticamente tiende la mano a un lado, buscando a ciegas el tacto de su cuerpo, pero no está. Lo único que encuentra son las sábanas, húmedas y pegajosas. No, claro que no está, se dice. No aquí. La dejó durmiendo en el hotel antes de volverse a casa en mitad de la noche, solo de nuevo... Seguramente sea mejor así, al fin y al cabo ahora tiene cosas más importantes de las que preocuparse. Deja escapar un largo suspiro de resignación y se obliga a incorporarse finalmente en el colchón.";
 2:	! description
 "A su alrededor todo son penumbras. La escasa luz capaz de filtrarse a través de las cortinas cerradas sirve tan sólo para dibujar una estrecha franja blanca y zigzagueante sobre el suelo de la habitación.";
 3:	! description
@@ -106,7 +136,7 @@ Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) flowers, "
 4:	! description
 "La intensa claridad del amanecer se cuela ahora por la ventana abierta, iluminando el caos de ropa, libros, papeles y otros trastos esparcidos por todo el dormitorio. Sólo su cama y el escritorio siguen aún en pie entre el tumulto.";
 5:	! before: Smell
-"Durante unos instantes permanece suspendido entre las tinieblas el perfume de ", (the) flowers, ". Sin embargo, es sólo un residuo de su memoria y se desvanece enseguida. Aquí y ahora el único aroma que hay es el acre del sudor que empapa las sábanas.";
+"Durante unos instantes permanece suspendido entre las tinieblas el perfume de ", (the) x1, ". Sin embargo, sabe que el olor está sólo en su cabeza, y se desvanece enseguida. Aquí y ahora el único aroma que hay es el acre del sudor que empapa las sábanas.";
 6:	! e_to	TODO
 "Está a punto de atravesar el umbral cuando algo le hace detenerse en seco, justo en el último momento. ¡Casi lo olvida! El billete. Automáticamente busca en el bolsillo, aunque ahí no está, desde luego. No, lo escondió en alguna parte. Maldice por lo bajo. Tiene que encontrarlo; no podrá llegar muy lejos sin él.";
 7:	! e_to TODO
@@ -188,13 +218,21 @@ print "Se trataba de un gran abrigo oscuro de tela basta, largo hasta las rodill
 "Son unos pantalones negros, algo desgastados ya por el uso.";
 8:	! description: trousers
 "Eran unos pantalones vaqueros azules.";
-9:	! before: Wear
-"Comienza a vestirse lentamente, con las imágenes de la noche anterior dando vueltas aún en su cabeza. La última y solitaria cena en un restaurante cercano. El bar. Ella, la desconocida que le observaba desde el otro extremo de la barra. Y las copas juntos. Y vagos fragmentos de conversación. Y una barata habitación de hotel. Y el jarrón con ", (name) flowers, " en la mesilla de noche. Recuerda el perfume de ", (the) flowers, ". Y recuerda también el sentimiento de culpa por dejarla allí, una vez se hubo dormido, para volverse a casa en mitad de la noche. Sólo de nuevo. Sin una última palabra de despedida.
+9:	! after: Wear
+"Comienza a vestirse lentamente, con las imágenes de la noche anterior dando vueltas aún en su cabeza. La última y solitaria cena en un restaurante cercano. El bar. Ella, la desconocida que le observaba desde el otro extremo de la barra. Y las copas juntos. Y vagos fragmentos de conversación. Y una barata habitación de hotel. Y el jarrón con ", (name) x1, " en la mesilla de noche. Recuerda el perfume de ", (the) x1, ". Y recuerda también el sentimiento de culpa por dejarla allí, una vez se hubo dormido, para volverse a casa en mitad de la noche. Sólo de nuevo. Sin una última palabra de despedida.
 ^^
 Termina de abrocharse los pantalones y se coloca el abrigo. De inmediato nota el bulto en el bolsillo y, en un gesto inconsciente, desliza la mano dentro y acaricia el cañón del revólver. Un escalofrío le recorre la espalda; el arma sigue ahí. Frío. Pesado. Aterradoramente real.";
 }
 
 revolver: switch(n) {
+1:	! description
+switch (x1) {
+	0:	print "No le quedan balas";
+	1:	print "Le queda una sola bala";
+	6:	print "Tiene todas las balas ---las seis---";
+	default: print "Le quedan ", (number) x1, " balas";
+}
+" en el tambor.";
 }
 
 maleta: switch (n) {

@@ -103,7 +103,7 @@ Include "gwindefs.h";			! GWindows: Definiciones
 Include "Parser.h";				! Decodifica la entrada del teclado
 Include ">1973_lib.inf";		! Personalizaciones de la librería Inform
 Include ">1973_langLM.inf";		! Mensajes de la librería
-Include ">1973_texts.inf";		! Textos del relato
+Include ">1973_langOM.inf";		! Mensajes de los objetos
 
 #Ifdef TARGET_GLULX;
 Include "gwincls.h";			! GWindows; Window Class Framework
@@ -708,6 +708,8 @@ VerboIrregular "vestir" with imperativo
 	"Necesitaba un arma para hacer algo así.";
 ];
 
+!! TODO - Cuando el sistema de ayuda no tiene el atributo 'on', detener su 
+!! temporizador e imprimir la siguiente pista
 [ HelpOnSub;
 	if (HelpSystem.has_ended()) {
 		return HelpSystem.print_default_clue();

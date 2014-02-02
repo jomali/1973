@@ -130,8 +130,8 @@ Room	HABITACION
 			graphicWindow.setImage(PIC_1_01);
 			#Endif; ! TARGET_GLULX;
 			!! Introducción ----------------------------------------------------
-			O__M(self, 1);
-			PressAnyKey();
+			O__M(self, 1, flowers);
+			!! PressAnyKey();
 			new_line;
 			self.short_name = "En la habitación";
 			DrawStatusLine();
@@ -160,7 +160,7 @@ Room	HABITACION
 					"Huele al sudor empapado entre las sábanas.";
 				else {
 					self.smell_flag = true;
-					return O__M(self, 5);
+					return O__M(self, 5, flowers);
 				}
 		], 
 		e_to [;
@@ -523,9 +523,11 @@ Atrezzo	cortinas "cortinas" HABITACION
 				else {
 					give self general;
 					O__M(self, 3);
-					PressAnyKey();
+					!! PressAnyKey();
 					new_line;
-					!! XXX
+					!! XXX - Se comprueba si el tutorial está activo para 
+					!! evitar la eventualidad de que se imprima la pista en 
+					!! respuesta a la acción #Look.
 					if (HelpSystem.is_active()) {
 						flag = true;
 						HelpSystem.deactivate();
@@ -1124,7 +1126,7 @@ Item	ropa "ropa" cama
 				if (self hasnt general) {
 					give self general;
 					move revolver to self;
-					return O__M(self, 9);
+					return O__M(self, 9, flowers);
 				}
 				return false;
 		], 
@@ -1206,13 +1208,7 @@ Item	revolver "revólver" LIMBO
 			'amenazador' 'amenazadora' 'brillante' 'fria' 'frio' 'fuego' 
 			'horrible' 'metal' 'metalica' 'metalico' 'pesada' 'pesado',
 		description [;
-			switch(self.ammo) {
-				0: print "No le quedan balas";
-				1: print "Le queda una sola bala";
-				6: print "Tiene todas las balas ---las seis---";
-				default: print "Le quedan ", (number) self.ammo, " balas";
-			}
-			" en el tambor.";
+			return O__M(self, 1, self.ammo);
 		], 
 		!! Indica si el revólver se ha quedado sin balas.
 		out_of_ammo [;

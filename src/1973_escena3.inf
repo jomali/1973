@@ -104,7 +104,7 @@ Room	TAXI "Dentro del taxi"
 			}
 			if (self.state == 2) {
 				self.state = 3;
-				O_M(self, 4);
+				O__M(self, 4);
 				new_line;
 			}
 			#Ifdef TARGET_GLULX;

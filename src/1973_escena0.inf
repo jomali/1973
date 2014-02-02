@@ -301,13 +301,7 @@ Class	SmartEnterable
 Room	LIMBO "En algún lugar"
  with	name	'limbo' 'lugar' 'sueno' 'vacio',
 		clarification "",
-		description [;
-			O__M(self, 1);
-			if (self hasnt visited)
-				print (emph) " ¿Qué? ¿Cómo?... ¿cómo he llegado aquí?";
-			new_line;
-			return true;
-		];
+		description [; return O__M(self, 1); ];
 
 !!	<>	El atributo 'general' se activa tras imprimir el primer mensaje en la 
 !!		rutina 'react_after'.
@@ -499,8 +493,7 @@ Object	HelpSystem "(Help System)"
 			if (self hasnt general) {
 				give self general;
 				new_line;
-				print_ret (parser) "Si lo necesitas puedes teclear AYUDA en 
-				cualquier momento.";
+				return O__M(self, 1);
 			}
 		], 
 		time_left, 
@@ -562,161 +555,55 @@ Object	HelpSystem "(Help System)"
 		!! Inicio del tutorial
 		start_clue_printed false, 
 		start_clue_flag false, 
-		start_clue_a [;
-			print_ret (parser) "En un relato interactivo como éste, a cada 
-			pequeño fragmento de texto le acompaña el símbolo '>', que señala 
-			que la historia aguarda tu reacción antes de continuar. Puedes 
-			indicar cómo deseas proseguir con la narración por medio de 
-			sencillas instrucciones de texto. Por ejemplo, puedes volver a 
-			obtener una descripción de los alrededores tecleando MIRA A TU 
-			ALREDEDOR, o simplemente MIRA. (Si lo deseas, puedes desactivar el 
-			tutorial tecleando AYUDA NO).";
-		], 
+		start_clue_a [; return O__M(self, 2); ], 
 		!! Acción ##LOOK
 		look_clue_printed false, 
 		look_clue_flag false, 
-		look_clue_a [;
-			print_ret (parser) "Puedes volver a obtener una descripción de los 
-			alrededores tecleando MIRA A TU ALREDEDOR, o simplemente MIRA.";
-		], 
-		look_clue_b [;
-			print_ret (parser) "En el futuro puedes usar indistintamente la 
-			instrucción MIRA, o limitarte a pulsar la tecla @<<intro@>> para 
-			leer de nuevo la descripción del lugar en que se encuentra 
-			Gabriel.";
-		], 
+		look_clue_a [; return O__M(self, 3); ], 
+		look_clue_b [; return O__M(self, 4); ], 
 		!! Acción #REMARKABLE_OBJECTS
 		remarkableObjs_clue_printed false, 
 		remarkableObjs_clue_flag false, 
-		remarkableObjs_clue_a [;
-			print_ret (parser) "Hay instrucciones como MIRA, ESCUCHA o AYUDA, 
-			por ejemplo, que funcionan por ellas mismas sin necesidad de nada 
-			más. Sin embargo, muchas otras pueden realizarse sobre los objetos 
-			presentes en el relato. Puedes utilizar la instrucción OBJETOS para 
-			obtener un listado de objetos clave con los que Gabriel puede 
-			interactuar en cada momento.";
-		], 
+		remarkableObjs_clue_a [; return O__M(self, 5); ], 
 		!! Acción ##EXAMINE
 		examine_clue_printed false, 
 		examine_clue_flag false, 
-		examine_clue_a [ obj; 
-			start_parser_style();
-			print "Además de las localidades, los objetos tienen sus propias 
-			descripciones también. Puedes averiguar más cosas sobre un objeto 
-			en particular usando la instrucción EXAMINA. Prueba a examinar ", 
-			(the) obj, ", por ejemplo.";
-			end_parser_style();
-			new_line;
-			return true;
-		], 
-		examine_clue_b [; 
-			print_ret (parser) "Dado que examinar objetos es una acción muy 
-			frecuente, puedes abreviar el comando y teclear EX, X, o 
-			simplemente el nombre del objeto que quieras examinar. De este 
-			modo, la instrucción EXAMINA LAS CORTINAS es equivalente a escribir 
-			EX CORTINAS, o simplemente CORTINAS.";
-		], 
+		examine_clue_a [ obj; return O__M(self, 7, obj); ], 
+		examine_clue_b [; return O__M(self, 8); ], 
 		!! Acción ##OPEN
 		open_clue_a_printed false, 
 		open_clue_a_flag false, 
-		open_clue_a [; 
-			print_ret (parser) "Con la escasa luz que hay en la habitación 
-			apenas puedes hacer nada. Intenta abrir las cortinas para dejar 
-			pasar la luz del exterior.";
-		], 
+		open_clue_a [; return O__M(self, 9); ], 
 		open_clue_b_printed false, 
 		open_clue_b_flag false, 
-		open_clue_b [;
-			print_ret (parser) "Para abrir las cortinas tienes que utilizar la 
-			instrucción ABRE CORTINAS.";
-		], 
+		open_clue_b [; return O__M(self, 10); ], 
 		!! Acción ##TAKE/##DROP
 		take_clue_printed false, 
 		take_clue_flag false, 
-		take_clue_a [ obj; 
-			start_parser_style();
-			print "A lo largo del relato te encontrarás con varios objetos que 
-			Gabriel podrá coger y llevar consigo. Prueba, por ejemplo, a 
-			coger ", (the) obj, ".";
-			end_parser_style();
-			new_line;
-			return true;
-		], 
-		take_clue_b [; 
-			print_ret (parser) "De forma análoga, también podrás hacer que 
-			Gabriel suelte los objetos que lleva encima usando la instrucción 
-			DEJA <OBJETO>. Además, normalmente los objetos se pueden manipular 
-			de muchas otras maneras (ya has visto que se pueden intentar 
-			examinar, abrir y cerrar, o coger y dejar, pero también tocar, 
-			oler, vestir, empujar, etc). Un mensaje te informará del efecto que 
-			tiene la acción sobre el objeto:";
-		], 
+		take_clue_a [ obj; return O__M(self, 11, obj); ], 
+		take_clue_b [; return O__M(self, 12); ], 
 		!! Acción ##INV
 		inv_clue_printed false, 
 		inv_clue_flag false, 
-		inv_clue_a [; 
-			print_ret (parser) "Cuando Gabriel coge un objeto, éste deja de 
-			estar en el sitio que ocupaba antes y pasa a su poder. Puedes ver 
-			las cosas que Gabriel lleva encima en cualquier momento tecleando 
-			INVENTARIO.";
-		], 
-		inv_clue_b [; 
-			print_ret (parser) "Comprobar cuáles son los objetos que lleva el 
-			protagonista es una acción muy frecuente de forma que, al igual que 
-			muchas otras, también podrás abreviarla. INVENTARIO, INV, o 
-			simplemente I harán que se imprima el siguiente listado:";
-		], 
+		inv_clue_a [; return O__M(self, 13); ], 
+		inv_clue_b [; return O__M(self, 14); ], 
 		!! Acción ##GO
 		go_clue_printed false, 
 		go_clue_flag false, 
-		go_clue_a [; 
-			print_ret (parser) "Para hacer que Gabriel se desplace de una 
-			localidad a otra puedes teclear el nombre del punto cardinal en 
-			dirección al cuál quieres ir (NORTE, SUR, ESTE, OESTE, así como 
-			NORESTE, NOROESTE, SURESTE y SUROESTE). SAL, ENTRA, SUBE y BAJA son 
-			instrucciones para movimientos también posibles. Lee con atención 
-			las descripciones de cada localidad para hacerte una idea de en 
-			qué direcciones puedes intentar moverte.";
-		], 
-		go_clue_b [; 
-			print_ret (parser) "Los puntos cardinales se pueden abreviar por N, 
-			S, E, W, NE, NW, SE y SW.";
-		], 
+		go_clue_a [; return O__M(self, 15); ], 
+		go_clue_b [; return O__M(self, 16); ], 
 		!! Muestras de duda
 		hesitate_clue_printed false, 
-		hesitate_clue_a [; 
-			print_ret (parser) "Cuando Gabriel muestra signos de duda es porque 
-			la acción introducida puede cambiar o hacer avanzar la historia. 
-			Asegúrate de que es así como quieres continuar el relato y después 
-			repite la última instrucción introducida.";
-		], 
+		hesitate_clue_a [; return O__M(self, 17); ], 
 		!! Meta-acciones
 		meta_clue_printed false, 
 		meta_clue_flag false, 
-		meta_clue_a [; 
-			print_ret (parser) "Si quieres salir del relato, teclea TERMINAR. 
-			Para guardar tu posición actual, teclea GUARDAR. CARGAR te 
-			permitirá retomar una partida que hayas guardado previamente, y 
-			REINICIAR comenzará el relato de nuevo desde el principio. Además, 
-			si en algún momento quieres volver un paso atrás, teclea DESHACER.";
-		], 
+		meta_clue_a [; return O__M(self, 18); ], 
 		!! Acción ##USE
 		use_clue_printed false, 
-		use_clue_a [; 
-			print_ret (parser) "Normalmente podrás intentar manipular los 
-			objetos con los que te encuentres de varias formas distintas, por 
-			lo que la instrucción USA suele resultar demasiado ambigua. Si 
-			Gabriel no encuentra la forma de usar un objeto prueba a realizar 
-			una acción más concreta.";
-		], 
+		use_clue_a [; return O__M(self, 19); ], 
 		!! Final del tutorial
-		default_clue_a [; 
-			print_ret (parser) "Ya has visto todas las instrucciones básicas 
-			que deberás utilizar para avanzar en la historia hasta el final, 
-			sin embargo hay muchas otras acciones que puedes intentar hacer 
-			para conocer más cosas sobre el protagonista y su entorno. No 
-			temas experimentar con nuevas instrucciones.";
-		], 
+		default_clue_a [; return O__M(self, 20); ], 
  has	on scenery;
 
 Atrezzo	"paredes" 
