@@ -1,4 +1,4 @@
-!% -SD
+!% -~S~D
 !% +language_name=Spanish
 !% $MAX_LABELS=2000
 !% $MAX_ZCODE_SIZE=45000
@@ -201,7 +201,7 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 	#Endif; ! TARGET_GLULX;
 
 	!! Advertencia de la demostración:
-	#Ifdef DEBUG;
+	#Ifndef DEBUG;
 	#Ifdef DEMO_RELEASE;
 	print (strong) "AVISO:", " Esta aplicación es una versión de demostración 
 	de un relato interactivo pendiente de publicar. Los contenidos (en especial 
@@ -214,7 +214,7 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 	#Endif; ! DEMO_RELEASE;
 	#Endif; ! DEBUG;
 
-	location = MainMenu();		! Menú principal. Establece la localidad inicial
+	MainMenu();					! Menú principal. Establece la localidad inicial
 
 	return 2;
 ];
@@ -222,7 +222,7 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 !!------------------------------------------------------------------------------
 !!	Menú principal.
 !!------------------------------------------------------------------------------
-[ MainMenu i key initialLocation;
+[ MainMenu i key;
 	EraseWindow();
 	Banner();
 	new_line;
@@ -244,22 +244,21 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 	roman_style();
 
 	key = KeyCharPrimitive();
+	location = cama;
 	switch (key) {
-		'I', 'i': initialLocation = IndexMenu();
+		'I', 'i': IndexMenu();
 		'R', 'r': EraseWindow(); print "Cargando partida...^"; <<Restore>>;
 		'Q', 'q': quit;
-		default: initialLocation = cama;
 	}
 
 	EraseWindow();
-	return initialLocation;
 ];
 
 !!------------------------------------------------------------------------------
 !!	Menú con el índice de escenas.
 !!	TODO - Activar escenas no disponibles
 !!------------------------------------------------------------------------------
-[ IndexMenu i key initialLocation; 
+[ IndexMenu i key; 
 	EraseWindow();
 	monospaced_style();
 	print "  ÍNDICE  ^";
@@ -284,15 +283,14 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 
 	key = KeyCharPrimitive();
 	switch (key) {
-		'1': initialLocation = cama;
-!		'2': initialLocation = CAFE;
-!		'3': initialLocation = TAXI;
-!		'4': initialLocation = SAN_ANTONIO;
-		default: return MainMenu();
+		'1': location = cama;
+!		'2': location = CAFE;
+		'3': location = TAXI;
+!		'4': location = SAN_ANTONIO;
+		default: MainMenu();
 	}
 
 	EraseWindow();
-	return initialLocation;
 ];
 
 !!------------------------------------------------------------------------------
