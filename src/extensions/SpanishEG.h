@@ -206,9 +206,9 @@ Extend	only 'levantate' 'levantarse' 'levantarte' first
 	* 'de' noun						-> StandUp;
 Verb    'levanta' 'incorpora'
     * 								-> StandUp
-	* '-te' / '-me'					-> StandUp
+	* '-te'/'-me'					-> StandUp
     * 'de' noun 					-> StandUp
-	* '-te' / '-me' 'de//' noun		-> StandUp
+	* '-te'/'-me' 'de//' noun		-> StandUp
 ;
 
 Verb	'desata' 'libera' 'desune' 'desenchufa'
@@ -222,10 +222,19 @@ Extend	only 'desconecta' last
 	* noun 'de' noun				-> Untie
 ;
 
-Verb	'usa' 'utiliza' 'emplea'
+Verb	'emplea' 'usa' 'utiliza'
 	* noun							-> Use
-	* noun 'con' / 'en' noun		-> Use
+	* noun 'con'/'en' noun			-> Use
 ;
+
+Verb	'actua' 'interactua'
+	* noun							-> Use
+	* 'con' noun					-> Use
+	* noun 'con'/'en' noun			-> Use
+	* 'con' noun 'en' noun			-> Use
+	* 'en' noun 'con' noun			-> Use reverse
+;
+	
 
 Verb	meta 'creditos' 'credits' 'autor' 'author' 'informacion' 'info'
 	*								-> Version

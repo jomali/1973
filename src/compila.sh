@@ -12,6 +12,10 @@ bresc_location=~/bin
 zcode_interpreter=gargoyle-free;
 glulx_interpreter=gargoyle-free;
 
+#-------------------------------------------------------------------------------
+
+rm ./*~
+
 if [ "$1" != "" ]; then gameFile=$1;
 else 
 	echo -n "Introduce el nombre del archivo (sin la extensión): ";

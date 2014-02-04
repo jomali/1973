@@ -67,8 +67,10 @@ print_ret (parser)
 "En un futuro puedes usar indistintamente la instrucción MIRA, o limitarte a pulsar la tecla @<<intro@>> para leer de nuevo la descripción del lugar en que se encuentra Gabriel.";
 5:	! remarkableObjs_clue_a
 print_ret (parser) 
-"Hay instrucciones como MIRA, ESCUCHA o AYUDA, por ejemplo, que funcionan por ellas mismas sin necesidad de nada más. Sin embargo, muchas otras pueden realizarse sobre objetos presentes en el relato. Puedes utilizar la instrucción OBJETOS para obtener un listado de objetos clave con los que Gabriel puede interactuar en cada momento.";
+"Hay instrucciones como MIRA, ESCUCHA o AYUDA, por ejemplo, que funcionan por si mismas sin necesidad de nada más. Sin embargo, muchas otras pueden realizarse sobre objetos presentes en el relato. Puedes utilizar la instrucción OBJETOS para obtener un listado de objetos con los que Gabriel puede interactuar en cada momento.";
 6:	! remarkableObjs_clue_b
+print_ret (parser)
+"Hay muchos otros objetos además de los que aparecen en este listado con los que se puede interactuar y que, si bien pueden no ser indispensables para avanzar en la historia, siempre pueden aportar información interesante sobre la situación o los personajes. No tengas miedo de intentar acciones también sobre ellos.";
 7:	! examine_clue_a
 start_parser_style();
 print "Además de las localidades, los objetos tienen sus propias descripciones también. Puedes averiguar más cosas sobre un objeto en partiicular usando la instrucción EXAMINA. Prueba a examinar ", (the) x1, ", por ejemplo.";
@@ -114,7 +116,16 @@ print_ret (parser)
 19:	! use_clue_a
 print_ret (parser) 
 "Normalmente podrás manipular los objetos con los que te encuentres de varias formas distintas, por lo que la instrucción USA suele resultar demasiado ambigua. Si Gabriel no encuentra la forma de usar un objeto prueba a realizar una acción más concreta.";
-20:	! default_clue_a
+20:	! fireAt_clue_a
+print_ret (parser)
+"Puedes disparar el revólver usando la orden DISPARA (A) OBJETO.";
+21:	! talkTo_clue_a
+print_ret (parser) 
+"Para iniciar la conversación con un personaje, teclea HABLA (a/con) PERSONAJE.";
+22:	! talkTo_clue_b
+print_ret (parser) 
+"Durante una conversación, a cada intervención de los personajes le sigue una pausa en la que se espera a que pulses una tecla antes de continuar. Si prefieres que se imprima todo el diálogo de una sola vez, pulsa la tecla @<<q@>>.";
+23:	! default_clue_a
 print_ret (parser) 
 "Ya has visto todas las instrucciones básicas que deberás utilizar para avanzar en la historia hasta el final, sin embargo hay muchas otras acciones que puedes intentar hacer para conocer más cosas sobre el protagonista y su entorno. No temas experimentar con nuevas instrucciones.";
 }

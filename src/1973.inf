@@ -477,60 +477,6 @@ Global remarkableObjectsCount;
 	}
 ];
 
-!!------------------------------------------------------------------------------
-!!	Comprueba que se cumplan las condiciones bajo las que se puede hacer un 
-!!	disparo con el revólver. Retorna verdadero si se el revólver está en 
-!!	condiciones de disparar, o falso en caso contrario.
-!!------------------------------------------------------------------------------
-[ CheckFireAtConditions obj;
-	!! El único objeto con el que se puede disparar es el revólver:
-	if (obj ~= nothing or revolver) {
-		switch (GRAMMATICAL_INFLECTION) {
-			1:	"Necesito un arma para hacer algo así.^";
-			2:	"Necesitas un arma para hacer algo así.^";
-			3:	"Necesita un arma para hacer algo así.^";
-			4:	"Necesitaba un arma para hacer algo así.^";
-			5:	"Necesitabas un arma para hacer algo así.^";
-			6:	"Necesitaba un arma para hacer algo así.^";
-		}
-		return false;
-	}
-	!! Gabriel tiene que tener el revolver en las manos para hacer el disparo:
-	if (obj == nothing && revolver notin player) {
-		switch (GRAMMATICAL_INFLECTION) {
-			1:	print "Primero trato de coger ", (the) revolver, ":^";
-			2:	print "Primero tratas de coger ", (the) revolver, ":^";
-			3:	print "Primero trata de coger ", (the) revolver, ":^";
-			4:	print "Primero traté de coger ", (the) revolver, ":^";
-			5:	print "Primero trataste de coger ", (the) revolver, ":^";
-			6:	print "Primero trató de coger ", (the) revolver, ":^";
-		}
-		<Take revolver>;
-		if (revolver notin player) return false;
-		else new_line;
-	}
-	!! El revólver tiene que tener balas:
-	if (revolver.out_of_ammo()) {
-		switch (GRAMMATICAL_INFLECTION) {
-		1:	print (The) revolver, " está", (n) revolver, " descargad", 
-			(o) revolver, ". No puedo disparar.^";
-		2:	print (The) revolver, " está", (n) revolver, " descargad", 
-			(o) revolver, ". No puedes disparar.^";
-		3:	print (The) revolver, " está", (n) revolver, " descargad", 
-			(o) revolver, ". No puede disparar.^";
-		4:	print (The) revolver, " estaba", (n) revolver, " descargad",
-			(o) revolver, ". No podía disparar.^";
-		5:	print (The) revolver, " estaba", (n) revolver, " descargad",
-			(o) revolver, ". No podías disparar.^";
-		6:	print (The) revolver, " estaba", (n) revolver, " descargad",
-			(o) revolver, ". No podía disparar.^";
-		}
-		return false;
-	}
-	!! Se cumplen todas las condiciones. Retorna verdadero:
-	return true;
-];
-
 
 !!==============================================================================
 !!	Gramática estándar y extendida
@@ -678,32 +624,48 @@ VerboIrregular "vestir" with imperativo
 ];
 
 [ FireAtSub;
-	if (second == revolver 
-		|| (second == nothing && IndirectlyContains(player, revolver))) {
-		if (revolver.out_of_ammo()) {
-			if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
-				print_ret (The) revolver, " está", (n) revolver, " descargad", 
-				(o) revolver, ". No puede disparar.";
-			print_ret (The) revolver, " estaba", (n) revolver, " descargad",
-			(o) revolver, ". No podía disparar.";
-		}
-		if (noun == nothing or revolver) {
-			if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
-				"Frustrado, siente ganas de disparar sobre algo. Aunque 
-				ponerse a disparar al aire probablemente no sea muy buena 
-				idea.";
-			"Frustrado, sentía ganas de disparar sobre algo. Aunque ponerse a 
-			disparar al aire probablemente no hubiese sido muy buena idea.";
-		}
+	if (~~TestScope(revolver)) {
 		if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
-			"Frustrado, siente ganas de disparar sobre algo. Aunque pegar un 
-			tiro ", (al) noun, " probablemente no sea muy buena idea.";
-		"Frustrado, sentía ganas de disparar sobre algo. Aunque pegar un 
-		tiro ", (al) noun, " probablemente no hubiese sido muy buena idea.";
+			"Necesita un arma para hacer algo así.";
+		"Necesitaba un arma para hacer algo así.";
+	}
+	if (parent(revolver) ~= player) {
+		<Take revolver>;
+		if (parent(revolver) ~= player)
+			return true;
+		new_line;
+	}
+	if (revolver.out_of_ammo()) {
+		if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
+			"El revólver está descargado. No puede disparar.";
+		"El revólver estaba descargado. No podía disparar.";
+	}
+	if (AfterRoutines() == 1) rtrue;
+	if (keep_silent == 1) rtrue;
+	if (noun == nothing) {
+		if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
+			"Frustrado, siente ganas de disparar sobre algo. Aunque ponerse a 
+			disparar al aire probablemente no sea muy buena idea.";
+		"Frustrado, sentía ganas de disparar sobre algo. Aunque ponerse a 
+		disparar al aire probablemente no hubiese sido muy buena idea.";
+	}
+	if (noun == revolver) {
+		if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
+			"Eso no tiene sentido.";
+		"Eso no tenía sentido.";
+	}
+	if (noun == player) {
+		if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
+			"No es la primera vez que tiene ganas de meterse una bala en la 
+			cabeza y acabar con todo, pero aún no piensa hacerlo.";
+		"No era la primera vez que tenía ganas de meterse una bala en la 
+		cabeza y acabar con todo, pero aún no pensaba hacerlo.";
 	}
 	if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
-		"Necesita un arma para hacer algo así.";
-	"Necesitaba un arma para hacer algo así.";
+		"Frustrado, siente ganas de disparar sobre algo. Aunque pegar un 
+		tiro ", (al) noun, " probablemente no sea muy buena idea.";
+	"Frustrado, sentía ganas de disparar sobre algo. Aunque pegar un 
+	tiro ", (al) noun, " probablemente no hubiese sido muy buena idea.";
 ];
 
 !! TODO - Cuando el sistema de ayuda no tiene el atributo 'on', detener su 
@@ -740,6 +702,7 @@ VerboIrregular "vestir" with imperativo
 ];
 
 [ RemarkableObjectsSub;
+	HelpSystem.print_remarkableObjs_clue();
 	remarkableObjectsCount = 0;
 	LoopOverScope(CountRemarkableObjects);
 	if (remarkableObjectsCount == 0)

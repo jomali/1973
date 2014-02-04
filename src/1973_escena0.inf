@@ -50,16 +50,17 @@ Class	Room
  with	description [;
 			if (action == ##Look || self hasnt visited) self.long_description();
 			else self.short_description();
-			!! Espacio para elementos comunes a las dos descripciones
+			!! Espacio para elementos comunes a las dos descripciones.
 			return true;
 		],
 		long_description "EN CONSTRUCCIÓN.",
-		!! Por defecto, la descripción corta es la misma descripción larga
+		!! Por defecto, la descripción corta es la misma descripción larga.
 		short_description [; return self.long_description(); ],
 		!! Si se activa, se inhibe el listado automático de objetos simples 
 		!! al imprimir la descripción de la localidad (ver comportamiento de 
-		!! ##Look en "1973_langLM.inf")
-		inhibit_object_list false,
+		!! ##Look en "1973_langLM.inf").
+		inhibit_object_list false, 
+		!! 
  has	light;
 
 !!------------------------------------------------------------------------------
@@ -96,7 +97,7 @@ Class	Thing
 !!------------------------------------------------------------------------------
 Class	Item
  class	Thing
- with	long_description [;
+ with	description [;
 			switch (GRAMMATICAL_INFLECTION) {
 				1,2,3:	print "Tiene", (n) self;
 				4,5,6:	print "Tenía", (n) self;
@@ -339,24 +340,18 @@ Object	HelpSystem "(Help System)"
 				if (~~flag) new_line;
 				return self.start_clue_a();
 			}
-			!! Acción ##LOOK
+			!! Acción ##Look
 			if (self.look_clue_flag && ~~self.look_clue_printed) {
 				if (~~flag) new_line;
 				return self.look_clue_a();
 			}
-			!! Acción ##REMARKABLE_OBJECTS
+			!! Acción ##RemarkableObjs
 			if (self.remarkableObjs_clue_flag
 				&& ~~self.remarkableObjs_clue_printed) {
-				self.remarkableObjs_clue_flag = false;
-				self.remarkableObjs_clue_printed = true;
-				self.activate_next_flag();
-				give self ~on;
-				StopTimer(self);
-				StartTimer(self, 2);
 				if (~~flag) new_line;
 				return self.remarkableObjs_clue_a();
 			}
-			!! Acción ##EXAMINE
+			!! Acción ##Examine
 			if (self.examine_clue_flag && ~~self.examine_clue_printed) {
 				if (~~flag) new_line;
 				if (HABITACION.has_light_flag()) {
@@ -365,7 +360,7 @@ Object	HelpSystem "(Help System)"
 					return self.examine_clue_a(cortinas);
 				}
 			}
-			!! Acción ##OPEN
+			!! Acción ##Open
 			if (self.open_clue_a_flag && ~~self.open_clue_a_printed) {
 				if (~~flag) new_line;
 				return self.open_clue_a();
@@ -374,17 +369,19 @@ Object	HelpSystem "(Help System)"
 				if (~~flag) new_line;
 				return self.open_clue_b();
 			}
-			!! Acción ##TAKE
+			!! Acción ##Take
 			if (self.take_clue_flag && ~~self.take_clue_printed) {
 				if (~~flag) new_line;
-				return self.take_clue_a(ropa);
+				if (~~IndirectlyContains(player, ropa))
+					return self.take_clue_a(ropa);
+				return self.take_clue_a(maleta);
 			}
-			!! Acción #INV
+			!! Acción #Inv
 			if (self.inv_clue_flag && ~~self.inv_clue_printed) {
 				if (~~flag) new_line;
 				return self.inv_clue_a();
 			}
-			!! Acción #GO
+			!! Acción #Go
 			if (self.go_clue_flag && ~~self.go_clue_printed) {
 				if (~~flag) new_line;
 				return self.go_clue_a();
@@ -399,10 +396,10 @@ Object	HelpSystem "(Help System)"
 			}
 		], 
 		react_before [;
-			if (~~self.is_active()) {
-				return false;
-			}
 			Examine:
+				if (~~self.is_active()) {
+					return false;
+				}
 				if (~~self.examine_clue_printed) {
 					self.examine_clue_printed = true;
 					self.examine_clue_b();
@@ -416,6 +413,9 @@ Object	HelpSystem "(Help System)"
 					StartTimer(self, 3);
 				}
 			Go:
+				if (~~self.is_active()) {
+					return false;
+				}
 				if (~~self.go_clue_printed) {
 					self.go_clue_printed = true;
 					self.go_clue_b();
@@ -429,6 +429,9 @@ Object	HelpSystem "(Help System)"
 					StartTimer(self, 3);
 				}
 			Inv:
+				if (~~self.is_active()) {
+					return false;
+				}
 				if (~~self.inv_clue_printed) {
 					self.inv_clue_printed = true;
 					self.inv_clue_b();
@@ -442,6 +445,9 @@ Object	HelpSystem "(Help System)"
 					StartTimer(self, 3);
 				}
 			Look:
+				if (~~self.is_active()) {
+					return false;
+				}
 				if (~~self.look_clue_printed) {
 					self.look_clue_printed = true;
 					self.look_clue_b();
@@ -454,7 +460,7 @@ Object	HelpSystem "(Help System)"
 					StopTimer(self);
 					StartTimer(self, 3);
 				}
-			Open: 
+			Open:
 				if (noun == cortinas) {
 					if (~~self.open_clue_a_printed) 
 						self.open_clue_a_printed = true;
@@ -470,6 +476,9 @@ Object	HelpSystem "(Help System)"
 					}
 				}
 			Take:
+				if (~~self.is_active()) {
+					return false;
+				}
 				if (~~self.take_clue_printed) {
 					self.take_clue_printed = true;
 					self.take_clue_b();
@@ -504,6 +513,19 @@ Object	HelpSystem "(Help System)"
 			new_line;
 			self.hesitate_clue_a();
 		],
+		print_remarkableObjs_clue [;
+			if (self.remarkableObjs_clue_printed) return true;
+			self.remarkableObjs_clue_printed = true;
+			if (self.is_active()) {
+				self.remarkableObjs_clue_flag = false;
+				self.activate_next_flag();
+				give self ~on;
+				StopTimer(self);
+				StartTimer(self, 2);
+				self.remarkableObjs_clue_b();
+				new_line;
+			}
+		], 
  private
 		!! Atributo que indica si el tutorial está activado
 		on_flag false, 
@@ -556,38 +578,39 @@ Object	HelpSystem "(Help System)"
 		start_clue_printed false, 
 		start_clue_flag false, 
 		start_clue_a [; return O__M(self, 2); ], 
-		!! Acción ##LOOK
+		!! Acción ##Look
 		look_clue_printed false, 
 		look_clue_flag false, 
 		look_clue_a [; return O__M(self, 3); ], 
 		look_clue_b [; return O__M(self, 4); ], 
-		!! Acción #REMARKABLE_OBJECTS
+		!! Acción #RemarkableObjs
 		remarkableObjs_clue_printed false, 
 		remarkableObjs_clue_flag false, 
-		remarkableObjs_clue_a [; return O__M(self, 5); ], 
-		!! Acción ##EXAMINE
+		remarkableObjs_clue_a [; return O__M(self, 5); ],
+		remarkableObjs_clue_b [; return O__M(self, 6); ], 
+		!! Acción ##Examine
 		examine_clue_printed false, 
 		examine_clue_flag false, 
 		examine_clue_a [ obj; return O__M(self, 7, obj); ], 
 		examine_clue_b [; return O__M(self, 8); ], 
-		!! Acción ##OPEN
+		!! Acción ##Open
 		open_clue_a_printed false, 
 		open_clue_a_flag false, 
 		open_clue_a [; return O__M(self, 9); ], 
 		open_clue_b_printed false, 
 		open_clue_b_flag false, 
 		open_clue_b [; return O__M(self, 10); ], 
-		!! Acción ##TAKE/##DROP
+		!! Acción ##Take / ##Drop
 		take_clue_printed false, 
 		take_clue_flag false, 
 		take_clue_a [ obj; return O__M(self, 11, obj); ], 
 		take_clue_b [; return O__M(self, 12); ], 
-		!! Acción ##INV
+		!! Acción ##Inv
 		inv_clue_printed false, 
 		inv_clue_flag false, 
 		inv_clue_a [; return O__M(self, 13); ], 
 		inv_clue_b [; return O__M(self, 14); ], 
-		!! Acción ##GO
+		!! Acción ##Go
 		go_clue_printed false, 
 		go_clue_flag false, 
 		go_clue_a [; return O__M(self, 15); ], 
@@ -599,11 +622,18 @@ Object	HelpSystem "(Help System)"
 		meta_clue_printed false, 
 		meta_clue_flag false, 
 		meta_clue_a [; return O__M(self, 18); ], 
-		!! Acción ##USE
+		!! Acción ##Use
 		use_clue_printed false, 
 		use_clue_a [; return O__M(self, 19); ], 
+		!! Acción ##FireAt
+		fireAt_clue_printed false, 
+		fireAt_clue_a [; return O__M(self, 20); ], 
+		!! Acción ##TalkTo
+		talkTo_clue_printed false, 
+		talkTo_clue_a [; return O__M(self, 21); ], 
+		talkTo_clue_b [; return O__M(self, 22); ], 
 		!! Final del tutorial
-		default_clue_a [; return O__M(self, 20); ], 
+		default_clue_a [; return O__M(self, 23); ], 
  has	on scenery;
 
 Atrezzo	"paredes" 

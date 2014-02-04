@@ -146,7 +146,6 @@ Global GRAMMATICAL_INFLECTION = SECOND_PERSON_PRESENT;
 
 !!==============================================================================
 !! Créditos generales de la aplicación.
-!! TODO - Traducir al castellano
 !!------------------------------------------------------------------------------
 !! Imprime el número de versión
 [ PrintVersionNumber i;
@@ -208,12 +207,11 @@ Global GRAMMATICAL_INFLECTION = SECOND_PERSON_PRESENT;
 		print (string) Headline;
 		new_line;
 	}
-	print "Release ";
+	print "Versión ";
 	PrintVersionNumber();
-	print " / Serial number ";
+	print " / Núm. de serie ";
 	PrintSerialNumber();
-	print " / Inform v"; inversion;
-	print " Lib. ", (string) LibRelease;
+	print " / Creado con Inform "; inversion;
 	#Ifdef DEBUG;
 	print " ";
 	#Endif; ! DEBUG;
@@ -848,14 +846,20 @@ Verb	meta 'gramatica'
 
 !!==============================================================================
 !! Créditos detallados de la aplicación.
-!! TODO - Traducir al castellano
 !!------------------------------------------------------------------------------
 [ VersionSub ix;
-	new_line; Banner();
+	new_line;
+	Banner();
+	print "Versión de la librería Inform ", (string) LibRelease;
+	print " / Núm. de serie librería ", (string) LibSerial;
+	new_line;
+	#Ifdef LanguageVersion;
+	print (string) LanguageVersion, "^";
+	#Endif; ! LanguageVersion
 	#Ifdef TARGET_ZCODE;
 	ix = 0; ! shut up compiler warning
 	if (standard_interpreter > 0) {
-		print "Standard interpreter ", standard_interpreter/256, ".", 
+		print "Estándar del intérprete ", standard_interpreter/256, ".", 
 			standard_interpreter%256, " (", HDR_TERPNUMBER->0;
 		#Iftrue (#version_number == 6);
 		print (char) '.', HDR_TERPVERSION->0;
@@ -864,7 +868,7 @@ Verb	meta 'gramatica'
 		#Endif;
 		print ") / ";
 	} else {
-		print "Interpreter ", HDR_TERPNUMBER->0, " Version ";
+		print "Intérprete ", HDR_TERPNUMBER->0, " Versión ";
 		#Iftrue (#version_number == 6);
 		print HDR_TERPVERSION->0;
 		#Ifnot;
@@ -874,15 +878,12 @@ Verb	meta 'gramatica'
 	}
 	#Ifnot; ! TARGET_GLULX;
 	@gestalt 1 0 ix;
-	print "Interpreter version ", ix / $10000, ".", (ix & $FF00) / $100,
+	print "Versión del intérprete ", ix / $10000, ".", (ix & $FF00) / $100,
 	".", ix & $FF, " / ";
 	@gestalt 0 0 ix;
-	print "VM ", ix / $10000, ".", (ix & $FF00) / $100, ".", ix & $FF, " / ";
+	print "VM ", ix / $10000, ".", (ix & $FF00) / $100, ".", ix & $FF;
 	#Endif; ! TARGET_;
-	print "Library serial number ", (string) LibSerial, "^";
-	#Ifdef LanguageVersion;
-	print (string) LanguageVersion, "^";
-	#Endif; ! LanguageVersion
+	new_line;
 ];
 
 

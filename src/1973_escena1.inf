@@ -17,13 +17,6 @@
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	TODO:
-!!
-!!	<>	reproducción de audio de la escena
-!!	<>	objeto: amanecer
-!!
-!!------------------------------------------------------------------------------
-!!
 !!	Copyright (c) 2014, J. Francisco Martín
 !!
 !!	This file is part of PROYECTO 1973.
@@ -40,6 +33,45 @@
 !!
 !!	You should have received a copy of the GNU General Public License 
 !!	along with PROYECTO 1973. If not, see <http://www.gnu.org/licenses/>.
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	# TODO:
+!!
+!!	<>	Crear una nueva acción "recuerda".
+!!	<>	Crear nuevas acciones "dispárate", "métete un tiro",...
+!!	<>	Crear nuevas acciones "dúchate", "péinate",...
+!!	<>	Crear un nuevo objeto "luz" que permita interactuar con él. Por ej.:
+!!		acción "enciende la luz" y similares.
+!!	<>	Crear un nuevo objeto "mujer" que permita interactuar con ella. Por ej.:
+!!		acciones "buscarla", "llamarla", "recordarla",...
+!!	<>	Crear un nuveo objeto "tarjeta", dentro del bolsillo. Una tarjeta de 
+!!		publicidad de un bar, con el nombre del local y un número de teléfono:
+!!		"Sin Límites" - 555 2581. En la escena 2 se incluirá un teléfono 
+!!		público dentro del bar. Si el jugador recuerda el número, podrá llamar 
+!!		y mantener una conversación con el autor de la obra. (A lo Unamuno.)
+!!	<>	Crear un nuevo objeto "mechero", dentro del cajón.
+!!	<>	Crear un nuevo objeto "billete" que permita interactuar con él antes de 
+!!		encontrar el billete de verdad. Por ej.: acciones "busca billete" y 
+!!		similares.
+!!	<>	Crear un nuevo objeto "amanecer" que permita interactuar con él.
+!!	<>	Repasar objeto "revólver".
+!!	<>	Repasar objeto "cama". Comprender la acción "hacer la cama".
+!!	<>	Repasar objeto "desorden". Comprender la acción "busca en el montón de 
+!!		ropa" y similares.
+!!	<>	Repasar objeto "maleta". Comprneder acciones como "mete revólver en la 
+!!		maleta" y similares.
+!!	<>	Repasar objeto "maleta". Comprender acciones como "busca en la maleta".
+!!	<>	Repasar objeto "billete". Comprender acciones como "leer billete".
+!!	<>	Repasar objeto "billete". Modificar acción "coge el papel" de forma que 
+!!		quede claro que se trata del billete sin necesidad de examinarlo.
+!!	<>	Repasar objeto "ropa". Falla la decripción de los bolsillos del abrigo 
+!!		cuando están vacíos.
+!!	<>	Repasar objeto "ropa". Modificar descripciones de las diferentes partes 
+!!		que forman parte de la ropa.
+!!	<>	Repasar objeto "ropa". Añadir adjectivos.
+!!	<>	Repasar acción "vete".
+!!	<>	Repasar objeto "puerta". Comprobar acción "sal por la puerta".
 !!
 !!------------------------------------------------------------------------------
 
@@ -124,7 +156,8 @@ Room	HABITACION
 			Damusix.AsignarCanal(WOUNDED_A, 0, -1, 1);
 			Damusix.AsignarCanal(WOUNDED_B, 1, -1, -1);
 			Damusix.AsignarCanal(WOUNDED_C, 2, -1, 1);
-			Damusix.Tocar(WOUNDED_A, 1);
+! TODO
+!			Damusix.Tocar(WOUNDED_A, 1);
 			next_track = WOUNDED_B;
 			ShowGraphicWindow();
 			graphicWindow.setImage(PIC_1_01);
@@ -152,7 +185,7 @@ Room	HABITACION
 				print "Desde el exterior llega el eco";
 				if (~~self.light_flag)
 					print " distante y apagado";
-				" de motores.";
+				" de motores. Nada más.";
 			Smell:
 				if (self.light_flag)
 					"El aire que se cuela por la ventana es fresco y fragante.";
@@ -188,14 +221,7 @@ Room	HABITACION
 					self.exit_flag = true;
 					return O__M(self, 6);
 				}
-				!! TODO - repasar texto
-				print_ret (string) random (
-					"Antes tiene que encontrar el billete. Lo necesita. Sin él 
-					no podrá llegar muy lejos.", 
-					"Necesita el billete. Sabe que lo escondió por aquí, en 
-					alguna parte. Tiene que encontrarlo antes de ponerse en 
-					camino."
-				);
+				return O__M(self, 7);
 			}
 			!! Todas las restricciones han sido satisfechas:
 			return puerta_habitacion;
@@ -206,6 +232,8 @@ Room	HABITACION
 		cant_go
 			"No puede ir por ahí. La puerta es la única salida de la 
 			habitación.", 
+		!! Si es 'true', evita que se imprima el listado de objetos presentes 
+		!! al mostrar la descripción de la localidad.
 		inhibit_object_list true, 
 		!! Establece si la habitación está o no iluminada.
 		set_light_flag [ status;
@@ -214,7 +242,6 @@ Room	HABITACION
 				move oscuridad to LIMBO;
 				give cortinas ~remarkable;
 				give cama ~concealed;
-				give cama remarkable;
 				give escritorio remarkable;
 				give puerta_habitacion remarkable;
 				give ropa remarkable;
@@ -228,7 +255,6 @@ Room	HABITACION
 			if (status == false) {
 				give cortinas remarkable;
 				give cama concealed;
-				give cama ~remarkable;
 				give escritorio ~remarkable;
 				give puerta_habitacion ~remarkable;
 				if (~~IndirectlyContains(player, ropa))
@@ -259,7 +285,6 @@ Room	HABITACION
 !!------------------------------------------------------------------------------
 !! Objetos con rutinas react_before:
 
-!!	<>	TODO - Nueva acción: hacer la cama
 Furniture	cama "cama" HABITACION
  class	SmartEnterable
  with	name_m	'camastro' 'catre' 'colchon' 'jergon' 'lecho' 'mobiliario' 
@@ -616,9 +641,9 @@ Atrezzo	calendario "calendario de pared" puerta_habitacion
 		react_before [;
 			FireAt:
 				if (noun == nothing or puerta_habitacion)
-					<<FireAt self>>;
+					<<FireAt self revolver>>;
 		],
-		before [ result;
+		before [;
 			Close, Open:
 				"Ya está bien como está.";
 			Examine:
@@ -629,31 +654,31 @@ Atrezzo	calendario "calendario de pared" puerta_habitacion
 					new_line;
 					return false;
 				}
-			FireAt:
-				if (CheckFireAtConditions(second)) {
-					print "Aunque sabe que no debería hacerlo es incapaz de 
-					controlar el impulso. Con decisión, levanta el revólver y 
-					apunta a la puerta...";
-					result = AimAndFire();
-					revolver.ammo--;
-					print " y dispara.^";
-					new_line;
-					if (result == -2) {
-						result = random(1,2,2,3,3,3,4,5,6,7,8,9,10);
-					}
-					if (result == 0) {
-						self.fire_count++;
-						"La bala impacta directamente sobre la cuadrícula de días 
-						del calendario.";
-					}
-					if (result == 1 or 2) {
-						self.fire_count++;
-						"El disparo alcanza al calendario.";
-					}
-					"Falla el disparo, que impacta sobre la pared.";
-				}  else return true;
 			Pull, Push, PushDir, Take:
 				"Está enganchado a la puerta.";
+		], 
+		after [ result;
+			FireAt:
+				print "Aunque sabe que no debería hacerlo es incapaz de 
+				controlar el impulso. Con decisión, levanta el revólver y 
+				apunta a la puerta...";
+				result = AimAndFire();
+				revolver.ammo--;
+				print " y dispara.^";
+				new_line;
+				if (result == -2) {
+					result = random(1,2,2,3,3,3,4,5,6,7,8,9,10);
+				}
+				if (result == 0) {
+					self.fire_count++;
+					"La bala impacta directamente sobre la cuadrícula de días 
+					del calendario.";
+				}
+				if (result == 1 or 2) {
+					self.fire_count++;
+					"El disparo alcanza al calendario.";
+				}
+				"Falla el disparo, que impacta sobre la pared.";
 		], 
 		!! TODO - Eliminar de la versión final
 		fire_count 0, 
@@ -1265,7 +1290,7 @@ Item	maleta "maleta de viaje" HABITACION
 		description_flag false,	! indica si el objeto ha sido descrito
  has	female openable ~open;
 
-Item	libro_bolsillo "librito de poemas" HABITACION
+Item	libro_bolsillo "librito de poemas" LIMBO
  with	name_m	'ejemplar' 'librito' 'libro' 'poemario' 'tomo' 'volumen',
 		gender	G_MASCULINO,
 		adjectives
