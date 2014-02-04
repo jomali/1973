@@ -284,9 +284,9 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 	key = KeyCharPrimitive();
 	switch (key) {
 		'1': location = cama;
-!		'2': location = CAFE;
+		'2': location = CAFE;
 		'3': location = TAXI;
-!		'4': location = SAN_ANTONIO;
+		'4': location = SAN_ANTONIO;
 		default: MainMenu();
 	}
 

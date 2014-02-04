@@ -328,14 +328,10 @@ Furniture	cama "cama" HABITACION
 		], 
 		react_before [;
 			if (self.SmartEnterable::react_before()) return true;
-			Jump:
-				if (player in self && noun == nothing) <<Exit self>>;
 			Sit:
 				if (noun == nothing) <<Sit self>>;
 			Sleep:
 				if (noun == nothing) <<Sleep self>>;
-			Swing:
-				if (player in self && noun == nothing) <<Swing self>>;
 		], 
 		before [;
 			Climb:

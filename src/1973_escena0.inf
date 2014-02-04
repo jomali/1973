@@ -248,7 +248,8 @@ Class	SmartEnterable
 				return false;
 			! Consult:
 			! Fill:
-			! Jump:
+			Jump:
+				if (noun == nothing) <<Exit self>>;
 			! JumpOver:
 			! Kiss:
 			! LetGo:
@@ -266,7 +267,8 @@ Class	SmartEnterable
 			! Set
 			! SetTo
 			! Swim
-			! Swing
+			Swing:
+				if (noun == nothing) <<Swing self>>;
 			! Tell
 			! Wake
 			! WakeOther

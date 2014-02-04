@@ -43,10 +43,7 @@
 
 Room	CALLEJON "En el callejón"
  with	name	'callejon' 'calleja' 'callejuela' 'callizo' 'calle' 'calles' 
-				'avenida' 'bulevar' 'rambla' 'santiago',
-		description
-			"Descripción del callejón.",
-;
+				'avenida' 'bulevar' 'rambla' 'santiago';
 
 !!------------------------------------------------------------------------------
 !! Objetos con rutinas react_before:
@@ -87,6 +84,9 @@ Room	CALLEJON "En el callejón"
 !!==============================================================================
 !!	SAN_ANTONIO: Embarcadero de San Antonio
 !!------------------------------------------------------------------------------
+
+Room	SAN_ANTONIO "Embarcadero de San Antonio"
+ with	name	'antonio' 'embarcadero' 'puerto' 'san';
 
 !!------------------------------------------------------------------------------
 !! Objetos con rutinas react_before:

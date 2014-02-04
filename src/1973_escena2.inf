@@ -13,7 +13,7 @@
 !!	System:			Inform, INFSP 6
 !!	Platform:		Z-Machine / GLULX
 !!	Version:		1.0
-!!	Released:		2014/02/01
+!!	Released:		2014/02/04
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -59,21 +59,21 @@ Room	CAFE "Café Blanca Florida"
 			return true;
 		}],
 		description [;
-			return O__M(self, 2);
+			return O__M(self, 2, (self has visited));
 		],
 		w_to	[; return self.out_to(); ],
 		out_to	"No podía irse aún. No sin hablar antes con Pablo.",
-		cant_go "Esa dirección no llevaba a ningún lado.", 
+		cant_go "Por ahí no podía ir a ningún lado.", 
 ;
 
 !!------------------------------------------------------------------------------
 !! Objetos con rutinas react_before:
 
-Atrezzo	-> silla "silla" 
+Atrezzo	silla "silla" CAFE
  class	SmartEnterable
  with	clarification "sentado a una de las mesas", 
 		name_m	'asiento' 'taburete', 
-		name_f	'silla' 'banqueta', 
+		name_f	'banqueta' 'silla', 
 		gender	G_FEMENINO, 
 		!! TODO: adjectives
 		description "Una silla normal y corriente.", 
@@ -87,13 +87,228 @@ Atrezzo	-> silla "silla"
 				<<Exit self>>;
 		],
 		after [;
-			Enter:	"Se sentó en ", (the) self, ", frente a Pablo.";
-			Exit:	"Se levantó de ", (the) self, ".";
+			Enter:
+				"Se sentó en ", (the) self, ", frente a Pablo.";
+			Exit:
+				"Se levantó de ", (the) self, ".";
 		],
- has	female enterable supporter transparent;
+ has	female supporter transparent;
 
 !!------------------------------------------------------------------------------
 !! Atrezzo:
+
+Atrezzo	"mesa" CAFE
+ with	name_m	'mobiliario' 'moblaje' 'mueble',
+		name_f	'mesa',
+		name_mp	'muebles',
+		gender	G_FEMENINO,
+		adjectives
+			'corriente' 'funcional' 'normal' 'ordinaria' 'ordinario' 'sencilla' 
+			'sencillo' 'simple',
+		description [;
+			print "Era una mesa normal y corriente";
+			if (child(self)) {
+				print ". Encima había ";
+				WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT);
+			}
+			".";
+		],
+		before [;
+			Climb, Enter, Sit:
+				"No había ningún motivo para subirse ahí.";
+			Pull, Push, PushDir, Take, Turn:
+				print_ret (The) self, " ya estaba", (n) self, " bien donde 
+				estaba", (n) self, ". No había motivos para andar moviéndol", 
+				(o) self, ".";
+			Search:
+				if (child(self) ofclass Atrezzo)
+					"Sobre la mesa sólo estaba la bebida de Pablo.";
+		],
+ has	female supporter transparent;
+
+Atrezzo	-> -> "bebida de Pablo"
+ with	name_m	'tinto' 'vaso' 'vino', 
+		name_f	'bebida',
+		gender	G_FEMENINO, 
+		adjectives
+			'alcohol' 'alcoholica' 'color' 'oscura' 'oscuro' 'pablo' 'roja' 
+			'rojo' 'sangre',
+		description
+			"Pablo bebía un vaso de vino tinto. Oscuro como la sangre.",
+		before [;
+			Examine:
+				return false;
+			Drink, Pull, Push, PushDir, Take, Touch, Turn:
+				"Esa era la bebida de Pablo. No se la iba a quitar.";
+			default:
+				"Era un simple vaso de vino sin nada de especial. No hacía 
+				falta preocuparse por él.";
+		],
+ has	female;
+
+Atrezzo	"mesas y sillas del café" CAFE
+ with	name_m	'mobiliario' 'moblaje' 'mueble' 'taburete',
+		name_mp	'asientos' 'muebles' 'taburetes',
+		name_fp	'banquetas' 'mesas' 'sillas',
+		gender	G_FEMENINO + G_PLURAL,
+		adjectives 
+			'corriente' 'corrientes' 'funcional' 'funcionales' 'normal' 
+			'normales' 'ordinaria' 'ordinarias' 'ordinario' 'ordinarios' 
+			'sencilla' 'sencillas' 'sencillo' 'sencillos' 'simple' 'simples',
+		description
+			"Había unas cuantas mesas y sillas de aspecto corriente 
+			repartidas por todo el bar.",
+		before [;
+			Examine, Search, LookUnder:
+				return false;
+			Enter, Sit:
+				<<Enter silla>>;
+			Exit, StandUp:
+				<<Exit silla>>;
+			default:
+				"No era necesario preocuparse por eso. Después de todo, no 
+				tenía", (n) self, " nada de especial.";
+		],
+ has	female pluralname;
+
+Atrezzo	barra "barra" CAFE
+ with	name_m	'mobiliario' 'moblaje' 'mostrador' 'mueble',
+		name_f	'barra' 'repisa',
+		name_mp 'muebles',
+		gender	G_FEMENINO, 
+		!! TODO - adjectives
+		description [;
+			return O__M(self, 1);
+		], 
+		before [;
+			Pull, Push, PushDir, Turn:
+				"Le hubiese sido imposible mover eso.";
+			Take:
+				"Le hubiese sido imposible coger eso.";
+		],
+ has	female;
+
+!!	<>	El atributo 'general' se activa después de que Mr. Panamá se haya ido.
+Atrezzo	cliente "cliente" CAFE
+ with	name_m 'cliente' 'desconocido' 'extrano' 'hombre' 'parroquiano' 'senor',
+		gender G_MASCULINO,
+		adjectives 'sombrero' 'panama', !! TODO
+		description [;
+			if (self hasnt general) O__M(self, 1);
+			else O__M(self, 2);
+			if (clientes hasnt general) {
+				print " ";
+				<<Listen clientes>>;
+			}
+			new_line;
+			return true;
+		],
+		react_before [;
+			if (noun ~= self) return false;
+			Attack: <<Attack clientes second>>;
+			Listen: <<Listen clientes second>>;
+			Pull, Push: <<Pull clientes second>>;
+			TalkTo: <<TalkTo clientes second>>;
+		],
+ has	male; !! TODO - animate?
+
+Atrezzo	clientes "clientes" CAFE
+ with	name_f	'clientela' 'gente' 'persona',
+		name_mp	'chicos' 'clientes' 'hombres' 'mozos' 'parroquianos' 'senores',
+		name_fp	'chicas' 'mozas' 'mujeres' 'parroquinas' 'personas' 'senoras',
+		gender	G_MASCULINO + G_PLURAL,
+		!! TODO - adjectives
+		description [;
+			O__M(self, 1);
+			if (~~self.listen_flag) {
+				print " ";
+				<<Listen self>>;
+			}
+			new_line;
+			return true;
+		],
+		react_before [;
+			Listen:
+				if (noun == nothing)
+					<<Listen self>>;
+		],
+		before [;
+			Attack, Pull, Push:
+				"No era el momento ni el lugar para empezar una pelea.";
+			Listen:
+				if (~~self.listen_flag) self.listen_flag = true;
+				return O__M(self, 2);
+			TalkTo:
+				return O__M(self, 3);
+		],
+ private
+		!! Se activa al escuchar el objeto por primera vez.
+		listen_flag false,
+ has	animate male pluralname;
+
+Atrezzo	humo "humo" CAFE
+ with	name_m	'cigarrillo' 'cigarro' 'humo' 'pitillo' 'puro' 'tabaco',
+		name_f	'fumarada' 'humarada',
+		name_mp	'cigarrillos' 'cigarros' 'pitillos' 'puros',
+		gender	G_MASCULINO, 
+		adjectives
+			'apestado' 'corrompido' 'hediondo' 'infecto' 'maloliente' 
+			'pestilente' 'volutas',
+		description [;
+			return O__M(self, 1);
+		], 
+		react_before [;
+			Smell: 
+				if (noun == nothing)
+					<<Smell self>>;
+		], 
+		before [;
+			Examine:
+				return false;
+			Smell:
+				return O__M(self, 2);
+			default:
+				"No hacía falta que se preocupase por eso.";
+		], 
+ has	male;
+
+Atrezzo	telefono "teléfono público" CAFE
+ with	name_m	'auricular' 'cajetin' 'disco' 'microfono' 'microtelefono' 
+				'teclado' 'telef' 'telefono' 'telf' 'visor',
+		name_f	'cabina' 'inscripcion' 'placa' 'ruleta',
+		gender	G_MASCULINO,
+		adjectives !! TODO
+			'aparato' 'ficha' 'fichas' 'negra' 'negro' 'numerico' 'publica' 
+			'publico' 'telefonica' 'telefonico',
+		description [;
+			return O__M(self, 1, self.tokens);
+		],
+		before [;
+			Use, TalkOn:
+				!! TODO - Contemplar opción de llamar por telf.
+				"No tenía a nadie a quien llamar por teléfono en aquel 
+				momento.";
+		],
+ private
+		tokens 0,
+ has	male;
+
+Atrezzo	ventilador "ventilador" CAFE
+ with	name_m	'ventilador', 
+		name_f	'aspa', 
+		name_fp	'aspas', 
+		gender	G_FEMENINO, 
+		adjectives 'encendido' 'movimiento' 'negra' 'negras' 'negro' 'techo', 
+		description [; return O__M(self, 1); ],
+		before [;
+			Examine:
+				return false;
+			Listen:
+				return O__M(self, 2);
+			default:
+				return O__M(self, 3);
+		],
+ has	male;
 
 !!------------------------------------------------------------------------------
 !! Furniture:
@@ -104,78 +319,112 @@ Atrezzo	-> silla "silla"
 !!------------------------------------------------------------------------------
 !! NPCs:
 
+NPC		camarera "camarera" CAFE
+ with	name_m	'camarero' 'despensero',
+		name_f	'camarera' 'chica' 'dama' 'despensera' 'joven' 'moza' 
+				'muchacha' 'mujer' 'persona' 'senora' 'senorita',
+		gender	G_FEMENINO,
+		!! TODO - adjectives
+		description [;
+			return O__M(self, 1);
+		],
+		before [;
+			Attack, Pull, Push:
+				"No era el momento ni el lugar para comenzar una pelea.";
+			TalkTo:
+				!! TODO - Incluir conversación con la camarera
+				"No llegó a cruzar una palabra con ella. Era con Pablo con 
+				quien quería hablar.";
+		],
+ has	female concealed;
+
+NPC		MrPanama "hombre del sombrero" LIMBO
+ with	name_m 'cliente' 'desconocido' 'extrano' 'hombre' 'parroquiano' 'senor',
+		gender G_MASCULINO,
+		adjectives 'sombrero' 'panama', !! TODO
+		description [;
+			if (~~self.telephone_flag) return O__M(self, 1);
+			else return O__M(self, 2);
+		],
+		react_before [;
+			Look:
+				!! Si el jugador intenta mirar la localidad cuando está activo 
+				!! alguno de los indicadores de movimiento de Mr. Panamá, se 
+				!! lanza la acción examinar a Mr. Panamá en su lugar para que 
+				!! se imprima el texto del movimiento.
+				if (noun == nothing)
+					if (self.movement_1_flag || self.movement_2_flag 
+						|| self.movement_3_flag)
+						<<Examine self>>;
+			Examine, Search:
+				!! Si el jugador intenta mirar al teléfono mientras Mr. Panamá 
+				!! está hablando por él, se imprime la descripción del hombre.
+				if (noun == telefono && self.telephone_flag)
+					<<Examine self>>;
+				!! Si el jugador intenta examinar a Mr. Panamá o a la clientela 
+				!! cuando está activo alguno de los indicadores de movimiento, 
+				!! se imprime el texto del movimiento en lugar de la 
+				!! descripción del hombre o de los clientes.
+				if (noun == self or clientes) {
+					if (self.movement_1_flag) {
+						self.movement_1_flag = false;
+						return O__M(self, 3);
+					}
+					if (self.movement_2_flag) {
+						self.movement_2_flag = false;
+						return O__M(self, 4);
+					}
+					if (self.movement_3_flag) {
+						self.movement_3_flag = false;
+						return O__M(self, 5);
+					}
+				}
+			!! TODO - Comportamiento de TalkTo
+		],
+		before [;
+			Attack, Pull, Push, PushDir:
+				!! TODO - Cambiar mensaje
+				"No era el momento ni el lugar para empezar una pelea.";
+			Listen:
+				if (~~self.telephone_flag) return O__M(self, 6);
+				if (self.listen_flag) return O__M(self, 8);
+				self.listen_flag = true;
+				return O__M(self, 7);
+			TalkTo:
+				return O__M(self, 9);
+		],
+		!! TODO - Gestión de los movimientos del personaje, usando daemon o 
+		!! temporizadores.
+ private
+		listen_flag		false,
+		movement_1_flag	false,
+		movement_2_flag	false,
+		movement_3_flag	false,
+		telephone_flag	false,
+ has	concealed male;
+
 NPC		Pablo "Pablo" CAFE
  with	name_m	'pablo' 'ureta' 'amigo' 'hombre', 
 		name_f	'persona', 
 		gender	G_MASCULINO, 
 		!! TODO: adjectives
 		describe [;
-			if (~~self.description_flag) {
-				self.description_flag = true;
-				new_line;
-				return O__M(self, 1);
+			new_line;
+			if (~~self.describe_flag) {
+				self.describe_flag = true;
+				return O__M(self, 1, (parent(player) == silla));
 			}
-			else {
-				print "^Pablo estudiaba su cerveza en silencio, sentado";
-				if (player in silla) " frente a Gabriel.";
-				else " solo en una de las mesas más alejadas.";
-			}
+			return O__M(self, 2, (parent(player) == silla));
 		],
 		description [;
-			if (player notin silla)
-				print "Estaba sentado en una de las mesas del fondo, con la 
-				vista clavada en su botellín de cerveza. ";
-			return O__M(self, 2);
+			return O__M(self, 3, (parent(player) == silla));
 		],
 		before [;
 			TalkTo:
-				print "Atravesó el local hasta la mesa en que se encontraba 
-				Pablo.^";
-				new_line;
-				print "---Ahí estás. Llegas tarde, chico.^";
-				new_line;
-				ConversationManager.start(conversacion_pablo);
-				return true;
+				!! TODO - Implementar conversación
 		], 
  private
-		description_flag false,	! indica si el objeto ha sido descrito
+		describe_flag false, ! indica si el objeto ha sido descrito
  has	male proper;
-
-!!------------------------------------------------------------------------------
-!! Conversations:
-
-Conversation conversacion_pablo
- with	topics e2_02 e2_01;
-
-ConversationEntry e2_01
- with	entry [;
-			print (strong) "pedir disculpas", " por el retraso";
-		], 
-		keys
-			'disculparse' 'pedir' 'pide' 'disculpa' 'disculpas' 'disculpate'
-			'lo' 'siento', 
-		reply [;
-			"---Lo sé, lo sé. Lo siento. Hay soldados por todas partes. He 
-			venido dando un rodeo.";
-		], 
-		reaction [;
-			parent(self).remove_topic(e2_02);
-		];
-
-ConversationEntry e2_02
- with	entry [;
-			print (strong) "llamar loco", " a Pablo por cirtarle allí en un 
-			momento como aquel";
-		], 
-		keys
-			'llamarle' 'loco' 'citarle' 'alli' 'momento' 'aquel', 
-		reply [;
-			"---¿Es que estás loco, Pablo? ¿Cómo se te ha ocurrido pedirme que 
-			me reúna contigo aquí? ¿No sabes que la ciudad está llena de 
-			soldados?";
-		], 
-		reaction [;
-			parent(self).remove_topic(e2_01);
-		];
 
 
