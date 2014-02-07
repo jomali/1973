@@ -171,9 +171,7 @@ No había ninguna ficha en el visor en aquel momento.
 
 *habla con camarera* Gabriel se acercó hasta la barra.
 
----¿Qué vas a tomar?
 ---¿Quieres alguna cosa?
----¿En qué puedo servirte?
 
 [Puedes escoger entre pedir una bebida, pedir fichas para el teléfono o no pedir nada.]
 
@@ -183,13 +181,13 @@ No había ninguna ficha en el visor en aquel momento.
 
 *habla con Pablo* Atravesó el local hasta la mesa en que se encontraba Pablo.
 
----Ahí estás. Llegas tarde, chico. ---Directo y seco, como siempre.
+---Ahí estás. Llegas tarde, chico.
 
 [Puedes escoger entre pedir disculpas por el retraso, llamar loco a Pablo por citarle allí en un momento como aquel o guardar silencio.]
 
 *pedir disculpas* ---Si, lo sé. Lo siento. He tenido que dar un rodeo enorme para llegar hasta aquí. Hay soldados por toda la ciudad.
 
----¡No me digas! Claro que hay soldados, carajo... Ya no hay sitio seguro en toda la capital. Sin Allende, todo está perdido. Es no más cuestión de tiempo que nos agarren esos mamones con pistola. ---Terminó lo que le quedaba en el vaso con un trago rápido y señaló la diana de dardos colgada al otro extremo del bar. ---Ven, juguemos.
+---¡No me digas! Claro que hay soldados, carajo... Ya no hay sitio seguro en toda la capital. Sin Allende, todo está perdido. Es no más cuestión de tiempo que nos agarren esos mamones con pistola. ---Terminó lo que le quedaba en el vaso con un trago rápido y con un gesto de cabeza señaló la diana de dardos colgada al otro extremo del bar. ---Ven, juguemos.
 
 [Puedes escoger entre aceptar la partida o decirle que no era buena idea llamar la atención.]
 

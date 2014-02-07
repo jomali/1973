@@ -8,13 +8,13 @@
 !!==============================================================================
 !!
 !!	File:			topicInventory.h
-!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Author(s):		J. Francisco Martín <jfm.lisaso@gmail.com>
 !!					Mastodon
 !!	Language:		ES (Castellano)
 !!	System:			Inform-INFSP 6
 !!	Platform:		Z-Machine / Glulx
-!!	Version:		1.7
-!!	Released:		2014/01/29
+!!	Version:		1.8
+!!	Released:		2014/02/05
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -134,21 +134,22 @@
 System_file;
 
 !! Descomentar para obtener información de depuración:
-!Constant DEBUG_CONVERSATION;
+!Constant DEBUG_TOPICINVENTORY;
 
 !! Vector para guardar palabras temporalmente:
 Array tmp_text -> 64;
 
-Default CONVERSATION_STYLE	1;
-Default CONVERSATION_PREFIX	"(Puedes ";
+Default CONVERSATION_STYLE	1; ! (0-3) Romana, Itálica, Negrita, Monoespaciada
+Default CONVERSATION_PREFIX	"(";
 Default CONVERSATION_SUFIX	".)";
-Default CONVERSATION_CHOOSE	"escoger entre ";
+Default CONVERSATION_MSG1	"Puedes ";
+Default CONVERSATION_MSG2	"escoger entre ";
 
 !!==============================================================================
 !!	Funciones de depuración
 !!------------------------------------------------------------------------------
 
-#Ifdef DEBUG_CONVERSATION;
+#Ifdef DEBUG_TOPICINVENTORY;
 
 !! Función para pintar un String Array
 [ PrintStringArray the_array i;
@@ -164,7 +165,7 @@ Default CONVERSATION_CHOOSE	"escoger entre ";
 		print (char) dir->i;
 ];
 
-#Endif; ! DEBUG_CONVERSATION;
+#Endif; ! DEBUG_TOPICINVENTORY;
 
 !!==============================================================================
 !!	Compara una palabra de la entrada del usuario con una de las palabras de 
@@ -202,10 +203,10 @@ Default CONVERSATION_CHOOSE	"escoger entre ";
 		len = tmp_text->(WORDSIZE-1);	! Se actualiza el valor de 'len'
 	}
 	
-	#Ifdef DEBUG_CONVERSATION;
+	#Ifdef DEBUG_TOPICINVENTORY;
 	print "Comparando prompt: <", (PrintPromptWord) num_word_prompt, 
 	"> con palabra de diccionario:<", (PrintStringArray) tmp_text, ">^";
-	#Endif; ! DEBUG_CONVERSATION;
+	#Endif; ! DEBUG_TOPICINVENTORY;
 
 	!! Si la longitud de las palabras no es igual, se retorna NO coincidente. 
 	!! (NOTA: Hay que contemplar el caso especial de palabras de más de 9 
@@ -233,12 +234,12 @@ Default CONVERSATION_CHOOSE	"escoger entre ";
 !!	función reaction() se le quita el atributo "visited". Ej:
 !!
 !!		Object	topic
-!!		 class	ConversationEntry
+!!		 class	ConversationTopic
 !!		 with	[...]
 !!				reaction [; give self ~visited; ];
 !!------------------------------------------------------------------------------
 
-Class	ConversationEntry
+Class	ConversationTopic
  with	compare_prompt [i j;
 			self.hits = 0;
 			for (i = 0 : i < self.#keys/WORDSIZE : i++) {
@@ -259,9 +260,9 @@ Class	ConversationEntry
 		reaction null,
 		!! Lista de subtemas que añadir a la conversacion tras tratar este tema
 		subtopics null, 
-		!! Establecer a 'true' para forzar que el turno en que se trata este 
-		!! tema finalice mostrando el inventario de temas disponibles
-		append_topic_inventory false;
+		!! Si está establecido a 'true' se fuerza que el turno en que se trata 
+		!! este tema finalice mostrando el inventario de temas disponibles
+		append_topic_inventory true;
 
 !!==============================================================================
 !!	Representa una conversación que tiene una lista de temas que pueden ser 
@@ -314,20 +315,20 @@ Class	Conversation
 !!	de funciones que pueden ser utilizadas por un autor de relatos interactivos 
 !!	para manejar conversaciones:
 !!
-!!	*	start(conversacion:Conversation) - Inicia y deja activa en el gestor 
+!!	 *	start(conversacion:Conversation) - Inicia y deja activa en el gestor 
 !!		la conversación pasada como parámetro.
 !!
-!!	*	end() - Quita del gestor la conversación activa.
+!!	 *	end() - Quita del gestor la conversación activa.
 !!
-!!	*	is_running() - Indica si hay una conversación activa en el gestor. 
+!!	 *	is_running() - Indica si hay una conversación activa en el gestor. 
 !!		Retorna verdadero si es así, o falso en caso contrario.
 !!
-!!	*	topic_inventory_size() - Retorna el número de temas disponibles en la 
+!!	 *	topic_inventory_size() - Retorna el número de temas disponibles en la 
 !!		conversación activa.
 !!
-!!	*	show_topic_inventory() - Muestra el inventario de temas disponibles.
+!!	 *	show_topic_inventory() - Muestra el inventario de temas disponibles.
 !!
-!!	*	try() - Función principal del gestor. Comprueba si la entrada de 
+!!	 *	try() - Función principal del gestor. Comprueba si la entrada de 
 !!		usuario se refiere a alguno de los temas disponibles y lanza la acción 
 !!		adecuada para tratarlo si es así. Debe invocarse desde el punto de 
 !!		entrada *BeforeParsing()*.
@@ -382,8 +383,10 @@ Object ConversationManager "(Conversation Manager)"
 !			}
 !			if (CONVERSATION_PREFIX ~= 0)
 !				print (string) CONVERSATION_PREFIX;
-!			if (self.topic_inventory_size() > 1 && CONVERSATION_CHOOSE ~= 0)
-!				print (string) CONVERSATION_CHOOSE;
+!			if (CONVERSATION_MSG1 ~= 1)
+!				print (string) CONVERSATION_MSG1;
+!			if (self.topic_inventory_size() > 1 && CONVERSATION_MSG2 ~= 0)
+!				print (string) CONVERSATION_MSG2;
 !			self.current_conversation.show_topic_list();
 !			if (CONVERSATION_SUFIX ~= 0)
 !				print (string) CONVERSATION_SUFIX;
@@ -398,8 +401,10 @@ Object ConversationManager "(Conversation Manager)"
 		!! Mensaje del parser (requiere la extensión types.h)
 		show_topic_inventory [;
 			start_parser_style();
-			if (self.topic_inventory_size() > 1) print "Escoge entre ";
-			else print "Puedes ";
+			if (CONVERSATION_MSG1 ~= 0)
+				print (string) CONVERSATION_MSG1;
+			if (self.topic_inventory_size() > 1 && CONVERSATION_MSG2 ~= 0)
+				print (string) CONVERSATION_MSG2;
 			self.current_conversation.show_topic_list();
 			print ".";
 			end_parser_style();
@@ -416,19 +421,19 @@ Object ConversationManager "(Conversation Manager)"
 				!! B) Da un repaso a los temas actuales comprobando si alguno 
 				!! encaja con la entrada de usuario
 				objectloop (o in self.current_conversation) {
-					#Ifdef DEBUG_CONVERSATION;
+					#Ifdef DEBUG_TOPICINVENTORY;
 					print "Probando: ", (string) o.entry, "... ";
-					#Endif; ! DEBUG_CONVERSATION;
+					#Endif; ! DEBUG_TOPICINVENTORY;
 
 					!! Se calcula el número de coincidencias del tema en 
 					!! relación al total de palabras (%)
 					o.compare_prompt();
 					o_tmp_hits = (o.hits*100) / num_words; 
 					
-					#Ifdef DEBUG_CONVERSATION;
+					#Ifdef DEBUG_TOPICINVENTORY;
 					print "Ajuste de ", o.hits, " sobre ", 
 					o.#keys / WORDSIZE, " palabras: ", o_tmp_hits, "%^";
-					#Endif; ! DEBUG_CONVERSATION;
+					#Endif; ! DEBUG_TOPICINVENTORY;
 
 					!! Si coincide más que el máximo actual:
 					if (o_tmp_hits > self.hits) {
@@ -440,10 +445,10 @@ Object ConversationManager "(Conversation Manager)"
 				!! C) Se muestra la respuesta al tema elegido, si lo hay, se 
 				!! quita de la conversación y se añaden los posibles subtemas
 				if (self.hits) {
-					#Ifdef DEBUG_CONVERSATION;
+					#Ifdef DEBUG_TOPICINVENTORY;
 					print "Tema seleccionado: ", (string) self.topic.entry;
 					new_line;
-					#Endif; ! DEBUG_CONVERSATION;
+					#Endif; ! DEBUG_TOPICINVENTORY;
 
 					!! El tema queda marcado como tratado
 					give self.topic visited;

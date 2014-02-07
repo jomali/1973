@@ -1,4 +1,4 @@
-!% -~S~D
+!% -SD
 !% +language_name=Spanish
 !% $MAX_LABELS=2000
 !% $MAX_ZCODE_SIZE=45000
@@ -12,10 +12,10 @@
 !!==============================================================================
 !!
 !!	File:			1973.inf
-!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Author(s):		J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Languague:		ES (Castellano)
-!!	System:			Inform, INFSP 6
-!!	Platform:		Z-Machine / GLULX
+!!	System:			Inform-INFSP 6
+!!	Platform:		Máquina-Z / GLULX
 !!	Version:		0.1
 !!	Released:		2014/01/30
 !!
@@ -521,6 +521,20 @@ Verb	'apunta' 'dispara' 'tirotea'
 	* 'con' held 'a//'/'hacia' noun	-> FireAt reverse
 ;
 
+#Ifdef TARGET_GLULX;
+Verb meta 'grafico' 'graficos' 'graphic' 'graphics'
+	*								-> Graphics
+	* 'on'/'si'						-> GraphicsOn
+	* 'encendido'/'activado'		-> GraphicsOn
+	* 'encendidos'/'activados'		-> GraphicsOn
+	* 'off'/'no'					-> GraphicsOff
+	* 'apagado'/'desactivado'		-> GraphicsOff
+	* 'apagados'/'desactivados'		-> GraphicsOff
+;
+VerboIrregular "establecer ventana gráfica"
+	with imperativo 'grafico' 'graficos' 'graphic' 'graphics';
+#Endif; ! TARGET_GLULX;
+
 Verb meta 'ayuda' 'ayudas' 'pista' 'pistas' 'sos' 'tutorial'
 	*								-> HelpOn
 	* 'on' / 'si'					-> HelpOn
@@ -668,8 +682,33 @@ VerboIrregular "vestir" with imperativo
 	tiro ", (al) noun, " probablemente no hubiese sido muy buena idea.";
 ];
 
+!! TODO - Cuando se cierra la ventana y se abre después, la imágen que se 
+!! mostraba deja de hacerlo
+
+#Ifdef TARGET_GLULX;
+[ GraphicsSub;
+	if (GRAPHIC_WIN_FLAG) <<GraphicsOff>>;
+	else <<GraphicsOn>>;
+];
+
+[ GraphicsOnSub;
+	if (GRAPHIC_WIN_FLAG)
+		print_ret (parser) "La ventana gráfica ya estaba abierta.";
+	ShowGraphicWindow();
+	print_ret (parser) "Ventana gráfica abierta.";
+];
+
+[ GraphicsOffSub;
+	if (~~GRAPHIC_WIN_FLAG)
+		print_ret (parser) "La ventana gráfica ya estaba cerrada.";
+	HideGraphicWindow();
+	print_ret (parser) "Ventana gráfica cerrada.";
+];
+#Endif; ! TARGET_GLULX;
+
 !! TODO - Cuando el sistema de ayuda no tiene el atributo 'on', detener su 
 !! temporizador e imprimir la siguiente pista
+
 [ HelpOnSub;
 	if (HelpSystem.has_ended()) {
 		return HelpSystem.print_default_clue();

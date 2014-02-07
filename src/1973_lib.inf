@@ -8,12 +8,12 @@
 !!==============================================================================
 !!
 !!	File:			1973_lib.inf
-!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Author(s):		J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Languague:		ES (Castellano)
-!!	System:			Inform, INFSP 6
-!!	Platform:		Z-Machine / GLULX
+!!	System:			Inform-INFSP 6
+!!	Platform:		Máquina-Z / GLULX
 !!	Version:		0.1
-!!	Released:		2014/01/21
+!!	Released:		2014/02/07
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -33,6 +33,31 @@
 !!
 !!	You should have received a copy of the GNU General Public License 
 !!	along with PROYECTO 1973. If not, see <http://www.gnu.org/licenses/>.
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	# RUTINAS IMPLEMENTADAS
+!!
+!!	<>	AttemptToTakeObject()
+!!	<>	Banner()
+!!		<>	PrintVersionNumber()
+!!		<>	PrintSerialNumber()
+!!	<>	DrawStatusLine()
+!!		<>	PrintLocationName()
+!!	<>	GetGNAOfObject()
+!!	<>	InvSub()
+!!	<>	InvTallSub()
+!!	<>	InvWideSub()
+!!	<>	LMode1Sub()
+!!	<>	LMode2Sub()
+!!	<>	LMode3Sub()
+!!	<>	LookSub()
+!!	<>	_o()
+!!	<>	ParseNoun()
+!!	<>	SetGrammaticalInflection()
+!!		<>	GrammarSub()
+!!	<>	SpanishNominativePronoun()
+!!	<>	VersionSub()	
 !!
 !!------------------------------------------------------------------------------
 
@@ -55,6 +80,7 @@ Global GRAMMATICAL_INFLECTION = SECOND_PERSON_PRESENT;
 !! Trata de transferir un objeto dado al jugador: retorna falso si la acción se 
 !! realiza con éxito, verdadero si se produce algún error (imprimiendo un 
 !! mensaje adecuado en este último caso).
+!! [Sobreescribe a verblibm.h]
 !!------------------------------------------------------------------------------
 [ AttemptToTakeObject item     ancestor after_recipient i j k;
 	if (item == player) return L__M(##Take, 2);
@@ -145,7 +171,8 @@ Global GRAMMATICAL_INFLECTION = SECOND_PERSON_PRESENT;
 
 
 !!==============================================================================
-!! Créditos generales de la aplicación.
+!! Créditos generales de la aplicación en castellano.
+!! [Sobreescribe a verblibm.h]
 !!------------------------------------------------------------------------------
 !! Imprime el número de versión
 [ PrintVersionNumber i;
@@ -229,7 +256,8 @@ Global GRAMMATICAL_INFLECTION = SECOND_PERSON_PRESENT;
 
 
 !!==============================================================================
-!! Dibuja una barra de estado con el nombre de la localidad centrado en pantalla
+!! Dibuja una barra de estado con el nombre de la localidad centrado.
+!! [Sobreescribe a parserm.h]
 !!------------------------------------------------------------------------------
 !! Buffer temporal para calcular el largo de un texto
 #Ifdef	VN_1630; ! compilador 6.30 o superior
@@ -277,7 +305,8 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 !! values in THE INFORM DESIGNER'S MANUAL Ch.34. Si se invoca con el parámetro 
 !! flag activado, el GNA se elige basándose en el atributo animate y la 
 !! propiedad gender del objeto. En caso contrario, lo hace basándose en sus 
-!! atributos animate, male, female, neuter y pluralname. [Extraído de parserm.h]
+!! atributos animate, male, female, neuter y pluralname.
+!! [Sobreescribe a parserm.h]
 !!------------------------------------------------------------------------------
 [ GetGNAOfObject obj flag case gen;
 	if (obj hasnt animate) case = 6;
@@ -307,10 +336,9 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 
 
 !!==============================================================================
-!! Rutinas para tomar inventario del protagonista
+!! Rutinas para tomar inventario del protagonista.
+!! [Sobreescribe a verblibm.h]
 !!------------------------------------------------------------------------------
-[ InvWideSub; <Inv>; ];
-[ InvTallSub; <Inv>; ];
 [ InvSub item number_worn number_carried first_worn;
 
 	!! El protagonista no lleva ningún objeto en el inventario
@@ -415,10 +443,13 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 	#Endif;
 	AfterRoutines();
 ];
+[ InvTallSub; <Inv>; ];
+[ InvWideSub; <Inv>; ];
 
 
 !!==============================================================================
-!! Redefinición de los 'lookmode': Breve, Largo y Superbreve
+!! Redefinición de los 'lookmode': Breve, Largo y Superbreve. 
+!! [Sobreescribe a verblibm.h]
 !!------------------------------------------------------------------------------
 [ LMode1Sub; lookmode = 1; L__M( ##LMode1 ); ];	! Breve
 [ LMode2Sub; lookmode = 2; L__M( ##LMode2 ); ];	! Largo (ahora por defecto)
@@ -426,7 +457,8 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 
 
 !!==============================================================================
-!! Redefinición de LookSub para que no imprima el nombre de la localidad actual
+!! Redefinición de LookSub para que no imprima el nombre de la localidad actual. 
+!! [Sobreescribe a verblibm.h]
 !!------------------------------------------------------------------------------
 [ LookSub allow_abbrev  visibility_levels i j k nl_flag;
 	if (parent(player) == 0) return RunTimeError(10);
@@ -531,16 +563,16 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 !! pertenecientes al objeto. En nuestro ejemplo, ante "caja de madera" debe 
 !! retornar 3, pero ante "caja de bolsa" debe retornar 1.
 !!
-!! MODIFICACIÓN SOBRE LA RUTINA ParseNoun DE SpanishG.h
+!! MODIFICACIÓN: Si usamos la rutina original y redefinimos el objeto con el 
+!! valor "caja" en sus campos "name" (name, name_m, name_f, name_mp y name_fp) 
+!! y los valores "madera" y "caoba" en el campo "adjectives", ParseNoun 
+!! aceptaría las cadenas "caja", "caja de madera", "caja de madera de caoba", 
+!! "madera", "caoba",... para referirse al objeto. Con la rutina modificada se 
+!! altera el comportamiento de ParseNoun para que las cadenas "madera" y 
+!! "caoba" no sean cadenas válidas, de manera que sea precisa la existencia de 
+!! al menos una coincidencia con los valores de los campos "name" del objeto.
 !!
-!! Si redefinimos el objeto con el valor "caja" en sus campos "name" (name, 
-!! name_m, name_f, name_mp y name_fp) y los valores "madera" y "caoba" en el 
-!! campo "adjectives", ParseNoun aceptaría las cadenas "caja", "caja de madera", 
-!! "caja de madera de caoba", "madera", "caoba",... para referirse al objeto. 
-!! Con la modificación se altera el comportamiento de ParseNoun para que las 
-!! cadenas "madera" y "caoba" no sean cadenas válidas, de manera que sea 
-!! precisa la existencia de al menos una coincidencia con los valores de los 
-!! campos "name" del objeto.
+!! [Sobreescribe a SpanishG.h]
 !!------------------------------------------------------------------------------
 [ ParseNoun obj n dudas seguir gen p aux m nm nf nmp nfp a;
 
@@ -792,28 +824,28 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 ];
 
 #Ifdef	DEBUG;
-Verb	meta 'gramatica'
-	*								-> Gramatica
-	* number						-> Gramatica;
-[ GramaticaSub;
+Verb	meta 'gramatica' 'grammar'
+	*								-> Grammar
+	* number						-> Grammar;
+[ GrammarSub;
 	start_parser_style();
 	switch (noun) {
-		1:	SetGrammaticalInflection( FIRST_PERSON_PRESENT); 
+		1:	SetGrammaticalInflection(FIRST_PERSON_PRESENT); 
 			print "Cambio de flexión gramatical: ";
-		2:	SetGrammaticalInflection( SECOND_PERSON_PRESENT );
+		2:	SetGrammaticalInflection(SECOND_PERSON_PRESENT);
 			print "Cambio de flexión gramatical: ";
-		3:	SetGrammaticalInflection( THIRD_PERSON_PRESENT); 
+		3:	SetGrammaticalInflection(THIRD_PERSON_PRESENT); 
 			print "Cambio de flexión gramatical: ";
-		4:	SetGrammaticalInflection( FIRST_PERSON_PAST ); 
+		4:	SetGrammaticalInflection(FIRST_PERSON_PAST); 
 			print "Cambio de flexión gramatical: ";
-		5:	SetGrammaticalInflection( SECOND_PERSON_PAST ); 
+		5:	SetGrammaticalInflection(SECOND_PERSON_PAST); 
 			print "Cambio de flexión gramatical: ";
-		6:	SetGrammaticalInflection( THIRD_PERSON_PAST ); 
+		6:	SetGrammaticalInflection(THIRD_PERSON_PAST); 
 			print "Cambio de flexión gramatical: ";
 		default:
 			print "Flexión gramatical actual: ";
 	}
-	switch ( GRAMMATICAL_INFLECTION ) {
+	switch (GRAMMATICAL_INFLECTION) {
 		FIRST_PERSON_PRESENT:	print "(1) presente 1a persona";
 		SECOND_PERSON_PRESENT:	print "(2) presente 2a persona";
 		THIRD_PERSON_PRESENT:	print "(3) presente 3a persona";
@@ -846,6 +878,7 @@ Verb	meta 'gramatica'
 
 !!==============================================================================
 !! Créditos detallados de la aplicación.
+!! [Sobreescribe a verblibm.h]
 !!------------------------------------------------------------------------------
 [ VersionSub ix;
 	new_line;

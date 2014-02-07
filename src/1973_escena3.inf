@@ -8,11 +8,11 @@
 !!==============================================================================
 !!
 !!	File:			1973_escena3.inf
-!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Author(s):		J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Languague:		ES (Castellano)
-!!	System:			Inform, INFSP 6
-!!	Platform:		Z-Machine / GLULX
-!!	Version:		1.0
+!!	System:			Inform-INFSP 6
+!!	Platform:		Máquina-Z / GLULX
+!!	Version:		0.1
 !!	Released:		2014/02/01
 !!
 !!------------------------------------------------------------------------------
@@ -254,7 +254,7 @@ NPC		taxista "taxista" TAXI
  has
 		male concealed;
 
-ConversationEntry topic_1_1
+ConversationTopic topic_1_1
  with	entry [; print (strong) "responder", " a la pregunta"; ], 
 		keys 'responder,' 'responderle,' 'responde,' 'pregunta', 
 		reply [;
@@ -293,7 +293,7 @@ ConversationEntry topic_1_1
 Conversation conversacion_taxista_1
  with	topics op03 op02 op01;
 
-ConversationEntry op01
+ConversationTopic op01
  with	entry [;
 			print (strong) "responder", " a la pregunta";
 		],
@@ -329,7 +329,7 @@ ConversationEntry op01
 		],
 ;
 
-ConversationEntry op02
+ConversationTopic op02
  with	entry [;
 			print "hablar sobre el ", (strong) "estado del tráfico";
 		],
@@ -357,7 +357,7 @@ ConversationEntry op02
 		], 
 ;
 
-ConversationEntry op03
+ConversationTopic op03
  with	entry [;
 			print "hablar sobre el ", (strong) "golpe contra el gobierno";
 		],
@@ -395,7 +395,7 @@ ConversationEntry op03
 Conversation conversacion_taxista_2
  with	topics op06 op05 op04;
 
-ConversationEntry op04
+ConversationTopic op04
  with	keys	'ser,' 'se,' 'contestar,' 'contesta,' 'sincero' 'sinceridad', 
 		entry [;
 			print (strong) "ser sincero";
@@ -411,7 +411,7 @@ ConversationEntry op04
 		],
 		subtopics op02 op03;
 
-ConversationEntry op05
+ConversationTopic op05
  with	keys	'mentir,' 'miente,' 'mentira', 
 		entry [;
 			print (strong) "mentir";
@@ -427,7 +427,7 @@ ConversationEntry op05
 		],
 		subtopics op02 op03;
 
-ConversationEntry op06
+ConversationTopic op06
  with	keys	'guardar,' 'guarda,' 'silencio', 
 		entry [;
 			print (strong) "guardar silencio";

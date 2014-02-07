@@ -8,16 +8,28 @@
 !!==============================================================================
 !!
 !!	File:			aimAndFire.h
-!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Author(s):		J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Language:		ES (Castellano)
-!!	System:			Inform, INFSP 6
+!!	System:			Inform-INFSP 6
 !!	Platform:		Máquina-Z / GLULX
-!!	Version:		3.0
-!!	Released:		2012/07/05
+!!	Version:		3.1
+!!	Released:		2014/02/06
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	Copyright (c) 2012, J. Francisco Martín
+!!	# HISTORIAL DE VERSIONES
+!!
+!!	3.1: 2014/02/06	Modo de depuración.
+!!	3.0: 2012/07/05	Versión preliminar de la rutina updateGridPosition_SHM() 
+!!					para mover la retícula con las ecuaciones del Movimiento 
+!!					Armónico Simple (Simple Harmonic Motion). Ver NOTA #1.
+!!	2.0: 2012		Refactorización del código, correcciones a la lógica y 
+!!					adición de comentarios.
+!!	1.0: 2012		Versión original de la librería.
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Copyright (c) 2012, 2014, J. Francisco Martín
 !!
 !!	Este programa es software libre: usted puede redistribuirlo y/o 
 !!	modificarlo bajo los términos de la Licencia Pública General GNU 
@@ -35,7 +47,7 @@
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	INSTRUCCIONES DE INSTALACIÓN:
+!!	# INSTRUCCIONES DE INSTALACIÓN
 !!
 !!	Para utilizar las funciones de tiempo real de la librería se debe incluir 
 !!	el siguiente punto de entrada glk en el código del relato interactivo (las 
@@ -48,6 +60,14 @@
 !!
 !!------------------------------------------------------------------------------
 System_file;
+
+!! Descomentar para obtener información de depuración:
+!Constant DEBUG_AIMANDFIRE;
+
+
+!!==============================================================================
+!!	Objeto gestor del sistema de apuntado.
+!!------------------------------------------------------------------------------
 
 #Ifdef	TARGET_GLULX;
 Object	AimingManager
@@ -141,9 +161,11 @@ Object	AimingManager
 				}
 			}
 		],
-!		!!----------------------------------------------------------------------
-!		!! Calcula la posición de la retícula (Movimiento Armónico Simple)
-!		!!----------------------------------------------------------------------
+		!!----------------------------------------------------------------------
+		!! Calcula la posición de la retícula (Movimiento Armónico Simple). 
+		!! XXX - NOTA #1: En el estado actual, la animación no se imprime 
+		!! correctamente, por eso la rutina está comentada.
+		!!----------------------------------------------------------------------
 !		updateGridPosition_SHM [ i ini sini aux gp; ! Simple Harmonic Motion
 !			aux = WIN_WIDTH/2;
 !			@numtof aux ini; ! ini: centro de la ventana
@@ -202,6 +224,7 @@ Object	AimingManager
 ;
 #Endif;	! TARGET_GLULX;
 
+
 !!==============================================================================
 !!	Lanza el sistema de apuntado y disparo:
 !!	@return int: 
@@ -210,22 +233,31 @@ Object	AimingManager
 !!		result (distancia entre la retícula y el centro).
 !!------------------------------------------------------------------------------
 !! TODO: controlar errores relativos a distintos anchos de ventana
+
 [ AimAndFire grid_pos width result;
 	#Ifdef	TARGET_ZCODE;
+
 	grid_pos = 0; width = 0; result = 0; ! Suprime advertencias del compilador
-!	print "** AimAndFire: Apuntado y disparo para máquina-Z. **^";
+	#Ifdef DEBUG_AIMANDFIRE;
+	print "** AimAndFire: Apuntado y disparo para máquina-Z. **^";
+	#Endif; ! DEBUG_AIMANDFIRE;
 	return -2;
+
 	#Ifnot;	! TARGET_GLULX;
+
 	AimingManager.initialize();
 	KeyCharPrimitive(); ! Pulsación de tecla. Fin de la animación
 	AimingManager.aimingEnded();
 	grid_pos = AimingManager.getGridPosition() + 1;
 	width	 = AimingManager.getAimingLineWidth();
-!	print "** Posición de la retícula: ", grid_pos, "/", width, " **^";
-!	print "** ", grid_pos, " - ", (width/2), ", = ", grid_pos-(width/2), " **^";
+	#Ifdef DEBUG_AIMANDFIRE;
+	print "** Posición de la retícula: ", grid_pos, "/", width, " **^";
+	print "** ", grid_pos, " - ", (width/2), ", = ", grid_pos-(width/2), " **^";
+	#Endif; ! DEBUG_AIMANDFIRE;
 	result = grid_pos - (width/2);
 	if (result < 0 ) return -result;
 	else return result;
+
 	#Endif;	! TARGET_
 ];
 

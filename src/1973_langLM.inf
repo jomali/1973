@@ -8,10 +8,10 @@
 !!==============================================================================
 !!
 !!	File:			1973_langLM.inf
-!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Author(s):		J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Languague:		ES (Castellano)
-!!	System:			Inform, INFSP 6
-!!	Platform:		Z-Machine / GLULX
+!!	System:			Inform-INFSP 6
+!!	Platform:		Máquina-Z / GLULX
 !!	Version:		1.0
 !!	Released:		2014/01/28
 !!
@@ -36,7 +36,7 @@
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	NOTAS:
+!!	# NOTAS
 !!
 !!	Por defecto se utilizan mensajes en presente, 2ª persona. Se pueden 
 !!	utilizar otras flexiones gramaticales dando valores a una variable 

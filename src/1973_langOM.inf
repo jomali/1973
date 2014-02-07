@@ -8,10 +8,10 @@
 !!==============================================================================
 !!
 !!	File:			1973_langOM.inf
-!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Author(s):		J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Languague:		ES (Castellano)
-!!	System:			Inform, INFSP 6
-!!	Platform:		Z-Machine / GLULX
+!!	System:			Inform-INFSP 6
+!!	Platform:		Máquina-Z / GLULX
 !!	Version:		1.0
 !!	Released:		2014/02/01
 !!
@@ -83,6 +83,12 @@ En cualquier caso, esta vez no hay tiempo para juegos ---quita entonces la mano 
 camarera: switch (n) {
 1:	! description
 "Gabriel no se fijó demasiado en ella y ahora la recuerda apenas; una mujer alta, de mediana edad y cabello oscuro ---negro, o quizá castaño---. No especialmente bonita, sin duda, puesto que de lo contrario la recordaría mejor. Fregaba vasos sucios y atendía a los clientes desde el otro lado de la barra.";
+2:	! TODO
+print_ret (string) random (
+"---¿Qué vas a tomar?",
+"---¿Quieres alguna cosa?",
+"---¿En qué puedo servirte?",
+);
 }
 
 !!------------------------------------------------------------------------------
@@ -303,6 +309,172 @@ if (x1) " frente a Gabriel."; else " solo en una de las mesas más alejadas.";
 3:	! description
 if (~~x1) print "Estaba sentado en una de las mesas del fondo, con la vista clavada en su vaso de tinto. ";
 "En un par de días parecía haber envejecido años; su espesa barba negra estaba más salpicada de canas que nunca, varias arrugas nuevas surcaban su frente y el contorno de sus ojos y, si bien es cierto que parte de su pelo había empezado a esfumarse hacía ya tiempo, el claro de piel enrrojecida que se revelaba entre los rizos color carbón de la coronilla era cada vez mayor.";
+}
+
+Pablo_tema_01: switch(n) {
+1:
+print "pedir ", (strong) "disculpas";
+2:
+print "---Si, lo sé. Lo siento. He tenido que dar un rodeo enorme para llegar hasta aquí. Hay soldados por toda la ciudad.";
+new_line;
+new_line;
+print "---¡No me digas! Claro que hay soldados, carajo... Ya no hay sitio seguro en toda la capital. Sin Allende, todo está perdido. Es no más cuestión de tiempo que nos agarren esos mamones con pistola. ---Terminó lo que le quedaba en el vaso con un trago rápido y con un gesto de cabeza señaló la diana de dardos colgada al otro extremo del bar. ---Ven, juguemos.";
+new_line;
+}
+
+Pablo_tema_02: switch(n) {
+1:
+print (strong) "llamarle loco", " por citarle allí en un momento como aquel";
+2: !! TODO
+print "---¿Es que estás loco, Pablo? ¿Cómo se te ha ocurrido citarme aquí justo ahora? La ciudad parece un hormiguero lleno de soldados";
+new_line;
+new_line;
+print "Terminó lo que le quedaba en el vaso con un trago rápido y con un gesto de cabeza señaló la diana de dardos colgada al otro extremo del bar. ---Ven, juguemos.";
+new_line;
+}
+
+Pablo_tema_03: switch(n) {
+1:
+print (strong) "aceptar", " la partida";
+2:
+print "---Vale.";
+new_line;
+}
+
+Pablo_tema_04: switch(n) {
+1:
+print "decirle que ", (strong) "no es buena idea", " llamar la atención";
+2:
+print "---No creo que sea buena idea llamar la atención.";
+new_line;
+}
+
+Pablo_tema_05: switch(n) {
+1:
+print "ceder y ", (strong) "aceptar", " la partida";
+2:
+print "---Vale. Juguemos.";
+new_line;
+}
+
+Pablo_tema_06: switch(n) {
+1:
+print "insistir en que ", (strong) "no era buena idea";
+2:
+print "---Tal y como están las cosas, no conviene llamar la atención, Pablo. Nunca se sabe quién puede estar mirando.";
+new_line;
+}
+
+Pablo_tema_07: switch(n) {
+1:
+print "preguntar por el hombre de la barra";
+2:
+print "---¿Conoces a ese hombre?";
+}
+
+Pablo_tema_08: switch(n) {
+1:
+print "preguntar si pueden esperar ayuda";
+2:
+print "---¿Llegará ayuda?";
+}
+
+Pablo_tema_09: switch(n) {
+1:
+print "preguntar por el resto de gente del partido";
+2:
+print "---¿Y qué hay de los demás? ¿El resto de la gente de Unidad?";
+}
+
+Pablo_tema_10: switch(n) {
+1:
+print "preguntar por lo que podían hacer entonces";
+2:
+print "---¿No podemos reorganizar al pueblo y...?";
+}
+
+Pablo_tema_11: switch(n) {
+1:
+print "preguntar a dónde iba a ir";
+2:
+print "---¿A dónde iba a huir?";
+}
+
+Pablo_tema_12: switch(n) {
+1:
+print "negarte a escapar como un cobarde";
+2:
+print "---No pienso huir a ninguna parte, Pablo. No soy un cobarde.";
+}
+
+Pablo_tema_13: switch(n) {
+1:
+print "insistir en que no pensaba ir a ningún sitio";
+2:
+print "---De ninguna manera, Pablo. Me da igual lo que digas. No me pienso mover de aquí.";
+}
+
+Pablo_tema_14: switch(n) {
+1:
+print "preguntar por el hombre";
+2:
+print "---¿De verdad no conoces a ese hombre del sombrero?";
+}
+
+Pablo_tema_15: switch(n) {
+1:
+print "preguntar si le iba a acompañar";
+2:
+print "---¿Vendréis conmigo?";
+}
+
+Pablo_tema_16: switch(n) {
+1:
+print "preguntarle si es que quería que lo matasen";
+2:
+print "---¿Estáis loco o es que queréis que os maten?";
+}
+
+Pablo_tema_17: switch(n) {
+1:
+print "preguntarle por qué le quería abandonar";
+2:
+print "---¿Por qué me abandonais?";
+}
+
+Pablo_tema_18: switch(n) {
+1:
+print "llamarle cobarde";
+2:
+print "---Eres un cobarde, Pablo.";
+}
+
+Pablo_tema_19: switch(n) {
+1:
+print "guardar silencio";
+2:
+print "Gabriel guardó silencio.";
+}
+
+Pablo_tema_20: switch(n) {
+1:
+print "sugerir que quedaba la esperanza de volver";
+2:
+print "---Aún queda la esperanza de volver";
+}
+
+Pablo_tema_21: switch(n) {
+1:
+print "preguntar si no había más opciones";
+2:
+print "---De verdad crees que ésta es la única opción, ¿no es así?";
+}
+
+Pablo_tema_22: switch(n) {
+1:
+print "decirle que no pensaba irse sin él";
+2:
+print "---Si tú no piensas huir, yo tampoco. No voy a dejarte sólo, Pablo.";
 }
 
 !!------------------------------------------------------------------------------

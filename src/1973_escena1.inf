@@ -8,11 +8,11 @@
 !!==============================================================================
 !!
 !!	File:			1973_escena1.inf
-!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Author(s):		J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Languague:		ES (Castellano)
-!!	System:			Inform, INFSP 6
-!!	Platform:		Z-Machine / GLULX
-!!	Version:		1.0
+!!	System:			Inform-INFSP 6
+!!	Platform:		Máquina-Z / GLULX
+!!	Version:		0.1
 !!	Released:		2014/02/01
 !!
 !!------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ Room	HABITACION
 				return O__M(self, 2);
 			}
 		], 
-		before [;
+		before [ result;
 			Listen:
 				print "Desde el exterior llega el eco";
 				if (~~self.light_flag)
@@ -195,6 +195,16 @@ Room	HABITACION
 					self.smell_flag = true;
 					return O__M(self, 5, flowers);
 				}
+			!! TODO
+			Xyzzy:
+				result = AimAndFire();
+				if (result == -2) "Disparo en Máquina-Z.";
+				if (result == 0) "Acierto exacto.";
+				if (result <= 2) "Acierto.";
+				if (result == 3) "Acierto por lo pelos.";
+				if (result <= 6) "Fallo por los pelos.";
+				if (result <= 15) "Fallo.";
+				"Fallo calamitoso.";
 		], 
 		e_to [;
 			!! XXX - Se podrían llevar las siguientes comprobaciones, o parte 
@@ -293,7 +303,7 @@ Furniture	cama "cama" HABITACION
 		name_mp	'muebles',
 		gender	G_FEMENINO,
 		adjectives 'desecho' 'desecha' 'sin' 'hacer',
-		!! La propiedad 'clarification' se encarga de imprimir un mensaje 
+		!! XXX - La propiedad 'clarification' se encarga de imprimir un mensaje 
 		!! personalizado junto al título de la localidad cuando el jugador se 
 		!! encuentra en un objeto.
 		clarification "sentado en la cama", 
@@ -328,10 +338,15 @@ Furniture	cama "cama" HABITACION
 		], 
 		react_before [;
 			if (self.SmartEnterable::react_before()) return true;
+			Jump:
+				if (noun == nothing && parent(player) == self)
+					<<JumpOver self>>;
 			Sit:
-				if (noun == nothing) <<Sit self>>;
+				if (noun == nothing)
+					<<Sit self>>;
 			Sleep:
-				if (noun == nothing) <<Sleep self>>;
+				if (noun == nothing)
+					<<Sleep self>>;
 		], 
 		before [;
 			Climb:
@@ -341,7 +356,6 @@ Furniture	cama "cama" HABITACION
 			JumpOver:
 				if (~~self.jumpOver_flag) {
 					self.jumpOver_flag = true;
-					move player to parent(self);
 					return O__M(self, 1);
 				}
 				"Ahora no hay tiempo para juegos. Tiene que salir de aquí.";

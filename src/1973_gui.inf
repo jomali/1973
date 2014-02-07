@@ -8,16 +8,24 @@
 !!==============================================================================
 !!
 !!	File:			1973_gui.inf
-!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
-!!	Language:		ES (Castellano)
-!!	System:			Inform/INFSP 6
-!!	Platform:		Máquina-Z / Glulx
-!!	Version:		1.0
-!!	Released:		2013/04/16
+!!	Author(s):		J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Languague:		ES (Castellano)
+!!	System:			Inform-INFSP 6
+!!	Platform:		Máquina-Z / GLULX
+!!	Version:		1.1
+!!	Released:		2014/02/07
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	Copyright (c) 2013, J. Francisco Martín
+!!	# HISTORIAL DE VERSIONES
+!!
+!!	2.1: 2014/02/07	Adición de una variable GRAPHIC_WIN_FLAG que permita 
+!!					conocer si la ventana gráfica está o no activada.
+!!	1.0: 2013/04/16	Versión original.
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Copyright (c) 2013, 2014, J. Francisco Martín
 !!
 !!	This file is part of PROYECTO 1973.
 !!
@@ -38,12 +46,15 @@
 
 
 !!==============================================================================
-!!	Constantes
+!!	Constantes y variables
 !!------------------------------------------------------------------------------
 
 Constant MARGIN_WIDTH 8;		! Ancho del margen interior
 Constant FRAME_WIDTH 56;		! Ancho del marco
 Constant GRAPHIC_WIN_WIDTH 28;	! Ancho de la ventana de imágenes
+
+!! Variable que indica si se está mostrando o no la ventana de imágenes:
+Global GRAPHIC_WIN_FLAG = false;
 
 
 !!==============================================================================
@@ -51,7 +62,6 @@ Constant GRAPHIC_WIN_WIDTH 28;	! Ancho de la ventana de imágenes
 !!------------------------------------------------------------------------------
 
 Include "gimage.h";				! GWindows; Image Window Widget
-!Include "gquote.h";			! GWindows; Quote Box Widget
 Include "gstatusX.h";			! GWindows; Status Window Module
 Include "gtile.h";				! GWindows; Tiled Image Windows
 
@@ -186,6 +196,8 @@ WindowPair rootUI;
 		MARGIN_WIDTH + 2, 
 		interiorMargin.winid);
 	interiorMargin.split = MARGIN_WIDTH + 2;
+	!! Se activa el indicador de la ventana gráfica:
+	GRAPHIC_WIN_FLAG = true;
 ];
 
 [ HideGraphicWindow;
@@ -201,6 +213,8 @@ WindowPair rootUI;
 		0, 
 		interiorMargin.winid);
 	interiorMargin.split = 0;
+	!! Se desactiva el indicador de la ventana gráfica:
+	GRAPHIC_WIN_FLAG = false;
 ];
 
 

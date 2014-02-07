@@ -8,20 +8,33 @@
 !!==============================================================================
 !!
 !!	File:			receptacles.h
-!!	Author(s):		Peer Shaefer (peerschaefer@gmx.net) - original
-!!					J. Francisco Martín (jfm.lisaso@gmail.com) - traducción
+!!	Author(s):		Peer Schaefer <peer@wolldingwacht.de> (lib. recept.h)
+!!					J. Francisco Martín <jfm.lisaso@gmail.com> (traducción)
 !!	Language:		ES (Castellano)
-!!	System:			Inform/INFSP 6
-!!	Platform:		Máquina-Z / Glulx
-!!	Version:		2.0
-!!	Released:		2012/05/03
-!!	Notes:			Las funciones pueden no funcionar como se espera si se usa 
-!!					el compilador Inform 6.15 o anteriores
+!!	System:			Inform-INFSP 6
+!!	Platform:		Máquina-Z / GLULX
+!!	Version:		2.1
+!!	Released:		2014/02/06
+!!	Notes:			Las funciones pueden no comportarse como se espera si se 
+!!					utiliza una versión del compilador Inform igual o anterior 
+!!					a la 6.15.
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	# HISTORIAL DE VERSIONES
+!!
+!!	2.1: 2014/02/06	Traducción completa de la documentación.
+!!	2.0: 2012/05/03	Correcciones y creación de la propiedad error_messages 
+!!					sobre la clase Receptacle para separar la lógica y los 
+!!					mensajes.
+!!	1.0				Traducción de la librería original recept.h v1.0 de Peer 
+!!					Schaefer, para implementar contenedores con capacidades 
+!!					definidas.
 !!
 !!------------------------------------------------------------------------------
 !!
 !!	Copyright (c) 2002, 2006, Peer Schaefer
-!!	Copyright (c) 2012, J. Francisco Martín
+!!	Copyright (c) 2012, 2014, J. Francisco Martín
 !!
 !!	Este programa es software libre: usted puede redistribuirlo y/o 
 !!	modificarlo bajo los términos de la Licencia Pública General GNU 
@@ -39,217 +52,231 @@
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	REFERENCIA
+!!	# REFERENCIA
 !!
-!!	Esta librería implementa una nueva clase de objetos, llamados "receptacles".
-!!	Los receptáculos son contenedores (o soportes) capaces de manejar parámetros
-!!	de peso, volumen y tamaño. Cada vez que el jugador intenta colocar un objeto
-!!	en uno de ellos, el receptáculo comprobará si la capacidad restante es 
-!!	suficiente para almacenar el nuevo objeto o no.
+!!	Esta librería implementa una nueva clase de objeto, llamada Receptacle. Los 
+!!	receptáculos son contenedores o soportes con ciertas capacidades definidas 
+!!	sobre el peso, volumen, tamaño y número de objetos que pueden albergar en 
+!!	su interior o sobre ellos. Cada vez que se intenta colocar un objeto en un 
+!!	Receptacle, éste comprobará si sus parámetros de capacidad son suficientes 
+!!	para albergar o no al nuevo objeto.
 !!
-!!	Para definir su peso, volumen y tamaño, los objetos del juego pueden tener 
-!!	definidas las siguiente propiedades (no es necesario que lo hagan):
-!!		-- weight (peso)
-!!		-- volume (volumen)
-!!		-- size (tamaño)
-!!				("size" represents the maximum length on any axis, e.g.
-!!				the length of an arrow or of a staff. It's obvious that
-!!				the volume of a quiver is "used up" when you store many
-!!				arrows in it, but the length of the quiver is not "used
-!!				up" by the length of the stored arrows: it only
-!!				indicates whether an arrow is too long for the quiver
-!!				or not.)
+!!	Para indicar su peso, volumen y tamaño, los objetos del juego pueden tener 
+!!	definidas las siguientes propiedades (no son obligatorias):
+!!
+!!	 *	weight	(peso)
+!!	 *	volume	(volumen)
+!!	 *	size	(tamaño. Representa la longitud máxima en cualquier eje. Ej: 
+!!				la longitud de una flecha o de un bastón. Resulta obvio que la 
+!!				capacidad de volumen de un carcaj termina "agotándose" cuando 
+!!				se introducen suficientes flechas en él, pero la capacidad de 
+!!				tamaño del carcaj no se agota con la suma de tamaños de las 
+!!				flechas almacenadas en él: la capacidad de tamaño indica si una 
+!!				flecha es o no demasiado larga para el carcaj.)
 !!
 !!	Cada una de estas tres propiedades puede ser un valor numérico o una rutina 
 !!	que retorne un valor numérico. Si alguna de las tres propiedades no está 
-!!	definida o tiene el valor 0 (cero), esa medida respectiva del objeto será 0 
-!!	(lo que significa que el objeto carece de peso, volumen o tamaño, o 
-!!	simplemente que esa medida es despreciable).
+!!	definida o tiene el valor 0 (cero), se interpretará que esa característica 
+!!	del objeto será 0 (lo que indicaría que el objeto carece de peso, volumen, 
+!!	o tamaño, o que se trata de una medida despreciable).
 !!
-!!	NOTA:	weight, volume y size se miden en unidades abstractas (son simples 
-!!			números sin dimensión). Que una unidad se refiera (por ejemplo) a un 
-!!			gramo, una libra, una tonelada o la masa de un sol es decisión tan 
-!!			sólo del programador.
+!!	*** Nota: weight, volume y size se miden en unidades abstractas (son 
+!!	simples números sin dimensión). Que una unidad se refiera, por ejemplo, a 
+!!	un gramo, una libra, una tonelada, o la masa del sol, es decisión exclusiva 
+!!	del programador.
 !!
-!!	Para crear un contenedor que compruebe automáticamente el peso, volumen y 
-!!	tamaño de los objetos, se usará una nueva clase "Receptacle". Los 
-!!	contenedores de esta clase pueden definir tres nuevas propiedades:
-!!		-- capacity_weight
-!!		-- capacity_volume
-!!		-- capacity_size
+!!	Para crear un receptáculo que compruebe automáticamente peso, volumen y 
+!!	tamaño de los objetos que se intenten introducir en él, se crea una nueva 
+!!	clase Receptacle. Estos receptáculos pueden definir tres nuevas propiedades 
+!!	(de nuevo, no son obligatorias):
+!!
+!!	 *	capacity_weight
+!!	 *	capacity_volume
+!!	 *	capacity_size
+!!
 !!	Cada una de estas tres propiedades puede ser un valor numérico o una rutina 
-!!	que devuelva un valor numérico. Si alguna de estas propiedades no está 
+!!	que retorne un valor numérico. Si alguna de estas propiedades no está 
 !!	definida o tiene el valor INFINITE_CAPACITY (una constante predefinida por 
-!!	la librería), la capacidad respectiva para esa medida del receptáculo será 
-!!	infinita.
+!!	la librería), la capacidad respectiva para esa medida del receptáculo se 
+!!	considerará infinita. 
 !!
-!!	Por supuesto los contenedores/receptáculos pueden tener también definido un 
-!!	peso, volumen y tamaño (ya que no son sólo contenedores/receptáculos, si no 
-!!	también objetos que puedes ser colocados dentro de otros contenedores).
+!!	Desde luego, los contenedores/soportes pueden tener también definidos un 
+!!	peso, volumen y tamaño (ya que no se tratan sólo de contenedores/soportes, 
+!!	si no también de objetos que pueden ser colocados en otros receptáculos).
 !!
-!!	En resúmen:
-!!	 *	El jugador puede almacenar múltiples objetos en un receptáculo, siempre 
-!!		que el peso total no exceda el valor 'capacity_weight' del receptáculo.
-!!	 *	El jugador puede almacenar múltiples objetos en un receptáculo, siempre 
-!!		que el volumen total no exceda el valor 'capacity_volume' del 
-!!		receptáculo.
-!!	 *	En otras palabras: 'capacity_weight' y 'capacity_volume' son valores 
-!!		empleados por los objetos que se almacenarán en el receptáculo.
-!!	 *	La propiedad 'capacity_size' se comporta de forma diferente: no se trata
+!!	En resumen:
+!!
+!!	 *	El jugador puede almacenar múltiples objetos en un Receptacle, siempre 
+!!		que el peso total no exceda el valor capacity_weight del receptáculo.
+!!	 *	El jugador puede almacenar múltiples objetos en un Receptacle, siempre 
+!!		que el volumen total no exceda el valor capacity_volume del receptáculo.
+!!	 *	Dicho de otra forma: capacity_weight y capacity_volume son valores que 
+!!		acaban "agotándose" conforme se almacenan objetos en el receptáculo.
+!!	 *	La propiedad capacity_size se comporta de forma diferente: no se trata 
 !!		de un límite que se agote a medida que se va añadiendo más peso o 
 !!		volumen al receptáculo, si no que se tiene que comprobar por separado 
 !!		cada vez que se intenta introducir un nuevo objeto en él.
 !!
-!!	A forma de pequeño extra, un receptáculo puede tener también definida una 
-!!	nueva propiedad 'capacity_number'. Esta propiedad tiene que ser bien un 
-!!	valor numérico o bien una rutina que devuelva un valor numérico. Indica 
-!!	cuántos objetos (como máximo) se pueden almacenar dentro de un receptáculo. 
-!!	Saltará un mensaje de error cada vez que se intente introducir cualquier 
-!!	objeto una vez que se ha alcanzado ese máximo.
+!!	Por último, un Receptacle puede también tener definida una nueva propiedad 
+!!	capacity_number. Este atributo tiene que ser bien un valor númerico o una 
+!!	rutina que devuelva un valor numérico, e indica cuántos objetos (como 
+!!	máximo) se pueden almacenar dentro de un receptáculo. Se mostrará un 
+!!	mensaje de error cada vez que se intente introducir cualquier objeto una 
+!!	vez se haya alcanzado ese máximo.
+!!
+!!
+!!	# DETALLES TÉCNICOS
+!!
+!!	 *	Calcular el peso de un contenedor/soporte es un proceso recursivo: los 
+!!		pesos de todos los objetos inmediatamente contenidos en él se añaden al 
+!!		peso del propio contenedor/soporte. Ocurre igual con los objetos que 
+!!		hay en el contenedor/soporte, si éstos a su vez albergan otros objetos, 
+!!		y así sucesivamente.
+!!	 *	Si el peso de un objeto viene dado por una rutina, esta rutina debería 
+!!		devolver el peso TOTAL del objeto, incluyendo los pesos de todos los 
+!!		objetos que alberga directa e indirectamente en él. En este caso, los 
+!!		pesos de los objetos contenidos en el receptáculo NO se calculan 
+!!		automáticamente. Esto añade flexibilidad a la hora de crear 
+!!		receptáculos especiales (ej: una bolsa mágica cuyo peso es menor que el 
+!!		de los objetos que contiene en su interior).
+!!	 *	El volumen y los tamaños de los objetos que alberga un receptáculo NO 
+!!		se añaden al volumen o tamaño del Receptacle (se asume que un 
+!!		receptáculo estándar no es flexible y tiene unas proporciones fijas y 
+!!		predeterminadas). Para reescribir este comportamiento se pueden definir 
+!!		nuevas propiedades VOLUME y SIZE, de forma que calculen el volumen y 
+!!		tamaño del receptáculo en tiempo de ejecución (ver EJEMPLO 3).
+!!	 *	Es perfectamente posible crear un receptáculo cuya capacidad sea 
+!!		superior a sus propias medidas (un comportamiento altamente improbable 
+!!		en un objeto, pero que permite la creación de cajas mágicas, agujeros 
+!!		negros y otros objetos extraños).
+!!
+!!
+!!	# VERBOS DE DEPURACIÓN
+!!
+!!	Al compilar en modo depuración (con la constante DEBUG), la librería define 
+!!	tres meta-acciones nuevas:
+!!
+!!	 *	xpeso OBJETO			imprime el peso del objeto
+!!	 *	xdimensiones OBJETO		imprime todas las dimensiones del objeto
+!!	 *	xcapacidad OBJETO		imprime todas laas capacidades del objeto
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	ALGUNOS DETALLES TÉCNICOS:
+!!	# EJEMPLO 1
 !!
-!!	*	Calcular el peso de un contenedor (o soporte) es un proceso recursivo: 
-!!		los pesos de todos los objeto-hijo (inmediatos) se añaden al peso del 
-!!		propio contenedor; el peso total de estos objetos-hijo depende también 
-!!		de si ellos albergan a su vez otros objetos en su interior, y así 
-!!		sucesivamente.
-!!	*	Si el peso de un objeto viene dado por una rutina, esta rutina debería 
-!!		devolver el peso TOTAL del objeto (incluyendo los pesos de todos los 
-!!		objeto-hijo que tenga en su interior, el de sus objeto-nieto, etc.) Los 
-!!		pesos de los objeto-hijo NO se calculan automáticamente en este caso. Lo
-!!		que añade flexibilidad a la hora de crear receptáculos especiales (e.j. 
-!!		una bolsa mágica cuyo peso es menor que el de los objetos que contiene 
-!!		en su interior).
-!!	*	El volumen y tamaños de los hijos NO se añade ni al volumen ni al tamaño
-!!		del objeto (se asume que un contenedor estándar no es flexible y tiene 
-!!		unas proporciones fijas y predeterminadas). Para reescribir este 
-!!		comportamiento puedes definir tus porpias propiedades VOLUME y SIZE, 
-!!		de forma que calculen el volumen y tamaño del objeto en tiempo de 
-!!		ejecución (mirar el ejemplo de más abajo).
-!!	*	Está totalmente permitido crear un contenedor cuya capacidad sea 
-!!		superior a sus propias medidas (se trata de un comportamiento altamente 
-!!		improbable en un objeto, pero de esta manera pueden crearse cajas 
-!!		mágicas, agujeros negros y otros objetos extraños).
+!!	Creación de una caja con un volumen de 10 y una capacidad de volumen de 9, 
+!!	y una piedra con un volumen de 2. El jugador puede poner hasta 4 piedras en 
+!!	la caja (cuyo volumen total sería 2*4 = 8). Una quinta piedra no podría ser 
+!!	introducida en la caja, puesto que su capacidad es 9 y el volumen total de 
+!!	5 piedras sería de 10:
+!!
+!!		Receptacle -> box "caja"
+!!		 with	name 'caja',
+!!				volume 10,			! el volumen de la propia caja
+!!				capacity_volume 9,	! la capacidad de la caja
+!!		 has	container;
+!!
+!!		Object -> stone "piedra"
+!!		 with	name 'piedra',
+!!				volume 2;			! el volumen de la piedra
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	VERBOS DE DEPURACIÓN:
+!!	# EJEMPLO 2
 !!
-!!	Al compilar en modo-debug, 'recept_sp.h' define tres meta-acciones nuevas:
-!!		peso OBJETO				- imprime el peso del objeto
-!!		dimensiones OBJETO		- imprime las dimensiones del objeto
-!!		capacidad OBJETO		- imprime las capacidades como receptáculo
+!!	El siguiente ejemplo crea una caja de madera y una caja de acero:
+!!
+!!		Receptacle -> wooden_box "caja de madera"
+!!		 with	name 'caja' 'madera',
+!!				volume 10,			! volumen del objeto
+!!				capacity_volume 9,	! capacidad de volumen del objeto
+!!		 has	container;
+!!
+!!		Receptacle -> stell_box "caja de acero"
+!!		 with	name 'caja' 'acero',
+!!				volume 8,			! volumen del objeto
+!!				capacity_volume 7,	! capacidad de volumen del objeto
+!!		 has	container;
+!!
+!!	El jugador puede introducir la caja de acero (volumen 8) dentro de la caja 
+!!	de madera (capacidad 9), pero la caja de madera (volumen 10) no se puede 
+!!	introducir en la caja de acero (capacidad 7). Si se introduce un objeto de 
+!!	volumen igual o mayor a 2 dentro de la caja de madera (como la piedra del 
+!!	EJEMPLO 1), ya no se podría introducir la caja de acero en su interior, 
+!!	porque ésta requiere un espacio libre de 8 o más.
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	# EJEMPLO 3
+!!
+!!	El volumen y tamaño de los objetos contenidos en un receptáculo NO se 
+!!	añaden a su volumen y tamaño total (se asume que los receptáculos no son 
+!!	flexibles y tienen proporciones fijas). Si se desea crear una bolsa 
+!!	flexible cuyo volumen aumente conforme se introducen objetos en su 
+!!	interior, se debe implementar la rutina apropiada en su propiedad volume:
+!!
+!!		Receptacle -> bag "bolsa flexible"
+!!		 with	name 'bolsa' 'flexible',
+!!				capacity_volume 20,
+!!				capacity_size 5,
+!!				volume [ result i;
+!!					!! Volumen mínimo de la bolsa (cuando está vacía):
+!!					result = 1;
+!!					!! Se suman los volúmenes de los objetos que contiene:
+!!					objectloop (i in self)
+!!						result = result + VolumeOf(i);
+!!					!! Retorna el volumen total acumulado:
+!!					return result;
+!!				],
+!!				size [ result i;
+!!					!! Tamaño mínimo de la bolsa (cuando está vacía):
+!!					result = 1;
+!!					!! Se obtiene el objeto contenido de mayor tamaño:
+!!					objectloop(i in self) 
+!!						if (SizeOf(i) > result) result = SizeOf(i);
+!!					!! El tamaño del mayor objeto contenido en ella determina 
+!!					!! el tamaño actual de la bolsa:
+!!					return result;
+!!				],
+!!		 has	container;
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	EJEMPLO 1:
+!!	# EJEMPLO 4
 !!
-!!	Receptacle box "box" with name "box",
-!!	       volume 10,                ! The box itself has a volume of 10
-!!	       capacity_volume 9,        ! And it can store a volume of 9
-!!	       has container;
+!!	Los pesos de los objetos contenidos en él se añaden automáticamente al peso 
+!!	total del receptáculo. Se puede sobreescribir este comportamiento 
+!!	definiendo la propiedad weight como una rutina. El siguiente ejemplo crea 
+!!	una bolsa mágica cuyo peso total es sólo la mitad del peso de los objetos 
+!!	contenidos en su interior:
 !!
-!!	Object stone "stone" with name "stone",
-!!	       volume 2;                 ! This stone has a volume of 2
-!!
-!!	The lines above create a box with a volume of 10 and a capacity of 9,
-!!	and a stone with a volume of 2. The player can put up to 4 stones in
-!!	the box (with a total volume of 4x2=8). A fifth stone can't be stored
-!!	in the box, since the capacity of the box is 9 and the total volume
-!!	of 5 stones would be 10.
-!!
-!!-------------------
-!!
-!!	EJEMPLO 2:
-!!
-!!	The following example creates a wooden box and a steel box:
-!!
-!!	Receptacle wooden_box "wooden box"
-!!	       with name "wooden" "box",
-!!	       volume 10,              ! The box itself has a volume of 10
-!!	                               ! units
-!!	       capacity_volume 9,      ! And it can store objects up to a
-!!	                               ! volume of 9 units
-!!	       has container;
-!!
-!!	Receptacle steel_box "steel box"
-!!	       with name "steel" "box",
-!!	       volume 8,               ! The box itself has a volume of 8
-!!	                               ! units
-!!	       capacity_volume 7,      ! And it can store objects up to a
-!!	                               ! volume of 7 units
-!!	       has container;
-!!
-!!	You can put the steel box into the wooden box (volume 8 fits in
-!!	capacity 9) but not the wooden box into the steel box (volume 10
-!!	doesn't fit in capacity 7). If you put something with a volume of 2
-!!	or greater into the wooden box, you can't put the steel box into
-!!	it because that would require a free volume of 8 or more.
-!!
-!!-------------------
-!!
-!!	EJEMPLO 3:
-!!
-!!	Volume and size of childrens are NOT added to the objects volume or
-!!	size (assuming that containers are not flexible and have fixed
-!!	proportions), so if you want to create a flexible bag whose volume
-!!	grows if objects are stored inside, you should code an appropriate
-!!	routine as the volume property:
-!!
-!!	Receptacle -> bag "flexible bag"
-!!	       with name "flexible" "bag",
-!!	       capacity_volume 20,
-!!	       capacity_size 5,
-!!	       volume [ v i;
-!!	               v = 1;                         ! Minimal volume.
-!!	               objectloop (i in bag)          ! Add volumes of all
-!!	                       v = v + VolumeOf (i);  ! immediate childs.
-!!	               return v;
-!!	       ],
-!!	       size [ s i;
-!!	               s = 1;                  ! Minimal size when empty.
-!!	               objectloop (i in bag)   ! Find the largest child:
-!!	                       if (SizeOf (i) > s) s = SizeOf (i);
-!!	               return s;               ! (The size of the largest
-!!	       ],                              ! immediate child determines
-!!	       has container;                  ! the size of the bag.)
-!!
-!!-------------------
-!!
-!!	EJEMPLO 4:
-!!
-!!	The weights of childrens are added automatically to the objects
-!!	weight. You can override this by providing an own weight-routine.
-!!	The following example creates a wonder-bag, whose total-weight is
-!!	only half the total-weight of it's contents:
-!!
-!!	Receptacle -> wonder_bag "wonder bag"
-!!	       with name "wonder" "magic" "bag",
-!!	       capacity_volume 100,
-!!	       weight [ w i;
-!!	               w = 1;                        ! Base weight of bag is 1
-!!	               objectloop (i in wonder_bag)
-!!	                       w = w + WeightOf (i); ! Add up weights...
-!!	               return (w/2);                 ! ...and return 50%
-!!	       ],
-!!	       has container;
+!!		Receptacle -> magic_bag "bolsa mágica"
+!!		 with	name 'bolsa' 'magica' 'maravillosa',
+!!				capcity_volume 100,
+!!				weight [ result i;
+!!					!! Peso base de la bolsa (cuando está vacía):
+!!					result = 1;
+!!					!! Se suman los pesos de los objetos que contiene:
+!!					objectloop(i in self)
+!!						result = result + WeightOf(i);
+!!					!! Retorna el 50% del peso total:
+!!					return (result/2);
+!!				],
+!!		 has	container;
 !!
 !!------------------------------------------------------------------------------
-
 System_file;
-Constant INFINITE_CAPACITY -1;		! (-1) simboliza una capacidad infinita
 
 Class	FAKE_RECEPT					! Se definen las siete nuevas
- with	weight	0,					! propiedades sin usar nada de
-		size	0,					! espacio del programa o de
-		volume	0,					! runtime-memory
+ with	weight	0,					! propiedades sin usar espacio
+		size	0,					! de programa ni memoria en
+		volume	0,					! tiempo de ejecución
 		capacity_weight	0,
 		capacity_size	0,
 		capacity_volume	0,
 		capacity_number	0;
+
+Constant INFINITE_CAPACITY -1;		! (-1) simboliza una capacidad infinita
 
 !!==============================================================================
 !! Funciones para calcular el peso, volumen y tamaño de cualquier objeto dado
@@ -327,6 +354,7 @@ Class	FAKE_RECEPT					! Se definen las siete nuevas
 !! para soportar un objeto, dados ambos como argumentos. Retorna falso si el 
 !! objeto no entra, verdadero en caso contrario.
 !!------------------------------------------------------------------------------
+
 [ CheckIfObjectFits receiver obj	s i;
 	!! Se comprueba si el peso de obj está dentro de los límites de receiver:
 	if ( CapacityWeightOf( receiver ) ~= INFINITE_CAPACITY ) {
@@ -443,13 +471,13 @@ Class	Receptacle
 !! Verbos de depuración
 !!------------------------------------------------------------------------------
 
-#ifdef DEBUG;
+#Ifdef DEBUG;
 
-Verb meta 'peso' * noun			-> MetaWeigh;
-Verb meta 'dimensiones' * noun	-> MetaMeasure;
-Verb meta 'capacidad' * noun	-> MetaCapacity;
+Verb meta 'xpeso' 'xweight'			* noun	-> MetaWeight;
+Verb meta 'xdimensiones' 'xmeasure'	* noun	-> MetaMeasure;
+Verb meta 'xcapacidad' 'xcapacity'	* noun	-> MetaCapacity;
 
-[ MetaWeighSub;
+[ MetaWeightSub;
 	print (The) noun, " pesa", (n) noun ," ",
 	WeightOf (noun), " unidad";
 	if ( WeightOf( noun ) ~= 1 ) print "es";
@@ -487,6 +515,6 @@ Verb meta 'capacidad' * noun	-> MetaCapacity;
 	return true;
 ];
 
-#endif;
+#Endif; ! DEBUG;
 
 

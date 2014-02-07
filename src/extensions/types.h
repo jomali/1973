@@ -10,8 +10,8 @@
 !!	File:			types.h
 !!	Author(s):		J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Language:		ES (Castellano)
-!!	System:			Inform, INFSP 6
-!!	Platform:		Z-Machine / Glulx
+!!	System:			Inform-INFSP 6
+!!	Platform:		Máquina-Z / GLULX
 !!	Version:		4.2
 !!	Released:		2013/04/02
 !!
@@ -35,22 +35,19 @@
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	Estilos:
+!!	# ESTILOS DE TEXTO
 !!
-!!	*	emph
-!!	*	bold
-!!	*	preformatted
-!!	*	fixed
-!!	*	header
-!!	*	subheader
-!!	*	alert
-!!	*	reverse
-!!	*	note
-!!	*	underline
-!!	*	block
-!!	*	input
-!!	*	user 1
-!!	*	user 2
+!!	<>	romana
+!!	<>	itálica
+!!	<>	negrita
+!!	<>	monoespaciada
+!!
+!!	# ESTILOS ABSTRACTOS
+!!
+!!	<>	enfático
+!!	<>	fuerte
+!!	<>	código
+!!	<>	parser
 !!
 !!------------------------------------------------------------------------------
 System_file;

@@ -7,30 +7,32 @@
 !!==============================================================================
 !!
 !!	File:			SpanishEG.inf
-!!	Author(s):		Emily Short (emshort@mindspring.com)
-!!					J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Author(s):		Emily Short <emshort@mindspring.com>
+!!					J. Francisco Martín <jfm.lisaso@gmail.com>
 !!					Mapache
 !!	Language:		ES (Castellano)
-!!	System:			Inform/INFSP 6
-!!	Platform:		Máquina-Z / Glulx
+!!	System:			Inform-INFSP 6
+!!	Platform:		Máquina-Z / GLULX
 !!	Version:		3.1
 !!	Released:		2014/01/28
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	# NOTAS:
+!!	# NOTAS
 !!
 !!	Basada en "ExpertGrammar.h", de Emily Short (emshort@mindspring.com) 
 !!	y en su traducción al castellano "GramaticaExperta.h", de Mapache.
 !!
-!!	# DERECHOS:
+!!
+!!	# DERECHOS
 !!
 !!	Esta librería puede tratarse como de dominio público. Puede incluirse 
 !!	con o sin citar al autor original. Puede ser modificada a discreción 
 !!	por el usuario. Se puede distribuir libremente. Pueden extraerse 
 !!	fragmentos de la librería.
 !!
-!!	# INSTALACIÓN:
+!!
+!!	# INSTALACIÓN
 !!
 !!	Incluye "SpanishEG.h" después de SpanishG en tu archivo de juego.
 !!
@@ -42,21 +44,22 @@
 !!	GRAMMATICAL_INFLECTION, la librería interpreta que se usa el valor 2: los 
 !!	mensajes de "SpanishEG.h" se imprimen en presente y segunda persona.
 !!
-!!	# NUEVAS ACCIONES:
 !!
-!!	Dance
-!!	GoDown
-!!	GoUp
-!!	KnockOn
-!!	Masturbate
-!!	Shout
-!!	Sit
-!!	SleepWith
-!!	StandUp
-!!	Untie
-!!	Use
-!!	Write
-!!	Xyzzy
+!!	# NUEVAS ACCIONES
+!!
+!!	<>	Dance
+!!	<>	GoDown
+!!	<>	GoUp
+!!	<>	KnockOn
+!!	<>	Masturbate
+!!	<>	Shout
+!!	<>	Sit
+!!	<>	SleepWith
+!!	<>	StandUp
+!!	<>	Untie
+!!	<>	Use
+!!	<>	Write
+!!	<>	Xyzzy
 !!
 !!------------------------------------------------------------------------------
 

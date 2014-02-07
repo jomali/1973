@@ -8,11 +8,11 @@
 !!==============================================================================
 !!
 !!	File:			1973_escena2.inf
-!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Author(s):		J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Languague:		ES (Castellano)
-!!	System:			Inform, INFSP 6
-!!	Platform:		Z-Machine / GLULX
-!!	Version:		1.0
+!!	System:			Inform-INFSP 6
+!!	Platform:		Máquina-Z / GLULX
+!!	Version:		0.1
 !!	Released:		2014/02/04
 !!
 !!------------------------------------------------------------------------------
@@ -77,6 +77,21 @@ Atrezzo	silla "silla" CAFE
 		gender	G_FEMENINO, 
 		!! TODO: adjectives
 		description "Una silla normal y corriente.", 
+		react_before [;
+			TalkTo:
+				if (parent(player) ~= self && noun == Pablo
+						&& Pablo.conversation_counter == 0) {
+					move player to self;
+					print "Atravesó el local hasta sentarse frente a él.^";
+					new_line;
+					return false;
+				}
+			if (self.SmartEnterable::react_before()) return true;
+			Examine, Look:
+				if (parent(player) == self && noun == telefono)
+					"Un teléfono público negro. Desde la silla no podía ver 
+					mucho más.";
+		],
 		before [;
 			Pull, Push, PushDir, Take, Turn:
 				"Ya estaba", (n) self, " muy bien donde estaba", (n) self, 
@@ -421,10 +436,239 @@ NPC		Pablo "Pablo" CAFE
 		],
 		before [;
 			TalkTo:
-				!! TODO - Implementar conversación
+				if (parent(MrPanama) ~= parent(self)) {
+					move cliente to LIMBO;
+					move MrPanama to parent(self);
+					!! TODO - Activar temporizador de Mr. Panamá.
+				}
+				if (ConversationManager.is_running()) {
+					ConversationManager.show_topic_inventory();
+					return true;
+				}
+				switch (self.conversation_counter) {
+				0:	self.conversation_counter++;
+					print "---Ahí estás. Llegas tarde, chico.^";
+					new_line;
+					ConversationManager.start(conversacion_Pablo_01);
+					return true;
+				default:
+					!! TODO
+					"Resto de la conversación con Pablo.";
+				}
 		], 
+		conversation_counter 0,	! contador del estado de la conversación
  private
-		describe_flag false, ! indica si el objeto ha sido descrito
+		describe_flag false,	! indica si el objeto ha sido descrito
  has	male proper;
+
+!!------------------------------------------------------------------------------
+!! Conversación con Pablo:
+
+Conversation conversacion_Pablo_01
+ with	topics Pablo_tema_01 Pablo_tema_02;
+
+ConversationTopic Pablo_tema_01
+ with	entry [; return O__M(self, 1); ],
+		keys
+			'disculparte' 'disculpas' 'excusarte' 'excusas' 'pedir' 'pedirle' 
+			'perdon' 'pide',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+			parent(self).remove_topic(Pablo_tema_02);
+		], 
+		subtopics Pablo_tema_03 Pablo_tema_04;
+
+ConversationTopic Pablo_tema_02
+ with	entry [; return O__M(self, 1); ],
+		keys !! TODO
+			'decir' 'decirle' 'desequilibrado' 'llamar' 'llamarle' 'loco',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+			parent(self).remove_topic(Pablo_tema_01);
+			!! TODO - *
+		],
+		subtopics Pablo_tema_03 Pablo_tema_04;
+
+ConversationTopic Pablo_tema_03
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'aceptar' 'partida' 'juego',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+			parent(self).remove_topic(Pablo_tema_04);
+		];
+
+ConversationTopic Pablo_tema_04
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'no' 'buena' 'idea' 'llamar' 'atencion',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+			parent(self).remove_topic(Pablo_tema_03);
+		],
+		subtopics Pablo_tema_05 Pablo_tema_06;
+
+ConversationTopic Pablo_tema_05
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'ceder' 'aceptar' 'partida' 'juego',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+			parent(self).remove_topic(Pablo_tema_06);
+		];
+
+ConversationTopic Pablo_tema_06
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'insistir' 'no' 'buena' 'idea' 'llamar' 'atencion',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+			parent(self).remove_topic(Pablo_tema_05);
+			!! TODO - *
+		];
+
+!! TODO - Pablo_tema_07 sólo tiene que estar disponible si el jugador ha 
+!! llegado a ver a Mr. Panamá.
+Conversation conversacion_Pablo_02
+ with	topics Pablo_tema_07 Pablo_tema_08 Pablo_tema_09 Pablo_tema_10;
+
+ConversationTopic Pablo_tema_07
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'preguntar' 'hombre' 'desconocido' 'barra' 'sombrero' 'panama',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+		];
+
+ConversationTopic Pablo_tema_08
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'preguntar' 'pregunta' 'esperar' 'ayuda',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+		];
+
+ConversationTopic Pablo_tema_09
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'preguntar' 'pregunta' 'resto' 'gente' 'partido' 'unidad',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+		];
+
+ConversationTopic Pablo_tema_10
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'preguntar' 'pregunta' 'pueden' 'podian' 'hacer' 'entonces',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+		];
+
+ConversationTopic Pablo_tema_11
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'preguntar' 'pregunta' 'donde' 'ir' 'huir' 'escapar' 'lugar',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+		];
+
+ConversationTopic Pablo_tema_12
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'negarte' 'negar' 'niegate' 'niega' 'escapar' 'huir' 'cobarde',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+		];
+
+ConversationTopic Pablo_tema_13
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'insistir' 'insiste' 'ir' 'ningun' 'sitio' 'lugar' 'no' 'huir' 
+			'escapar',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+			!! TODO - *
+		];
+
+ConversationTopic Pablo_tema_14
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'pregunta' 'preguntar' 'preguntale' 'hombre' 'desconocido' 
+			'sombrero' 'panama',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+		];
+
+ConversationTopic Pablo_tema_15
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'pregunta' 'preguntar' 'preguntale' 'preguntarle' 'acompanar' 
+			'acompanara',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+		];
+
+ConversationTopic Pablo_tema_16
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'pregunta' 'preguntar' 'preguntale' 'preguntarle' 'queria' 'quiere' 
+			'maten' 'matasen' 'morir' 'asesinen' 'asesinarle',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+		];
+
+ConversationTopic Pablo_tema_17
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'pregunta' 'preguntar' 'preguntale' 'preguntarle' 'quiere' 'queria' 
+			'abandonar' 'dejarle' 'abandonarle',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+		];
+
+ConversationTopic Pablo_tema_18
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'llamarle' 'llamale' 'llama' 'cobarde' 'pablo',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+			!! TODO - **
+		];
+
+ConversationTopic Pablo_tema_19
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'guarda' 'guardar' 'quedate' 'quedar' 'silencio',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+		];
+
+ConversationTopic Pablo_tema_20
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'sugerir' 'sugiere' 'sugierele' 'esperanza' 'volver' 'regreso' 
+			'regresar',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+		];
+
+ConversationTopic Pablo_tema_21
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'pregunta' 'preguntar' 'preguntale' 'preguntarle' 'habia' 'hay' 
+			'mas' 'otras' 'opciones' 'alternativas',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+		];
+
+ConversationTopic Pablo_tema_22
+ with	entry [; return O__M(self, 1); ],
+		keys	!! TODO
+			'di' 'dile' 'decir' 'decirle' 'piensa' 'pensaba' 'ir' 'irse' 'huir' 
+			'escapar' 'sin' 'pablo',
+		reply [; return O__M(self, 2); ],
+		reaction [;
+			!! TODO - **
+		];
 
 
