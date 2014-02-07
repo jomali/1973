@@ -177,16 +177,12 @@ Class	NPC
 		],
  has	animate;
 
+
 !!------------------------------------------------------------------------------
-!! Representa un objeto al que el personaje jugador pueden entrar o subirse 
-!! encima.
-!!
-!! TODO - repasar el conjunto completo de acciones de la librería para 
-!! determinar su comportamiento cuando el personaje jugador se encuentra dentro 
-!! o sobre un objeto 'SmartEnterable'.
+!! Representa un objeto al que el jugador puede entrar o subirse encima.
 !!------------------------------------------------------------------------------
 Class	SmartEnterable
- with	react_before [; if (player notin self) return false;
+ with	react_before [; if (parent(player) ~= self) return false;
 			!! GROUP 2 ACTIONS: Usually work, given the right circumstances.
 			Close, Open:
 				if (noun hasnt openable)						return false;
@@ -296,10 +292,51 @@ Class	SmartEnterable
 			! Untie:
 			! Use:
 		],
-		out_of_reach [ obj;
-			if (obj == nothing or player or self)	return false;
-			if (IndirectlyContains(self, obj))		return false;
-			if (IndirectlyContains(player, obj))	return false;
+		reach_zones 0,
+ private
+		!! Dado un objeto como parámetro, retorna su antecesor más lejano 
+		!! previo a los objetos localidad. (En el árbol de objetos del modelo 
+		!! de mundo, los objetos localidad ocuparían el nivel 1 del árbol 
+		!! mientras que el resultado de la rutina ocuparía el nivel 2).
+		top_holder [ obj i;
+			!print "** top_holder de ", (name) obj, ": ";
+			while (parent(obj) ~= 0) {
+				i = ObjectScopedBySomething(obj);
+				if (i == 0) i = parent(obj);
+				if (parent(i) == 0) break;
+				obj = i;
+			}
+			!print (name) obj, ".^";
+			return obj;
+		],
+		!! Indica si el objeto pasado como parámetro se encuentra fuera de 
+		!! alcance desde el SmartEnterable. Retorna verdadero si el objeto está 
+		!! fuera de alcance, falso en caso contrario. [Código adaptado de la 
+		!! librería OutOfRch.h v2.00, de Marnie Parker <doeadeer3@aol.com>].
+		out_of_reach [ obj 		top x y i;
+			!! Se comprueba si el objeto se encuentra fuera de la localidad o 
+			!! en el interior de un contenedor cerrado:
+			if (ObjectIsUntouchable(obj, true)) return false;
+			!! Se comrpueba si el objeto se encuentra en el jugador o en el 
+			!! propio SmartEnterable:
+			if (IndirectlyContains(player, obj)) return false;
+			if (IndirectlyContains(self, obj)) return false;
+			!! Se comprueba si el objeto es o se encuentra contenido en alguna 
+			!! de las reach_zones:
+			top = self.top_holder(obj);
+			if (ZRegion(self.&reach_zones-->0) == 1 or 2) {
+				if (ZRegion(self.&reach_zones-->0) == 2) {
+					x = self.reach_zones();
+					if (x == top) return false;
+				} else {
+					y = self.#reach_zones;
+					for (i = 0 : i < (y/2) : i++) {
+						x = self.&reach_zones-->i;
+						if (x == top) return false;
+					}
+				}
+			}
+			!! El objeto se encuentra fuera del alcance:
 			return true;
 		],
  has	enterable;
