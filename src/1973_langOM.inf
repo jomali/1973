@@ -54,6 +54,14 @@ print "Es el billete para una barcaza que sale del puerto de San Antonio con fec
 }
 
 !!------------------------------------------------------------------------------
+billete_cafe: switch(n) {
+2:	! TODO mensaje al cogerlo
+"Hizo caso a Pablo y cogió el billete y el revólver. ¿Qué otra cosa podía hacer?
+^^
+Y ya nunca volvió a verlo. A pesar de sus palabras, Gabriel no le creyó. Él había crecido con esas historias de héroes, reales o inventados, que habían muerto por defender sus ideas. Hombres y mujeres de leyenda, más parecidas a dioses que ha personas como Pablo Ureta. Insensato para los conocidos, enemigo para los golpistas, y nadie para los demás. Tenía razón en parte: ya estaba muerto, porque su vida no le pertenecía. La había donado a un sueño que ahora se volvía contra él, no podía más que aceptar las consecuencias. Huir lo hubiese convertido en un fantasma, sin voz, sin memoria y sin sueños.";
+}
+
+!!------------------------------------------------------------------------------
 CAFE: switch(n) {
 1:	! initial
 "Debe abandonar el país ahora que la situación se ha vuelto insostenible. Los militares se han hecho a la calle y todos los del partido están en peligro de ser prendidos o encarcelados. O algo peor, puesto que desde que cayó el gobierno se han sucedido las ejecuciones... entre ellas la de su amigo Pablo Ureta. Todavía siente cómo la frente se le perla de un sudor frío al pensar que estuvieron juntos apenas horas antes de su asesinato, en un bar de la avenida Libertador Bernardo O'Higgins:";

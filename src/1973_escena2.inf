@@ -35,6 +35,17 @@
 !!	along with PROYECTO 1973. If not, see <http://www.gnu.org/licenses/>.
 !!
 !!------------------------------------------------------------------------------
+!!
+!!	# TODO
+!!
+!!	<>	Revisar sistema de ayuda cuando no se empieza desde la escena 1.
+!!	<>	Inicializaciones de la escena. Gabriel tiene que tener la ropa puesta 
+!!		pero los contenidos de los bolsillos no son los mismos que al final de 
+!!		la escena 1.
+!!	<>	Muestras de duda antes de coger el billete y el revólver y pasar a la 
+!!		escena 3.
+!!
+!!------------------------------------------------------------------------------
 
 
 !!==============================================================================
@@ -46,12 +57,13 @@ Room	CAFE "Café Blanca Florida"
 				'meson' 'tasca' 'establecimiento',
 		initial [; if (self hasnt visited) {
 			!! Inicializaciones de la escena -----------------------------------
+			!! TODO - Resto de inicializaciones
 			SetGrammaticalInflection(THIRD_PERSON_PAST);
-			!! TODO - Contenidos de la ropa
 			!! Inicializaciones multimedia -------------------------------------
 			#Ifdef TARGET_GLULX;
 			Damusix.AsignarCanal(BAR_ENVIRONMENT, 0, 50, -1);
-			Damusix.Tocar(BAR_ENVIRONMENT);
+!! TODO
+!			Damusix.Tocar(BAR_ENVIRONMENT);
 			#Endif; ! TARGET_GLULX;
 			!! Introducción ----------------------------------------------------
 			O__M(self, 1);
@@ -331,6 +343,12 @@ Atrezzo	ventilador "ventilador" CAFE
 !!------------------------------------------------------------------------------
 !! Items:
 
+Item	billete_cafe "billete" LIMBO
+ with	name_m	'billete', !! TODO
+		gender	G_MASCULINO, 
+		adjectives 'barcaza', !! TODO
+ has	male;
+
 !!------------------------------------------------------------------------------
 !! NPCs:
 
@@ -457,15 +475,15 @@ NPC		Pablo "Pablo" CAFE
 					new_line;
 					print "Primer dardo: ";
 					PressAnyKey();
-					print self.get_points(), " puntos.^";
+					print LanzaDardo(), " puntos.^";
 					new_line;
 					print "Segundo dardo: ";
 					PressAnyKey();
-					print self.get_points(), " puntos.^";
+					print LanzaDardo(), " puntos.^";
 					new_line;
 					print "Tercer dardo: ";
 					PressAnyKey();
-					print self.get_points(), " puntos.^";
+					print LanzaDardo(), " puntos.^";
 					PressAnyKey();
 					new_line;
 					print "XXX puntos en total.^";
@@ -477,20 +495,6 @@ NPC		Pablo "Pablo" CAFE
 					"Resto de la conversación con Pablo.";
 				}
 		], 
-		!! TODO - quitar de aquí
-		get_points [ result;
-			result = AimAndFire();
-			if (result == -2)	return 10;
-			if (result == 0)	return 50;
-			if (result <= 1)	return 25;
-			if (result <= 3)	return 10;
-			if (result <= 4)	return 5;
-			if (result <= 5)	return 4;
-			if (result <= 6)	return 3;
-			if (result <= 7)	return 2;
-			if (result <= 8)	return 1;
-			return 0;
-		],
 		conversation_counter 0,	! contador del estado de la conversación
  private
 		describe_flag false,	! indica si el objeto ha sido descrito
@@ -670,11 +674,11 @@ ConversationTopic Pablo_tema_08
 			la diana. ---Aquí los únicos que te van a echar una mano son los 
 			muñequitos de verde, y directa al cuello. Me temo que te tienes 
 			que salvar tú sólo.",
-		keys	!! TODO
-			'preguntar' 'pregunta' 'esperar' 'ayuda',
 		entry [;
 			print "preguntar si pueden esperar ayuda";
 		],
+		keys	!! TODO
+			'preguntar' 'pregunta' 'esperar' 'ayuda',
 		reply [;
 			self.display();
 		],
@@ -685,11 +689,11 @@ ConversationTopic Pablo_tema_09
  class	TextSequence
  with	description
 			"---¿Y qué hay de los demás? ¿El resto de la gente de Unidad?",
-		keys	!! TODO
-			'preguntar' 'pregunta' 'resto' 'gente' 'partido' 'unidad',
 		entry [;
 			print "preguntar por el resto de la gente del partido";
 		],
+		keys	!! TODO
+			'preguntar' 'pregunta' 'resto' 'gente' 'partido' 'unidad',
 		reply [;
 			self.display();
 		],
@@ -707,11 +711,11 @@ ConversationTopic Pablo_tema_10
 			perdona, no digo más que puras tonterías. Pero es cierto, más te 
 			vale que huyas, hijo. ---Le pasó los tres dardos a Gabriel después 
 			de anotar 40 puntos más.",
-		keys	!! TODO
-			'preguntar' 'pregunta' 'pueden' 'podian' 'hacer' 'entonces',
 		entry [;
 			print "preguntar por lo que podían hacer entonces";
 		],
+		keys	!! TODO
+			'preguntar' 'pregunta' 'pueden' 'podian' 'hacer' 'entonces',
 		reply [;
 			self.display();
 		],
@@ -721,12 +725,36 @@ ConversationTopic Pablo_tema_10
 ConversationTopic Pablo_tema_11
  class	TextSequence
  with	description
-			"---¿A dónde iba a huir?",
-		keys	!! TODO
-			'preguntar' 'pregunta' 'donde' 'ir' 'huir' 'escapar' 'lugar',
+		[;
+			print "Gabriel lanzó el primero de sus dardos: ";
+			PressAnyKey();
+			print LanzaDardo(), " puntos.";
+		]
+			"---¿Y a dónde quieres que vaya?"
+			"---No importa. A cualquier lugar, donde quieras, pero lejos de 
+			aquí. Y cuanto antes."
+		[;
+			print "Lanzó el segundo dardo: ";
+			PressAnyKey();
+			print LanzaDardo(), " puntos.";
+		]
+			"Pablo seguía hablando: ---Hay una barcaza en el puerto de San 
+			Antonio que sale dentro de cinco días. Ya estás corriendo si no 
+			quieres que te descubran y te den morada en la cara."
+		[;
+			print "Su último dardo: ";
+			PressAnyKey();
+			print LanzaDardo(), " puntos.";
+		]
+		[;
+			"Después de dos rondas, Pablo había conseguido XX y XX: XX puntos, 
+			mientras que Gabriel XX y XX: XX puntos.";
+		],
 		entry [;
 			print "preguntar a dónde iba a huir";
 		],
+		keys	!! TODO
+			'preguntar' 'pregunta' 'donde' 'ir' 'huir' 'escapar' 'lugar',
 		reply [;
 			self.display();
 		],
@@ -736,12 +764,14 @@ ConversationTopic Pablo_tema_11
 ConversationTopic Pablo_tema_12
  class	TextSequence
  with	description
-			"---No soy un cobarde, Pablo. No pienso huir.",
-		keys	!! TODO
-			'negarte' 'negar' 'niegate' 'niega' 'escapar' 'huir' 'cobarde',
+			"---No soy un cobarde, Pablo. No pienso huir."
+			"---¡La cobardía no tiene nada que ver con esto, chico! ¡Estamos 
+			hablando de tu vida! O pones pies en polvorosa o estás perdido.",
 		entry [;
 			print "negarte a escapar como un cobarde";
 		],
+		keys	!! TODO
+			'negarte' 'negar' 'niegate' 'niega' 'escapar' 'huir' 'cobarde',
 		reply [;
 			self.display();
 		],
@@ -785,13 +815,22 @@ ConversationTopic Pablo_tema_14
 ConversationTopic Pablo_tema_15
  class	TextSequence
  with	description
-			"---¿Vendréis conmigo?",
-		keys	!! TODO
-			'pregunta' 'preguntar' 'preguntale' 'preguntarle' 'acompanar' 
-			'acompanara',
+			"---¿Vendréis conmigo, Pablo?"
+			"Entonces él clavó la vista en la diana, pero en realidad miraba a 
+			algún lugar oculto a los ojos de Gabriel. Oculto a otros ojos 
+			cualesquiera salvo a los suyos. Lanzó sus tres dardos 
+			mecánicamente, uno tras otro, por 15, 20 y 18 puntos, mientras 
+			sobre sus cabezas las aspas del ventilador continuaban girando con 
+			su zumbido monótono. Los ecos de las demás conversaciones flotaban 
+			entre ellos, extrañamente lejanas. Insignificantes. Sacudió la 
+			cabeza lentamente."
+			"---No.",
 		entry [;
 			print "preguntar si le iba a acompañar";
 		],
+		keys	!! TODO
+			'pregunta' 'preguntar' 'preguntale' 'preguntarle' 'acompanar' 
+			'acompanara',
 		reply [;
 			self.display();
 		],
@@ -801,13 +840,21 @@ ConversationTopic Pablo_tema_15
 ConversationTopic Pablo_tema_16
  class	TextSequence
  with	description
-			"---¿Estáis loco o es que queréis que os maten?",
-		keys	!! TODO
-			'pregunta' 'preguntar' 'preguntale' 'preguntarle' 'queria' 'quiere' 
-			'maten' 'matasen' 'morir' 'asesinen' 'asesinarle',
+			"---¿Qué? Pero... ¿pero no acabáis de decir? ¿Estáis loco o es que 
+			queréis quedaros a ver cómo os dan el paseíllo?"
+			"---Yo ya no tengo nada que perder, chico. Mi futuro era ver éste 
+			país levantado por los chilenos unidos, pero se nos adelantaron los 
+			maricas del rifle y las botas, y todo se ha jodido. En realidad es 
+			como si estuviese muerto. Toda la vida luchando por un fin, y ahora 
+			ese fin está más lejos que nunca. ---Contó los XX puntos que había 
+			conseguido antes de devolverle los dardos a Gabriel. ---Venga, 
+			lanza.",
 		entry [;
 			print "preguntarle si es que quería que lo ", (strong) "matasen";
 		],
+		keys	!! TODO
+			'pregunta' 'preguntar' 'preguntale' 'preguntarle' 'queria' 'quiere' 
+			'maten' 'matasen' 'morir' 'asesinen' 'asesinarle',
 		reply [;
 			self.display();
 		],
@@ -864,13 +911,56 @@ ConversationTopic Pablo_tema_19
 ConversationTopic Pablo_tema_20
  class	TextSequence
  with	description
-			"---Aún queda la esperanza de volver.",
-		keys	!! TODO
-			'sugerir' 'sugiere' 'sugierele' 'esperanza' 'volver' 'regreso' 
-			'regresar',
+			"Aún queda la esperanza de volver, Pablo..."
+			"---¡Menuda elección me das, carajo! Esperanza o muerte. Ninguna de 
+			las dos me dará lo que buscaba. Verás, en la vida creemos que 
+			siempre podemos elegir, y que podemos ganar. Pero cuando te obligan 
+			a escoger, entonces chico, entonces sólo nos queda perder. Y yo 
+			prefiero perderlo ya todo, que no perder y llorar lo que me queda 
+			de mísera vida. ---Hizo una leve pausa antes de añadir como con un 
+			gruñido: ---Venga, chico. Lanza. Terminemos la partida."
+			"Pablo había conseguido XX, XX y XX: XXX puntos, mientras que 
+			Gabriel XX y XX: XX puntos. En silencio, se preparó para lanzar sus 
+			últimos tres dardos:"
+		[;
+			print "Primero: ";
+			PressAnyKey();
+			print LanzaDardo(), " puntos.";
+		]
+		[;
+			print "Segundo: ";
+			PressAnyKey();
+			print LanzaDardo(), " puntos.";
+		]
+		[;
+			print "Tercero: ";
+			PressAnyKey();
+			print LanzaDardo(), " puntos.";
+		]
+			"Pablo se encargó de hacer el recuento: ---Hacen en total XXX 
+			puntos. Contra mis XXX, mira qué bien. Yo gano. ---La sonrisa que 
+			se dibujó en su rostro no era alegre. No lo era en absoluto. 
+			---Ten."
+			"---¿Qué cosa me dáis?"
+			"---Un premio de consolación. Es el billete para la barcaza de la 
+			que te he hablado... ---miró a uno y otro lado antes de volver a 
+			meterse la mano en el bolsillo. Un momento después le tendió el 
+			revólver disimuladamente, junto con el billete. ---... y un arma, 
+			por si las moscas. Cinco días son mucho tiempo, y Santiago se ha 
+			convertido en una ciudad peligrosa."
+			"---N-no. Yo... no puedo..."
+			"---¡Pues claro que puedes, diantre! Trágate esos escrúpulos tuyos 
+			por una vez, chico. Espero que no tengas que utilizarlo, sobre todo 
+			después de ver la horrible puntería que tienes, pero en este 
+			maldito país ya no se puede estar seguro de nada... además, aunque 
+			no lo uses, yo me sentiré mejor si lo llevas contigo. Tómalo. 
+			Tómalo, Gabriel. Por favor.",
 		entry [;
 			print "sugerir que quedaba la ", (strong) "esperanza de volver";
 		],
+		keys	!! TODO
+			'sugerir' 'sugiere' 'sugierele' 'esperanza' 'volver' 'regreso' 
+			'regresar',
 		reply [;
 			self.display();
 		],
@@ -910,5 +1000,22 @@ ConversationTopic Pablo_tema_22
 		reaction [;
 			!! TODO - Cambiar disposición de Pablo **
 		];
+
+!!------------------------------------------------------------------------------
+
+!! TODO
+[ LanzaDardo result;
+	result = AimAndFire();
+	if (result == -2)	return 10;
+	if (result == 0)	return 50;
+	if (result <= 1)	return 25;
+	if (result <= 3)	return 10;
+	if (result <= 4)	return 5;
+	if (result <= 5)	return 4;
+	if (result <= 6)	return 3;
+	if (result <= 7)	return 2;
+	if (result <= 8)	return 1;
+	return 0;
+];
 
 

@@ -263,11 +263,13 @@ Después de dos rondas, Pablo había conseguido 37 y 40: 77 puntos, mientras que
 
 *habla con Pablo* ---¿Vendréis conmigo, Pablo?
 
-Clavó la vista en la diana, pero en realidad **miraba a aquel lugar/miraba a algún lugar** oculto a mis ojos. Oculto a otros ojos cualesquiera salvo a los suyos. Lanzó los tres dardos mecánicamente, uno tras otro, por 15, 20 y 18 puntos, mientras sobre nuestras cabezas las aspas del ventilador continuaban girando con su zumbido monótono. Los ecos de las demás conversaciones flotaban entre ellos, extrañamente lejanas. Insignificantes. Sacudió la cabeza lentamente.
+Clavó la vista en la diana, pero en realidad **miraba a aquel lugar/miraba a algún lugar** oculto a los ojos de Gabriel. Oculto a otros ojos cualesquiera salvo a los suyos. Lanzó los tres dardos mecánicamente, uno tras otro, por 15, 20 y 18 puntos, mientras sobre nuestras cabezas las aspas del ventilador continuaban girando con su zumbido monótono. Los ecos de las demás conversaciones flotaban entre ellos, extrañamente lejanas. Insignificantes. Sacudió la cabeza lentamente.
 
 ---No.
 
----¿Qué? Pero... ¿pero no acabas de decir? ¿Estáis loco o es que queréis quedaros a ver cómo os dan el paseíllo?
+*habla con Pablo* [Puedes escoger entre preguntarle si es que quería morir o guardar silencio.]
+
+*morir* ---¿Qué? Pero... ¿pero no acabas de decir? ¿Estáis loco o es que queréis quedaros a ver cómo os dan el paseíllo?
 
 ---Yo ya no tengo nada que perder, chico. Mi futuro era ver éste país levantado por los chilenos unidos, pero se nos adelantaron los maricas del rifle y las botas, y todo se ha jodido. En realidad es como si estuviese muerto. Toda la vida luchando por un fin, y ahora ese fin está más lejos que nunca. ---Contó los 53 puntos que había conseguido antes de devolverle los dardos a Gabriel. ---Venga, lanza.
 
@@ -277,7 +279,9 @@ Clavó la vista en la diana, pero en realidad **miraba a aquel lugar/miraba a al
 
 *diana* Era una diana de dardos situada en una esquina al fondo del bar, de forma que al jugar se molestase lo menos posible al resto de la clientela. En aquel momento estaban en la tercera ronda. Pablo había conseguido 37, 40 y 53: 130 puntos, mientras que Gabriel 40 y 48: 88 puntos. Ahora era el turno de Gabriel.
 
-*habla con Pablo* ---Aún queda la esperanza de volver, Pablo...
+*habla con Pablo* [Puedes escoger entre sugerir la esperanza de volver, preguntar si no tenían más opciones o decirle que no pensaba huir sin él.]
+
+*esperanza* ---Aún queda la esperanza de volver, Pablo...
 
 ---¡Menuda elección me das, carajo! Esperanza o muerte. Ninguna de las dos me dará lo que buscaba. Verás, en la vida creemos que siempre podemos elegir, y que podemos ganar. Pero cuando te obligan a escoger, entonces chico, entonces sólo nos queda perder. Y yo prefiero perderlo ya todo, que no perder y llorar lo que me queda de mísera vida. ---Hizo una leve pausa antes de añadir como en un gruñido: ---Venga, chico. Lanza. Terminemos la partida.
 
@@ -303,7 +307,7 @@ Pablo se encargó de hacer el recuento. ---Hacen en total 125 puntos. Contra mis
 
 *coge billete* Hizo caso a Pablo y cogió el billete y el revólver. ¿Qué otra cosa podía hacer?
 
-Y ya nunca volvió a verlo. A pesar de sus palabras, Gabriel no le creyó. Él creció con esas historias de héroes, reales o inventados, que habían muerto por defender sus ideas. Hombre y mujeres de leyenda, más parecidas a dioses que ha personas como Pablo Ureta. Insensato para los conocidos, enemigo para los golpistas, y nadie para los demás. Tenía razón en parte: ya estaba muerto, porque su vida no le pertenecía. La había donado a un sueño que ahora se volvía contra él, no podía más que aceptar las consecuencias. Huir lo hubiese convertido en un fantasma, sin voz, sin memoria y sin sueños.
+Y ya nunca volvió a verlo. A pesar de sus palabras, Gabriel no le creyó. Él había crecido con esas historias de héroes, reales o inventados, que habían muerto por defender sus ideas. Hombre y mujeres de leyenda, más parecidas a dioses que ha personas como Pablo Ureta. Insensato para los conocidos, enemigo para los golpistas, y nadie para los demás. Tenía razón en parte: ya estaba muerto, porque su vida no le pertenecía. La había donado a un sueño que ahora se volvía contra él, no podía más que aceptar las consecuencias. Huir lo hubiese convertido en un fantasma, sin voz, sin memoria y sin sueños.
 
 -------
 

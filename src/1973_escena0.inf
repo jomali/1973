@@ -13,7 +13,7 @@
 !!	System:			Inform-INFSP 6
 !!	Platform:		Máquina-Z / GLULX
 !!	Version:		0.1
-!!	Released:		2014/02/07
+!!	Released:		2014/02/09
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -185,114 +185,200 @@ Class	SmartEnterable
  with	react_before [; if (parent(player) ~= self) return false;
 			!! GROUP 2 ACTIONS: Usually work, given the right circumstances.
 			Close, Open:
-				if (noun hasnt openable)						return false;
-				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				if (noun hasnt openable) return false;
+				if (self.out_of_reach(noun))
+					{ <Exit self>; new_line; }
 				return false;
 			Disrobe, Wear:
-				if (noun == nothing or player or self)			return false;
-				if (noun hasnt clothing)						return false;
+				if (noun hasnt clothing) return false;
 				<Exit self>; new_line;
 				return false;
-			Drop: !! TODO: Comprobar funcionamiento
-				return false;
+			Drop:
+				if (self has container) return false;
+				if ((noun == player) || (parent(noun) ~= player)) return false;
+				if (self.drop_on_object == 0) move noun to self;
+				else move noun to self.drop_on_object;
+				if (keep_silent == 0) print "Dejad", (o) noun, ".^";
+				return true;
 			Eat:
-				if (noun hasnt edible)							return false;
-				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				if (noun hasnt edible) return false;
+				if (self.out_of_reach(noun))
+					{ <Exit self>; new_line; }
 				return false;
 			Empty, Remove, Search, Take:
-				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				if (self.out_of_reach(noun))
+					{ <Exit self>; new_line; }
 				return false;
-			EmptyT: !! TODO: Comprobar funcionamiento
+			EmptyT: !! TODO - Comprobar funcionamiento
 				if (ObjectIsUntouchable(noun, 1)) return false;
-				if (self.out_of_reach(second)) { <Exit self>; new_line; }
+				if (self.out_of_reach(second))
+					{ <Exit self>; new_line; }
 				return false;
-			! Enter:
-			Exit:
-				if (noun == nothing) <<Exit self>>;
-			! GetOff:
-			! Give:
+			!Enter:
+			!Examine:
+			!Exit:
+			!GetOff:
+			!Give:
 			Go:
-				if (noun == nothing or player or self)			return false;
-				if (~~(noun ofclass CompassDirection))			return false;
+				!! TODO - Habría que corregir el comportamiento si se 
+				!! implementa un sistema de movimiento no basado en puntos 
+				!! cardinales. (Ej: IR A <LOCALIDAD>)
+				if (~~(noun ofclass CompassDirection)) return false;
 				<Exit self>; new_line;
 				return false;
-			! GoIn:
+			!GoIn:
 			Insert, PutOn:
 				if ((second == d_obj) || (player in second)) <<Drop noun>>;
-				if (self.out_of_reach(second)) { <Exit self>; new_line; }
+				if (self.out_of_reach(second))
+					{ <Exit self>; new_line; }
 				return false;
+			!Inv:
+			!InvTall:
+			!InvWide:
 			Lock, Unlock:
-				if (noun hasnt lockable)						return false;
-				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				if (noun hasnt lockable) return false;
+				if (self.out_of_reach(noun))
+					{ <Exit self>; new_line; }
 				return false;
-			! Order:
-			! Show:
+			!Look:
+			!Open:		Ver ##Close
+			!Order:
+			!PutOn:		Ver ##Insert
+			!Remove:	Ver ##Empty
+			!Search:	Ver ##Empty
+			!Show:
 			SwitchOff, SwitchOn:
-				if (noun hasnt switchable)						return false;
-				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				if (noun hasnt switchable) return false;
+				if (self.out_of_reach(noun))
+					{ <Exit self>; new_line; }
 				return false;
-			Transfer: !! TODO: Comprobar funcionamiento
-				if (noun notin player)							return false;
-				return false;
+			!SwitchOn:	Ver ##SwitchOff
+			!Take:		Ver ##Empty
+			!Transfer:
+			!Unlock:	Ver ##Lock
+			!VagueGo:
+			!Wear:		Ver ##Disrobe
 			!! GROUP 3 ACTIONS: Output a message and stop at the "before" stage.
-			! Answer:
-			! Ask:
-			! AskFor:
+			!Answer:
+			!Ask:
+			!AskFor:
 			Attack, Blow, LookUnder, Smell, Squeeze, Taste, Touch:
-				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				if (self.out_of_reach(noun))
+					{ <Exit self>; new_line; }
 				return false;
-			Burn:
-				!! TODO: comprobaciones de noun y second
-				return false;
-			! Buy:
+			!Blow:		Ver ##Attack
+			!Burn:
+			!Buy:
 			Climb:
-				if (noun has enterable) {
-					if (self.out_of_reach(noun)) { <Exit self>; new_line; }
-				}
+				if (noun hasnt enterable) return false;
+				if (self.out_of_reach(noun))
+					{ <Exit self>; new_line; }
 				return false;
-			! Consult:
-			! Fill:
+			!Consult:
+			!Cut:
+			!Dig:
+			!Drink:
+			!Fill:
 			Jump:
-				if (noun == nothing) <<Exit self>>;
-			! JumpOver:
-			! Kiss:
-			! LetGo:
-			! Listen:
-			! Mild:
-			! No:
-			! Pray:
-			Pull, Push, Turn: !! TODO: Comprobar funcionamiento
-				! if (noun has scenery or static or concealed)	return false;
-				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				if (noun has supporter) <<Exit self>>;
 				return false;
-			! PushDir
-			! Receive
-			! Rub
-			! Set
-			! SetTo
-			! Swim
+			!JumpOver:
+			!Kiss:
+			!LetGo:
+			!Listen:
+			!LookUnder:	Ver ##Attack
+			!Mild:
+			!No:
+			!Pray:
+			Pull, Push, Turn:
+				!! TODO - Comprobar mensaje al empujar objetos scenery o static
+				if (noun has scenery or static) return false;
+				if (self.out_of_reach(noun))
+					{ <Exit self>; new_line; }
+				return false;
+			!Push:		Ver ##Pull
+			!PushDir:
+			!Receive:
+			!Rub:
+			!Set:
+			!SetTo:
+			!Sing:
+			!Sleep:
+			!Smell:		Ver ##Attack
+			!Sorry:
+			!Squeeze:	Ver ##Attack
+			!Strong:
+			!Swim:
 			Swing:
-				if (noun == nothing) <<Swing self>>;
-			! Tell
-			! Wake
-			! WakeOther
-			! Wave
-			! WaveHands
+				if (noun has supporter) <<Swing self>>;
+				return false;
+			!Taste:		Ver ##Attack
+			!Tell:
+			!Think:
+			!ThrowAt:
+			!Tie:
+			!Touch:		Ver ##Attack
+			!Turn:		Ver ##Pull
+			!Wait:
+			!Wake:
+			!WakeOther:
+			!Wave:
+			!WaveHands:
+			!Yes:
 			!! CUSTOM ACTIONS
-			! Dance:
-			! GoDown:
-			! GoUp:
-			! KnockOn:
-			! Masturbate:
-			! Sit:
-			! SleepWith:
+			!Dance:
+			GoDown:
+				if (self has supporter) <<Exit self>>;
+				return false;
+			!GoUp:
+			!KnockOn:
+			!Masturbate:
+			!Sit:
+			!SleepWith:
 			StandUp:
-				if (noun == nothing) <<Exit self>>;
-			! TalkTo:
-			! Untie:
-			! Use:
+				if ((self has supporter) && (noun == nothing or self))
+					<<Exit self>>;
+			TalkTo:
+				if (noun hasnt animate) return false;
+				if (self.out_of_reach(noun))
+					{ <Exit self>; new_line; }
+				return false;
+			!TalkTo:
+			!Untie:
+			!Use:
+			!Write:
+			!Xyzzy:
 		],
-		reach_zones 0,
+		after [;
+			Exit:
+				if (keep_silent == 0) {
+					if (self has supporter) {
+						switch (GRAMMATICAL_INFLECTION) {
+							1: print "Me bajo";
+							2: print "Te bajas";
+							3: print "Se baja";
+							4: print "Me bajé";
+							5: print "Te bajaste";
+							6: print "Se bajó";
+						}
+					} else {
+						switch (GRAMMATICAL_INFLECTION) {
+							1: print "Salgo";
+							2: print "Sales";
+							3: print "Sale";
+							4: print "Salí";
+							5: print "Saliste";
+							6: print "Salió";
+						}
+					}
+					print " ", (del) self, ".^";
+				}
+				return true;
+		],
+		!! Objetos al alcance desde el SmartEnterable:
+		reach_objects 0,
+		!! Objeto destino de la acción ##Drop estando en el SmartEnterable:
+		drop_on_object 0,
  private
 		!! Dado un objeto como parámetro, retorna su antecesor más lejano 
 		!! previo a los objetos localidad. (En el árbol de objetos del modelo 
@@ -326,17 +412,17 @@ Class	SmartEnterable
 			!! propio SmartEnterable:
 			if (IndirectlyContains(player, obj)) return false;
 			if (IndirectlyContains(self, obj)) return false;
-			!! Se comprueba si el objeto es o se encuentra contenido en alguna 
-			!! de las reach_zones definidas:
+			!! Se comprueba si el objeto es o se encuentra contenido en alguno 
+			!! de los reach_objects definidas:
 			top = self.top_holder(obj);
-			if (metaclass(self.&reach_zones-->0) == Routine) {
-				x = self.reach_zones();
+			if (metaclass(self.&reach_objects-->0) == Routine) {
+				x = self.reach_objects();
 				if (x == top) return false;
 			}
-			if (metaclass(self.&reach_zones-->0) == Object or Class) {
-				y = self.#reach_zones;
+			if (metaclass(self.&reach_objects-->0) == Object or Class) {
+				y = self.#reach_objects;
 				for (i = 0 : i < (y/2) : i++) {
-					x = self.&reach_zones-->i;
+					x = self.&reach_objects-->i;
 					if (x == top) return false;
 				}
 			}

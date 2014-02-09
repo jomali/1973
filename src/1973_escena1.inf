@@ -36,7 +36,7 @@
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	# TODO:
+!!	# TODO
 !!
 !!	<>	Crear una nueva acción "recuerda".
 !!	<>	Crear nuevas acciones "dispárate", "métete un tiro",...
@@ -396,6 +396,7 @@ Furniture	cama "cama" HABITACION
 				if (i == 0) give self concealed;
 				else give self ~concealed;
 		], 
+		drop_on_object HABITACION, ! Ver SmartEnterable
  private
 		jumpOver_flag false,	! indica si Gabriel ha saltado sobre la cama
 		standUp_flag false, 	! indica si Gabriel se ha levantado de la cama
