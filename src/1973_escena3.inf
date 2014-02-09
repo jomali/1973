@@ -251,83 +251,51 @@ NPC		taxista "taxista" TAXI
  private
 		!! Indica si el objeto ha sido ya descrito al usuario o no
 		described false, 
- has
-		male concealed;
+ has	male concealed;
 
-ConversationTopic topic_1_1
- with	entry [; print (strong) "responder", " a la pregunta"; ], 
-		keys 'responder,' 'responderle,' 'responde,' 'pregunta', 
-		reply [;
-			Say("---Es... es algo que escribí yo.^");
-			Say("---¡No me diga! De modo que es usted poeta, ¿eh?^");
-			Say("---Si, supongo que si. Pero de los malos, me temo. No conseguí 
-			ningún premio.^");
-			Say("---¿Cómo dice?^");
-			print "---Eso. Eso que he recitado. Son unos versos que presenté a 
-			un concurso. Aquí al lado, hace unos meses. No gané nada. ---Aunque 
-			sí se sintió bastante satisfecho con su obra.";
+!!------------------------------------------------------------------------------
+!! Conversación con el taxista:
+
+Conversation conversacion_taxista_1
+ with	topics op03 op02 taxista_tema_01;
+
+ConversationTopic taxista_tema_01
+ class	TextSequence
+ with	description
+			"---Es... es algo que escribí yo."
+			"---¡No me diga! De modo que es usted poeta, ¿eh?"
+			"---Supongo que si. De los malos, me temo. No conseguí ningún 
+			premio."
+			"---¿Cómo dice?"
+		[;
+			print "---Eso que he recitado. Son unos versos que presenté a un 
+			concurso. Aquí al lado, hace unos meses. No gané nada. ---Aunque sí 
+			se sintió bastante satisfecho con su obra.";
 			if (ventanilla.is_described())
 				print " Juzgaba que había mejorado mucho desde los pareados 
 				grabados a punta de navaja en un árbol.";
-			new_line;
-			Say();
-			Say("---Lástima. Bueno, ya habrá mejor suerte la próxima vez.^");
-			Say ("Duda mucho que vaya a haber una próxima vez. Hasta ahora 
-			estaba seguro de que si abandonaba Chile sería para regresar algún 
-			día, más tarde o más temprano, cuando todo fuese seguro otra vez. 
-			Pero, ¿y si Pablo tenía razón? ¿Qué sentido tenía volver? No dejaba 
-			atrás más que recuerdos, y no hay forma de regresar al pasado. ¿Por 
-			qué motivo iba a regresar aquí?^");
-			print "Afortunadamente, en esta ocasión tiene cuidado de guardarse 
-			esos pensamientos para sí mismo y no expresarlos en voz alta.^";
-		],
-		reaction [;
-			taxista.last_topic = 1;
-			taxista.k_poetry = true;
-			self.append_topic_inventory = true;
-		];
-
-
-
-
-Conversation conversacion_taxista_1
- with	topics op03 op02 op01;
-
-ConversationTopic op01
- with	entry [;
+		]
+			"---Lástima. Bueno, ya habrá mejor suerte la próxima vez."
+			"Duda mucho que vaya a haber una próxima vez. Hasta ahora estaba 
+			seguro de que si abandonaba Chile sería para regresar algún día, 
+			más tarde o más temprano, cuando todo fuese seguro de nuevo. Pero, 
+			¿y si Pablo tenía razón? ¿Qué sentido tenía volver? No deja atrás 
+			más que recuerdos, y no hay forma de regresar al pasado. ¿Por qué 
+			motivo iba a volver aquí?"
+			"Afortunadamente, en esta ocasión tiene cuidado de guardarse esos 
+			pensamientos para sí mismo y no expresarlos en voz alta.",
+		entry [;
 			print (strong) "responder", " a la pregunta";
 		],
-		keys	'responder,' 'reponderle,' 'responde,' 'pregunta',
+		keys
+			'responder,' 'responderle,' 'responde,' 'pregunta',
 		reply [;
-			Say ("---Pues si. Es... es algo que escribí yo.^");
-			Say ("---¡Vaya! Así que es usted poeta, ¿eh?^");
-			Say ("---Si, supongo que si. Pero de los malos, me temo. No 
-			conseguí ningún premio.^");
-			Say ("---¿Cómo dice?^");
-			print "---Esos... eso que he recitado. Son unos versos que presenté 
-			a concurso. Aquí al lado, hace unos meses. No gané nada. ---Aunque 
-			sí se sintió bastante satisfecho con su obra.";
-			if (ventanilla.is_described())
-				print " Juzgaba que había mejorado mucho desde los pareados 
-				grabados a punta de navaja en los árboles.";
-			new_line;
-			Say();
-			Say ("---Lástima. Bueno, ya habrá mejor suerte la próxima vez.^");
-			Say ("Duda mucho que haya una próxima vez. Hasta ahora estaba 
-			seguro de que si abandonaba Chile sería para regresar algún día, 
-			más tarde o más temprano, cuando todo fuese seguro otra vez. Pero, 
-			¿y si Pablo tenía razón? ¿Qué sentido tenía volver? No dejaba atrás 
-			más que recuerdos, y no hay forma de regresar al pasado. ¿Por qué 
-			motivo iba a regresar aquí?^");
-			print "Afortunadamente, en esta ocasión tiene cuidado de guardarse 
-			esos pensamientos para sí mismo y no expresarlos en voz alta.^";
-		], 
+			self.display();
+		],
 		reaction [;
 			taxista.last_topic = 1;
 			taxista.k_poetry = true;
-			self.append_topic_inventory = true;
-		],
-;
+		];
 
 ConversationTopic op02
  with	entry [;
@@ -351,7 +319,7 @@ ConversationTopic op02
 			malsonante.^";
 		], 
 		reaction [;
-			parent(self).remove_topic(op01);
+			parent(self).remove_topic(taxista_tema_01);
 			taxista.last_topic = 2;
 			self.append_topic_inventory = true;
 		], 
@@ -386,7 +354,7 @@ ConversationTopic op03
 			print "---Si, desde luego.^";
 		], 
 		reaction [;
-			parent(self).remove_topic(op01);
+			parent(self).remove_topic(taxista_tema_01);
 			taxista.last_topic = 3;
 			self.append_topic_inventory = true;
 		], 

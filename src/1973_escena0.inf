@@ -298,6 +298,11 @@ Class	SmartEnterable
 		!! previo a los objetos localidad. (En el árbol de objetos del modelo 
 		!! de mundo, los objetos localidad ocuparían el nivel 1 del árbol 
 		!! mientras que el resultado de la rutina ocuparía el nivel 2).
+		!!
+		!! Tendría sentido implementar top_holder como una rutina independiente 
+		!! en lugar de una propiedaad privada de una clase, sin embargo se deja 
+		!! así por no dispersar código. (Su funcionalidad no se necesita en 
+		!! ningún otro lugar).
 		top_holder [ obj i;
 			!print "** top_holder de ", (name) obj, ": ";
 			while (parent(obj) ~= 0) {
@@ -322,24 +327,47 @@ Class	SmartEnterable
 			if (IndirectlyContains(player, obj)) return false;
 			if (IndirectlyContains(self, obj)) return false;
 			!! Se comprueba si el objeto es o se encuentra contenido en alguna 
-			!! de las reach_zones:
+			!! de las reach_zones definidas:
 			top = self.top_holder(obj);
-			if (ZRegion(self.&reach_zones-->0) == 1 or 2) {
-				if (ZRegion(self.&reach_zones-->0) == 2) {
-					x = self.reach_zones();
+			if (metaclass(self.&reach_zones-->0) == Routine) {
+				x = self.reach_zones();
+				if (x == top) return false;
+			}
+			if (metaclass(self.&reach_zones-->0) == Object or Class) {
+				y = self.#reach_zones;
+				for (i = 0 : i < (y/2) : i++) {
+					x = self.&reach_zones-->i;
 					if (x == top) return false;
-				} else {
-					y = self.#reach_zones;
-					for (i = 0 : i < (y/2) : i++) {
-						x = self.&reach_zones-->i;
-						if (x == top) return false;
-					}
 				}
 			}
 			!! El objeto se encuentra fuera del alcance:
 			return true;
 		],
  has	enterable;
+
+!!------------------------------------------------------------------------------
+!! Clase para representar secuencias de texto. Los objetos TextSequence pueden 
+!! ejecutar o imprimir una serie de rutinas o cadenas de texto de manera 
+!! secuencial, con una espera de pulsación de tecla entre ellas antes de 
+!! continuar. Si el jugador pulsa 'q' se dejan de realizar pausas y se imprime 
+!! el resto de la secuencia. [Código adaptado de la librería Cortos.h v2.0].
+!!------------------------------------------------------------------------------
+Class	TextSequence
+ with	display [ flag i;
+			if (self provides description) {
+				for (i=0 : i<(self.#description)/WORDSIZE : i++) {
+					if (i ~= 0) new_line;
+					if (metaclass(self.&description-->i) == String)
+						print (string) self.&description-->i;
+					else if (metaclass(self.&description-->i) == Routine)
+						indirect(self.&description-->i);
+					else break;
+					if (~~flag) flag = PressAnyKey();
+					new_line;
+				}
+			}
+		],
+ has	proper;
 
 
 !!==============================================================================

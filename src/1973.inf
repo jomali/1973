@@ -69,7 +69,6 @@ Constant PARSER_PREFIX "[";		! Define texto inicial de mensajes del parser
 Constant PARSER_SUFIX "]";		! Define texto final de mensajes del parser
 
 Global flowers;					! Tipo de flor destacado en el relato (NOTA #1)
-Global say_switch = true;		! Interruptor de la función say()
 Global next_track;				! Siguiente pista de audio a reproducir
 
 
@@ -352,16 +351,6 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 	spaces (ScreenWidth()-1-7) / 2;
 	print "*  *  *^";
 	roman_style();
-];
-
-!!------------------------------------------------------------------------------
-!!	Imprime un mensaje text y, si el interruptor "say_switch" está activado, 
-!!	espera una pulsación de tecla para continuar.
-!!------------------------------------------------------------------------------
-[ Say text;
-	if (text ofclass String && text ~= 0) print (string) text;
-	if (say_switch) say_switch = PressAnyKey();
-	new_line;
 ];
 
 !!------------------------------------------------------------------------------

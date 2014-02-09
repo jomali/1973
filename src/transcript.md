@@ -187,7 +187,7 @@ No había ninguna ficha en el visor en aquel momento.
 
 *pedir disculpas* ---Si, lo sé. Lo siento. He tenido que dar un rodeo enorme para llegar hasta aquí. Hay soldados por toda la ciudad.
 
----¡No me digas! Claro que hay soldados, carajo... Ya no hay sitio seguro en toda la capital. Sin Allende, todo está perdido. Es no más cuestión de tiempo que nos agarren esos mamones con pistola. ---Terminó lo que le quedaba en el vaso con un trago rápido y con un gesto de cabeza señaló la diana de dardos colgada al otro extremo del bar. ---Ven, juguemos.
+---¡No me digas! Claro que hay soldados, carajo... Ya no hay sitio seguro en toda la capital. Sin Allende, todo está perdido. Es no más cuestión de tiempo que nos agarren esos mamones con pistola. ---Terminó lo que le quedaba en el vaso con un trago rápido y luego hizo un ademán para señalar la diana del otro extremo del bar. ---Ven, juguemos.
 
 [Puedes escoger entre aceptar la partida o decirle que no era buena idea llamar la atención.]
 
@@ -211,7 +211,7 @@ No había ninguna ficha en el visor en aquel momento.
 
 *habla con Pablo* ---Adelante, chico. Lanza.
 
-Gabriel guardó silencio y se centró en los dardos mientras pensaba en las últimas palabras de su amigo. Entonces era cierto, ¿no es así? Allende estaba muerto... Tragó saliva y apuntó a la diana:
+Gabriel guardó silencio y se centró en los dardos mientras digería las últimas palabras de su amigo. Entonces era cierto, ¿no es así? Allende estaba muerto... Tragó saliva y apuntó a la diana:
 
 Primer dardo: 15 puntos.
 
@@ -219,13 +219,19 @@ Segundo dardo: 10 puntos.
 
 Último: 15 puntos.
 
-Contó el total de puntos, 40, antes de tendérselos de nuevo a Pablo. ---¿Llegará ayuda?
+Cuarenta puntos en total.
+
+[Puedes escoger entre preguntar por el hombre de la barra, preguntar si pueden esperar ayuda, preguntar por el resto de la gente del partido o preguntar por lo que pueden hacer ahora.]
+
+*ayuda* Le tendió los dardos de nuevo a Pablo. ---¿Llegará ayuda?
 
 ---¡Ja!... ¿De quién, de los gringos? Esos precisamente no están de nuestra parte, chico. ---Mientras hablaba lanzaba con furia contra la diana.--- Aquí los únicos que te van a echar una mano son los muñequitos de verde, y directa al cuello. Me temo que te tienes que salvar tú sólo.
 
----¿Nosotros no podríamos reorganizar al pueblo y...?
+[Puedes escoger entre preguntar por el hombre de la barra, preguntar por el resto de la gente del partido o preguntar por lo que pueden hacer ahora.]
 
----Baja, baja de la nube, chico. El miedo les tiene a todos bien agarrados por las pelotas, ni uno dirá nada. Y aún así, ¿qué querías que hicieran?, atacarlos con tu mierda de claveles y... perdona, no digo más que puras tonterías. Pero es cierto, más te vale que huyas, hijo. Ten. ---Le pasó los tres dardos a Gabriel después de anotar 40 puntos más.
+*lo que pueden hacer ahora* ---¿Nosotros no podríamos reorganizar al pueblo y...?
+
+---Baja, baja de la nube, chico. El miedo les tiene a todos bien agarrados por las pelotas, ni uno dirá nada. Y aún así, ¿qué querías que hicieran?, atacarlos con tu mierda de claveles y... perdona, no digo más que puras tonterías. Pero es cierto, más te vale que huyas, hijo. ---Le pasó los tres dardos a Gabriel después de anotar 40 puntos más.
 
 ---No soy un cobarde, Pablo. No pienso huir.
 

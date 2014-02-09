@@ -63,8 +63,7 @@ Room	CAFE "Café Blanca Florida"
 		],
 		w_to	[; return self.out_to(); ],
 		out_to	"No podía irse aún. No sin hablar antes con Pablo.",
-		cant_go "Por ahí no podía ir a ningún lado.", 
-;
+		cant_go "Por ahí no podía ir a ningún lado.";
 
 !!------------------------------------------------------------------------------
 !! Objetos con rutinas react_before:
@@ -75,7 +74,8 @@ Atrezzo	silla "silla" CAFE
 		name_m	'asiento' 'taburete', 
 		name_f	'banqueta' 'silla', 
 		gender	G_FEMENINO, 
-		!! TODO: adjectives
+		!! TODO - adjectives
+		!! TODO - Añadir reach_zones
 		description "Una silla normal y corriente.", 
 		react_before [;
 			TalkTo:
@@ -447,15 +447,50 @@ NPC		Pablo "Pablo" CAFE
 				}
 				switch (self.conversation_counter) {
 				0:	self.conversation_counter++;
-					print "---Ahí estás. Llegas tarde, chico.^";
+					O__M(self, 4);
 					new_line;
 					ConversationManager.start(conversacion_Pablo_01);
+					return true;
+				1:	self.conversation_counter++;
+					O__M(self, 5);
+					PressAnyKey();
+					new_line;
+					print "Primer dardo: ";
+					PressAnyKey();
+					print self.get_points(), " puntos.^";
+					new_line;
+					print "Segundo dardo: ";
+					PressAnyKey();
+					print self.get_points(), " puntos.^";
+					new_line;
+					print "Tercer dardo: ";
+					PressAnyKey();
+					print self.get_points(), " puntos.^";
+					PressAnyKey();
+					new_line;
+					print "XXX puntos en total.^";
+					new_line;
+					ConversationManager.start(conversacion_Pablo_02);
 					return true;
 				default:
 					!! TODO
 					"Resto de la conversación con Pablo.";
 				}
 		], 
+		!! TODO - quitar de aquí
+		get_points [ result;
+			result = AimAndFire();
+			if (result == -2)	return 10;
+			if (result == 0)	return 50;
+			if (result <= 1)	return 25;
+			if (result <= 3)	return 10;
+			if (result <= 4)	return 5;
+			if (result <= 5)	return 4;
+			if (result <= 6)	return 3;
+			if (result <= 7)	return 2;
+			if (result <= 8)	return 1;
+			return 0;
+		],
 		conversation_counter 0,	! contador del estado de la conversación
  private
 		describe_flag false,	! indica si el objeto ha sido descrito
@@ -465,210 +500,415 @@ NPC		Pablo "Pablo" CAFE
 !! Conversación con Pablo:
 
 Conversation conversacion_Pablo_01
- with	topics Pablo_tema_01 Pablo_tema_02;
+ with	topics Pablo_tema_02 Pablo_tema_01;
 
 ConversationTopic Pablo_tema_01
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---Si, lo sé. Lo siento. He tenido que dar un rodeo enorme para 
+			llegar hasta aquí. Hay soldados por toda la ciudad."
+			"---¡No me digas! Claro que hay soldados, carajo... Ya no hay sitio 
+			seguro en toda la capital. Sin Allende, todo está perdido. Es no 
+			más cuestión de tiempo que nos agarren esos mamones con pistola. 
+			---Terminó lo que le quedaba en el vaso con un trago rápido y luego 
+			hizo un ademán para señalar la diana del otro extremo del bar. 
+			---Ven, juguemos.",
+		entry [;
+			print "pedir ", (strong) "disculpas";
+		],
 		keys
 			'disculparte' 'disculpas' 'excusarte' 'excusas' 'pedir' 'pedirle' 
 			'perdon' 'pide',
-		reply [; return O__M(self, 2); ],
+		reply [;
+			self.display();
+		],
 		reaction [;
 			parent(self).remove_topic(Pablo_tema_02);
-		], 
+		],
 		subtopics Pablo_tema_03 Pablo_tema_04;
 
 ConversationTopic Pablo_tema_02
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description !! TODO
+			"---¿Es que estás loco, Pablo? ¿Cómo se te ha ocurrido citarme 
+			aquí justo ahora? La ciudad parece un hormiguero lleno de 
+			soldados."
+			"Terminó lo que le quedaba en el vaso con un trago rápido y luego 
+			señaló con un ademán la diana de dardos colgada al otro extremo del 
+			bar. ---Ven, juguemos.",
+		entry [;
+			print (strong) "llamarle loco", " por citarle allí en un momento 
+			como aquel";
+		],
 		keys !! TODO
 			'decir' 'decirle' 'desequilibrado' 'llamar' 'llamarle' 'loco',
-		reply [; return O__M(self, 2); ],
+		reply [;
+			self.display();
+		],
 		reaction [;
 			parent(self).remove_topic(Pablo_tema_01);
-			!! TODO - *
+			!! TODO - Cambiar disposición de Pablo *
 		],
 		subtopics Pablo_tema_03 Pablo_tema_04;
 
 ConversationTopic Pablo_tema_03
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"Pablo se hizo hasta la barra para devolver el vaso vacío y pedir 
+			un juego de dardos a la camarera.
+			^^
+			---Has oido lo que ha ocurrido, ¿verdad? ---Hablaba mientras se 
+			colocaba frente a la diana y empezaba a lanzar dardos."
+			"---Dicen que lo mataron, pero era demasiado orgulloso para dejarse 
+			arrastrar. Los de arriba hablan de que se dio el viaje..."
+			"---¡Qué sabrán los de arriba! ---Su dardo se clavó con bastante 
+			más fuerza de la necesaria. ---Ellos jamás creyeron en Salvador. Ya 
+			antes le dieron la patada, ahora no iban a hacer menos. No, él no 
+			huiría, lo dejó bien claro. Estoy seguro de que al final ha pagado 
+			la lealtad del pueblo, pero también la deslealtad de los cabrones 
+			de Unidad, que le dejaron bien en la Moneda con el culo al aire. 
+			---Hizo entonces una pausa y lanzó su último dardo. ---No sé ya si 
+			lo mataron o se mató él, pero estoy seguro de que..."
+			"---No lo digáis..."
+			!! TODO - calcular puntos de Pablo
+			"---... está ya criando malvas, chico, y eso no lo vamos a 
+			solucionar ni tú ni to. Estamos bien jodidos. ---Arrancó los dardos 
+			de la diana y se los tendió luego a Gabriel. ---Quince y diez y 
+			doce. Treinta y siente puntos. Ten. Tu turno.",
+		entry [;
+			print (strong) "aceptar", " partida";
+		],
 		keys	!! TODO
 			'aceptar' 'partida' 'juego',
-		reply [; return O__M(self, 2); ],
+		reply [;
+			self.display();
+		],
 		reaction [;
 			parent(self).remove_topic(Pablo_tema_04);
 		];
 
 ConversationTopic Pablo_tema_04
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---No creo que sea buena idea llamar la atención.",
 		keys	!! TODO
 			'no' 'buena' 'idea' 'llamar' 'atencion',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "decirle que ", (strong) "no es buena idea", " llamar la 
+			atención";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 			parent(self).remove_topic(Pablo_tema_03);
 		],
 		subtopics Pablo_tema_05 Pablo_tema_06;
 
 ConversationTopic Pablo_tema_05
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---Vale. Echemos una partida.",
 		keys	!! TODO
 			'ceder' 'aceptar' 'partida' 'juego',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "ceder y ", (strong) "aceptar", " la partida";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 			parent(self).remove_topic(Pablo_tema_06);
 		];
 
 ConversationTopic Pablo_tema_06
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---Tal y como están las cosas, no creo que sea buena idea llamar 
+			la atención, Pablo. Nunca se sabe quién puede estar mirando.",
 		keys	!! TODO
 			'insistir' 'no' 'buena' 'idea' 'llamar' 'atencion',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "insistir en que ", (strong) "no era buena idea";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 			parent(self).remove_topic(Pablo_tema_05);
-			!! TODO - *
-		];
+			!! TODO - Cambiar disposición de Pablo *
+		],
+		subtopics;
 
 !! TODO - Pablo_tema_07 sólo tiene que estar disponible si el jugador ha 
 !! llegado a ver a Mr. Panamá.
+
 Conversation conversacion_Pablo_02
- with	topics Pablo_tema_07 Pablo_tema_08 Pablo_tema_09 Pablo_tema_10;
+ with	topics Pablo_tema_10 Pablo_tema_09 Pablo_tema_08 Pablo_tema_07;
 
 ConversationTopic Pablo_tema_07
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---¿Conoces a ese hombre?",
 		keys	!! TODO
 			'preguntar' 'hombre' 'desconocido' 'barra' 'sombrero' 'panama',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "preguntar por ", (strong) "el hombre", "de la barra";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 		];
 
 ConversationTopic Pablo_tema_08
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"Le tendió los dardos de nuevo a Pablo. ---¿Llegará ayuda?"
+			"¡Ja!... ¿De quién, de los gringos? Esos precisamente no están de 
+			nuestra parte, chico. ---Mientras hablaba lanzaba con furia contra 
+			la diana. ---Aquí los únicos que te van a echar una mano son los 
+			muñequitos de verde, y directa al cuello. Me temo que te tienes 
+			que salvar tú sólo.",
 		keys	!! TODO
 			'preguntar' 'pregunta' 'esperar' 'ayuda',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "preguntar si pueden esperar ayuda";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 		];
 
 ConversationTopic Pablo_tema_09
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---¿Y qué hay de los demás? ¿El resto de la gente de Unidad?",
 		keys	!! TODO
 			'preguntar' 'pregunta' 'resto' 'gente' 'partido' 'unidad',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "preguntar por el resto de la gente del partido";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 		];
 
 ConversationTopic Pablo_tema_10
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---¿Nosotros no podríamos reorganizar al pueblo y...?"
+			!! TODO - calcular puntos de Pablo
+			"---Baja, baja de la nube, chico. El miedo les tiene a todos bien 
+			agarrados por las pelotas, ni uno dirá nada. Y aún así, ¿qué 
+			querías que hicieran?, atacarlos con tu mierda de claveles y... 
+			perdona, no digo más que puras tonterías. Pero es cierto, más te 
+			vale que huyas, hijo. ---Le pasó los tres dardos a Gabriel después 
+			de anotar 40 puntos más.",
 		keys	!! TODO
 			'preguntar' 'pregunta' 'pueden' 'podian' 'hacer' 'entonces',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "preguntar por lo que podían hacer entonces";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 		];
 
 ConversationTopic Pablo_tema_11
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---¿A dónde iba a huir?",
 		keys	!! TODO
 			'preguntar' 'pregunta' 'donde' 'ir' 'huir' 'escapar' 'lugar',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "preguntar a dónde iba a huir";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 		];
 
 ConversationTopic Pablo_tema_12
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---No soy un cobarde, Pablo. No pienso huir.",
 		keys	!! TODO
 			'negarte' 'negar' 'niegate' 'niega' 'escapar' 'huir' 'cobarde',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "negarte a escapar como un cobarde";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 		];
 
 ConversationTopic Pablo_tema_13
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---De ninguna manera, Pablo. Me da igual lo que digas. No me 
+			pienso mover de aquí.",
 		keys	!! TODO
 			'insistir' 'insiste' 'ir' 'ningun' 'sitio' 'lugar' 'no' 'huir' 
 			'escapar',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "insistir en que no pensaba ir a ningún sitio";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
-			!! TODO - *
+			!! TODO - Cambiar disposición de Pablo
 		];
 
 ConversationTopic Pablo_tema_14
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---¿De verdad no conoces a ese hombre del sombrero?",
 		keys	!! TODO
 			'pregunta' 'preguntar' 'preguntale' 'hombre' 'desconocido' 
 			'sombrero' 'panama',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "preguntar por el hombre";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 		];
 
 ConversationTopic Pablo_tema_15
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---¿Vendréis conmigo?",
 		keys	!! TODO
 			'pregunta' 'preguntar' 'preguntale' 'preguntarle' 'acompanar' 
 			'acompanara',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "preguntar si le iba a acompañar";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 		];
 
 ConversationTopic Pablo_tema_16
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---¿Estáis loco o es que queréis que os maten?",
 		keys	!! TODO
 			'pregunta' 'preguntar' 'preguntale' 'preguntarle' 'queria' 'quiere' 
 			'maten' 'matasen' 'morir' 'asesinen' 'asesinarle',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "preguntarle si es que quería que lo ", (strong) "matasen";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 		];
 
 ConversationTopic Pablo_tema_17
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---¿Por qué me abandonáis?",
 		keys	!! TODO
 			'pregunta' 'preguntar' 'preguntale' 'preguntarle' 'quiere' 'queria' 
 			'abandonar' 'dejarle' 'abandonarle',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "preguntarle por qué le ", (strong) "quería abandonar";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 		];
 
 ConversationTopic Pablo_tema_18
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---Eres un cobarde, Pablo.",
 		keys	!! TODO
 			'llamarle' 'llamale' 'llama' 'cobarde' 'pablo',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "llamarle ", (strong) "cobarde";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
-			!! TODO - **
+			!! TODO - Cambiar disposición de Pablo **
 		];
 
 ConversationTopic Pablo_tema_19
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"Gabriel guardó silencio.",
 		keys	!! TODO
 			'guarda' 'guardar' 'quedate' 'quedar' 'silencio',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "guardar silencio";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 		];
 
 ConversationTopic Pablo_tema_20
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---Aún queda la esperanza de volver.",
 		keys	!! TODO
 			'sugerir' 'sugiere' 'sugierele' 'esperanza' 'volver' 'regreso' 
 			'regresar',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "sugerir que quedaba la ", (strong) "esperanza de volver";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 		];
 
 ConversationTopic Pablo_tema_21
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---De verdad crees que ésta es la única opción, ¿no es cierto?",
 		keys	!! TODO
 			'pregunta' 'preguntar' 'preguntale' 'preguntarle' 'habia' 'hay' 
 			'mas' 'otras' 'opciones' 'alternativas',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "preguntar si no había ", (strong) "más opciones";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
 		];
 
 ConversationTopic Pablo_tema_22
- with	entry [; return O__M(self, 1); ],
+ class	TextSequence
+ with	description
+			"---Si tú no piensas huir, yo tampoco. No voy a dejarte solo, 
+			Pablo.",
 		keys	!! TODO
 			'di' 'dile' 'decir' 'decirle' 'piensa' 'pensaba' 'ir' 'irse' 'huir' 
 			'escapar' 'sin' 'pablo',
-		reply [; return O__M(self, 2); ],
+		entry [;
+			print "decirle que no pensaba irse sin él";
+		],
+		reply [;
+			self.display();
+		],
 		reaction [;
-			!! TODO - **
+			!! TODO - Cambiar disposición de Pablo **
 		];
 
 

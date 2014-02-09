@@ -1,0 +1,2263 @@
+
+
+!!==============================================================================
+!!
+!!	PROYECTO MISTRAL
+!!	Definición de atributos, clases y objetos
+!!
+!!==============================================================================
+!!
+!!	File:			mistral_obj.inf
+!!	Author(s):		J. Francisco Martín (jfm.lisaso@gmail.com)
+!!	Language:		ES (Castellano)
+!!	System:			Inform/INFSP 6
+!!	Platform:		Máquina-Z / Glulx
+!!	Version:		1.0
+!!	Released:		2012/01/22
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Copyright (c) 2012, J. Francisco Martín
+!!
+!!	Este programa es software libre: usted puede redistribuirlo y/o 
+!!	modificarlo bajo los términos de la Licencia Pública General GNU 
+!!	publicada por la Fundación para el Software Libre, ya sea la versión 
+!!	3 de la Licencia, o (a su elección) cualquier versión posterior.
+!!
+!!	Este programa se distribuye con la esperanza de que sea útil, pero 
+!!	SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o 
+!!	de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de 
+!!	la Licencia Pública General GNU para más información.
+!!
+!!	Debería haber recibido una copia de la Licencia Pública General GNU 
+!!	junto a este programa. En caso contrario, consulte
+!!	<http://www.gnu.org/licenses/>.
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!	Definición de clases y funciones sobre objetos
+!!------------------------------------------------------------------------------
+Default	GRAMMATICAL_INFLECTION 2;
+
+!!------------------------------------------------------------------------------
+Class	Room
+ with	description [;
+			if (action == ##Look || self hasnt visited) self.long_description();
+			else self.short_description();
+			!! Espacio para elementos comunes a las dos descripciones
+			return true;
+		],
+		long_description "EN CONSTRUCCIÓN.",
+		!! Por defecto, la descripción corta es la misma descripción larga
+		short_description [; return self.long_description(); ],
+ has	light;
+
+!!------------------------------------------------------------------------------
+Class	Thing
+ with	size	0,			! Tamaño
+		volume	0,			! Volumen
+		weight	0,			! Peso
+		capacity_number	-1,	! Capacidad total: número de objetos
+		capacity_size	-1,	! Capacidad total: tamaño
+		capacity_volume	-1,	! Capacidad total: volumen
+		capacity_weight	-1;	! Capacidad total: peso
+
+!!------------------------------------------------------------------------------
+Class	Item
+ class	Thing
+ with	description [;
+			switch (GRAMMATICAL_INFLECTION) {
+				1,2,3:	print "Tiene", (n) self;
+				4,5,6:	print "Tenía", (n) self;
+			}
+			print " el mismo aspecto que cual";
+			if ( self has pluralname ) print "esquiera otr";
+			else print "quier otr";
+			print (o) self, " ", (name) self, " ";
+			switch (GRAMMATICAL_INFLECTION) {
+				1:	"que haya visto antes.";
+				2:	"que hayas visto antes.";
+				3:	"que haya visto antes.";
+				4:	"que hubiese visto antes.";
+				5:	"que hubieses visto antes.";
+				6:	"que hubiese visto antes.";
+			}
+		];
+
+!!------------------------------------------------------------------------------
+Class	Furniture
+ class	Thing,
+ with	before [;
+			Pull, Push, PushDir, Take, Turn:
+				switch (GRAMMATICAL_INFLECTION) {
+					1,2,3:	print (The) self, " ", (es) self;
+					4,5,6:	print (The) self, " era", (n) self;
+				} " demasiado pesad", (o) self, " para andar moviéndol",
+				(o) self, ".";
+		],
+ has	static;
+
+!!------------------------------------------------------------------------------
+Class	Atrezzo
+ class	Thing
+ has	scenery;
+
+!!------------------------------------------------------------------------------
+!! TODO: Crear clase atuendo (Attire) que implemente propiedad list_together
+
+!!------------------------------------------------------------------------------
+!! Hay algunas librerías para manejar conversaciones que definen una nueva 
+!! clase con la que representar personajes (por ejemplo "gtalk.h" de Greg 
+!! Boettcher, Krister Fundin y Mark J. Tilford para manejar conversaciones 
+!! por medio de menús, define la clase Character). Se puede reutilizar la 
+!! clase definida en una librería externa dentro de NPC convirtiendo esta 
+!! última en una subclase de aquella definida en la librería externa.
+!!------------------------------------------------------------------------------
+Class	NPC
+ class	Thing
+ class	Character	! Definida en la librería "gtalk.h"
+ with	life [;
+			Answer, Ask, AskFor, Order, Tell:
+				print_ret (parser_type) "Para iniciar una conversación usa 
+				simplemente la orden HABLA (a/con) PERSONAJE.";
+		],
+ has	animate;
+
+!!------------------------------------------------------------------------------
+Class	SmartEnterable
+ with	!! TODO: Repasar el conjunto completo de acciones de la librería para 
+		!! determinar su comportamiento cuando el protagonista se encuentra 
+		!! dentro o sobre un objeto SmartEnterable.
+		react_before [; if (player notin self) return false;
+			!! GROUP 2 ACTIONS: Usually work, given the right circumstances.
+			Close, Open:
+				if (noun hasnt openable)						return false;
+				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				return false;
+			Disrobe, Wear:
+				if (noun == nothing or player or self)			return false;
+				if (noun hasnt clothing)						return false;
+				<Exit self>; new_line;
+				return false;
+			Drop: !! TODO: Comprobar funcionamiento
+				return false;
+			Eat:
+				if (noun hasnt edible)							return false;
+				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				return false;
+			Empty, Remove, Search, Take:
+				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				return false;
+			EmptyT: !! TODO: Comprobar funcionamiento
+				if (ObjectIsUntouchable(noun, 1)) return false;
+				if (self.out_of_reach(second)) { <Exit self>; new_line; }
+				return false;
+!Enter
+			Exit:
+				if (noun == nothing) <<Exit self>>;
+!GetOff
+!Give
+			Go:
+				if (noun == nothing or player or self)			return false;
+				if (~~(noun ofclass CompassDirection))			return false;
+				<Exit self>; new_line;
+				return false;
+!GoIn
+			Insert, PutOn:
+				if ((second == d_obj) || (player in second)) <<Drop noun>>;
+				if (self.out_of_reach(second)) { <Exit self>; new_line; }
+				return false;
+			Lock, Unlock:
+				if (noun hasnt lockable)						return false;
+				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				return false;
+!Order
+!Show
+			SwitchOff, SwitchOn:
+				if (noun hasnt switchable)						return false;
+				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				return false;
+			Transfer: !! TODO: Comprobar funcionamiento
+				if (noun notin player)							return false;
+				return false;
+			!! GROUP 3 ACTIONS: Output a message and stop at the "before" stage.
+!Answer
+!Ask
+!AskFor
+			Attack, Blow, LookUnder, Smell, Squeeze, Taste, Touch:
+				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				return false;
+			Burn:
+				!! TODO: comprobaciones de noun y second
+				return false;
+!Buy
+			Climb:
+				if (noun has enterable) {
+					if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				}
+				return false;
+!Consult
+!Fill
+!Jump
+!JumpOver
+!Kiss
+!LetGo
+!Listen
+!Mild
+!No
+!Pray
+			Pull, Push, Turn: !! TODO:
+				! if (noun has scenery or static or concealed)	return false;
+				if (self.out_of_reach(noun)) { <Exit self>; new_line; }
+				return false;
+!PushDir
+!Receive
+!Rub
+!Set
+!SetTo
+!Swim
+!Swing
+!Tell
+!Wake
+!WakeOther
+!Wave
+!WaveHands
+!! CUSTOM ACTIONS
+!Dance
+!GoDown
+!GoUp
+!KnockOn
+!Masturbate
+!Sit
+!SleepWith
+			StandUp:
+				if (noun == nothing) <<Exit self>>;
+!TalkTo
+!Untie
+!Use
+		],
+		out_of_reach [ obj;
+			if (obj == nothing or player or self)	return false;
+			if (IndirectlyContains(self, obj))		return false;
+			if (IndirectlyContains(player, obj))	return false;
+			return true;
+		],
+ has	enterable;
+
+
+!!==============================================================================
+!!	LIMBO: En algún lugar
+!!------------------------------------------------------------------------------
+
+Room	LIMBO "En algún lugar"
+ with	name	'limbo' 'lugar' 'sueno' 'vacio',
+		clarification "",
+		description [;
+			print "Más allá de la barrera casi insuperable que separa la 
+			realidad de todo lo demás. Un lugar etéreo, donde la vida, la 
+			materia y la vitalidad no son necesariamente constantes; un lugar 
+			donde el tiempo y el espacio no existen tal y como los capta 
+			nuestro ser despierto...";
+			if (self hasnt visited)
+				print (italic_type) " ¿Qué? ¿Cómo?... ¿cómo he llegado aquí?";
+			new_line;
+			return true;
+		];
+
+Object	-> contenedor_LIMBO
+ has	scenery container open;
+
+Atrezzo	"paredes"
+ with	found_in HABITACION CAFE,
+		name_m	'tabique' 'muro',
+		name_f	'pared' 'esquina',
+		name_mp	'tabiques' 'muros',
+		name_fp	'paredes' 'esquinas',
+		gender	G_FEMENINO + G_PLURAL,
+		adjectives 'blanco' 'blanca' 'blancos' 'blancas' 'amarillento' 
+			'amarillenta' 'amarillentos' 'amarillentas' 'averdado' 'averdada'
+			'averdados' 'averdadas',
+		description [; switch (GRAMMATICAL_INFLECTION) {
+			1,2,3:	"No hay nada interesante en ", (the) self, ".";
+			4,5,6:	"No había nada interesante en ", (the) self, ".";
+		}],
+		before [;
+			Examine:	return false;
+			Take:		return false;
+			default:
+				switch (GRAMMATICAL_INFLECTION) {
+					1,2,3:	"No es necesario preocuparse por eso.";
+					4,5,6:	"No era necesario preocuparse por eso.";
+				}
+		],
+ has	female pluralname;
+
+Item	revolver "revólver" LIMBO
+ with	name_m	'revolver' 'tambor' 'barrilete' 'canon',
+		name_f	'pistola' 'arma' 'cacha' 'culata',
+		name_fp	'cachas',
+		gender	G_MASCULINO,
+		adjectives 'frio' 'fria' 'pesado' 'pesada' 'metalico' 'metalica' 
+			'metal' 'brillante' 'amenazador' 'amenazadora' 'horrible' 'fuego',
+		description [;
+			print "Pequeña gorgona de metal. ";
+			switch (self.ammo) {
+				0:	print "No le quedan balas";
+				1:	print "Le queda una última bala";
+				6:	print "Tiene todas las balas ---las seis---";
+				default: print "Le quedan ", (number) self.ammo, " balas";
+			}
+			" en el tambor.";
+		],
+		ammo 6,
+		size 2,
+ has	male;
+
+
+!!==============================================================================
+!!	HABITACION: En la habitación
+!!------------------------------------------------------------------------------
+
+!! TODO:
+!!	<>	Objeto luz (rayos de luz, interruptor de luz,...) con el que el 
+!!		interlector pueda interactuar (enciende la luz, o examina la luz).
+!!	<>	Objeto polvo (se menciona al mirar bajo la cama).
+Room	HABITACION "En la habitación"
+ with	first_description	true,
+		is_dark				true,
+		name	'habitacion' 'cuarto' 'dormitorio' 'estancia',
+		short_name " ",
+		initial [; if (self hasnt visited) {
+			box	""
+				" Te ha dolido, ¿verdad?, dijo el chico.           "
+				" Si.                                              "
+				" ¿Eres muy valiente?                              "
+				" Regular.                                         "
+				" ¿Qué es lo más valiente que has hecho?           "
+				" Escupió en la carretera una flema sanguinolenta. "
+				" Levantarme esta mañana, dijo.                    "
+				""
+				"                                   CORMAC MCCARTY "
+				"                                   The Road, 2006 "
+				"";
+			PressAnyKey();
+			EraseWindow();
+			box	""
+				" Te ha dolido, ¿verdad?, dijo el chico.           "
+				" Si.                                              "
+				" ¿Eres muy valiente?                              "
+				" Regular.                                         "
+				" ¿Qué es lo más valiente que has hecho?           "
+				" Escupió en la carretera una flema sanguinolenta. "
+				" Levantarme esta mañana, dijo.                    "
+				""
+				"                                   CORMAC MCCARTY "
+				"                                   The Road, 2006 "
+				"";
+			print (parser_type) "Pulsa una tecla para empezar";
+			PressAnyKey();
+			EraseWindow();
+
+			#Ifdef	TARGET_GLULX;
+			#Ifdef	USAR_GWINDOWS;
+			imageWindow.setImage(PIC_AWAKENING);
+			#Endif;	! USAR_GWINDOWS;
+			#Endif;	! TARGET_GLULX;
+
+			SetGrammaticalInflection(PRESENTE_TERCERA_PERSONA);
+			DrawStatusLine();
+			self.short_name = "En la habitación";
+			print (italic_type) "No debió ser así.", " Eso es lo primero que el joven Gabriel Mistral piensa al abrir los ojos y despertar en la cálida oscuridad de la habitación. Aún permanece algunos minutos en la cama, tumbado con la mirada perdida entre las sombras del techo mientas las imágenes de los últimos días dan vueltas en un torbellino confuso dentro de su cabeza. Todo se había torcido. Todo había salido mal, y ya no se podía hacer nada por arreglarlo. ¿Cómo habían llegado hasta este punto? ¿Dónde se habían equivocado?^^";
+			print "Vuelve a cerrar los ojos un momento y el recuerdo del perfume de las violetas lo ocupa todo.", (italic_type) " Ella...", " Automáticamente tiende la mano a un lado y busca a ciegas el tacto de su cuerpo, pero lo único que encuentra son las sábanas, húmedas y pegajosas.", (italic_type) " No, claro que no está,", " recuerda,", (italic_type) " no aquí.", " La dejó durmiendo en el hotel antes de volverse a casa en mitad de la noche, solo de nuevo. Se dice que es mejor así después de todo; ahora tiene cosas más importantes de las que preocuparse. Deja escapar un largo suspiro de resignación y se obliga a incorporarse en el colchón. Tiene que salir de aquí.^";
+!			PressAnyKey();
+			new_line;
+			return true;
+		}],
+		description [;
+			if (self hasnt visited)
+				"Algunos finos haces de luz se cuelan en la habitación por los resquicios que dejan las cortinas cerradas. Insuficientes todavía como para descorrer el espeso telón de tinieblas que lo envuelve todo.";
+			else if (self.is_dark)
+				"A su alrededor todo son penumbras. Tan sólo unos finos haces de luz logran colarse en el cuarto por entre las cortinas cerradas, dibujando blancas líneas zigzagueantes sobre el suelo.";
+			else
+				"La intensa claridad del amanecer se cuela ahora por la ventana abierta, descubriendo el caos en que está sumido el dormitorio; libros y cuadernos y papeles sueltos arrugados astillados muebles medio hechos pedazos marcos de fotografías tiradas rotos los cristales y algunos otros trastos están esparcidos por todas partes. Sólo su cama y el escritorio parecen haber escapado mejor al destrozo, y aguantan aún en pie entre el tumulto.";
+		],
+ e_to	[;
+		!! XXX: Se podrían llevar las siguientes comprobaciones al código de 
+		!! los diferentes objetos (haciendo uso de sus rutinas react_before), 
+		!! pero incluirlas aquí resulta más sencillo y da más control sobre el 
+		!! orden en que se verifican.
+		if (self.is_dark)
+			"Está todo tan oscuro que no acierta a abrir ", (the) puerta, ".";
+		if (~~IndirectlyContains(player, ropa))
+			"Será mejor que se vista antes. No tiene ninguna intención de 
+			pasearse por ahí desnudo.";
+		if (ropa hasnt worn)
+			"Será mejor que se vista antes. No tiene ninguna intención de 
+			pasearse por ahí desnudo.";
+		if (~~IndirectlyContains(player, maleta)) {
+			PronounNotice(maleta);
+			"No puede dejarse la maleta aquí.";
+		}
+		if (puerta hasnt open)
+			{ <Open puerta>; new_line; }
+		!! TODO: Cambiar mensaje:
+		if (~~IndirectlyContains(player, billete))
+			"Antes tiene que encontrar el billete. Lo necesita. No podrá llegar 
+			muy lejos sin él.";
+		return puerta; ],
+ out_to	[;
+		return self.e_to(); ],
+ cant_go
+		"No puede ir por ahí. La puerta es la única salida de la habitación.";
+
+!!------------------------------------------------------------------------------
+!! Objetos con rutinas react_before (el orden en que se definen importa):
+
+!! TODO:
+!!	<>	acción: hacer la cama
+!!	<>	repasar acción StandUp
+Furniture	-> cama "cama"
+ class	SmartEnterable
+ with	name_m	'mueble' 'mobiliario' 'moblaje' 'colchon' 'jergon' 'somier' 
+				'lecho' 'catre' 'camastro',
+		name_f	'cama' 'piltra',
+		name_mp	'muebles',
+		gender	G_FEMENINO,
+		adjectives 'desecho' 'desecha' 'sin' 'hacer',
+		!! La propiedad "clarification" se encarga de imprimir un mensaje
+		!! personalizado junto al título de la localidad cuando el jugador se 
+		!! encuentra subido o dentro de un objeto.
+		clarification "sentado en la cama",
+		describe [ i obj;
+			if (child(self) == nothing) return true;
+			!! Listado de objetos que hay sobre la cama
+			objectloop (obj in self)
+				if (obj~=player && obj hasnt scenery or concealed) i++;
+			if (i == 0) return true;
+			if (i == 1 && ropa in self)
+				"^Tiene la ropa hecha un rebujo sobre la cama.";
+			print "^Sobre la cama puede ver ";
+			WriteListFrom (child(self),CONCEAL_BIT + ENGLISH_BIT + PARTINV_BIT);
+			".";
+		],
+		description [ obj flag;
+			print "Tiene las sábanas arrugadas y empapadas en sudor";
+			if (self.first_description) {
+				self.first_description = false;
+				print (italic_type) ". Supongo que hoy no habrá ningún problema 
+				por que la deje sin hacer";
+			}
+			!! Listado de objetos que hay sobre la cama
+			objectloop (obj in self)
+				if (obj~=player && obj hasnt scenery or concealed) flag = true;
+			if (flag) {
+				print ". Sobre ella puede ver también ";
+				WriteListFrom (child(self), CONCEAL_BIT + ENGLISH_BIT);
+			}
+			".";
+		],
+		react_before [; if (self.SmartEnterable::react_before()) return true;
+			Jump:
+				if (player in self && noun == nothing) <<Exit self>>;
+			Sit:
+				if (noun == nothing) <<Sit self>>;
+			Swing:
+				if (player in self && noun == nothing) <<Swing self>>;
+		],
+		before [;
+			Climb:
+				<<Enter self>>;
+			JumpOver:
+				if (self.first_jumpOver) {
+					self.first_jumpOver = false;
+					move player to parent(self);
+					!! TODO: Repasar texto
+					"Por algún extraño motivo recuerda de pronto aquel juego 
+					infantil. Lo tenían absolutamente prohibido así que, por 
+					supuesto, saltar y columpiarse en las camas enseguida se 
+					convirtió en uno de sus juegos favoritos. El capricho puede 
+					con Gabriel, que ignora la vieja prohibición y salta sobre 
+					la cama una vez más. Con la misma mirada rebelde de aquel 
+					niño que a pesar de haberse llevado más de una paliza por 
+					aquello seguía saltando sobre las literas de la habitación 
+					común del orfanato.";
+				}
+				"Ha sido divertido pasar por alto la vieja prohibición una 
+				última vez, pero ya no tiene tiempo para eso. Ahora mismo tiene 
+				cosas más importantes de las que preocuparse.";
+			LookUnder:
+				"Bajo la cama sólo hay unos cuántos papeles más, inservibles y 
+				semiocultos por las sombras y el polvo.";
+			Sit:
+				if (player in self) "Ya estaba sentado en ", (the) self, ".";
+				<<Enter self>>;
+			Smell:
+				"Un ligero hedor a sudor se levanta de entre las sábanas.";
+!			StandUp:
+!				if (player in self) <<Exit self>>;
+			Swing:
+				<<JumpOver self>>;
+		],
+		after [ i obj;
+			Enter:
+				"Se sienta en ", (the) self, ".";
+			Exit:
+				if (self.first_exit) {
+					self.first_exit = false;
+					"Aparta las sábanas a un lado y se levanta ",(del) self,".";
+				}
+				"Se levanta ", (del) self, ".";
+			!! Tras coger o colocar objetos de la cama, se comprueba si encima 
+			!! de ella hay algún objeto relevante (que no tenga el atributo 
+			!! scenery o concealed). Si no los hay, la cama tiene el atributo 
+			!! concealed y es la descripción de la localidad la que se encarga 
+			!! de hacer mención a ella. Si los hay, deja de tener el atributo 
+			!! concealed, para que la librería imprima un mensaje descriptivo 
+			!! listando aquellos objetos que tiene encima.
+			LetGo, Receive:
+				objectloop (obj in self)
+					if (obj~=player && obj hasnt scenery or concealed) i++;
+				if (i == 0) give self concealed;
+				else give self ~concealed;
+		],
+		first_description	true,
+		first_exit			true,
+		first_jumpOver		true,
+ has	female enterable supporter concealed;
+
+Atrezzo	-> oscuridad "oscuridad"
+ with	name_f	'oscuridad' 'negrura' 'tenebrosidad' 'lobreguez' 'penumbra',
+		name_fp	'sombras' 'tinieblas' 'penumbras',
+		gender	G_FEMENINO,
+		article	"la",
+		adjectives 'telon' 'venda' 'mortaja' 'impenetrable' 'calida' 'calidas' 
+				'espeso' 'espesa' 'denso' 'densa' 'tupido' 'tupida' 'cerrado' 
+				'cerrada',
+		description
+			"La oscuridad es prácticamente impenetrable, rota tan sólo por las 
+			estrechas franjas de luz que logran atravesar las cortinas 
+			cerradas.",
+		!! TODO: Repasar todas las acciones de la librería para determinar su 
+		!! comportamiento con la habitación a oscuras.
+		react_before [; if (self has general) return false;
+			Close:
+				if (noun hasnt openable)						return false;
+				if (noun == cortinas)							return false;
+				if (noun == puerta)								return false;
+				if (noun hasnt open)
+					"En la oscuridad de la habitación no es capaz de dar con ",
+					(the) noun, ".";
+				"Está todo tan oscuro que no es capaz de acertar a cerrar ",
+				(the) noun, ".";
+			Consult, Examine, Look, LookUnder, Read, Search:
+				if (noun == nothing or player or self)			return false;
+				if (noun == HABITACION)							return false;
+				if (noun == cortinas)							return false;
+				print (string) random(
+					"Con la habitación a oscuras apenas se puede distinguir más 
+					que algunos bultos y siluetas. Necesita más luz para poder 
+					ver algo.",
+					"No es capaz de ver nada en la oscuridad.",
+					"La luz que se cuela por entre las cortinas cerradas no es 
+					suficiente para iluminar el cuarto. En esta oscuridad no 
+					se puede ver nada.",
+					"Está todo demasiado oscuro como para poder ver algo más 
+					que formas vagas y la silueta de algún mueble.",
+					"Todo cuanto puede distinguir en la oscuridad son algunas 
+					formas y siluetas. Necesita luz para poder ver algo más."
+				); new_line; return true;
+			Dance:
+				"Decide que no es buena idea ponerse a bailar por la habitación 
+				a oscuras.";
+			Jump, JumpOver:
+				"Decide que no es buena idea ponerse a saltar a oscuras.";
+			Open:
+				if (noun hasnt openable)						return false;
+				if (noun has open)								return false;
+				if (noun == cortinas)							return false;
+				"Está todo tan oscuro que no es capaz de acertar a abrir ",
+				(the) noun, ".";
+			Pull, Push, PushDir, Take:
+				if (noun has scenery or static)					return false;
+				if (noun == nothing or player)					return false;
+				"No acierta a dar con ", (the) noun, " en la oscuridad.";
+			Blow, Listen, Rub, SetTo, Smell, Taste, Touch:
+				if (noun == nothing or player or self)			return false;
+				if (noun == cama)								return false;
+				if (noun == cortinas)							return false;
+				"No acierta a dar con ", (the) noun, " en la oscuridad.";
+		],
+		before [;
+			Consult, Examine, Look: return self.description();
+			default: "No es necesario preocuparse por eso.";
+		],
+ has	female;
+
+!!------------------------------------------------------------------------------
+!! Items:
+
+!! TODO: Cuando la ropa está quitada, teniendo algo en los bolsillos, se debe 
+!! poder ver qué hay haciendo Search, así como meter y sacar cosas.
+!! En lugar de utilizar el mismo objeto ropa en la escena del flashback, será 
+!! más sencillo crear un segundo objeto ropa diferente (sobre todo para no 
+!! tener que estar moviendo el contenido de los bolsillos entre escenas)
+Item	ropa "ropa" cama
+ class	Receptacle,
+ with	desc_pantalones	false,
+		desc_camisa		false,
+		desc_abrigo		false,
+		size			4,
+		capacity_size	3,
+		name_m	'atuendo' 'vestuario' 'pantalon' 'tejano' 'vaquero' 'abrigo'
+				'gaban' 'sobretodo' 'chaqueton' 'bolsillo',
+		name_f	'ropa' 'indumentaria' 'prenda' 'vestimenta' 'pelliza' 
+				'chaqueta' 'faltriquera' 'camisa' 'camisola' 'camiseta',
+		name_mp	'atuendos' 'pantalones' 'tejanos' 'vaqueros' 'bolsillos',
+		name_fp	'prendas' 'vestimentas' 'faltriqueras',
+		gender	G_FEMENINO,
+		article	"su",
+		!! TODO: adjectives
+		parse_name [ w;
+			w = NextWord();
+			if (w == 'pantalon' or 'pantalones' or 'tejano' or 'tejanos' or 
+				'vaquero' or 'vaqueros') {
+				self.desc_pantalones	= true;
+			}
+			else if (w == 'camisa' or 'camiseta' or 'camisola') {
+				self.desc_camisa		= true;
+			}
+			else if (w == 'abrigo' or 'gaban' or 'sobretodo' or 'chaqueton' or 
+				'pelliza' or 'chaqueta' or 'bolsillo' or 'bolsillos' or 
+				'faltriquera' or 'faltriqueras') {
+				self.desc_abrigo		= true;
+			}
+			wn--;
+			return -1;
+		],
+		description [;
+			if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA) {
+				if (self.desc_pantalones)
+					"Descripción de los pantalones.";
+				if (self.desc_camisa)
+					"Descripción de la camisa.";
+				if (self.desc_abrigo) {
+					print "Descripción del abrigo.";
+					if (self has worn) { print " "; self.contenido_bolsillos();}
+					new_line;
+					return true;
+				}
+				print "Descripción de la ropa de Gabriel.";
+				if (self has worn) { print " "; self.contenido_bolsillos();}
+				new_line;
+				return true;
+			} else {
+				if (self.desc_pantalones)
+					"Descripción de los pantalones.";
+				if (self.desc_camisa)
+					"Descripción de la camisa.";
+				if (self.desc_abrigo) {
+					print "Descripción del abrigo.";
+					if (self has worn) { print " "; self.contenido_bolsillos();}
+					new_line;
+					return true;
+				}
+				print "Descripción de la ropa de Gabriel.";
+				if (self has worn) { print " "; self.contenido_bolsillos();}
+				new_line;
+				return true;
+			}
+		],
+		before [;
+			!! TODO: Mensajes diferentes si el jugador trata de quitarse una u 
+			!! otra prenda de las que componen el objeto
+			Disrobe:
+				if (self hasnt worn)				return false;
+				if (real_location == LIMBO)			return false; !! TODO
+				if (real_location == HABITACION)	return false;
+				if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					 "No piensa pasearse por ahí desnud", (o) player, ".";
+				else "No pensaba pasearse por ahí desnud", (o) player, ".";
+			Search:
+				if (self hasnt worn) {
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+						 "No encuentra nada interesante entre la ropa.";
+					else "No encontró nada interesante entre la ropa.";
+				}
+				self.contenido_bolsillos();
+				new_line;
+				return true;
+		],
+		after [;
+			!! Se reestablecen las variables de objetivo de la descripción
+			self.desc_pantalones	= false;
+			self.desc_camisa		= false;
+			self.desc_abrigo		= false;
+			Disrobe:
+				!! TODO: Se deben de vaciar los bolsillos del abrigo al 
+				!! quitárselo. Para saber después cuáles son los objetos que 
+				!! guardaba, una solución puede ser moverlos desde el 
+				!! contenedor "ropa" a un contenedor comodín en "LIMBO".
+				give self ~open;
+				give self ~container;
+				if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					 "Se quita ", (the) self, ".";
+				else "Se quitó ", (the) self, ".";
+			LetGo: if (~~keep_silent) {
+				if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					 "Saca ", (the) noun, " del bolsillo.";
+				else "Sacó ", (the) noun, " del bolsillo.";
+			}
+			Receive: if (~~keep_silent) {
+				if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					 "Mete ", (the) noun," en uno de los bolsillos del abrigo.";
+				else "Metió ",(the) noun," en uno de los bolsillos del abrigo.";
+			}
+			Wear:
+				!! TODO: Cuando el personaje se pone la ropa, deben volver a 
+				!! colocarse en su interior los objetos que se supone que están 
+				!! guardados en los bolsillos.
+				give self container;
+				give self open;
+				if (self hasnt general) {
+
+					#Ifdef	TARGET_GLULX;
+					#Ifdef	USAR_GWINDOWS;
+					imageWindow.setImage(PIC_DRESSING);
+					#Endif;	! USAR_GWINDOWS;
+					#Endif;	! TARGET_GLULX;
+
+					give self general;
+					move revolver to self;
+"Comienza a vestirse lentamente, con las imágenes de la noche anterior dando vueltas aún en su cabeza. Recuerda el paseo y la cena solitaria en su restaurante favorito. Recuerda el bar, la recuerda a ella, la desconocida sentada con una copa al fondo de la barra, y retazos de conversación, y unos vasos de güisqui, y una desenfocada habitación de hotel... aunque parece como si todo ello le hubiese ocurrido a otra persona diferente y no a él. En cualquier caso tuvo suerte. Si no es por ella, probablemente le habrían encontrado en casa cuando llegaron.
+^^
+Termina de abrocharse los pantalones y se coloca el abrigo. De inmediato nota el bulto en el bolsillo y, en un gesto inconsciente, desliza la mano dentro y acaricia el cañón del revólver. Un escalofrío le recorre la espalda; el arma sigue ahí. Frío. Pesado. Aterradoramente real.";
+				}
+				!! La librería imprime el mensaje por defecto.
+				return false;
+		],
+		!! Mensajes de error. Se producen al intentar meter en el receptáculo 
+		!! un objeto que viola alguno de los límites de capacidad definidos
+		error_messages [ id obj;
+			switch (id) {
+				1:
+					!! Intentar meter en el bolsillo un objeto cuyo peso supera 
+					!! el límite permitido
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+						print_ret (The) obj, " ", (es) obj, " demasiado pesad", 
+						(o) obj, " como para guardarl", (o) obj, " en uno de 
+						los bolsillos del abrigo.";
+					else
+						print_ret (The) obj, " era", (n) obj, " demasiado 
+						pesad", (o) obj, " como para guardarl", (o) obj, " en 
+						uno de los bolsillos del abrigo.";
+				2:
+					!! Intentar meter en el bolsillo un objeto cuyo peso, unido 
+					!! al del resto de objetos que hay ya en el bolsillo, 
+					!! superan el límite permitido
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+						 "Ya no se pueden meter más cosas en los bolsillos.";
+					else "Ya no se podían meter más cosas en los bolsillos.";
+				3:
+					!! Intentar meter en el bolsillo un objeto cuyo volumen 
+					!! supera el límite permitido
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+						print_ret (The) obj, " no va", (n) obj, " a encajar 
+						dentro de uno de los bolsillos.";
+					else
+						print_ret (The) obj, " no iba", (n) obj, " a encajar 
+						dentro de uno de los bolsillos.";
+				4:
+					!! Intentar meter en el bolsillo un objeto cuyo volumen, 
+					!! unido al del resto de objetos que hay ya en el bolsillo, 
+					!! superan el límite permitido
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+						 "Ya no se pueden meter más cosas en los bolsillos.";
+					else "Ya no se podían meter más cosas en los bolsillos.";
+				5:
+					!! Intentar meter en el bolsillo un objeto cuyo tamaño 
+					!! supera el límite permitido
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA) 
+						print_ret (The) obj, " ", (es) obj, " demasiado 
+						grande", (s) obj, " como para guardarl", (o) obj, " en 
+						uno de los bolsillos del abrigo.";
+					else
+						print_ret (The) obj, " era", (n) obj, " demasiado 
+						grande", (s) obj, " como para guardarl", (o) obj, " en 
+						uno de los bolsillos del abrigo.";
+				6:
+					!! Intentar meter en el bolsillo un objeto después de haber 
+					!! alcanzado el límite de objetos introducidos permitido
+					if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+						"En los bolsillos del abrigo ya no entran más cosas.";
+					else
+						"En los bolsillos del abrigo ya no entraban más cosas.";
+			}
+		],
+		contenido_bolsillos [;
+			if (self hasnt worn) return false;
+			if (~~child(self)) {
+				if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+					 print "No lleva nada en los bolsillos.";
+				else print "No llevaba nada en los bolsillos.";
+				return true;
+			}
+			if (GRAMMATICAL_INFLECTION == PRESENTE_TERCERA_PERSONA)
+				 print "En los bolsillos del abrigo lleva ";
+			else print "En los bolsillos del abrigo llevaba ";
+			WriteListFrom(child(self), ENGLISH_BIT + RECURSE_BIT + FULLINV_BIT);
+			print ".";
+			return true;
+		],
+ has	female clothing;
+
+!!----------------------
+!! 'general' se activa al examinar el billete por primera vez.
+Item	-> billete
+ with	short_name [;
+			if ( self hasnt general ) print "trozo de papel";
+			else print "billete";
+			return true;
+		],
+		name_m	'billete' 'tique' 'tiquet' 'papel' 'pliego',
+		name_f	'hoja',
+		gender	G_MASCULINO,
+		!! TODO: adjectives
+		adjectives 'trozo' 'pedazo',
+		description [;
+			!! TODO:
+			"Descripción del papel.";
+		],
+ 		size 1,
+ has	male;
+
+Item	-> maleta "maleta"
+ with	name_m	'equipaje' 'maleton' 'equipo' 'bagaje',
+		name_f	'maleta' 'valija',
+		gender	G_FEMENINO,
+		!! TODO: adjectives
+		invent [; if ( inventory_stage == 1 && self in HABITACION ) {
+			print"su maleta de viaje, ya preparada y apoyada junto a la puerta";
+			return true;
+		}],
+		!! TODO:
+		description [;
+			"Descripción de la maleta.";
+		],
+		before [;
+			Close:
+				"Ya estaba cerrada.";
+			Open, Receive:
+				if ( location == HABITACION )
+					"Ya tiene dentro todo cuanto puede llevar consigo.";
+				else
+					"Ahora no necesita nada de lo que lleva en la maleta.";
+		],
+		after [;
+			Take:
+				if ( self hasnt moved ) "Recoge la maleta del suelo.";
+		],
+		size 5,
+ has	female openable;
+
+Item	-> pluma "pluma"
+ with	name_m	'calamo',
+		name_f	'pluma' 'pendola' 'estilografica',
+		gender	G_FEMENINO,
+		adjectives 'negra' 'segunda' 'mano',
+		description [;
+			"Una pluma estilográfica negra de segunda mano. Al observarla de 
+			cerca se puede distinguir la siguiente inscripción: ", 
+			(italic_type) "~J.C.~", " ¿El nombre de su antiguo dueño tal vez?";
+		],
+		before [;
+			Search:
+				"Se puede leer la siguiente inscripción al examinar de cerca 
+				la pluma: ", (italic_type) "~J.C.~";
+		],
+		size 2,
+ has	female;
+
+Item	-> jeringa "jeringa hipodérmica"
+ with	name_m	'embolo' 'tubo',
+		name_f	'jeringa' 'jeringuilla' 'aguja',
+		gender	G_FEMENINO,
+		adjectives 'hipodermica' 'vidrio' 'cobre',
+		description
+			"Es una jeringa hipodérmica con tubo de vidrio y émbolo de cobre, 
+			pensada para administrar líquidos por inyección. El tubo está 
+			vacío.",
+		size 2,
+ has	female;
+
+Item	-> jarron "jarrón ming"
+ with	name_m	'jarron' 'bucaro' 'florero' 'jarro',
+		gender	G_MASCULINO,
+		adjectives 'ming' 'porcelana' 'gran' 'grande' 'imitacion' 'falso',
+		description
+			"Un gran jarrón de porcelana pintado con motivos florales. De 
+			imitación seguramente.",
+		size 5;
+
+Item	-> sobrero "gorra de béisbol"
+ with	name_m	'gorro' 'sombrero',
+		name_f	'gorra' 'visera',
+		gender	G_FEMENINO,
+		adjectives 'beisbol' 'new' 'york' 'yankees' 'yankis',
+		description
+			"Una gorra de béisbol negra con las clásicas ~NY~ de los New York 
+			Yankees bordadas en blanco en la parte delantera.",
+		size 4,
+ has	female clothing;
+
+Item	-> botas "botas"
+ with	name_m	'calzado',
+		name_mp	'zapatos',
+		name_fp	'botas' 'zapatillas',
+		gender	G_FEMENINO + G_PLURAL,
+		description
+			"Una botas altas de montaña.",
+		size 4,
+ has	female pluralname clothing;
+
+Item	-> anillo "anillo"
+ with	name_m	'anillo',
+		name_f	'alianza' 'joya',
+		gender	G_MASCULINO,
+		adjectives 'oro' 'blanco' 'compromiso',
+		description
+			"Un sencillo anillo de compromiso, de oro blanco.",
+		size 1,
+ has	male clothing;
+
+Item	-> mochila "mochila mágica"
+ class	Receptacle,
+ with	name_m	'petate',
+		name_f	'mochila',
+		gender	G_FEMENINO,
+		adjectives 'magico' 'magica' 'grande' 'gran',
+		description "Es grande y tiene una sonrisa pintada.",
+		size			3,
+		capacity_size	INFINITE_CAPACITY,
+ has	female container openable open;
+
+Class	Letter
+ with	name_f	'letra' 'pieza',
+		name_fp	'letras' 'piezas',
+		gender	G_FEMENINO,
+		adjectives 'scrabble',
+		list_together [;
+			if (inventory_stage == 1) {
+				print "las letras ";
+				c_style = c_style | (ENGLISH_BIT + NOARTICLE_BIT);
+				c_style = c_style &~ (NEWLINE_BIT + INDENT_BIT);
+			}
+			else print " de un juego de Scrabble";
+		],
+		short_name [;
+			if (listing_together ofclass Letter) return false;
+			print "letra ", (object) self, " de un juego de Scrabble";
+			return true;
+		],
+		size 1;
+
+Letter	-> "X" with name_f	'x//';
+Letter	-> "A" with name_f	'a//';
+Letter	-> "F" with name_f	'f//';
+Letter	-> "M" with	name_f	'm//';
+Letter	-> "L" with name_f	'l//';
+
+!!------------------------------------------------------------------------------
+!! Furniture:
+
+Furniture	-> escritorio "escritorio"
+ with	name_m	'mueble' 'mobiliario' 'moblaje' 'escritorio' 'pupitre',
+		name_mp	'muebles',
+		name_f	'mesa',
+		gender	G_MASCULINO,
+		adjectives 'madera' 'pequeno' 'pequena',
+		description [;
+			print "Se trata de un funcional escritorio de madera";
+			if (child(self)) {
+				print " sobre el que se puede ver ";
+				WriteListFrom (child(self), CONCEAL_BIT + ENGLISH_BIT);
+			}
+			print ". Tiene un único cajón,";
+			if (cajon hasnt open) " cerrado.";
+			print " abierto.";
+			if (~~child(cajon)) " Dentro no hay nada.";
+			print " Dentro hay ";
+			WriteListFrom (child(cajon), CONCEAL_BIT + ENGLISH_BIT);
+			".";
+		],
+		before [;
+			Climb, Enter, Sit:
+				"No hay ningún motivo para subirse ahí.";
+			Close:
+				<<Close cajon>>;
+			Open:
+				<<Open cajon>>;
+			Pull, Push, PushDir, Take, Turn:
+				print_ret (The) self, " pesa", (n) self, " demasiado para andar 
+				moviéndol", (o) self, " sin necesidad.";
+		],
+ has	male concealed supporter transparent;
+
+Furniture	-> cajon "cajón"
+ class	Receptacle,
+ with	name_m	'cajon',
+		gender	G_MASCULINO,
+		adjectives 'escritorio',
+		description [; <<Search self>>; ],
+		before [;
+			Pull:	<<Open self>>;
+			Push:	<<Close self>>;
+			PushDir, Take, Turn: "Forma parte del escritorio.";
+		],
+		capacity_size 3,
+ has	male concealed container openable ~open;
+
+!!------------------------------------------------------------------------------
+!! Atrezzo:
+
+!!	<>	general: se activa tras abrir las cortinas por primera vez
+Atrezzo	-> cortinas "cortinas"
+ with	name_m	'visillo' 'cortinaje' 'ventanal',
+		name_f	'cortina' 'ventana' 'colgadura' 'persiana',
+		name_mp	'visillos' 'cortinajes',
+		name_fp	'cortinas' 'colgaduras' 'persianas',
+		gender	G_FEMENINO + G_PLURAL,
+		adjectives 'abierto' 'abiertos' 'abierta' 'abiertas' 'cerrado' 
+				'cerrados' 'cerrada' 'cerradas' 'tela' 'corrido' 'corrida' 
+				'corridos' 'corridas',
+		description [;
+			if (self has open)
+				"La luz del sol entra a raudales en la habitación ahora que las 
+				cortinas están descorridas.";
+			else
+				"Algunos finos haces de luz se cuelan por entre las rendijas 
+				que dejan las cortinas cerradas.";
+		],
+		react_before [; Yes: if (self has on) <<Close self>>; ],
+		before [;
+			Close:
+				if (self hasnt open) return false;
+				if (self hasnt on) {
+					StartTimer (self, 1);
+					give self on;
+					"¿Y dejar la habitación de nuevo a oscuras?";
+				}
+				return false;
+		],
+		after [;
+			Close:
+				give HABITACION ~general;
+				move oscuridad to HABITACION;
+				give cama concealed;
+				print (string) random(
+					"Corre las cortinas de nuevo.^",
+					"Cierra las cortinas.^",
+					"Cierra las cortinas otra vez.^"
+				);
+				new_line;
+				<<Look>>;
+			Open:
+				HABITACION.is_dark = false;
+				move oscuridad to LIMBO;
+				give cama ~concealed;
+				if (self has general) {
+					print "Abre las cortinas.^";
+					new_line;
+					<<Look>>;
+				} else {
+					give self general;
+print "El suelo de madera está caliente y cruje bajo sus pies descalzos. Dando tumbos a través de la oscuridad, se acerca a descorrer las cortinas y abre la ventana, dejando que los tibios y reconfortantes rayos del sol inunden la estancia. El olor es inconfundible; a mar y a montaña, a clavelinas y a malvas, pues está en casa y son los perfumes de su hogar. Pero hay algo más. Una... una sensación oculta entre los pliegues de las sábanas. Un temblor imperceptible que recorre en secreto desde las paredes blancas de la habitación hasta las manos y los ojos infinitos de Gabriel... Todo estaba completamente patas arriba, tal y como lo había encontrado al llegar a casa esta madrugada. Le han encontrado.^";
+!					PressAnyKey();
+					new_line;
+					<<Look>>;
+				}
+		],
+		time_left 1,
+		time_out [; give self ~on; ],
+ has	female pluralname openable;
+
+Atrezzo	-> puerta "puerta"
+ with	name_m	'porton',
+		name_f	'puerta' 'entrada' 'salida',
+		gender	G_FEMENINO,
+		adjectives 'madera' 'roble' 'sin' 'pintar' 'pintura',
+		description [;
+			print "De madera sin pintar, de este lado tiene colgado un 
+			calendario de pared.";
+			if (self has open) " Ahora está abierta.";
+			else " Está cerrada.";
+		],
+		after [;
+			Close:	"La puerta se cierra con un ligero crujir de goznes.";
+			Open:	"La puerta se abre con un ligero crujir de goznes.";
+		],
+		door_dir out_to,
+		door_to [;
+			print "Gabriel se detiene a echar un último vistazo a la habitación y tuerce la boca en una media sonrisa al pensar que se parece mucho a su propia vida; puesta toda patas arriba, llena de sueños rotos, pisoteados y tirados por el suelo. Al cabo de un momento, sin más, le da la espalda al pasado y sale con paso decidido por la puerta abierta.^";
+			PressAnyKey();
+			new_line;
+
+			#Ifdef ALFA_RELEASE;
+			print (parser_type) "Fin de la demostración.";
+			PressAnyKey();
+			@restart; L__M(##Restart, 2);
+			#Endif;
+
+			return CAFE;
+		],
+ has	female door openable ~open transparent;
+
+!! TODO: convertir los papeles en un objeto aparte vinculado al desorden. 
+!! De forma que cuando se abra el cajon desvelando un monton de papeles, el 
+!! objeto vinculado al desorden desaparezca. Volverá a aparecer si el montón de 
+!! papeles de dentro del cajón siguen ahí y el jugador lo cierra.
+Atrezzo	"desorden absoluto" HABITACION
+ with	first_description true,
+		name_m	'desorden' 'desconcierto' 'caos' 'tumulto' 'vidrio' 
+			'desbarajuste' 'barullo' 'follon' 'jaleo' 'alboroto' 'bartulo',
+		name_mp	'papeles' 'vidrios' 'cristales' 'bartulos',
+		name_f	'desorganizacion' 'confusion',
+		name_fp	'cosas',
+		gender	G_MASCULINO,
+		adjectives 'completo' 'absoluto' 'monton' 'montones' 'pila' 'pilas' 
+			'desencajados' 'viejas' 'destrozado' 'destrozados' 'destrozada' 
+			'destrozadas' 'otros' 'otras' 'esparcidos' 'esparcidas' 
+			'diseminados' 'diseminadas' 'tirados' 'tiradas' 'desordenados' 
+			'desordenadas' 'rotos' 'rotas',
+		description [;
+			if (self.first_description) {
+				self.first_description = false;
+				!! TODO: texto
+				"Los ojos de Gabriel se pierden entre las confusión en que está 
+				sumido el cuarto...";
+			} else
+				"Lo han dejado todo absolutamente patas arriba. Ahora saben 
+				dónde vive... tiene que salir de aquí cuanto antes.";
+		],
+		before [;
+			Examine:	return false;
+			Search:		return false;
+			default:
+				"Ya no puede preocuparse por eso. Tiene que huir de aquí, y 
+				cuanto antes lo haga mejor.";
+		],
+ has	male;
+
+Atrezzo	"fotografías" HABITACION
+ with	name_f	'fotografia' 'foto',
+		name_fp	'fotografias' 'fotos',
+		gender	G_FEMENINO + G_PLURAL,
+		adjectives 'vieja' 'viejas' 'tirada' 'tiradas' 'esparcida' 'esparcidas',
+		description
+			"Pequeños fragmentos de la que ha sido su vida hasta ahora. Nada 
+			que pueda llevarse consigo. Nada de lo que deba preocuparse ya.",
+		before [;
+			Examine:	return false;
+			Search:		return false;
+			Take:		"No las puede llevar consigo.";
+			default:
+				print "Ya no puede preocuparse por ";
+				SpanishNominativePronoun( self );
+				". Tiene que huir de aquí cuanto antes.";
+		],
+ has	female pluralname;
+
+!! TODO: descripción de estanterías y libros
+Atrezzo	"estanterías" HABITACION
+ with	name_m	'estante',
+		name_mp	'estantes',
+		name_f	'estanteria',
+		name_fp	'estanterias',
+		gender	G_FEMENINO + G_PLURAL,
+		adjectives 'vacio' 'vacios' 'vacia' 'vacias',
+		before [;
+			Examine:	<<Examine libros>>;
+			default:
+				print "Ya no tiene sentido que se preocupe por ";
+				SpanishNominativePronoun( self ); ".";
+		],
+ has	female pluralname;
+
+!! TODO: descripción de estanterías y libros
+Atrezzo	libros "libros tirados" HABITACION
+ with	name_m	'libro' 'cuaderno' 'tomo' 'volumen' 'ejemplar',
+		name_mp	'libros' 'cuadernos' 'tomos' 'volumenes' 'ejemplares',
+		gender	G_MASCULINO + G_PLURAL,
+		adjectives 'desordenado' 'desordenados' 'esparcido'  'esparcidos' 
+			'tirado' 'tirados' 'amontonado' 'amontonados',
+		description
+			"Han vaciado las estanterías y todos sus libros están esparcidos en 
+			montones desordenados por el suelo de la habitación.",
+		before [;
+			Consult, Read, Search:
+				print "Sin prestar demasiada atención, deja caer una mirada 
+				sobre algunos de sus títulos: ";
+				self.listado();
+				"... todos viejos libros que ya ha leído.";
+			Examine, LookUnder, Smell, Touch:
+				return false;
+			default:
+				print "Tiene que salir de aquí. Tiene que llegar a San 
+				Antonio. Ahora no puede preocuparse por ";
+				SpanishNominativePronoun( self ); ".";
+		],
+		!! Esto es solo un guiño a algunas otras obras de ficción interactiva. 
+		!! Son juegos de palabras con los siguientes títulos:
+		!!		- "Blue Lacuna", de Aaron A. Reed
+		!!		- "Hitchhikers Guide to the Galaxy", de D. Adams y S. Meretzky
+		!!		- "Afuera", de Sebastián Armas
+		!!		- "Macetas", de Sebastián Armas
+		!!		- Leyendas de Ci-U-Than, de Aventuras AD
+		!!		- "Visitantes", de Baltasarq
+		!!		- "1981", de Adam Cadre
+		!!		- "Interstate Zero", de Adam Cadre
+		!!		- "Photopia", de Adam Cadre
+		!!		- "Los placeres de Megara", de Xavi Carrascosa
+		!!		- "El regalo de Gorbag", de Xavi Carrascosa
+		!!		- "El extraño caso de Randolph Dwigth", de El Clérigo Urbatain
+		!!		- "El bibliotecario", de Depresiv
+		!!		- "Vespers", de Jason Devlin
+		!!		- "Make It Good", de Jon Ingold
+		!!		- "Amanda", de Francisco J. López
+		!!		- "El edificio 25", de Jarel
+		!!		- "La venganza de Yan", de Jarel
+		!!		- "Blue Chairs", de Chris Klimas
+		!!		- "Negra Noche", de Carlos Martínez Aguirre
+		!!		- "Broken Legs", de Sarah Morayarti
+		!!		- "The reliques of Tolty-Aph", de Graham Nelson
+		!!		- "El anillo", de Juan Antonio Paz
+		!!		- "Hierba tras el cristal", de Juan Antonio Paz
+		!!		- "Pronto", de Juan Antonio Paz
+		!!		- "Anchorhead", de Michael S. Gentry
+		!!		- "Alabaster", de Emily Short y VV.AA.
+		!!		- "Bronze", de Emily Short
+		!!		- "City of secrets", de Emily Short
+		!!		- "Galatea", de Emily Short
+		!!		- "Heresville", de Carlos Sisí
+		!!		- "Olvido Mortal", de Andrés Viedma Peláez
+		!!		- "El libro que se aburría", de Antonia Visiedo
+		!!		- "El museo de las consciencias", VV.AA.
+		!!		- "Violet"
+		!!		- "Voices of Spoon River", de VV.AA.
+		listado [;
+			italic_style();
+			print (string) random ( "Adentro", "El extraño caso del alabastro", 
+			"Guía del autoestopista de la I/0", "Fotofobia", "Tarde" );
+			roman_style(); print ", "; italic_style();
+			print (string) random ( "Hazlo mal", "Hierba en las macetas", 
+			"Voces del río Miskaton", "El museo de las sillas azules", 
+			"City of Bronze", "Las reliquias de Ci-U-Than" );
+			roman_style(); print ", "; italic_style();
+			print (string) random ( "Negra laguna", "Los placeres de Amanda",  
+			"Visitantes en Villageres", "El bibliotecario que se aburría", 
+			"El edificio 19-81" );
+			roman_style(); print ", "; italic_style();
+			print (string) random ( "Vísperas", "La venganza del anillo", 
+			"Recuerdo mortal", "Violeta tiene las piernas rotas", "El regalo de 
+			Galatea" );
+			roman_style(); return true;
+		],
+ has	male pluralname;
+
+Atrezzo	"calendario de pared" puerta
+ with	name_m	'calendario' 'anuario' 'almanaque',
+		gender	G_MASCULINO,
+		!! TODO: consultar DM por atributos nombres formados por varias 
+		!! palabras: 'van gogh', 'setenta y tres',...
+		adjectives 'pared' 'puerta' 'colgado' 'enganchado' 'pintura' 'cuadro' 
+			'van' 'gogh' 'bodegon' 'floral' 'flores' 'cuadricula' 'septiembre' 
+			'1973',
+		description [;
+			"En su mitad superior se ve la reproducción de una pintura de Van 
+			Gogh: un bodegón floral de tonos cálidos en el que varios claveles 
+			anaranjados comparten jarra con otros blanquecinos de tallo más 
+			largo. La mitad inferior del calendario está ocupada por la 
+			cuadrícula ordenada con los días del mes. Y encabezándolo 
+			todo, en grandes números: ", (bold_type) "Septiembre de 1973", ".";
+		],
+		before [;
+			Close, Open:
+				"Ya está bien como está.";
+			Pull, Push, PushDir, Take:
+				"Está bien donde está. No lo necesita para nada.";
+		],
+ has	male;
+
+Atrezzo	"almohada" cama
+ with	name_m	'almohadon' 'cojin',
+		name_f	'almohada',
+		gender	G_FEMENINO,
+		!! TODO: adjectives
+		before [;
+			Examine:
+				"Yace sobre la cama de cualquier manera.";
+			Search, LookUnder:
+				"No hay nada interesante escondido ahí.";
+			Smell:
+				"Huele al sudor.";
+			Take:
+				"No l", (o) self, " necesita para nada.";
+			default:
+				"Ahora tiene cosas más importantes de las que preocuparse.";
+		],
+ has	female;
+
+Atrezzo	"sábanas" cama
+ with	name_f	'sabana' 'manta',
+		name_fp	'sabanas' 'mantas',
+		gender	G_FEMENINO + G_PLURAL,
+		adjectives 'deshecha' 'deshechas' 'arrugada' 'arrugadas',
+		before [;
+			Enter:
+				"Ahora no es momento de dormir. Tiene que salir de aquí.";
+			Examine:
+				"Descansa",(n) self," sobre la cama ech",(o) self," un rebujo.";
+			Search, LookUnder:
+				"No hay nada escondido entre ", (the) self, ".";
+			Smell:
+				<<Smell cama>>;
+			Take, Pull, Push, PushDir:
+				"No l", (o) self, " necesita para nada.";
+			default:
+				"Ahora tiene cosas más importantes de las que preocuparse.";
+		],
+ has	female pluralname;
+
+
+!!==============================================================================
+!!	CAFE: Café Blanca Florida
+!!------------------------------------------------------------------------------
+
+Room	CAFE "Café Blanca Florida"
+ with	name	'cafe' 'blanca' 'florida' 'cafeteria' 'bar' 'local' 'taberna' 
+				'meson' 'tasca' 'establecimiento',
+		initial [; if (self hasnt visited) {
+			SetGrammaticalInflection(PASADO_TERCERA_PERSONA);
+print "Debe abandonar el país ahora que la situación se ha vuelto insostenible. Los militares se han hecho a la calle y todos los del partido están en peligro de ser prendidos o encarcelados. O algo peor, puesto que desde que cayó el gobierno se han sucedido las ejecuciones... entre ellas la de su amigo Pablo Ureta. Todavía siente cómo la frente se le perla con un sudor frío al pensar en que estuvieron juntos apenas horas antes de su asesinato, en un bar de la avenida Libertador Bernardo O'Higgins:^";
+			new_line;
+			return true;
+		}],
+		description [;
+			print "Las aspas de un gran ventilador giraban lentamente en el 
+			techo, removiendo el humo de tabaco y los ecos de casi una veintena 
+			de voces que se enroscaban y retorcían en el aire antes de terminar 
+			empotradas contra las amarillentas paredes del café. Tras la barra";
+			if (self hasnt visited) print ", una"; else print ", la";
+			print " camarera pasaba";
+			if (self hasnt visited) print " el"; else print " un";
+			" trapo a los vasos sucios mientras los clientes repartidos por el 
+			local charlaban, fumaban y daban cuenta de sus bebidas.";
+			!! TODO: "Al fondo puede ver una diana de dardos.
+		],
+	w_to	[; return self.out_to(); ],
+	out_to	"No podía irse aún. No sin hablar antes con Pablo.",
+	cant_go "Esa dirección no llevaba a ningún lado.";
+
+!!------------------------------------------------------------------------------
+!! Objetos con rutinas react_before:
+
+Atrezzo	-> silla_cafe "silla"
+ class	SmartEnterable
+ with	clarification "sentado a una de las mesas",
+		name_m	'asiento' 'taburete',
+		name_f	'silla' 'banqueta',
+		gender	G_FEMENINO,
+		!! TODO: adjectives
+		description "Una silla normal y corriente.",
+		before [;
+			Pull, Push, PushDir, Take, Turn:
+				"Ya estaba", (n) self, " muy bien donde estaba", (n) self, 
+				". No había ningún motivo para andar moviéndol", (o) self, ".";
+			Sit:
+				<<Enter self>>;
+			StandUp:
+				<<Exit self>>;
+		],
+		after [;
+			Enter:	"Se sentó en ", (the) self, ", frente a Pablo.";
+			Exit:	"Se levantó de ", (the) self, ".";
+		],
+ has	female enterable supporter transparent;
+
+!!------------------------------------------------------------------------------
+!! NPCs:
+
+NPC		hombre "hombre" LIMBO
+ with	hablando_por_telf	false,
+		movimiento_1_flag	false,
+		movimiento_2_flag	false,
+		movimiento_3_flag	false,
+		guarda_silencio		false,
+		flag				false,
+		contador_daemon		0,
+		name_m 'cliente' 'parroquiano' 'senor' 'hombre' 'extrano' 'desconocido',
+		gender	G_MASCULINO,
+		adjectives 'sombrero' 'panama',
+		description [;
+			if (self.hablando_por_telf)
+				"Aquel hombre hablaba con alguien por el teléfono que había al 
+				lado de la barra. Estaba de espaldas a ellos, de forma que 
+				Gabriel sólo podía verle la parte de atrás de la chaqueta y su 
+				llamativo sombrero panamá.";
+			else
+				"Era un hombre de cierta estatura, corpulento, de ojos negros y 
+				rostro anguloso inmaculadamente afeitado. Vestía ropa elegante 
+				pero discreta, nada que llamase especialmente la atención salvo 
+				un sombrero panamá color marfil que llevaba calado hasta las 
+				cejas.";
+		],
+		movimiento_1 [;
+"Gabriel echó un vistazo rápido a su alrededor; las pocas personas sentadas en las mesas cercanas seguían enfrascadas en sus conversaciones sin prestarles atención. Sólo al levantar la vista sus ojos se cruzaron con los de un hombre acodado en la barra ---un tipo alto, con sombrero---, pero un instante después éste la desvió hacia su bebida, aparentemente indiferente a lo que ellos dos estaban hablando.";
+		],
+		movimiento_2 [;
+"Gabriel levantó la cabeza hacia la barra y descubrió que el hombre del sombrero estaba otra vez mirando hacia ellos. Más tarde desecharía la idea, pero entonces vio, o más bien creyó ver, cómo aquel desconocido le dedicaba una leve sonrisa antes de girar la cabeza y encaminarse al teléfono de fichas que había junto a la barra.";
+		],
+		movimiento_3 [;
+"El hombre del sombrero panamá colgó el auricular, pagó sus bebidas a la camarera y abandonó el café apresuradamente, sin mirar ni sonrerir a nadie más. Si era verdad que en algún momento había estado interesado en ellos, parecía que todo interés había desaparecido por completo.", (italic_type) " Después de todo,", " se dijo Gabriel,", (italic_type) " probablemente sólo habían cruzado un par de miradas fortuítas. Nada más.";
+		],
+		react_before [;
+			Look:
+				if (noun == nothing && (self.movimiento_1_flag 
+					|| self.movimiento_2_flag || self.movimiento_3_flag)) {
+					noun = self;
+					new_line;
+					<<Examine self>>;
+				}
+			Examine, Search:
+				if (noun == self or clientes) {
+					if (self.movimiento_1_flag) {
+						self.movimiento_1_flag = false;
+						self.movimiento_1();
+					}
+					if (self.movimiento_2_flag) {
+						self.movimiento_2_flag = false;
+						self.movimiento_2();
+					}
+					if (self.movimiento_3_flag) {
+						self.movimiento_3_flag = false;
+						self.movimiento_3();
+					}
+				}
+		],
+		before [;
+			Attack, Pull, Push:
+				!! TODO: en realidad, igual si lo hubiese sido. cambiar mensaje
+				"No era el momento ni el lugar para comenzar una pelea.";
+			Listen:
+				if (self.hablando_por_telf)
+					!! TODO: segundas respuestas
+					"Hablaba entre susurros y Gabriel no alcanzó a escuchar más 
+					que unas cuántas palabras sueltas de la conversación:",
+					(italic_type) " ~... si... yo, de Ovalle... dos... no 
+					creo... Florida...~";
+				else
+					"Estaba solo y en silencio. Únicamente abría la boca para 
+					darle un trago al vaso que sostenía en la mano.";
+			TalkTo:
+				"Gabriel no conocía de nada a aquel hombre. Era con Pablo con 
+				quien necesitaba hablar.";
+		],
+		daemon [;
+			if (player notin silla_cafe) {
+				return false;
+			}
+			if (self.guarda_silencio) { 
+				self.guarda_silencio = false;
+				return false;
+			}
+			switch (self.contador_daemon) {
+				0:
+					self.contador_daemon++;
+					self.movimiento_1_flag = true;
+					return true;
+				1:
+					self.contador_daemon++;
+					if (~~self.movimiento_1_flag) return true;
+					self.movimiento_1_flag = false;
+					new_line;
+					self.movimiento_1();
+					new_line;
+					if (self.flag) { self.flag = false; new_line; }
+					return true;
+				7:
+					self.contador_daemon++;
+					self.movimiento_2_flag = true;
+					return true;
+				8:
+					self.contador_daemon++;
+					self.hablando_por_telf = true;
+					if (~~self.movimiento_2_flag) return true;
+					self.movimiento_2_flag = false;
+					new_line;
+					self.movimiento_2();
+					new_line;
+					if (self.flag) { self.flag = false; new_line; }
+					return true;
+				11:
+					self.contador_daemon++;
+					self.movimiento_3_flag = true;
+					return true;
+				12:
+					self.contador_daemon++;
+					self.hablando_por_telf = false;
+					move cliente to CAFE;
+					give cliente general;
+					move self to LIMBO;
+					StopDaemon(self);
+					if (~~self.movimiento_3_flag) return true;
+					self.movimiento_3_flag = false;
+					new_line;
+					self.movimiento_3();
+					new_line;
+					if (self.flag) { self.flag = false; new_line; }
+					return true;
+				default:
+					self.contador_daemon++;
+					return true;
+			}
+		],
+ has	male concealed;
+
+NPC		-> camarera "camarera"
+ with	name_m	'camarero' 'despensero',
+		name_f	'camarera' 'despensera' 'mujer' 'muchacha' 'joven' 'chica' 
+				'moza' 'senora' 'dama' 'persona',
+		gender	G_FEMENINO,
+		description
+			"Gabriel no se fijó demasiado en ella y ahora la recuerda apenas; 
+			una mujer alta, de mediana edad, cabello oscuro ---negro, o quizá 
+			castaño--- recogido en una cola de caballo, y facciones toscas. No 
+			especialmente bonita, sin duda, de otra forma la recordaría con 
+			mucha mayor claridad. Fregaba vasos sucios y atendía a los clientes 
+			desde el otro lado de la barra.",
+		before [;
+			Attack, Pull, Push:
+				"No era el momento ni el lugar para empezar una pelea.";
+			TalkTo:
+				"No llegó a cruzar una palabra con ella. Era con Pablo con 
+				quien quería hablar.";
+		],
+ has	female concealed;
+
+NPC		-> Pablo "Pablo"
+ with	first_description	true,
+		chat_counter		0,
+		name_m	'pablo' 'ureta' 'amigo' 'hombre',
+		name_f	'persona',
+		gender	G_MASCULINO,
+		describe [;
+			if (self.first_description) {
+				self.first_description = false;
+				print "^Él ya se encontraba allí, tal y como habían quedado. Su rostro, apenas reconocible, estaba surcado por toda una colección de arrugas nuevas y marcado ferozmente por la tristeza y el cansancio. Pero seguía siendo su mismo rostro al fin y al cabo: duro, inteligente, familiar. Pablo bebía una";
+			}
+			else print "^Pablo estudiaba su";
+			print " cerveza en silencio, sentado";
+			if (player in silla_cafe) " frente a Gabriel.";
+			else " solo en una de las mesas más alejadas.";
+		],
+		description [;
+			if (player notin silla_cafe)
+				print "Estaba sentado en una de las mesas del fondo, con la 
+				vista clavada en su botellín de cerveza. ";
+			"En sólo un par de días parecía haber envejecido años: su espesa barba negra estaba más salpicada de canas que nunca, varias arrugas nuevas surcaban su frente y el contorno de sus ojos y, si bien es cierto que parte de su pelo había empezado a esfumarse hacía tiempo, el claro de piel enrojecida que se revelaba entre los rizos color carbón de la coronilla era cada vez mayor.";
+		],
+		before [ t;
+			TalkTo:
+				if ( hombre notin CAFE ) {		!! Se mueve al hombre del 
+					move cliente to LIMBO;		!! sombrero al CAFE, se inicia  
+					move hombre to CAFE;		!! su daemon, y se mueve el
+					StartDaemon( hombre );		!! objeto 'cliente' al LIMBO
+				}
+				t=0;
+				switch( self.chat_counter ) {
+				0:	self.chat_counter ++;
+					print "---Hola Pa --^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---¿Por qué me has llamado aquí? ¿No ves que no hay 
+					sitio seguro en la capital? Sin Allende todo está perdido. 
+					Es no más cuestión de tiempo que nos agarren esos mamones 
+					con pistola.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---Ya calla, loco, que os van a oír. Me he enterado 
+					de todo, Pablo. Dicen que lo mataron, pero era demasiado 
+					orgulloso para dejarse arrastrar. Los de arriba hablan de 
+					que se dio el viaje...^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---¡Qué sabrán los de arriba! Ellos jamás creyeron 
+					en Salvador. Ya antes le dieron la patada, ahora no iban a 
+					hacer menos. No, él no huiría, lo dejó bien claro. Estoy 
+					seguro de que al final ha pagado la lealtad del pueblo, 
+					pero también la deslealtad de los cabrones de Unidad, que 
+					le dejaron bien en la Moneda con el culo al aire. No sé ya 
+					si lo mataron o se mató él, pero estoy seguro de que...^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---No lo digáis...^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---... está ya criando malvas, chico, y eso no lo 
+					vamos a solucionar ni tú ni yo. Estamos bien jodidos.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^Terminó dando un largo sorbo de su cerveza. La 
+					mirada perdida en algún lugar desconocido, lejos de aquel 
+					bar.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					return true;
+				1:	self.chat_counter ++;
+					print "---¿Llegará ayuda?^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---¡Ja!... ¿De quién, de los gringos? Esos 
+					precisamente no están de nuestra parte, chico. Aquí los 
+					únicos que te van a echar una mano son los muñequitos de 
+					verde, y directa al cuello. Me temo que te tienes que 
+					salvar tú sólo.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---¿Y nosotros no podemos reorganizar al pueblo y 
+					--^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---Baja, baja de la nube, chico. El miedo les tiene 
+					a todos bien agarrados por las pelotas, ni uno dirá nada. Y 
+					aún así, ¿qué querías que hicieran?, atacarlos con tu 
+					mierda de claveles y... perdona, no digo más que puras 
+					tonterías. Pero es cierto, más te vale que huyas, hijo.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---¿Cómo? Que - ¿que huya?...^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					new_line; self.select( 1 );
+					return true;
+				2:	self.chat_counter ++;
+					if ( self.flag ) { t = 'q'; self.flag = false; }
+					print "Volvió a clavar la vista en aquel lugar oculto a mis 
+					ojos. Oculto a otros ojos cualesquiera salvo a los suyos. 
+					Sobre nuestras cabezas, las aspas del ventilador 
+					continuaban girando con su zumbido monótono. Los ecos de 
+					las demás conversaciones flotaban entre nosotros, 
+					extrañamente lejanas. Insignificantes. Sacudió la cabeza 
+					lentamente.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---No.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---¿Qué? Pero... ¿por qué? ¿No acabas de decir?... 
+					¿Estáis loco o es que queréis quedaros a ver cómo os dan el 
+					paseíllo?^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---Yo ya no tengo nada que perder, chico. Mi futuro 
+					era ver éste país levantado por los chilenos unidos, pero 
+					se nos adelantaron los maricas del rifle y las botas, y 
+					todo se ha jodido. En realidad es como si estuviese muerto. 
+					Toda la vida luchando por un fin, y ahora ese fin está más 
+					lejos que nunca.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^Dio un nuevo sorbo de la botella y se quedó en 
+					silencio, tratando de tragarse la rabia, la bebida y la 
+					decepción.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					return true;
+				3:	self.chat_counter ++;
+					move revolver to mesa_cafe;
+					move billete_cafe to mesa_cafe;
+					print "---Aún queda la esperanza de volver, Pablo...^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---¡Menuda elección me das, carajo! Esperanza o 
+					muerte. Ninguna de las dos me dará lo que buscaba. Verás, 
+					en la vida creemos que siempre podemos elegir, y que 
+					podemos ganar. Pero cuando te obligan a escoger, entonces 
+					chico, entonces sólo nos queda perder. Y yo prefiero 
+					perderlo ya todo, que no perder y llorar lo que me queda de 
+					mísera vida. Ten...^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---... ¿qué cosa me dais?^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---Es el billete para la barcaza... ---miró a uno y 
+					otro lado antes de volver a meter la mano en la cartera. Un 
+					momento después posó el revólver disimuladamente sobre la 
+					mesa, al lado del billete. ---... y un arma, por si las 
+					moscas. Cinco días son mucho tiempo, y Santiago se ha 
+					convertido en una ciudad peligrosa.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---No - yo... No puedo...^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					print "^---¡Pues claro que puedes, diantre! Trágate esos 
+					reparos tuyos por una vez, chico. Espero que no tengas que 
+					utilizarlo, pero en este maldito país ya no se puede estar 
+					seguro de nada... aún así, yo me sentiré mejor si lo llevas 
+					contigo. Tómalo. Tómalo, Gabriel. Por favor.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+					return true;
+				default:
+					print_ret (string) random (
+					"---Venga, ---insistió Pablo ---cógelos. Sólo vas a tener 
+					que usar el billete, estoy seguro, pero más vale que estés 
+					preparado.",
+					"---No te estoy pidiendo que mates a nadie, chico. 
+					Simplemente llévate el billete y el revólver contigo. Por 
+					favor.",
+					"---No hagas que me repita, ---insistió Pablo ---por favor. 
+					Cógelos."
+					);
+				}
+		],
+		quip [a b t; switch( a ) {
+		!!-------------------
+			!! MENÚ PRINCIPAL
+			11:	! No requiere nombre
+				new_line;
+			12:	! No requiere réplica
+			13:	qtype	= MainMenu;
+				qqon	= true;
+				killq	= true;
+				killz	= true;
+			14:	switch( b ) {
+				0:	return 3;		! 3 opciones
+				1:	return 2;
+				2:	return 3;
+				3:	return 4;
+				}
+		!!-------------------
+			21: print_ret (italic_type)
+				"~No. No puedo. No soy un cobarde.~";
+			22: self.qoff( 21, 22, 23 );
+				print "---No. No puedo. No soy un cobarde.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+				print "^---¡La cobardía no tiene nada que ver con esto, chico! 
+				El valor sólo tiene sentido cuando detrás hay un hueco para la 
+				esperanza, y aquí estupidez tienes toda la del mundo, cuanta 
+				quieras, pero no esperanza. Ninguna. Ya no. ---Se detuvo 
+				durante un momento y dio un rápido sorbo de cerveza antes de 
+				continuar con un susurro: ---Hay una barcaza en el puerto de 
+				San Antonio que sale dentro de cinco días, así que ya estás 
+				corriendo si no quieres que te descubran y te den morada en la 
+				cara.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+				print "^---¿Vendréis conmigo?^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+				new_line;
+				if ( t == 'q' or 'Q' ) self.flag = true;
+				<<TalkTo self>>;
+			23: qqon	= true;
+				killq	= true;
+				killz	= true;
+		!!-------------------
+			31: print_ret (italic_type)
+				"~¿Y a dónde iba a ir?~";
+			32: self.qoff( 21, 22, 23 );
+				print "---¿Y a dónde iba a ir?^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+				print "^---¿Acaso importa, chico? A cualquier lugar, a dónde 
+				quieras, pero lejos de aquí. Y cuanto antes. ---Se detuvo 
+				durante un momento y dio un rápido sorbo de cerveza antes de 
+				continuar con un susurro: ---Hay una barcaza en el puerto de 
+				San Antonio que sale dentro de cinco días, así que ya estás 
+				corriendo si no quieres que te descubran y te den morada en la 
+				cara.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+				print "^---¿Vendréis conmigo?^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+				new_line;
+				if ( t == 'q' or 'Q' ) self.flag = true;
+				<<TalkTo self>>;
+			33:	qqon	= true;
+				killq	= true;
+				killz	= true;
+		!!-------------------
+			41: print_ret (italic_type)
+				"~Yo... t-tengo miedo, Pablo.~";
+			42: self.qoff( 21, 22, 23 );
+				print "---Yo no... no sabría cómo... t-tengo miedo, Pablo.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+				print "^---No te preocupes, ya está todo preparado. ---Bajó su 
+				tono de voz hasta convertirla en un susurro: ---Hay una barcaza 
+				en el puerto de San Antonio que sale dentro de cinco días. 
+				Tómala. Tómala y sal de aquí corriendo antes de que te 
+				descubran y te den morada en la cara, chico.^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+				print "^---¿Ven-vendréis conmigo?^";
+									if (t ~= 'q' or 'Q') t = KeyCharPrimitive();
+				new_line;
+				if ( t == 'q' or 'Q' ) self.flag = true;
+				<<TalkTo self>>;
+			43:	qqon	= true;
+				killq	= true;
+				killz	= true;
+		!!-------------------
+		}],
+!! BETA: Aumentar el número de respuestas
+		take_them [;
+			"Pablo me aferró del brazo. ---¿A dónde vas, chico? Coge eso antes 
+			de que lo vea quien no debe.";
+		],
+		flag		false,
+ has	male proper;
+
+!!------------------------------------------------------------------------------
+!! Items:
+
+!!------------------------------------------------------------------------------
+!! Furniture:
+
+!!------------------------------------------------------------------------------
+!! Atrezzo:
+
+Atrezzo	-> barra "barra"
+ with	name_m	'mueble' 'mobiliario' 'moblaje' 'mostrador',
+		name_f	'barra' 'repisa',
+		name_mp	'muebles',
+		gender	G_FEMENINO,
+		!! TODO: adjectives
+		describe [ i obj;
+			objectloop(obj in self)
+				if (obj hasnt scenery or static or concealed)
+					i++;
+			if (i == 0) return true;
+			print "^Sobre la barra podía ver ";
+			WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT + PARTINV_BIT);
+			".";
+		],
+		description [;
+			print "Un mostrador alargado de azulejo y madera oscura. Detrás, la 
+			camarera estaba ocupada con los vasos sucios mientras, delante, 
+			varios clientes intercambiaban las noticias y los rumores de los 
+			últimos días entre susurros inseguros y rápidos tragos de cerveza.
+			^^
+			Justo al lado de la barra, encajado en una esquina en el extremo 
+			más alejado del café, había un teléfono de fichas.";
+			new_line;
+			return true;
+		],
+		before [;
+			Pull, Push, PushDir, Turn:
+				"Difícilmente podría haber movido eso.";
+			Take:
+				"Difícilmente podría haberse llevado eso.";
+		],
+		after [ i obj;
+			LetGo, Receive:
+				objectloop(obj in self)
+					if (obj hasnt scenery or static or concealed)
+						i++;
+				if (i == 0) give self concealed;
+				else give self ~concealed;
+		],
+ has	female supporter ~scenery static concealed;
+
+Atrezzo	-> "humo"
+ with	name_m	'humo' 'tabaco' 'cigarro' 'cigarrillo' 'puro' 'pitillo',
+		name_f	'humareda' 'fumarada',
+		name_mp	'cigarros' 'cigarrillos' 'puros' 'pitillos',
+		gender	G_MASCULINO,
+		adjectives 'volutas',
+		description
+			"El humo de tabaco llenaba la estancia y se incrustaba en el techo 
+			y las paredes ---marcándolas con un feo tono amarillento---, y en 
+			la ropa, y las fosas nasales, y la garganta, y en los pulmones.",
+		react_before [; Smell: if (noun == nothing) <<Smell self>>; ],
+		before [;
+			Examine: return false;
+			Smell:	 "El olor del humo resultaba casi insoportable.";
+			default: "No hacía falta prestarle", (s) self, " mayor atención.";
+		],
+ has	male;
+
+Atrezzo	-> "ventilador"
+ with	name_m	'ventilador',
+		name_f	'aspa',
+		name_fp	'aspas',
+		gender	G_MASCULINO,
+		adjectives 'negro' 'negra' 'negras' 'techo',
+		description
+			"Las aspas del ventilador giraban sobre sus cabezas con un zumbido 
+			apenas audible, empeñadas en hacer mínimamente respirable la 
+			viciada atmósfera llena de humo del café.",
+		before [;
+			Examine: return false;
+			Listen: "El motor del ventilador emitía un leve zumbido.";
+			default:
+				"No tenía", (n) self, " nada de especial, ni hacía falta 
+				molestarse en dedicarle", (s) self, " mayor atención.";
+		],
+ has	male;
+
+Atrezzo	-> "sillas y mesas del café"
+ with	name_m	'mueble' 'mobiliario' 'moblaje' 'taburete',
+		name_mp	'muebles' 'asientos' 'taburetes',
+		name_fp	'sillas' 'banquetas' 'mesas',
+		gender	G_FEMENINO + G_PLURAL,
+		adjectives
+			'sencillo' 'sencillos' 'sencillas' 'corriente' 'corrientes' 
+			'simple' 'simples' 'normal' 'normales' 'ordinario' 'ordinarios' 
+			'ordinarias' 'funcional' 'funcionales',
+		description
+			"Había unas cuantas mesas y sillas de aspecto corriente repartidas 
+			por todo el bar.",
+		before [;
+			Examine, Search, LookUnder: return false;
+			Enter, Sit:		<<Enter silla_cafe>>;
+			Exit, StandUp:	<<Exit silla_cafe>>;
+			default:
+				"No tenía", (n) self, " nada de especial, ni se molestó en 
+				dedicarle", (s) self, " mayor atención.";
+		],
+ has	female pluralname;
+
+Atrezzo	-> clientes "clientes"
+ with	first_description true,
+		name_f	'persona' 'clientela' 'gente',
+		name_mp	'clientes' 'parroquianos' 'senores' 'hombres' 'chicos' 'mozos',
+		name_fp	'personas',
+		gender	G_MASCULINO + G_PLURAL,
+		description [;
+			print "Eran unas dieciocho o veinte personas, repartidas entre un 
+			hueco frente a la barra y algunas de las mesas que ocupaban el 
+			resto del café";
+			if (self.first_description) {
+				self.first_description = false;
+				print ". ";
+				<<Listen self>>;
+			}
+			".";
+		],
+		react_before [; Listen: if (noun == nothing) <<Listen self>>; ],
+		before [;
+			Attack, Pull, Push:
+				"No era el momento ni el lugar para empezar una pelea.";
+			Listen:
+				if (self.first_description) self.first_description = false;
+				"Las conversaciones fluían y llenaban el local como cualquier 
+				otro día, pero se advertía en ellas un cierto aura de 
+				nerviosidad. La caída de Allende había golpeado más duramente a 
+				unos que a otros, pero era evidente que la inquietud se había 
+				adueñado igualmente de todos.";
+			TalkTo:
+				"No llegó a cruzar una sola palabra con ninguno. Era con Pablo 
+				con quien quería hablar.";
+		],
+ has	male pluralname concealed animate;
+
+Atrezzo	-> cliente "cliente"
+ with	name_m 'cliente' 'parroquiano' 'senor' 'hombre' 'extrano' 'desconocido',
+		!! TODO: name_f...
+		gender	G_MASCULINO,
+		adjectives 'sombrero' 'panama',
+		description [;
+			if (self hasnt general)
+				"La única persona que interesaba a Gabriel en aquel momento era 
+				Pablo. Los demás ---aproximadamente una veintena de personas--- 
+				estaban repartidos entre un hueco frente a la barra y algunas 
+				de las mesas esparcidas por el café.";
+			else
+				"El hombre del sombrero panamá se había ido. Los demás 
+				---aproximadamente una veintena de personas--- estaban 
+				repartidos entre un hueco frente a la barra y algunas de las 
+				mesas que ocupaban el resto del café.";
+		],
+		react_before [; if (noun ~= self) return false;
+			Attack:		<<Attack clientes>>;
+			Listen:		<<Listen clientes>>;
+			Pull, Push:	<<Pull clientes>>;
+			TalkTo:		<<TalkTo clientes>>;
+		],
+		before [;
+			Examine:	return false;
+			Search:		<<Examine self>>;
+			default:
+				"La única persona que interesaba a Gabriel en aquel momento 
+				era Pablo.";
+		],
+ has	male;
+
+Atrezzo	-> mesa_cafe "mesa"
+ with	name_f	'mesa',
+		gender	G_FEMENINO,
+		adjectives 
+			'sencillo' 'sencilla' 'corriente' 'simple' 'normal' 'ordinario' 
+			'ordinaria' 'funcional',
+		description [ i obj;
+			print "Era una mesa de madera, normal y corriente";
+			objectloop(obj in self)
+				if (obj hasnt scenery or static or concealed)
+					i++;
+			if (i > 0) {
+				print ". Encima había ";
+				WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT);
+			}
+			".";
+		],
+		before [;
+			Climb, Enter, Sit:
+				"No había ningún motivo para subirse ahí.";
+			LetGo: if ( noun == revolver or billete_cafe ) {
+!				move revolver to ropa;
+!				move billete_cafe to ropa;
+				print "Hice caso a Pablo y cogí el billete y el revólver. ¿Qué 
+				otra cosa podía hacer?
+				^^
+				Y ya nunca volví a verlo. A pesar de sus palabras yo no las 
+				creí, desde luego, ni siquiera ahora. Crecí con esas historias 
+				de héroes, reales o inventados, que habían muerto por defender 
+				sus ideas. Hombres y mujeres de leyenda, más parecidas a dioses 
+				que a personas como Pablo Ureta. Insensato para los conocidos, 
+				enemigo para los golpistas, y nadie para los demás. Tenía razón 
+				en parte: ya estaba muerto, porque su vida no le pertenecía. La 
+				había donado a un sueño que ahora se volvía contra él, no podía 
+				más que aceptar las consecuencias. Huir lo hubiese convertido 
+				en un fantasma, sin voz, sin memoria y sin sueños.^";
+				KeyCharPrimitive();
+				new_line;
+
+				#Ifdef ALFA_RELEASE;
+				print (parser_type) "Fin de la demostración.";
+				PressAnyKey();
+				@restart; L__M(##Restart, 2);
+				#Endif;
+
+				PlayerTo( TAXI );
+				return true;
+			}
+			Pull, Push, PushDir, Take, Turn:
+				print_ret (The) self, " ya estaba", (n) self, " bien donde 
+				estaba", (n) self, ". No había motivos para andar moviéndol", 
+				(o) self, ".";
+			Search:
+				if (child(self) has scenery)
+					"Sobre la mesa sólo estaba la cerveza de Pablo.";
+		],
+ has	female supporter transparent;
+
+
+Atrezzo	"cerveza de Pablo" mesa_cafe
+ with	name_m	'botellin',
+		name_f	'cerveza' 'botella' 'bebida',
+		gender	G_FEMENINO,
+		adjectives 'pablo' 'alcohol' 'alcoholica',
+		description "Era la cerveza de Pablo.",
+		before [;
+			Examine:	return false;
+			Drink, Pull, Push, PushDir, Take, Touch, Turn:
+				"Esa cerveza era de Pablo. No creo que le hubiese hecho gracia 
+				si se la llego a quitar.";
+			default:
+				"No tenía", (n) self, " nada de especial, ni me molesté en 
+				dedicarle", (s) self, " mayor atención.";
+		],
+ has	female;
+
+
+Item	billete_cafe "billete" LIMBO
+ with	name_m	'billete' 'papel' 'pase',
+		gender	G_MASCULINO,
+		adjectives 'trozo' 'pedazo' 'barcaza' 'san' 'antonio',
+		description
+			"Era el billete para una barcaza que partía del puerto de San 
+			Antonio en cinco días, a las 11:30 de la mañana.",
+ has	male;
+
+
+!!==============================================================================
+!!	TAXI: Dentro del taxi
+!!------------------------------------------------------------------------------
+
+Room	TAXI "Dentro del taxi"
+ with	name	'taxi' 'coche' 'vehiculo' 'auto' 'automovil',
+		initial [; if (self hasnt visited) {
+			SetGrammaticalInflection (PRESENTE_TERCERA_PERSONA);
+			print "Siento el frío peso del revólver entre las manos un instante antes de comprender alarmado que estoy jugueteando con él, e inmediatamente lo vuelvo a guardar en uno de los profundos bolsillos del abrigo. El taxi dobla por Neftalí Basoalto en este mismo momento y enfila una nueva calle con un chirrido de neumáticos, camino del puerto de San Antonio.^";
+			return true;
+		}],
+		before [; 
+			Smell: "Humo viejo, viejo perfume, viejo sudor.";
+		],
+;
+
+!!------------------------------------------------------------------------------
+!! Objetos con rutinas react_before:
+
+!!------------------------------------------------------------------------------
+!! Items:
+
+!!------------------------------------------------------------------------------
+!! Furniture:
+
+!!------------------------------------------------------------------------------
+!! Atrezzo:
+
+
+!!==============================================================================
+!!	CALLE: Santiago
+!!------------------------------------------------------------------------------
+
+Room	CALLE "Santiago"
+ with	name	'calle' 'calles' 'santiago' 'aceras' 'acera' 'via' 'paseo' 
+				'avenida' 'bulevar' 'rambla' 'ronda' 'bordillo' 'anden' 
+				'pavimento' 'calzada' 'carretera',
+		description
+			"Descripción de la calle.",
+		cant_go
+			"Siente el impulso de echarse a correr, de huír de allí a la 
+			carrera y dejarlo todo atrás como hacía cuando era niño. Sabe que 
+			es una estupidez, no puede llamar así la atención ahora. Y sin 
+			embargo tiene que recurrir a toda su fuerza de voluntad para 
+			mantener la compustura y quedarse allí parado.";
+
+!!------------------------------------------------------------------------------
+!! Objetos con rutinas react_before:
+
+!!------------------------------------------------------------------------------
+!! NPCs:
+
+NPC		Luz_CALLE "Luz Acosta" CALLE
+ with	name 'Luz' 'Acosta',
+ has	female proper;
+
+!!------------------------------------------------------------------------------
+!! Items:
+
+!!------------------------------------------------------------------------------
+!! Furniture:
+
+Furniture	soldados "soldados" CALLE
+ with	name_mp 'soldados',
+ has	male pluralname;
+
+Furniture	taxi_CALLE "taxi" CALLE
+ with	name_m	'taxi' 'coche' 'vehiculo',
+ has	male;
+
+Furniture	"marquesina" CALLE
+ with	name_f	'marquesina' 'parada' 'autobús',
+ has	female;
+
+Furniture	papelera "papelera" CALLE
+ with	name_f	'papelera',
+ has	female;
+
+!!------------------------------------------------------------------------------
+!! Atrezzo:
+
+Atrezzo	"cielo" CALLE
+ with	name_m	'cielo',
+ has	male;
+
+Atrezzo	"gente que pasea por la calle" CALLE
+ with	name_m	'peaton' 'hombre' 'transeunte',
+		name_f	'gente' 'mujer',
+		name_mp	'transeuntes' 'peatones',
+		name_fp	'mueres',
+ has	female;
+
+Atrezzo	"tráfico" CALLE
+ with	name_m	'trafico' 'atasco',
+ has	male;
+
+
+!!==============================================================================
+!!	CALLEJON: En el callejón
+!!------------------------------------------------------------------------------
+
+Room	CALLEJON "En el callejón"
+ with	name	'callejon' 'calleja' 'callejuela' 'callizo' 'calle' 'calles' 
+				'avenida' 'bulevar' 'rambla' 'santiago',
+		description
+			"Descripción del callejón.",
+;
+
+!!------------------------------------------------------------------------------
+!! Objetos con rutinas react_before:
+
+!!------------------------------------------------------------------------------
+!! Items:
+
+!!------------------------------------------------------------------------------
+!! Furniture:
+
+!!------------------------------------------------------------------------------
+!! Atrezzo:
+
+
+!!==============================================================================
+!!	SALA DE JUEGO
+!!------------------------------------------------------------------------------
+
+Room	SALA_JUEGO "Sala de juego"
+ with	name	'sala' 'juego' 'salon' 'recreativo',
+		description
+			"Gabriel y Fran están en una sala mal iluminada. La única luz 
+			encendida en la habitación enfoca una diana de dardos colgada 
+			en la pared que tienen justo en frente.",
+		n_to
+			"Hoy no tiene nada mejor que hacer que echarse una partida a los 
+			dardos. Prefiere quedarse aquí.",
+		cant_go
+			"La única puerta de la sala está al norte.";
+
+NPC		-> Fran "Fran"
+ with	name_m	'fran' 'francisco' 'chico' 'hombre' 'joven',
+		name_f	'persona',
+		gender	G_MASCULINO,
+		description "Fran tiene tan buen aspecto como siempre.",
+		before [;
+			TalkTo:
+				print "---Ey Gabriel, juguemos a los dardos.^";
+				PartidaDardos();
+				return true;
+		],
+ has	male proper concealed;
+
+Atrezzo	-> diana "diana"
+ with	name_f	'diana',
+		gender	G_FEMENINO,
+		description "Una diana para jugar a los dardos.",
+ has	female;
+
+[ PartidaDardos af ptos;
+	print "Fran lanza sus dardos y obtiene ", PuntajeFran(), ".^^";
+
+	print "Coge un dardo y apunta a la diana...^";
+	af = AimAndFire(); ptos = ptos + Puntaje(af);
+	print "Consigue ", Puntaje(af), " ptos. con el primer dardo.^";
+	KeyCharPrimitive();
+	af = AimAndFire(); ptos = ptos + Puntaje(af);
+	print "Consigue ", Puntaje(af), " ptos. con el segundo dardo.^";
+	KeyCharPrimitive();
+	af = AimAndFire(); ptos = ptos + Puntaje(af);
+	print "Consigue ", Puntaje(af), " ptos. con el tercer dardo.^";
+	print "Puntaje total: ", ptos, ".^";
+];
+
+[ PuntajeFran p;
+	p = p + LanzamientoFran();
+	p = p + LanzamientoFran();
+	p = p + LanzamientoFran();
+	return p;
+];
+
+[ LanzamientoFran p;
+	p = random(100);
+	if (p <= 15)	return 50;
+	if (p <= 50)	return 25;
+	if (p <= 75)	return 10;
+	if (p <= 80)	return 5;
+	if (p <= 85)	return 4;
+	if (p <= 90)	return 3;
+	if (p <= 95)	return 2;
+	if (p <= 99)	return 1;
+	return 0;
+];
+
+[ Puntaje p;
+	if (p == -2)	"Apuntado y disparo en máquina-Z.";
+	if (p == 0)		return 50;
+	if (p <= 1)		return 25;
+	if (p <= 3)		return 10;
+	if (p <= 4)		return 5;
+	if (p <= 5)		return 4;
+	if (p <= 6)		return 3;
+	if (p <= 7)		return 2;
+	if (p <= 8)		return 1;
+	return 0;
+];
+
+
