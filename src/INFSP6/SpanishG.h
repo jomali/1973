@@ -523,6 +523,7 @@ VerboIrregular "responder ~sí~" with imperativo 'si' 'y//';
 Verb 'nx'
     *                                    -> No;
 VerboIrregular "responder ~no~" with imperativo 'nx';
+
 Verb 'sorry' 'perdon' 'perdona' 'disculpa'
     *                                   -> Sorry
     * topic                             -> Sorry;

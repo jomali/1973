@@ -17,13 +17,13 @@
 ! Definición de todo lo relacionado con el idioma Español (artículos,
 ! nombres, pre-parsing, mensajes estandares, etc.)
 !
-! XXX MODIFICACIÓN: Las modificaciones sobre la librería original se han 
-! marcado con el código XXX, de forma que se pueda navegar rápidamente 
-! hasta ellas utilizando una herramienta de búsqueda.
-!
 !  InformATE es (c) de Zak
 !  Re-edicion INFSP by Sarganar. Nuevas mejoras by colaboradores varios.
 !  caad.es/informate/infsp/
+!
+! XXX MODIFICACIÓN: Las modificaciones sobre la librería original se han 
+! marcado con el código XXX, de forma que se pueda navegar rápidamente 
+! hasta ellas utilizando una herramienta de búsqueda.
 ! ----------------------------------------------------------------------------
 
 System_file;
@@ -114,7 +114,7 @@ Global IS2__TX       = "ves ";
 Global ARE2__TX      = "ves ";
 Global YOU__TX       = "Tú";
 Global PARTICULA_TE  = "te";
-! FIN DE LA MODIFICACIÓN
+! XXX FIN DE LA MODIFICACIÓN
 
 !---------------------------------------------------------------------------
 ! Atributos y propiedades específicas de InformatE!, tambien usados en INFSP

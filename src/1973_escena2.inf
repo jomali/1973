@@ -80,19 +80,20 @@ Room	CAFE "Café Blanca Florida"
 !!------------------------------------------------------------------------------
 !! Objetos con rutinas react_before:
 
-Atrezzo	silla "silla" CAFE
+Atrezzo	silla_cafe "silla" CAFE
  class	SmartEnterable
- with	clarification "sentado a una de las mesas", 
-		name_m	'asiento' 'taburete', 
+ with	name_m	'asiento' 'taburete', 
 		name_f	'banqueta' 'silla', 
 		gender	G_FEMENINO, 
 		!! TODO - adjectives
-		!! TODO - Añadir reach_zones
-		description "Una silla normal y corriente.", 
+		clarification "sentado a una de las mesas", 
+		reach_objects mesa_cafe Pablo,
+		drop_on_object mesa_cafe,
+		description "Era una silla normal y corriente.", 
 		react_before [;
 			TalkTo:
-				if (parent(player) ~= self && noun == Pablo
-						&& Pablo.conversation_counter == 0) {
+				if ((parent(player) ~= self) && (noun == Pablo)
+						&& (conversacion_Pablo_01.counter == 0)) {
 					move player to self;
 					print "Atravesó el local hasta sentarse frente a él.^";
 					new_line;
@@ -124,7 +125,7 @@ Atrezzo	silla "silla" CAFE
 !!------------------------------------------------------------------------------
 !! Atrezzo:
 
-Atrezzo	"mesa" CAFE
+Atrezzo	mesa_cafe "mesa" CAFE
  with	name_m	'mobiliario' 'moblaje' 'mueble',
 		name_f	'mesa',
 		name_mp	'muebles',
@@ -133,11 +134,10 @@ Atrezzo	"mesa" CAFE
 			'corriente' 'funcional' 'normal' 'ordinaria' 'ordinario' 'sencilla' 
 			'sencillo' 'simple',
 		description [;
-			print "Era una mesa normal y corriente";
 			if (child(self)) {
-				print ". Encima había ";
+				print "Encima había ";
 				WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT);
-			}
+			} else print "Una simple mesa. No tenía nada de especial";
 			".";
 		],
 		before [;
@@ -189,9 +189,9 @@ Atrezzo	"mesas y sillas del café" CAFE
 			Examine, Search, LookUnder:
 				return false;
 			Enter, Sit:
-				<<Enter silla>>;
+				<<Enter silla_cafe>>;
 			Exit, StandUp:
-				<<Exit silla>>;
+				<<Exit silla_cafe>>;
 			default:
 				"No era necesario preocuparse por eso. Después de todo, no 
 				tenía", (n) self, " nada de especial.";
@@ -343,14 +343,55 @@ Atrezzo	ventilador "ventilador" CAFE
 !!------------------------------------------------------------------------------
 !! Items:
 
+Item	cerveza "cerveza de Gabriel" LIMBO
+ with	name_m	'botellin', 
+		name_f	'bebida' 'botella' 'cerveza', 
+		gender	G_FEMENINO,
+		adjectives 'alcohol' 'alcoholica' 'gabriel',
+		description [;
+			print "Un botellín de cerveza";
+			if (self.counter == 0) " vacío.";
+			if (self.counter == 1) " al que apenas le quedaba un trago.";
+			if (self.counter <  4) " medio vacío.";
+			if (self.counter < 10) " que Gabriel tenía a medias.";
+			" sin empezar.";
+		],
+		before [;
+			Drink:
+				if (self.counter == 0) "Ya estaba vacío.";
+				self.counter--;
+				if (self.counter == 0) "Apuró el último trago del botellín.";
+				"Gabriel dio un trago de su botellín de cerveza.";
+		],
+ private
+		counter 0, ! Indica la cantidad de bebida que queda
+ has	female;
+
+Item	vino "vino de Pablo" LIMBO
+ with	name_m	'tinto' 'vaso' 'vino',
+		name_f	'bebida',
+		gender	G_MASCULINO,
+		adjectives 'alcohol' 'alcoholica' 'pablo',
+		description "A Pablo siempre le había gustado el tinto.",
+		before [;
+			Examine:
+				return false;
+			Drink, Pull, Push, PushDir, Take, Touch, Turn:
+				"Esa era la bebida de Pablo.";
+			default:
+				"No tenía nada especial por lo que mereciese perder el tiempo 
+				con eso.";
+		],
+ has	male;
+
 Item	billete_cafe "billete" LIMBO
- with	name_m	'billete', !! TODO
+ with	name_m	'billete' 'papel' 'pase', 
 		gender	G_MASCULINO, 
-		adjectives 'barcaza', !! TODO
+		adjectives 'antonio' 'barcaza' 'pedazo' 'san' 'trozo',
  has	male;
 
 !!------------------------------------------------------------------------------
-!! NPCs:
+!! Camarera:
 
 NPC		camarera "camarera" CAFE
  with	name_m	'camarero' 'despensero',
@@ -365,11 +406,115 @@ NPC		camarera "camarera" CAFE
 			Attack, Pull, Push:
 				"No era el momento ni el lugar para comenzar una pelea.";
 			TalkTo:
-				!! TODO - Incluir conversación con la camarera
-				"No llegó a cruzar una palabra con ella. Era con Pablo con 
-				quien quería hablar.";
+				ConversationManager.start(conversacion_camarera);
+				return true;
 		],
+		conversation_flag false,
  has	female concealed;
+
+Conversation conversacion_camarera
+ with	topics camarera_tema_02, 
+		temporal_topics camarera_tema_01,
+		talker camarera,
+		initial_message [;
+			print "Gabriel se acercó hasta la barra.^";
+			new_line;
+			print (string) random (
+				"---¿Quieres alguna cosa?",
+				"---¿Te sirvo alguna cosa?",
+				"---¿Qué vas a tomar?",
+				"---¿Qué tomas?",
+				"---¿Qué te sirvo?",
+			);
+			new_line;
+			return true;
+		],
+		inter_message
+			"La camarera observaba a Gabriel desde el otro lado de la barra.",
+		final_message
+			"No llegó a cruzar ninguna otra palabra con ella. Era con Pablo con 
+			quien necesitaba hablar.";
+
+ConversationTopic camarera_tema_01
+ class	TextSequence
+ with	entry [;
+			print "no pedir ", (strong) "nada";
+		],
+		keys !! TODO
+			'nada' 'pedir' 'pide',
+		reply [;
+			give self ~visited;
+			"No quería nada en realidad. Dió las gracias a la mujer y se alejó 
+			de nuevo de la barra.";
+		],
+		reaction [;
+			ConversationManager.end();
+		];
+
+ConversationTopic camarera_tema_02
+ class	TextSequence
+ with	entry [;
+			print "pedir una ", (strong) "bebida para Gabriel";
+		],
+		keys !! TODO
+			'pedir' 'pide' 'bebida' 'gabriel',
+		reply [;
+			"La camarera le sirvió una cerveza.";
+		],
+		reaction [;
+		];
+
+ConversationTopic camarera_tema_03
+ class	TextSequence
+ with	description
+		[;
+			if (cerveza in LIMBO)
+				"---Ponme una cerveza y un tinto, por favor.";
+			"---Ponme un tinto, por favor.";
+		]
+			"---Claro."
+		[ x;
+			if (cerveza in LIMBO) x = true;
+			print "La camarera le sirvió";
+			if (x) print " las bebidas"; else print " la bebida";
+			print " y después Gabriel volvió hasta la mesa con";
+			if (x) " ellas."; else " ella.";
+		]
+			"---Ahí tienes, Pablo."
+			"---Gracias, chico.",
+		entry [;
+			if (cerveza in LIMBO) print "pedir ", (emph) "bebidas";
+			else print "pedir una ", (emph) "bebida para Pablo";
+		],
+		keys !! TODO
+			'pedir' 'pide' 'bebidas' 'bebida' 'pablo',
+		reply [;
+			self.display();
+		],
+		reaction [;
+		];
+
+ConversationTopic camarera_tema_04
+ class	TextSequence
+ with	description
+			"---Perdona, ¿para usar el teléfono?"
+			"---Si, te vendo yo las fichas, si quieres."
+			"---Bien. ¿Puedes darme alguna, por favor?"
+			"La camarera le puso unas fichas sobre el mostrador."
+			"---Ahí tienes.",
+		entry [;
+			print "pedir ", (emph) " fichas para el teléfono";
+		],
+		keys
+			'pedir' 'pide' 'ficha' 'fichas' 'telefono' 'telef' 'telf' 'tlf',
+		reply [;
+			self.display();
+		],
+		reaction [;
+		];
+
+!!------------------------------------------------------------------------------
+!! Mr. Panamá:
 
 NPC		MrPanama "hombre del sombrero" LIMBO
  with	name_m 'cliente' 'desconocido' 'extrano' 'hombre' 'parroquiano' 'senor',
@@ -436,6 +581,9 @@ NPC		MrPanama "hombre del sombrero" LIMBO
 		telephone_flag	false,
  has	concealed male;
 
+!!------------------------------------------------------------------------------
+!! Pablo:
+
 NPC		Pablo "Pablo" CAFE
  with	name_m	'pablo' 'ureta' 'amigo' 'hombre', 
 		name_f	'persona', 
@@ -445,66 +593,41 @@ NPC		Pablo "Pablo" CAFE
 			new_line;
 			if (~~self.describe_flag) {
 				self.describe_flag = true;
-				return O__M(self, 1, (parent(player) == silla));
+				return O__M(self, 1, (parent(player) == silla_cafe));
 			}
-			return O__M(self, 2, (parent(player) == silla));
+			return O__M(self, 2, (parent(player) == silla_cafe));
 		],
 		description [;
-			return O__M(self, 3, (parent(player) == silla));
+			return O__M(self, 3, (parent(player) == silla_cafe));
 		],
 		before [;
 			TalkTo:
-				if (parent(MrPanama) ~= parent(self)) {
-					move cliente to LIMBO;
-					move MrPanama to parent(self);
-					!! TODO - Activar temporizador de Mr. Panamá.
-				}
-				if (ConversationManager.is_running()) {
-					ConversationManager.show_topic_inventory();
-					return true;
-				}
-				switch (self.conversation_counter) {
-				0:	self.conversation_counter++;
-					O__M(self, 4);
-					new_line;
-					ConversationManager.start(conversacion_Pablo_01);
-					return true;
-				1:	self.conversation_counter++;
-					O__M(self, 5);
-					PressAnyKey();
-					new_line;
-					print "Primer dardo: ";
-					PressAnyKey();
-					print LanzaDardo(), " puntos.^";
-					new_line;
-					print "Segundo dardo: ";
-					PressAnyKey();
-					print LanzaDardo(), " puntos.^";
-					new_line;
-					print "Tercer dardo: ";
-					PressAnyKey();
-					print LanzaDardo(), " puntos.^";
-					PressAnyKey();
-					new_line;
-					print "XXX puntos en total.^";
-					new_line;
-					ConversationManager.start(conversacion_Pablo_02);
-					return true;
-				default:
-					!! TODO
-					"Resto de la conversación con Pablo.";
-				}
+!				if (parent(MrPanama) ~= parent(self)) {
+!					move cliente to LIMBO;
+!					move MrPanama to parent(self);
+!					!! TODO - Activar temporizador de Mr. Panamá.
+!				}
+				ConversationManager.start(conversacion_Pablo_01);
+				return true;
 		], 
-		conversation_counter 0,	! contador del estado de la conversación
  private
 		describe_flag false,	! indica si el objeto ha sido descrito
  has	male proper;
 
-!!------------------------------------------------------------------------------
-!! Conversación con Pablo:
-
 Conversation conversacion_Pablo_01
- with	topics Pablo_tema_02 Pablo_tema_01;
+ with	talker Pablo,
+		topics Pablo_tema_02 Pablo_tema_01,
+		initial_message [;
+			switch (conversacion_Pablo_01.counter) {
+			0:	conversacion_Pablo_01.counter++;
+				"---Ahí estás. Llegas tarde, chico.";
+			default:
+				"Pablo hizo un gesto a Gabriel con la cabeza.";
+			}
+		],
+		inter_message
+			"Pablo miraba paciente a Gabriel.",
+		counter 0;
 
 ConversationTopic Pablo_tema_01
  class	TextSequence

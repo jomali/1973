@@ -19,20 +19,21 @@
 !!
 !!	Copyright (c) 2014, J. Francisco Martín
 !!
-!!	This file is part of PROYECTO 1973.
+!!	Este archivo forma parte de PROYECTO 1973.
 !!
-!!	PROYECTO 1973 is free software: you can redistribute it and/or modify 
-!!	it under the terms of the GNU General Public License as published by 
-!!	the Free Software Foundation, either version 3 of the License, or 
-!!	(at your option) any later version.
+!!	PROYECTO 1973 es software libre: usted puede redistribuirlo y/o 
+!!	modificarlo bajo los términos de la Licencia Pública General GNU 
+!!	publicada por la Fundación para el Software Libre, ya sea la versión 
+!!	3 de la Licencia, o (a su elección) cualquier versión posterior.
 !!
-!!	PROYECTO 1973 is distributed in the hope that it will be useful, 
-!!	but WITHOUT ANY WARRANTY; without even the implied warranty of 
-!!	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-!!	GNU General Public License for more details.
+!!	PROYECTO 1973 se distribuye con la esperanza de que sea útil, pero 
+!!	SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o 
+!!	de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de 
+!!	la Licencia Pública General GNU para más información.
 !!
-!!	You should have received a copy of the GNU General Public License 
-!!	along with PROYECTO 1973. If not, see <http://www.gnu.org/licenses/>.
+!!	Debería haber recibido una copia de la Licencia Pública General GNU 
+!!	junto a PROYECTO 1973. En caso contrario, consulte
+!!	<http://www.gnu.org/licenses/>.
 !!
 !!------------------------------------------------------------------------------
 
@@ -440,7 +441,7 @@ Class	SmartEnterable
 !!------------------------------------------------------------------------------
 Class	TextSequence
  with	display [ flag i;
-			if (self provides description) {
+			if ((self provides description) && (self.description ~= 0)) {
 				for (i=0 : i<(self.#description)/WORDSIZE : i++) {
 					if (i ~= 0) new_line;
 					if (metaclass(self.&description-->i) == String)
@@ -448,8 +449,8 @@ Class	TextSequence
 					else if (metaclass(self.&description-->i) == Routine)
 						indirect(self.&description-->i);
 					else break;
-					if (~~flag) flag = PressAnyKey();
 					new_line;
+					if (~~flag) flag = PressAnyKey();
 				}
 			}
 		],

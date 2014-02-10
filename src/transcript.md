@@ -141,11 +141,11 @@ Pistas de audio:
 
 -------
 
-Debe abandonar el país ahora que la situación se ha vuelto insostenible. Los militares se han hecho a la calle y todos los del partido están en peligro de ser prendidos o encarcelados. O algo peor, puesto que desde que cayó el gobierno se han sucedido las ejecuciones... entre ellas la de su amigo Pablo Ureta. Todavía siente cómo la frente se le perla de un sudor frío al pensar que estuvieron juntos apenas horas antes de su **asesinato, en un bar** de la avenida Libertador Bernardo O'Higgins:
+Debe abandonar el país ya que la situación se ha vuelto insostenible. Los militares han salido a la calle y ahora todos los del partido están en peligro de ser prendidos o encarcelados. O algo peor. La locura es máxima; desde el que cayó el gobierno, hacía menos de una semana, no había un día que no llegasen noticias de nuevas ejecuciones. Entre ellas la de Pablo Ureta, amigo de Gabriel. Todavía siente cómo la frente se le perla de un sudor frío al recordar la última vez que le vió, horas antes de su asesinato, en un bar de la avenida Bernardo O'Higgins:
 
 Las aspas de un gran ventilador giraban lentamente en el techo, removiendo el humo de tabaco y los ecos de casi una treintena de voces que se enroscaban y retorcían en el aire antes de acabar empotrándose contra las amarillentas paredes del café. Tras la barra, una camarera pasaba el trapo a los vasos sucios mientras los clientes repartidos por el local charlaban, fumaban y daban cuenta de sus bebidas. Había también, en una esquina, una diana de dardos.
 
-Él ya se encontraba allí, tal y como habían quedado. Su rostro, apenas reconocible, estaba surcado por toda una colección de arrugas nuevas y marcado ferozmente por la tristeza y el cansancio. Pero seguía siendo su mismo rostro al fin y al cabo: duro, inteligente, familiar. Pablo bebía de un vaso en silencio, sentado solo en una de las mesas más alejadas.
+Él ya se encontraba allí, tal y como habían quedado. Su rostro, apenas reconocible, estaba surcado por toda una colección de arrugas nuevas y marcado ferozmente por la tristeza y el cansancio. Pero seguía siendo su mismo rostro al fin y al cabo: duro, inteligente, familiar. Pablo bebía en silencio, sentado solo en una de las mesas más alejadas.
 
 *humo* El humo de tabaco llenaba la estancia y se incrustraba en el techo y las paredes ---marcándolas con un feo tono amarillento---, y en la ropa, y las fosas nasales, y la garganta, y en los pulmones.
 

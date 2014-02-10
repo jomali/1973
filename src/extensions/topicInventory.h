@@ -13,13 +13,32 @@
 !!	Language:		ES (Castellano)
 !!	System:			Inform-INFSP 6
 !!	Platform:		Z-Machine / Glulx
-!!	Version:		1.8
-!!	Released:		2014/02/05
+!!	Version:		2.0
+!!	Released:		2014/02/10
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	# HISTORIAL DE VERSIONES
+!!
+!!	2.0: 2014/02/10	Mejor gestión en el cambio de conversaciones activas en el 
+!!					gestor y añadidos temas con presencia temporizada.
+!!	1.8: 2014/02/05	Cambiado el nombre de la clase *ConversationEntry* por 
+!!					*ConversationTopic* y otras pequeñas correcciones.
+!!	1.7: 2014/01/29	Cambiados los nombres de las clases y pequeñas correcciones.
+!!	1.4: 2013/04/13	Modificación de la propiedad *show_topic_inventory* del 
+!!					objeto gestor.
+!!	1.3: 2013/04/01 Añadidas nuevas propiedades a la clase *ConversationTopic* 
+!!					y modificación de la rutina *NPCTalkSub()*.
+!!	1.2: 2013/03/30	Añadidos a la documentación.
+!!	1.1: 2013/03/30 Añadidas nuevas propiedades al objeto *ConversationManager* 
+!!					y modificación de la rutina *NPCTalkSub()*.
+!!	1.0: 2013/03/30	Primera versión de la extensión.
+!!	0.1: 2013/03/28	Versión preliminar.
 !!
 !!------------------------------------------------------------------------------
 !!
 !!	Copyright (c) 2009, Mastodon
-!!	Copyright (c) 2014, J. Francisco Martín
+!!	Copyright (c) 2013, 2014, J. Francisco Martín
 !!
 !!	Este programa es software libre: usted puede redistribuirlo y/o 
 !!	modificarlo bajo los términos de la Licencia Pública General GNU 
@@ -107,13 +126,18 @@
 !!
 !!	# SOBRE LOS MENSAJES
 !!
-!!	Se puede definir una variable GRAMMATICAL_INFLECTION en el archivo de 
-!!	juego que puede tomar los valores: 1 (PRESENTE 1ª PERSONA), 2 (PRESENTE 2ª 
-!!	PERSONA), 3 (PRESENTE 3ª PERSONA), 4 (PASADO 1ª PERSONA), 5 (PASADO 2ª 
-!!	PERSONA) o 6 (PASADO 3ª PERSONA) para modificar la conjugación gramatical 
-!!	de los mensajes de la librería. Si no se define esta variable, la librería 
-!!	interpreta que se usa el valor 2 con lo que los mensajes se imprimen en 
-!!	presente y segunda persona.
+!!	El autor puede definir hasta 7 constantes para modificar los textos por 
+!!	defecto de la extensión:
+!!
+!!	 *	CONVERSATION_STYLE: (0-3) Define el estilo con el que se imprimen los 
+!!		textos de la extensión: 0-romana, 1-itálica, 2-negrita, 3-monoespaciada.
+!!	 *	CONVERSATION_PREFIX: Cadena de texto previa a cualquier otro mensaje.
+!!	 *	CONVERSATION_SUFIX: Cadena de texto posterior a cualquier otro mensaje.
+!!	 *	CONVERSATION_MSG1: Antecede a la lista de temas del inventario.
+!!	 *	CONVERSATION_MSG2: Si hay más de un tema en el inventario, se imprime 
+!!		entre CONVERSATION_MSG1 y la lista de temas.
+!!	 *	CONVERSATION_OR: Separador de los dos últimos temas del inventario.
+!!	 *	CONVERSATION_NO_MSG: Mensaje cuando no hay temas en el inventario.
 !!
 !!
 !!	# UTILIZACIÓN
@@ -126,8 +150,8 @@
 !!
 !!	# LIMITACIONES Y POSIBLES MEJORAS
 !!
-!!	Podría ser interesante contemplar la posibilidad de crear temas que no 
-!!	aparezcan sugeridos automáticamente al imprimir el inventario de temas 
+!!	Podría ser interesante contemplar la posibilidad de crear temas ocultos que 
+!!	no aparezcan sugeridos automáticamente al imprimir el inventario de temas 
 !!	disponibles.
 !!
 !!------------------------------------------------------------------------------
@@ -139,11 +163,13 @@ System_file;
 !! Vector para guardar palabras temporalmente:
 Array tmp_text -> 64;
 
-Default CONVERSATION_STYLE	1; ! (0-3) Romana, Itálica, Negrita, Monoespaciada
+Default CONVERSATION_STYLE	1; ! (0-3)
 Default CONVERSATION_PREFIX	"(";
-Default CONVERSATION_SUFIX	".)";
+Default CONVERSATION_SUFIX	")";
 Default CONVERSATION_MSG1	"Puedes ";
 Default CONVERSATION_MSG2	"escoger entre ";
+Default CONVERSATION_OR		" o ";
+Default CONVERSATION_NO_MSG	"No hay temas que tratar";
 
 !!==============================================================================
 !!	Funciones de depuración
@@ -257,103 +283,250 @@ Class	ConversationTopic
 		!! Desarrollo del tema
 		reply 0, 
 		!! Acciones a ejecutar después de tratar el tema
-		reaction null,
+		reaction 0,
 		!! Lista de subtemas que añadir a la conversacion tras tratar este tema
-		subtopics null, 
+		subtopics 0, 
 		!! Si está establecido a 'true' se fuerza que el turno en que se trata 
 		!! este tema finalice mostrando el inventario de temas disponibles
 		append_topic_inventory true;
 
 !!==============================================================================
 !!	Representa una conversación que tiene una lista de temas que pueden ser 
-!!	tratados a elección del usuario. Implementa métodos para añadir, eliminar y 
-!!	manipular la lista de temas disponible
+!!	tratados a elección del usuario. Implementa las siguientes funciones:
+!!
+!!	 *	add_topic(topic:ConversationTopic) - Añade un tema a la conversación (a 
+!!		menos que el tema pasado como parámetro esté marcado como ya tratado). 
+!!
+!!	 *	add_subtopics(topic:ConversationTopic) - Añade a la conversación los 
+!!		subtemas del tema pasado como parámetro (si tiene alguno).
+!!
+!!	 *	remove_topic(topic:ConversationTopic, visited_flag:boolean) - Elimina 
+!!		un tema de la conversación. Si se invoca con *visited_flag* verdadero, 
+!!		además se fuerza que el tema quede marcado como tratado aunque no haya 
+!!		llegado a mostrarse en pantalla en realidad.
+!!
+!!	 *	remove_temporal_topics() - Elimina todos los temas temporales de la 
+!!		conversación (si es que hay alguno).
+!!
+!!	 *	topic_inventory_size() - Retorna el número de temas de la conversación.
+!!
+!!	 *	show_topic_inventory() - Imprime el inventario de temas.
+!!
+!!	 *	initiate() - Inicializa el inventario de temas de la conversación con 
+!!		aquellos temas presentes en las propiedades *topics* y 
+!!		*temporal_topics* del objeto.
 !!------------------------------------------------------------------------------
 
 Class	Conversation
- with	!! Mueve un tema a la conversación (si no está marcado como ya tratado)
-		add_topic [ topic;
-			if (topic hasnt visited)
-				move topic to self;
+ with	add_topic [ topic;
+			!! Se comprueba que el tema pasado sea válido:
+			if (topic == 0) return false;
+			if (~~(topic ofclass ConversationTopic)) return false;
+			if (topic has visited) return false;
+			!! Se añade el tema a la conversación:
+			move topic to self;
+			return true;
 		],
-		!! Mueve a la conversación los subtemas de 'topic'
 		add_subtopics [ topic i;
-			if (topic.subtopics ~= nothing or null) {
-				for (i = 0 : i < topic.#subtopics/WORDSIZE : i++) {
+			if ((topic == 0) || ~~(topic provides subtopics)) return false;
+			if (topic.subtopics ~= 0) {
+				for (i=0 : i<(topic.#subtopics)/WORDSIZE : i++) {
 					self.add_topic(topic.&subtopics-->i);
 				}
 			}
+			return true;
 		],
-		!! Elimina un tema de la conversación
-		remove_topic [ topic;
+		remove_topic [ topic visited_flag;
+			if (parent(topic) ~= self) return false;
+			if (visited_flag) give topic visited;
 			remove topic;
+			return true;
 		], 
-		!! Imprime la lista de temas de la conversación
-		show_topic_list [ topic;
+		remove_temporal_topics [ i;
+			if (self.temporal_topics ~= 0)
+				for (i = 0 : i < (self.#temporal_topics)/WORDSIZE : i++)
+					self.remove_topic(self.&temporal_topics-->i);
+		],
+		topic_inventory_size [ topic size;
+			topic = 0; ! para evitar un desconcertante warning del compilador
+			objectloop(topic in self) size++;
+			return size;
+		],
+		show_topic_inventory [ topic size;
+			!! XXX - Puesto que el temporizador comprueba si se deben eliminar 
+			!! los temas temporales al finalizar el turno (es decir, después de 
+			!! de mostrar el inventario de temas), puede ocurrir que algunos de 
+			!! los temas del listado no estén en realidad disponibles. Por 
+			!! ello, antes de imprimir el inventario, si procede se eliminan 
+			!! los temas temporales.
+			if (self.time_left == 0) self.remove_temporal_topics();
+
+			if (self.talker ~= 0) {
+				switch (metaclass(self.talker)) {
+					Object:		print (The) self.talker;
+					String:		print (string) self.talker;
+					Routine:	indirect(self.talker);
+				}
+				print ": ";
+			}
+			size = self.topic_inventory_size();
+			if ((size == 0) && (CONVERSATION_NO_MSG ~= 0))
+				print (string) CONVERSATION_NO_MSG;
+			if ((size > 0) && (CONVERSATION_MSG1 ~= 0))
+				print (string) CONVERSATION_MSG1;
+			if ((size > 1) && (CONVERSATION_MSG2 ~= 0))
+				print (string) CONVERSATION_MSG2;
+			!! imprime el listado de temas
 			for (topic=child(self) : topic~=nothing : topic=sibling(topic)) {
 				PrintOrRun(topic, entry, true);
-				if (sibling(topic) ~= nothing) 
-					if (sibling(sibling(topic)) == nothing)
-						print " o ";
-					else
-						print ", ";	
+				if (sibling(topic) ~= nothing) {
+					if (sibling(sibling(topic)) == nothing) {
+						if (CONVERSATION_OR ~= 0) {
+							print (string) CONVERSATION_OR;
+						}
+					} else print ", ";
+				}
 			}
+			print ".";
+			return true;
 		],
-		!! Se inicializa la lista de temas de la conversación con aquellos 
-		!! temas presentes en 'topics' que no hayan sido tratados previamente
-		initiate [ topic i;
-			!! primero se asegura que no haya temas en la conversación:
-			objectloop (topic in self)
-				self.remove_topic(topic);
-			!! se inicializa la lista de temas de la conversación:
-			for (i = 0 : i < self.#topics/WORDSIZE : i++)
-				self.add_topic(self.&topics-->i);
+		initiate [ i;
+			if (self.topics ~= 0)
+				for (i=0 : i < (self.#topics)/WORDSIZE : i++)
+					self.add_topic(self.&topics-->i);
+			if (self.temporal_topics ~= 0) {
+				for (i=0 : i < (self.#temporal_topics)/WORDSIZE : i++)
+					self.add_topic(self.&temporal_topics-->i);
+				StartTimer(self, 1);
+			}
+			return true;
+		],
+		!! Temas con los que se inicializa la conversación.
+		topics 0,
+		!! Temas temporales con los que se inicializa la conversación.
+		temporal_topics 0,
+		!! Permite indicar con quién se lleva a cabo la conversación. Puede ser 
+		!! ser objeto, string o rutina.
+		talker 0,
+		!! Mensaje al activar una conversación.
+		initial_message 0,
+		!! Mensaje al intentar iniciar una conversación ya activada.
+		inter_message 0,
+		!! Mensaje al intentar iniciar una conversación agotada.
+		final_message 0,
+		!! Temporizadores.
+		time_left -1,
+		time_out [;
+			self.time_left = -1;
+			self.remove_temporal_topics();
 		];
+
 
 !!==============================================================================
 !!	Objeto gestor del sistema de conversación. Cuenta con el siguiente conjunto 
 !!	de funciones que pueden ser utilizadas por un autor de relatos interactivos 
 !!	para manejar conversaciones:
 !!
-!!	 *	start(conversacion:Conversation) - Inicia y deja activa en el gestor 
-!!		la conversación pasada como parámetro.
+!!	 *	start(conv:Conversation) - Inicia y deja activa en el gestor la 
+!!		conversación pasada como parámetro. Retorna verdadero si la 
+!!		conversación se activa correctamente, falso si la conversación no es 
+!!		válida o no tiene temas que tratar.
 !!
 !!	 *	end() - Quita del gestor la conversación activa.
 !!
-!!	 *	is_running() - Indica si hay una conversación activa en el gestor. 
-!!		Retorna verdadero si es así, o falso en caso contrario.
+!!	 *	is_running(conv:Conversation) - Retorna verdadero si la conversación 
+!!		pasada como parámetro está activada en el gestor. Si no se pasan 
+!!		parámetros, retorna verdadero si hay una conversación cualquiera 
+!!		activada. Retorna falso en otro caso.
 !!
-!!	 *	topic_inventory_size() - Retorna el número de temas disponibles en la 
+!!	 *	topic_inventory_size() - Retorna el número de temas de la conversación 
+!!		activa. 
+!!
+!!	 *	show_topic_inventory() - Muestra el inventario de temas de la 
 !!		conversación activa.
 !!
-!!	 *	show_topic_inventory() - Muestra el inventario de temas disponibles.
-!!
 !!	 *	try() - Función principal del gestor. Comprueba si la entrada de 
-!!		usuario se refiere a alguno de los temas disponibles y lanza la acción 
-!!		adecuada para tratarlo si es así. Debe invocarse desde el punto de 
-!!		entrada *BeforeParsing()*.
+!!		usuario se refiere a alguno de los temas disponibles en la conversación 
+!!		activa  y lanza la acción adecuada para tratarlo si es así. Debe 
+!!		invocarse desde el punto de entrada *BeforeParsing()*.
 !!------------------------------------------------------------------------------
 
 Object ConversationManager "(Conversation Manager)"
- with	start [ conversation;
-			self.current_conversation = conversation;
-			self.current_conversation.initiate();
+ with	start [ conv;
+			!! Se comprueba que la conversación pasada sea válida:
+			if ((conv == 0) || ~~(conv ofclass Conversation)) {
+				#Ifdef DEBUG_TOPICINVENTORY;
+				print "ERROR. La conversación introducida no es válida.^";
+				#Endif;
+				return false;
+			}
+			if (self.is_running(conv)) {
+				if (conv.inter_message ~= 0) {
+					switch (metaclass(conv.inter_message)) {
+						String:		print (string) conv.inter_message, "^";
+									new_line;
+						Routine:	indirect(conv.inter_message);
+									new_line;
+					}
+				}
+			} else {
+				!! Quita cualquier conversación activa en el gestor:
+				self.current_conversation = 0;
+				!! Si la conversación no tiene temas, imprime un mensaje de 
+				!! final de conversación (si está definido) y retorna:
+				conv.initiate();
+				if (~~(child(conv))) {
+					if (conv.final_message ~= 0) {
+						switch (metaclass(conv.final_message)) {
+							String:		print (string) conv.final_message, "^";
+										new_line;
+							Routine:	indirect(conv.final_message);
+										new_line;
+						}
+					}
+					return false;
+				}
+				!! En este punto se sabe que la conversación tiene temas. Se 
+				!! imprime un mensaje de inicio de conversación (si está 
+				!! definido):
+				if (conv.initial_message ~= 0) {
+					switch (metaclass(conv.initial_message)) {
+						String:		print (string) conv.initial_message, "^";
+									new_line;
+						Routine:	indirect(conv.initial_message);
+									new_line;
+					}
+				}
+				!! Activa la conversación en el gestor:
+				self.current_conversation = conv;
+			}
+			!! Imprime el inventario de temas de la conversación activa:
 			self.show_topic_inventory();
+			return true;
 		], 
 		end [;
 			self.current_conversation = 0;
+			return true;
 		], 
-		is_running [;
-			return self.current_conversation ~= nothing;
+		is_running [ conv;
+			if (conv == nothing)
+				return self.current_conversation ~= nothing;
+			else return self.current_conversation == conv;
 		], 
-		topic_inventory_size [ o size;
-			if (self.is_running()) 
-				objectloop (o in self.current_conversation)
-					size++;
-			return size;
+		topic_inventory_size [;
+			return self.current_conversation.topic_inventory_size();
 		],
-!		!! Mensaje del narrador:
-!		!! (descomentar para usar en lugar del mensaje del parser)
+		!! XXX - Requiere la extensión types.h v4.X o superior. Se puede 
+		!! cambiar por la versión alternativa que no hace uso de la extensión.
+		show_topic_inventory [;
+			start_parser_style();
+			self.current_conversation.show_topic_inventory();
+			end_parser_style();
+			new_line;
+			return true;
+		],
+		!! XXX - Versión alternativa de la propiedad show_topic_inventory. 
+		!! Descomentar si no se quiere utilizar la extensión types.h.
 !		show_topic_inventory [;
 !			switch (CONVERSATION_STYLE) {
 !			0:	!! Estilo: Romana
@@ -383,33 +556,17 @@ Object ConversationManager "(Conversation Manager)"
 !			}
 !			if (CONVERSATION_PREFIX ~= 0)
 !				print (string) CONVERSATION_PREFIX;
-!			if (CONVERSATION_MSG1 ~= 1)
-!				print (string) CONVERSATION_MSG1;
-!			if (self.topic_inventory_size() > 1 && CONVERSATION_MSG2 ~= 0)
-!				print (string) CONVERSATION_MSG2;
-!			self.current_conversation.show_topic_list();
+!			self.current_conversation.show_topic_inventory();
 !			if (CONVERSATION_SUFIX ~= 0)
 !				print (string) CONVERSATION_SUFIX;
-!			new_line;
 !			#Ifdef	TARGET_ZCODE;		!!
 !			font on; style roman;		!!
 !			#Ifnot;	! TARGET_GLULX;		!! Romana
 !			glk($0086, 0);				!!
 !			#Endif; ! TARGET_			!!
+!			new_line;
 !			return true;
-!		], 
-		!! Mensaje del parser (requiere la extensión types.h)
-		show_topic_inventory [;
-			start_parser_style();
-			if (CONVERSATION_MSG1 ~= 0)
-				print (string) CONVERSATION_MSG1;
-			if (self.topic_inventory_size() > 1 && CONVERSATION_MSG2 ~= 0)
-				print (string) CONVERSATION_MSG2;
-			self.current_conversation.show_topic_list();
-			print ".";
-			end_parser_style();
-			new_line;
-		], 
+!		],
 		try [ o o_tmp_hits;
 			if (self.current_conversation) {
 
@@ -454,7 +611,6 @@ Object ConversationManager "(Conversation Manager)"
 					give self.topic visited;
 
 					PrintOrRun(self.topic, reply);
-					PrintOrRun(self.topic, reaction);
 
 					!! Se establece la propiedad 'topic_inventory_flag' del 
 					!! sistema en función de las propiedades del tema
@@ -472,6 +628,8 @@ Object ConversationManager "(Conversation Manager)"
 					if (self.topic has visited)
 						self.current_conversation.remove_topic(self.topic);
 					self.current_conversation.add_subtopics(self.topic);
+
+					PrintOrRun(self.topic, reaction);
 
 					!! A partir de este punto, la librería lanzará la acción 
 					!! ##NPCTalk, que imprimirá el inventario de temas 
@@ -511,13 +669,14 @@ Verb	'npc.talk'
 ;
 
 [ NPCTalkSub;
-	if (ConversationManager.topic_inventory_size() > 0) {
-		if (ConversationManager.get_topic_inventory_flag()) {
-			new_line;
-			ConversationManager.show_topic_inventory();
-		}
-	} else 
-		ConversationManager.end();
+	if (ConversationManager.is_running()) {
+		if (ConversationManager.topic_inventory_size() > 0) {
+			if (ConversationManager.get_topic_inventory_flag()) {
+				new_line;
+				ConversationManager.show_topic_inventory();
+			}
+		} else ConversationManager.end();
+	}
 	return true;
 ];
 

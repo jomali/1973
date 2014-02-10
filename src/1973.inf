@@ -23,20 +23,21 @@
 !!
 !!	Copyright (c) 2014, J. Francisco Martín
 !!
-!!	This file is part of PROYECTO 1973.
+!!	Este archivo forma parte de PROYECTO 1973.
 !!
-!!	PROYECTO 1973 is free software: you can redistribute it and/or modify 
-!!	it under the terms of the GNU General Public License as published by 
-!!	the Free Software Foundation, either version 3 of the License, or 
-!!	(at your option) any later version.
+!!	PROYECTO 1973 es software libre: usted puede redistribuirlo y/o 
+!!	modificarlo bajo los términos de la Licencia Pública General GNU 
+!!	publicada por la Fundación para el Software Libre, ya sea la versión 
+!!	3 de la Licencia, o (a su elección) cualquier versión posterior.
 !!
-!!	PROYECTO 1973 is distributed in the hope that it will be useful, 
-!!	but WITHOUT ANY WARRANTY; without even the implied warranty of 
-!!	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-!!	GNU General Public License for more details.
+!!	PROYECTO 1973 se distribuye con la esperanza de que sea útil, pero 
+!!	SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o 
+!!	de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de 
+!!	la Licencia Pública General GNU para más información.
 !!
-!!	You should have received a copy of the GNU General Public License 
-!!	along with PROYECTO 1973. If not, see <http://www.gnu.org/licenses/>.
+!!	Debería haber recibido una copia de la Licencia Pública General GNU 
+!!	junto a PROYECTO 1973. En caso contrario, consulte
+!!	<http://www.gnu.org/licenses/>.
 !!
 !!------------------------------------------------------------------------------
 
@@ -67,6 +68,8 @@ Constant SACK_OBJECT = ropa;	! Contenedor principal para la librería
 Constant PARSER_STYLE _IST_;	! Selecciona estilo de los mensajes del parser
 Constant PARSER_PREFIX "[";		! Define texto inicial de mensajes del parser
 Constant PARSER_SUFIX "]";		! Define texto final de mensajes del parser
+
+Constant CONVERSATION_MSG2 "";
 
 Global flowers;					! Tipo de flor destacado en el relato (NOTA #1)
 Global next_track;				! Siguiente pista de audio a reproducir
@@ -177,6 +180,104 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 !!------------------------------------------------------------------------------
 
 !!------------------------------------------------------------------------------
+!!	Manipula la entrada del usuario antes de que sea analizada por la librería.
+!!------------------------------------------------------------------------------
+[ BeforeParsing; 
+	ConversationManager.try();
+];
+
+!!------------------------------------------------------------------------------
+!!	Deja la ventana en blanco.
+!!------------------------------------------------------------------------------
+[ EraseWindow;
+    #Ifdef TARGET_ZCODE;
+    @erase_window -1;
+    #Ifnot; ! TARGET_GLULX
+    if (gg_quotewin) {
+		glk($0024, gg_quotewin, 0); ! close_window
+		gg_quotewin = 0;
+    }
+    glk($002A, gg_mainwin); ! window_clear
+    if (gg_statuswin) glk($002A, gg_statuswin); ! window_clear
+    #Endif;
+];
+
+!!------------------------------------------------------------------------------
+!!	Cada vez que se inicia el relato se selecciona de manera aleatoria un tipo 
+!!	de flor de entre el siguiente conjunto de valores posibles {crisantemos, 
+!!	gladiolos, jazmines, madreselvas, narcisos, rosas, tulipanes, violetas}. La 
+!!	variable global "flowers" (NOTA #1) guardará el tipo de flor seleccionado.
+!!------------------------------------------------------------------------------
+[ GetFlowerType;
+	switch (random(8)) {
+		1:	return crisantemos;
+		2:	return gladiolos;
+		3:	return jazmines;
+		4:	return madreselvas;
+		5:	return malvas;
+		6:	return narcisos;
+		7:	return rosas;
+		8:	return tulipanes;
+		9:	return violetas;
+	}
+];
+
+Object	crisantemos "crisantemos"
+ with	name_mp	'crisantemos', 
+		gender	G_MASCULINO + G_PLURAL, 
+ has	male pluralname scenery;
+
+Object	gladiolos "gladiolos"
+ with	name_mp	'gladiolos', 
+		gender	G_MASCULINO + G_PLURAL, 
+ has	male pluralname scenery;
+
+Object	jazmines "jazmines"
+ with	name_mp	'jazmines', 
+		gender G_MASCULINO + G_PLURAL, 
+ has	male pluralname scenery;
+
+Object	madreselvas "madreselvas"
+ with	name_fp	'madreselvas', 
+		gender G_FEMENINO + G_PLURAL, 
+ has	female pluralname scenery;
+
+Object	malvas "malvas"
+ with	name_fp	'malvas', 
+		gender G_FEMENINO + G_PLURAL, 
+ has	female pluralname scenery;
+
+Object	narcisos "narcisos"
+ with	name_mp	'narcisos', 
+		gender	G_MASCULINO + G_PLURAL, 
+ has	male pluralname scenery;
+
+Object	rosas "rosas"
+ with	name_fp	'rosas', 
+		gender	G_FEMENINO + G_PLURAL, 
+ has	female pluralname scenery;
+
+Object	tulipanes "tulipanes"
+ with	name_mp	'tulipanes', 
+		gender	G_MASCULINO + G_PLURAL, 
+ has	male pluralname scenery;
+
+Object	violetas "violetas"
+ with	name_fp	'violetas', 
+		gender	G_FEMENINO + G_PLURAL, 
+ has	female pluralname scenery;
+
+!!------------------------------------------------------------------------------
+!!	Imprime una regla horizontal centrada en pantalla.
+!!------------------------------------------------------------------------------
+[ HorizontalRule;
+	monospaced_style();
+	spaces (ScreenWidth()-1-7) / 2;
+	print "*  *  *^";
+	roman_style();
+];
+
+!!------------------------------------------------------------------------------
 !! Inicialización del relato.
 !!------------------------------------------------------------------------------
 [ Initialise;
@@ -219,7 +320,20 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 ];
 
 !!------------------------------------------------------------------------------
-!!	Menú principal.
+!!	Foco del jugador.
+!!------------------------------------------------------------------------------
+[ InScope person item;
+	!! En la oscuridad, se mueven al foco del jugador todos aquellos objetos 
+	!! que hayan sido ya manipulados previamente por el personaje
+	if ( person == player && location == thedark ) {
+		objectloop(item in parent(player))
+			if (item has moved) PlaceInScope(item);
+	}
+	return false;
+];
+
+!!------------------------------------------------------------------------------
+!!	Menús iniciales (menú principal y menú con el índice de escenas).
 !!------------------------------------------------------------------------------
 [ MainMenu i key;
 	EraseWindow();
@@ -252,11 +366,6 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 
 	EraseWindow();
 ];
-
-!!------------------------------------------------------------------------------
-!!	Menú con el índice de escenas.
-!!	TODO - Activar escenas no disponibles
-!!------------------------------------------------------------------------------
 [ IndexMenu i key; 
 	EraseWindow();
 	monospaced_style();
@@ -265,12 +374,15 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 	print "  Escena 1: Habitación de Gabriel  ";
 		for (i=0 : i<(ScreenWidth() - 1 - 48) : i++) print ".";
 		print "      1      ^";
+	!! TODO - Activar escena
 	print "  Escena 2: Café Blanca Florida (no disponible)  ";
 		for (i=0 : i<(ScreenWidth() - 1 - 62) : i++) print ".";
 		print "      -      ^";
+	!! TODO - Activar escena
 	print "  Escena 3: Calles de Santiago (no disponible)  ";
 		for (i=0 : i<(ScreenWidth() - 1 - 61) : i++) print ".";
 		print "      -      ^";
+	!! TODO - Activar escena
 	print "  Escena 4: San Antonio (no disponible)  ";
 		for (i=0 : i<(ScreenWidth() - 1 - 54) : i++) print ".";
 		print "      -      ^";
@@ -293,42 +405,6 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 ];
 
 !!------------------------------------------------------------------------------
-!!	Manipula la entrada del usuario antes de que sea analizada por la librería.
-!!------------------------------------------------------------------------------
-[ BeforeParsing; 
-	ConversationManager.try();
-];
-
-!!------------------------------------------------------------------------------
-!!	Foco del jugador.
-!!------------------------------------------------------------------------------
-[ InScope person item;
-	!! En la oscuridad, se mueven al foco del jugador todos aquellos objetos 
-	!! que hayan sido ya manipulados previamente por el personaje
-	if ( person == player && location == thedark ) {
-		objectloop(item in parent(player))
-			if (item has moved) PlaceInScope(item);
-	}
-	return false;
-];
-
-!!------------------------------------------------------------------------------
-!!	Deja la ventana en blanco.
-!!------------------------------------------------------------------------------
-[ EraseWindow;
-    #Ifdef TARGET_ZCODE;
-    @erase_window -1;
-    #Ifnot; ! TARGET_GLULX
-    if (gg_quotewin) {
-		glk($0024, gg_quotewin, 0); ! close_window
-		gg_quotewin = 0;
-    }
-    glk($002A, gg_mainwin); ! window_clear
-    if (gg_statuswin) glk($002A, gg_statuswin); ! window_clear
-    #Endif;
-];
-
-!!------------------------------------------------------------------------------
 !!	Espera una pulsación de tecla o, si se introduce un valor, a que pase una 
 !!	cantidad delay de décimas de segundo antes de continuar. Retorna verdadero 
 !!	si la tecla pulsada es 'q' o 'Q', falso en caso contrario.
@@ -342,75 +418,6 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 	if (char == 'q' or 'Q') return true;
 	else return false;
 ];
-
-!!------------------------------------------------------------------------------
-!!	Imprime una regla horizontal centrada en pantalla.
-!!------------------------------------------------------------------------------
-[ HorizontalRule;
-	monospaced_style();
-	spaces (ScreenWidth()-1-7) / 2;
-	print "*  *  *^";
-	roman_style();
-];
-
-!!------------------------------------------------------------------------------
-!!	Cada vez que se inicia el relato se selecciona de manera aleatoria un tipo 
-!!	de flor de entre el siguiente conjunto de valores posibles {crisantemos, 
-!!	gladiolos, jazmines, madreselvas, narcisos, rosas, tulipanes, violetas}. La 
-!!	variable global "flowers" (NOTA #1) guardará el tipo de flor seleccionado.
-!!------------------------------------------------------------------------------
-[ GetFlowerType;
-	switch (random(8)) {
-		1:	return crisantemos;
-		2:	return gladiolos;
-		3:	return jazmines;
-		4:	return madreselvas;
-		5:	return narcisos;
-		6:	return rosas;
-		7:	return tulipanes;
-		8:	return violetas;
-	}
-];
-
-Object	crisantemos "crisantemos"
- with	name_mp	'crisantemos', 
-		gender	G_MASCULINO + G_PLURAL, 
- has	male pluralname scenery;
-
-Object	gladiolos "gladiolos"
- with	name_mp	'gladiolos', 
-		gender	G_MASCULINO + G_PLURAL, 
- has	male pluralname scenery;
-
-Object	jazmines "jazmines"
- with	name_mp	'jazmines', 
-		gender G_MASCULINO + G_PLURAL, 
- has	male pluralname scenery;
-
-Object	madreselvas "madreselvas"
- with	name_fp	'madreselvas', 
-		gender G_FEMENINO + G_PLURAL, 
- has	female pluralname scenery;
-
-Object	narcisos "narcisos"
- with	name_mp	'narcisos', 
-		gender	G_MASCULINO + G_PLURAL, 
- has	male pluralname scenery;
-
-Object	rosas "rosas"
- with	name_fp	'rosas', 
-		gender	G_FEMENINO + G_PLURAL, 
- has	female pluralname scenery;
-
-Object	tulipanes "tulipanes"
- with	name_mp	'tulipanes', 
-		gender	G_MASCULINO + G_PLURAL, 
- has	male pluralname scenery;
-
-Object	violetas "violetas"
- with	name_fp	'violetas', 
-		gender	G_FEMENINO + G_PLURAL, 
- has	female pluralname scenery;
 
 !!------------------------------------------------------------------------------
 !!	Rutinas y definiciones requeridas para lanzar la acción ##Examine sobre un 
@@ -448,24 +455,6 @@ Object	violetas "violetas"
 
 Verb 'no.verb' * noun -> Examine;
 
-!!------------------------------------------------------------------------------
-!!	Rutinas utilizadas por la acción ##RemarkableObjects para imprimir listado 
-!!	de objetos destacados del foco del jugador.
-!!------------------------------------------------------------------------------
-Global remarkableObjectsCount;
-[ CountRemarkableObjects obj; 
-	if (obj has remarkable) remarkableObjectsCount++;
-];
-[ PrintRemarkableObjects obj;
-	if (obj has remarkable) {
-		PronounNotice(obj);
-		print " ", (the) obj;
-		remarkableObjectsCount--;
-		if (remarkableObjectsCount > 1) print ",";
-		else if (remarkableObjectsCount == 1) print " y";
-	}
-];
-
 
 !!==============================================================================
 !!	Gramática estándar y extendida
@@ -474,8 +463,9 @@ Global remarkableObjectsCount;
 Include	"SpanishG.h";		! Gramática española
 Include	"SpanishEG.h";		! Gramática española extendida
 
-!!==============================================================================
-
+!!------------------------------------------------------------------------------
+!! #Audio, #AudioOn, #AudioOff
+!!------------------------------------------------------------------------------
 #Ifdef TARGET_GLULX;
 Verb meta 'audio' 'music' 'musica' 'sonido' 'sonidos'
 	*								-> Audio
@@ -486,106 +476,7 @@ Verb meta 'audio' 'music' 'musica' 'sonido' 'sonidos'
 ;
 VerboIrregular "establecer la reproducción de audio"
 	with imperativo 'audio' 'music' 'musica' 'sonido' 'sonidos';
-#Endif; ! TARGET_GLULX;
 
-Extend	only 'corre' replace
-	* noun							-> CloseX
-;
-
-Verb	'desnuda' 'desviste'
-	*								-> DisrobeX
-	* '-te'/'-me'					-> DisrobeX
-	* noun							-> DisrobeX
-	* '-te'/'-me' noun				-> DisrobeX
-;
-VerboIrregular "desvestir" with imperativo 'desnuda' 'desviste';
-
-Verb	'apunta' 'dispara' 'tirotea'
-	*								-> FireAt
-	* noun							-> FireAt
-	* 'a//'/'hacia' noun			-> FireAt
-	* 'a//'/'hacia' noun 'con' held	-> FireAt
-	* noun 'con' held				-> FireAt
-	* held 'a//'/'hacia' noun		-> FireAt reverse
-	* 'con' held 'a//'/'hacia' noun	-> FireAt reverse
-;
-
-#Ifdef TARGET_GLULX;
-Verb meta 'grafico' 'graficos' 'graphic' 'graphics'
-	*								-> Graphics
-	* 'on'/'si'						-> GraphicsOn
-	* 'encendido'/'activado'		-> GraphicsOn
-	* 'encendidos'/'activados'		-> GraphicsOn
-	* 'off'/'no'					-> GraphicsOff
-	* 'apagado'/'desactivado'		-> GraphicsOff
-	* 'apagados'/'desactivados'		-> GraphicsOff
-;
-VerboIrregular "establecer ventana gráfica"
-	with imperativo 'grafico' 'graficos' 'graphic' 'graphics';
-#Endif; ! TARGET_GLULX;
-
-Verb meta 'ayuda' 'ayudas' 'pista' 'pistas' 'sos' 'tutorial'
-	*								-> HelpOn
-	* 'on' / 'si'					-> HelpOn
-	* 'encendido' / 'activado'		-> HelpOn
-	* 'off' / 'no'					-> HelpOff
-	* 'apagado' / 'desactivado'		-> HelpOff
-;
-VerboIrregular "mostrar ayuda" with imperativo 
-	'ayuda' 'ayudas' 'pista' 'pistas' 'sos' 'tutorial';
-
-Extend only 'normal' replace
-    *								-> LMode2
-;
-
-Verb	'descorre'
-	* noun							-> OpenX
-;
-
-Verb	meta 'objetos' 'objs'
-	*								-> RemarkableObjects
-;
-VerboIrregular "mostrar objetos clave" with imperativo 'objetos' 'objs';
-
-Extend	'habla' replace
-	* noun							-> TalkTo
-	* 'a'/'con' noun				-> TalkTo
-	* creature						-> TalkTo
-	* 'a'/'con' creature			-> TalkTo
-	* 'por' noun					-> TalkOn
-	* 'por' creature				-> TalkOn
-;
-
-Verb	'conversa' 'platica'
-	* noun							-> TalkTo
-	* 'a'/'con' noun				-> TalkTo
-	* creature						-> TalkTo
-	* 'a'/'con' creature			-> TalkTo
-	* 'por' noun					-> TalkOn
-	* 'por' creature				-> TalkOn
-;
-
-Verb	meta 'temas' 't//'
-	*								-> TopicInventory
-;
-VerboIrregular "mostrar inventario de temas" with imperativo 'temas' 't//';
-
-Extend	'ponte' replace
-	* noun							-> Wear
-	* 'con' noun					-> Wear
-;
-
-Extend	only 'vistete' 'vestirse' 'vestirte' 'vestirme' 'visteme' replace
-	*								-> WearX
-	* noun							-> WearX
-	* 'con' noun					-> WearX
-;
-VerboIrregular "vestir" with imperativo 
-	'vistete' 'vestirse' 'vestirte' 'vestirme' 'visteme';
-
-!!==============================================================================
-
-#Ifdef TARGET_GLULX;
 [ AudioSub;
 	if (Damusix.HayAudio()) <<AudioOff>>;
 	else <<AudioOn>>;
@@ -606,6 +497,13 @@ VerboIrregular "vestir" with imperativo
 ];
 #Endif; ! TARGET_GLULX;
 
+!!------------------------------------------------------------------------------
+!! #CloseX
+!!------------------------------------------------------------------------------
+Extend	only 'corre' replace
+	* noun							-> CloseX
+;
+
 [ CloseXSub;
 	print (parser) "En lugar de ~correr~ el objeto, se intenta utilizar 
 	la acción ~cerrar~, que en este contexto es sinónima, y es más general. 
@@ -616,15 +514,38 @@ VerboIrregular "vestir" with imperativo
 ];
 
 !!------------------------------------------------------------------------------
-!!	Los verbos "desnudar"/"desvestir" pueden invocarse sin indicar un objeto, 
-!!	de manera que un objeto "clothing" pueda capturar la acción #DisrobeX en su 
-!!	rutina "react_before" y lanzar la acción #Disrobe sobre sí mismo.
+!! #DisrobeX
+!! Los verbos "desnudar"/"desvestir" pueden invocarse sin indicar un objeto, de 
+!! manera que un objeto "clothing" pueda capturar la acción #DisrobeX en su 
+!! rutina "react_before" y lanzar la acción #Disrobe sobre sí mismo.
 !!------------------------------------------------------------------------------
+Verb	'desnuda' 'desviste'
+	*								-> DisrobeX
+	* '-te'/'-me'					-> DisrobeX
+	* noun							-> DisrobeX
+	* '-te'/'-me' noun				-> DisrobeX
+;
+VerboIrregular "desvestir" with imperativo 'desnuda' 'desviste';
+
 [ DisrobeXSub;
 	if (noun == nothing)
 		print_ret (parser) "Tienes que indicar qué quieres quitarte.";
 	<<Disrobe noun>>;
 ];
+
+!!------------------------------------------------------------------------------
+!! #FireAt
+!! TODO - Se puede usar la sintaxis noun=<Routine>. Ver DM4 IV.31
+!!------------------------------------------------------------------------------
+Verb	'apunta' 'dispara' 'tirotea'
+	*								-> FireAt
+	* noun							-> FireAt
+	* 'a//'/'hacia' noun			-> FireAt
+	* 'a//'/'hacia' noun 'con' held	-> FireAt
+	* noun 'con' held				-> FireAt
+	* held 'a//'/'hacia' noun		-> FireAt reverse
+	* 'con' held 'a//'/'hacia' noun	-> FireAt reverse
+;
 
 [ FireAtSub;
 	if (~~TestScope(revolver)) {
@@ -671,10 +592,64 @@ VerboIrregular "vestir" with imperativo
 	tiro ", (al) noun, " probablemente no hubiese sido muy buena idea.";
 ];
 
-!! TODO - Cuando se cierra la ventana y se abre después, la imágen que se 
+!!------------------------------------------------------------------------------
+!! #GNA (sólo en modo de depuración)
+!!------------------------------------------------------------------------------
+#Ifdef	DEBUG;
+Verb meta 'gna'
+	* multi							-> GNA
+;
+
+[ GNA g;
+	g = GetGNAOfObject(noun);
+	print g, ": ";
+	switch (g) {
+		0,1,2,3,4,5: print "animado ";
+		default:	 print "inanimado ";
+	}
+	switch (g) {
+		0,1,2,6,7,8: print "singular ";
+		default:	 print "plural ";
+	}
+	switch (g) {
+		0,3,6,9:	 print "masculino";
+		1,4,7,10:	 print "femenino";
+		default:	 print "neutro";
+	}
+];
+
+[ GNASub;
+	start_parser_style();
+	print "Objeto: ";
+	roman_style();
+	print (name) noun; 
+	parser_style();
+	print ". (", (The) noun," / ", (the) noun," / ", (a) noun, 
+	" / -", (o) noun, ")^GNA ", (GNA) noun;
+	end_parser_style();
+	new_line;
+];
+#Endif; ! DEBUG;
+
+!!------------------------------------------------------------------------------
+!! #Graphics, #GraphicsOn, #GraphicsOff
+!!------------------------------------------------------------------------------
+#Ifdef TARGET_GLULX;
+Verb meta 'grafico' 'graficos' 'graphic' 'graphics'
+	*								-> Graphics
+	* 'on'/'si'						-> GraphicsOn
+	* 'encendido'/'activado'		-> GraphicsOn
+	* 'encendidos'/'activados'		-> GraphicsOn
+	* 'off'/'no'					-> GraphicsOff
+	* 'apagado'/'desactivado'		-> GraphicsOff
+	* 'apagados'/'desactivados'		-> GraphicsOff
+;
+VerboIrregular "establecer ventana gráfica"
+	with imperativo 'grafico' 'graficos' 'graphic' 'graphics';
+
+!! FIXME - Cuando se cierra la ventana y se abre después, la imágen que se 
 !! mostraba deja de hacerlo
 
-#Ifdef TARGET_GLULX;
 [ GraphicsSub;
 	if (GRAPHIC_WIN_FLAG) <<GraphicsOff>>;
 	else <<GraphicsOn>>;
@@ -694,6 +669,19 @@ VerboIrregular "vestir" with imperativo
 	print_ret (parser) "Ventana gráfica cerrada.";
 ];
 #Endif; ! TARGET_GLULX;
+
+!!------------------------------------------------------------------------------
+!! #HelpOn, #HelpOff
+!!------------------------------------------------------------------------------
+Verb meta 'ayuda' 'ayudas' 'pista' 'pistas' 'sos' 'tutorial'
+	*								-> HelpOn
+	* 'on' / 'si'					-> HelpOn
+	* 'encendido' / 'activado'		-> HelpOn
+	* 'off' / 'no'					-> HelpOff
+	* 'apagado' / 'desactivado'		-> HelpOff
+;
+VerboIrregular "mostrar ayuda" with imperativo 
+	'ayuda' 'ayudas' 'pista' 'pistas' 'sos' 'tutorial';
 
 !! TODO - Cuando el sistema de ayuda no tiene el atributo 'on', detener su 
 !! temporizador e imprimir la siguiente pista
@@ -720,6 +708,40 @@ VerboIrregular "vestir" with imperativo
 	print_ret (parser) "Sistema de ayuda desactivado.";
 ];
 
+!!------------------------------------------------------------------------------
+!! #LMode2
+!!------------------------------------------------------------------------------
+Extend only 'normal' replace
+    *								-> LMode2
+;
+
+!!------------------------------------------------------------------------------
+!! #NoSuchVerb
+!! Permite eliminar acciones definidas automáticamente por la librería Inform.
+!! Código extraído de <http://www.firthworks.com/roger/informfaq/vv.html#6>.
+!!------------------------------------------------------------------------------
+[ Anything; ! Ignore the remaining input line
+	while (NextWordStopped() ~= -1);
+	return GPR_PREPOSITION;
+];
+
+[ NoSuchVerbSub; return ParserError(VERB_PE); ];
+
+Extend	'perdona' replace
+	* Anything						-> NoSuchVerb
+;
+
+Extend	'nada' replace
+	* Anything						-> NoSuchVerb
+;
+
+!!------------------------------------------------------------------------------
+!! #OpenX
+!!------------------------------------------------------------------------------
+Verb	'descorre'
+	* noun							-> OpenX
+;
+
 [ OpenXSub;
 	print (parser) "En lugar de ~descorrer~ el objeto, se intenta utilizar 
 	la acción ~abrir~, que en este contexto es sinónima, y es más general. 
@@ -727,6 +749,28 @@ VerboIrregular "vestir" with imperativo
 	pueden abrir y cerrar.)";
 	new_line; new_line;
 	<<Open noun second>>;
+];
+
+!!------------------------------------------------------------------------------
+!! #RemarkableObjects
+!!------------------------------------------------------------------------------
+Verb	meta 'objetos' 'objs'
+	*								-> RemarkableObjects
+;
+VerboIrregular "mostrar objetos clave" with imperativo 'objetos' 'objs';
+
+Global remarkableObjectsCount;
+[ CountRemarkableObjects obj; 
+	if (obj has remarkable) remarkableObjectsCount++;
+];
+[ PrintRemarkableObjects obj;
+	if (obj has remarkable) {
+		PronounNotice(obj);
+		print " ", (the) obj;
+		remarkableObjectsCount--;
+		if (remarkableObjectsCount > 1) print ",";
+		else if (remarkableObjectsCount == 1) print " y";
+	}
 ];
 
 [ RemarkableObjectsSub;
@@ -744,6 +788,27 @@ VerboIrregular "vestir" with imperativo
 	new_line;
 	return true;
 ];
+
+!!------------------------------------------------------------------------------
+!! #TalkOn, #TalkTo
+!!------------------------------------------------------------------------------
+Extend	'habla' replace
+	* noun							-> TalkTo
+	* 'a'/'con' noun				-> TalkTo
+	* creature						-> TalkTo
+	* 'a'/'con' creature			-> TalkTo
+	* 'por' noun					-> TalkOn
+	* 'por' creature				-> TalkOn
+;
+
+Verb	'conversa' 'platica'
+	* noun							-> TalkTo
+	* 'a'/'con' noun				-> TalkTo
+	* creature						-> TalkTo
+	* 'a'/'con' creature			-> TalkTo
+	* 'por' noun					-> TalkOn
+	* 'por' creature				-> TalkOn
+;
 
 [ TalkOnSub;
 	start_parser_style();
@@ -795,6 +860,14 @@ VerboIrregular "vestir" with imperativo
 	}
 ];
 
+!!------------------------------------------------------------------------------
+!! #TopicInventory
+!!------------------------------------------------------------------------------
+Verb	meta 'temas' 't//'
+	*								-> TopicInventory
+;
+VerboIrregular "mostrar inventario de temas" with imperativo 'temas' 't//';
+
 [ TopicInventorySub;
 	if (ConversationManager.is_running()) {
 		if (ConversationManager.topic_inventory_size() > 0) {
@@ -808,9 +881,15 @@ VerboIrregular "vestir" with imperativo
 ];
 
 !!------------------------------------------------------------------------------
-!!	Basada en la implementación de "verblibm.h". Si el objeto no está en 
-!!	posesión del jugador, se le intenta pasar a su inventario automáticamente.
+!! #Wear
+!! Basada en la implementación de *verblibm.h*. Si el objeto no está en 
+!! posesión del jugador, se le intenta pasar a su inventario automáticamente.
 !!------------------------------------------------------------------------------
+Extend	'ponte' replace
+	* noun							-> Wear
+	* 'con' noun					-> Wear
+;
+
 [ WearSub;
 	if (ObjectIsUntouchable(noun)) return;
 	if (noun hasnt clothing)    return L__M(##Wear, 1, noun);
@@ -825,54 +904,25 @@ VerboIrregular "vestir" with imperativo
 ];
 
 !!------------------------------------------------------------------------------
-!!	El verbo "vestir" ('vistete', 'vestirse', 'vestirte'...) puede invocarse 
-!!	sin indicar un objeto, de manera que un objeto "clothing" pueda capturar la 
-!!	acción #WearX en su rutina "react_before" y lanzar la acción #Wear sobre 
-!!	sí mismo.
+!! #WearX
+!! El verbo "vestir" ('vistete', 'vestirse', 'vestirte'...) puede invocarse sin 
+!! indicar un objeto, de manera que un objeto "clothing" pueda capturar la 
+!! acción #WearX en su rutina "react_before" y lanzar la acción #Wear sobre sí 
+!! mismo.
 !!------------------------------------------------------------------------------
+Extend	only 'vistete' 'vestirse' 'vestirte' 'vestirme' 'visteme' replace
+	*								-> WearX
+	* noun							-> WearX
+	* 'con' noun					-> WearX
+;
+VerboIrregular "vestir" with imperativo 
+	'vistete' 'vestirse' 'vestirte' 'vestirme' 'visteme';
+
 [ WearXSub;
 	if (noun == nothing)
 		print_ret (parser) "Tienes que indicar con qué quieres vestirte.";
 	<<Wear noun>>;
 ];
-
-!!==============================================================================
-
-#Ifdef	DEBUG;
-Verb meta 'gna'
-	* multi							-> GNA
-;
-
-[ GNA g;
-	g = GetGNAOfObject(noun);
-	print g, ": ";
-	switch (g) {
-		0,1,2,3,4,5: print "animado ";
-		default:	 print "inanimado ";
-	}
-	switch (g) {
-		0,1,2,6,7,8: print "singular ";
-		default:	 print "plural ";
-	}
-	switch (g) {
-		0,3,6,9:	 print "masculino";
-		1,4,7,10:	 print "femenino";
-		default:	 print "neutro";
-	}
-];
-
-[ GNASub;
-	start_parser_style();
-	print "Objeto: ";
-	roman_style();
-	print (name) noun; 
-	parser_style();
-	print ". (", (The) noun," / ", (the) noun," / ", (a) noun, 
-	" / -", (o) noun, ")^GNA ", (GNA) noun;
-	end_parser_style();
-	new_line;
-];
-#Endif; ! DEBUG;
 
 
 !!==============================================================================

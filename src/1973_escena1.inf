@@ -1369,7 +1369,4 @@ Item	billete LIMBO
 		description_flag false,	! indica si el objeto ha sido descrito
  has	male;
 
-!!------------------------------------------------------------------------------
-!! NPCs:
-
 
