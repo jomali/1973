@@ -41,7 +41,7 @@
 !!	CALLEJON: En el callejón
 !!------------------------------------------------------------------------------
 
-Room	CALLEJON "En el callejón"
+Room	OBJ_CALLEJON "En el callejón"
  with	name	'callejon' 'calleja' 'callejuela' 'callizo' 'calle' 'calles' 
 				'avenida' 'bulevar' 'rambla' 'santiago';
 
@@ -85,7 +85,7 @@ Room	CALLEJON "En el callejón"
 !!	SAN_ANTONIO: Embarcadero de San Antonio
 !!------------------------------------------------------------------------------
 
-Room	SAN_ANTONIO "Embarcadero de San Antonio"
+Room	OBJ_SAN_ANTONIO "Embarcadero de San Antonio"
  with	name	'antonio' 'embarcadero' 'puerto' 'san';
 
 !!------------------------------------------------------------------------------

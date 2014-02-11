@@ -13,7 +13,7 @@
 !!	System:			Inform-INFSP 6
 !!	Platform:		Máquina-Z / GLULX
 !!	Version:		0.1
-!!	Released:		2014/02/09
+!!	Released:		2014/02/11
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -41,17 +41,17 @@
 !!==============================================================================
 !!	Definición de atributos y clases
 !!------------------------------------------------------------------------------
-!!	NOTA sobre las propiedades de clase: Hay rutinas como before o react_before 
-!!	que son propiedades no aditivas. Es decir, si se crea una clase que defina 
-!!	un comportamiento específico para una de esas propiedades, y a continuación 
-!!	un objeto como instancia de esta clase de forma que también él defina su 
-!!	propia versión de esas propiedades no aditivas, las rutinas del objeto 
-!!	"sobreescribirán" completamente aquéllas de la clase. Dicho de otra forma, 
-!!	si el objeto define las suyas propias, las rutinas before o react_before de 
-!!	la clase de la que es instancia NO SERÁN INVOCADAS en ningún momento. Sin 
-!!	embargo, se puede hacer una llamada explícita a la rutina de la clase desde 
-!!	la rutina del objeto. Ej. de un objeto invocando a la rutina react_before 
-!!	de la clase a la que instancia:
+!!	*NOTA sobre las propiedades de clase:* Hay rutinas como before o 
+!!	react_before que son propiedades no aditivas. Es decir, si se crea una 
+!!	clase que defina un comportamiento específico para una de esas propiedades, 
+!!	y a continuación un objeto como instancia de esta clase de forma que 
+!!	también él defina su propia versión de esas propiedades no aditivas, las 
+!!	rutinas del objeto "sobreescribirán" completamente aquéllas de la clase. 
+!!	Dicho de otra forma, si el objeto define las suyas propias, las rutinas 
+!!	before o react_before de la clase de la que es instancia NO SERÁN INVOCADAS 
+!!	en ningún momento. Sin embargo, se puede hacer una llamada explícita a la 
+!!	rutina de la clase desde la rutina del objeto. Ej. de un objeto invocando a 
+!!	la rutina react_before de la clase a la que instancia:
 !!
 !!		objectName.className::react_before();
 !!------------------------------------------------------------------------------
@@ -450,23 +450,23 @@ Class	TextSequence
 						indirect(self.&description-->i);
 					else break;
 					new_line;
-					if (~~flag) flag = PressAnyKey();
+					if ((self hasnt general) && ~~(flag)) flag = PressAnyKey();
 				}
 			}
 		],
- has	proper;
+ has	proper general;
 
 
 !!==============================================================================
 !!	LIMBO: En algún lugar
 !!------------------------------------------------------------------------------
 
-Room	LIMBO "En algún lugar"
+Room	OBJ_LIMBO "En algún lugar"
  with	name	'limbo' 'lugar' 'sueno' 'vacio',
 		description [; return O__M(self, 1); ];
 
-!!	<>	El atributo 'general' se activa tras imprimir el primer mensaje en la 
-!!		rutina 'react_after'.
+!!	 *	El atributo *general* se activa tras imprimir el primer mensaje en la 
+!!		rutina react_after.
 Object	HelpSystem "(Help System)"
  with	!! Indica si el tutorial está activado
 		is_active [; return self.on_flag; ], 
@@ -515,10 +515,10 @@ Object	HelpSystem "(Help System)"
 			!! Acción ##Examine
 			if (self.examine_clue_flag && ~~self.examine_clue_printed) {
 				if (~~flag) new_line;
-				if (HABITACION.has_light_flag()) {
-					return self.examine_clue_a(ropa);
+				if (OBJ_HABITACION.has_light_flag()) {
+					return self.examine_clue_a(OBJ_ropa);
 				} else {
-					return self.examine_clue_a(cortinas);
+					return self.examine_clue_a(OBJ_cortinas);
 				}
 			}
 			!! Acción ##Open
@@ -533,16 +533,16 @@ Object	HelpSystem "(Help System)"
 			!! Acción ##Take
 			if (self.take_clue_flag && ~~self.take_clue_printed) {
 				if (~~flag) new_line;
-				if (~~IndirectlyContains(player, ropa))
-					return self.take_clue_a(ropa);
-				return self.take_clue_a(maleta);
+				if (~~IndirectlyContains(player, OBJ_ropa))
+					return self.take_clue_a(OBJ_ropa);
+				return self.take_clue_a(OBJ_maleta);
 			}
-			!! Acción #Inv
+			!! Acción ##Inv
 			if (self.inv_clue_flag && ~~self.inv_clue_printed) {
 				if (~~flag) new_line;
 				return self.inv_clue_a();
 			}
-			!! Acción #Go
+			!! Acción ##Go
 			if (self.go_clue_flag && ~~self.go_clue_printed) {
 				if (~~flag) new_line;
 				return self.go_clue_a();
@@ -622,7 +622,7 @@ Object	HelpSystem "(Help System)"
 					StartTimer(self, 3);
 				}
 			Open:
-				if (noun == cortinas) {
+				if (noun == OBJ_cortinas) {
 					if (~~self.open_clue_a_printed) 
 						self.open_clue_a_printed = true;
 					if (~~self.open_clue_b_printed)
@@ -660,7 +660,7 @@ Object	HelpSystem "(Help System)"
 				}
 		], 
 		react_after [;
-			if (self hasnt general) {
+			if ((self hasnt general) && (location == OBJ_HABITACION)) {
 				give self general;
 				new_line;
 				return O__M(self, 1);
@@ -798,7 +798,7 @@ Object	HelpSystem "(Help System)"
  has	on scenery;
 
 Atrezzo	"paredes" 
- with	found_in HABITACION CAFE, 
+ with	found_in OBJ_HABITACION OBJ_CAFE, 
 		name_m	'muro',
 		name_mp	'muros',
 		name_f	'pared' 'esquina',
@@ -807,18 +807,23 @@ Atrezzo	"paredes"
 		adjectives
 			'amarillenta' 'amarillentas' 'amarillento' 'amarillentos' 'blanca' 
 			'blancas' 'blanco' 'blancos',
-		description [; switch ( GRAMMATICAL_INFLECTION ) {
-			1,2,3: "No se observa nada digno de mención en ", (the) self, ".";
-			4,5,6: "No se observaba nada digno de mención en ", (the) self, ".";
-		}],
 		before [;
-			Examine:
-				return false;
+			Examine, Search:
+				switch ( GRAMMATICAL_INFLECTION ) {
+					1,2,3: "No hay nada especial en ", (the) self, ".";
+					4,5,6: "No había nada especial en ", (the) self, ".";
+				}
 			default:
 				switch (GRAMMATICAL_INFLECTION) {
-					1, 2, 3: "No hace falta preocuparse por eso.";
-					4, 5, 6: "No hacía falta preocuparse por eso.";
+					1: "No creo que sea necesario preocuparme por ";
+					2: "No es necesario que te preocupes por ";
+					3: "No es necesario que se preocupe por ";
+					4: "No creí que fuese necesario preocuparme por ";
+					5: "No era necesario que te preocupases por ";
+					6: "No era necesario que se preocupase por ";
 				}
+				SpanishNominativePronoun(self);
+				".";
 		], 
  has	female pluralname;
 

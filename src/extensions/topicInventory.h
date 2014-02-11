@@ -171,6 +171,7 @@ Default CONVERSATION_PREFIX	"(";
 Default CONVERSATION_SUFIX	")";
 Default CONVERSATION_MSG1	"Puedes ";
 Default CONVERSATION_MSG2	"escoger entre ";
+Default CONVERSATION_MSG3	"Hablas con ";
 Default CONVERSATION_OR		" o ";
 Default CONVERSATION_NO_MSG	"No hay temas que tratar";
 
@@ -326,7 +327,9 @@ Class	ConversationTopic
 !!
 !!	 *	topic_inventory_size() - Retorna el número de temas de la conversación.
 !!
-!!	 *	show_topic_inventory() - Imprime el inventario de temas.
+!!	 *	show_topic_inventory(flag:boolean) - Imprime el inventario de temas. Si 
+!!		se invoca con *flag* verdadero y la conversación tiene definida la 
+!!		propiedad *talker*, ésta se imprime antes de imprimir el inventario.
 !!------------------------------------------------------------------------------
 
 Class	Conversation
@@ -388,7 +391,7 @@ Class	Conversation
 			objectloop(topic in self) size++;
 			return size;
 		],
-		show_topic_inventory [ topic size;
+		show_topic_inventory [ flag		topic size;
 			!! XXX - Puesto que el temporizador comprueba si se deben eliminar 
 			!! los temas temporales al finalizar el turno (es decir, después de 
 			!! de mostrar el inventario de temas), puede ocurrir que algunos de 
@@ -397,7 +400,7 @@ Class	Conversation
 			!! los temas temporales.
 			if (self.time_left == 0) self.remove_temporal_topic();
 
-			if (self.talker ~= 0) {
+			if ((flag) && (self.talker ~= 0)) {
 				switch (metaclass(self.talker)) {
 					Object:		print (The) self.talker;
 					String:		print (string) self.talker;
@@ -405,6 +408,7 @@ Class	Conversation
 				}
 				print ": ";
 			}
+
 			size = self.topic_inventory_size();
 			if ((size == 0) && (CONVERSATION_NO_MSG ~= 0))
 				print (string) CONVERSATION_NO_MSG;
@@ -427,7 +431,7 @@ Class	Conversation
 			return true;
 		],
 		!! Permite indicar con quién se lleva a cabo la conversación. Puede ser 
-		!! un objeto, un string o  una rutina.
+		!! un objeto, un string o una rutina.
 		talker 0,
 		!! Acción al activar una conversación.
 		initial_action 0,
@@ -438,7 +442,9 @@ Class	Conversation
 		!! Temporizadores.
 		time_left -1,
 		time_out [; self.remove_temporal_topic(); ],
- private temporal_topic 0; ! guarda el tema temporal
+ private
+		!! Guarda el tema temporal.
+		temporal_topic 0;
 
 
 !!==============================================================================
@@ -461,8 +467,9 @@ Class	Conversation
 !!	 *	topic_inventory_size() - Retorna el número de temas de la conversación 
 !!		activa. 
 !!
-!!	 *	show_topic_inventory() - Muestra el inventario de temas de la 
-!!		conversación activa.
+!!	 *	show_topic_inventory(flag:boolean) - Invoca la función 
+!!		*show_topic_inventory(flag)* de la conversación activa para imprimir el 
+!!		inventario de temas.
 !!
 !!	 *	try() - Función principal del gestor. Comprueba si la entrada de 
 !!		usuario se refiere a alguno de los temas disponibles en la conversación 
@@ -522,17 +529,17 @@ Object ConversationManager "(Conversation Manager)"
 		],
 		!! XXX - Requiere la extensión types.h v4.X o superior. Se puede 
 		!! cambiar por la versión alternativa que no hace uso de la extensión.
-		show_topic_inventory [;
+		show_topic_inventory [ flag;
 			if (self.current_conversation == 0) return false;
 			start_parser_style();
-			self.current_conversation.show_topic_inventory();
+			self.current_conversation.show_topic_inventory(flag);
 			end_parser_style();
 			new_line;
 			return true;
 		],
 		!! XXX - Versión alternativa de la propiedad show_topic_inventory. 
 		!! Descomentar si no se quiere utilizar la extensión types.h.
-!		show_topic_inventory [;
+!		show_topic_inventory [ flag;
 !			if (self.current_conversation == 0) return false;
 !			switch (CONVERSATION_STYLE) {
 !			0:	!! Estilo: Romana
@@ -562,7 +569,7 @@ Object ConversationManager "(Conversation Manager)"
 !			}
 !			if (CONVERSATION_PREFIX ~= 0)
 !				print (string) CONVERSATION_PREFIX;
-!			self.current_conversation.show_topic_inventory();
+!			self.current_conversation.show_topic_inventory(flag);
 !			if (CONVERSATION_SUFIX ~= 0)
 !				print (string) CONVERSATION_SUFIX;
 !			#Ifdef	TARGET_ZCODE;		!!
@@ -678,14 +685,12 @@ Verb	'npc.talk'
 
 [ NPCTalkSub;
 	if (ConversationManager.is_running()) {
-		if (ConversationManager.topic_inventory_size() > 0) {
-			if (ConversationManager.get_topic_inventory_flag()) {
-				new_line;
-				ConversationManager.show_topic_inventory();
-			}
-		} else ConversationManager.end();
+		if (ConversationManager.get_topic_inventory_flag()) {
+			new_line;
+			ConversationManager.show_topic_inventory();
+		}
 	}
-	return true;
+	return false;
 ];
 
 

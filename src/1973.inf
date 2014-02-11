@@ -17,7 +17,7 @@
 !!	System:			Inform-INFSP 6
 !!	Platform:		Máquina-Z / GLULX
 !!	Version:		0.1
-!!	Released:		2014/01/30
+!!	Released:		2014/02/11
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -38,6 +38,17 @@
 !!	Debería haber recibido una copia de la Licencia Pública General GNU 
 !!	junto a PROYECTO 1973. En caso contrario, consulte
 !!	<http://www.gnu.org/licenses/>.
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	# NOTAS
+!!
+!!	General:
+!!	 *	FIXME - Sería deseable disponer de un sistema de autoguardado y 
+!!		autocargado que registre en un archivo hasta qué escena ha llegado el 
+!!		jugador. De esta forma, al iniciar la aplicación, automáticamente se 
+!!		podría cargar ese archivo y permitir al jugador que empiece el relato 
+!!		desde cualquiera de las escenas hasta las que haya llegado. 
 !!
 !!------------------------------------------------------------------------------
 
@@ -62,17 +73,16 @@ Constant MANUAL_PRONOUNS;		! Los pronoms. refieren a objetos ya mencionados
 Constant NO_PLACES;				! Acciones LUGARES Y OBJETOS desactivadas
 Constant NO_SCORE;				! No se lleva conteo de puntuación
 Constant SIN_MENSAJES;			! Se omiten los mensajes por defecto de la lib.
-Constant MAX_CARRIED = 3;		! Máx. de objetos que se pueden llevar en mano
-Constant SACK_OBJECT = ropa;	! Contenedor principal para la librería
+Constant MAX_CARRIED 3;			! Máx. de objetos que se pueden llevar en mano
+Constant SACK_OBJECT OBJ_ropa;	! Contenedor principal para la librería
 
 Constant PARSER_STYLE _IST_;	! Selecciona estilo de los mensajes del parser
 Constant PARSER_PREFIX "[";		! Define texto inicial de mensajes del parser
 Constant PARSER_SUFIX "]";		! Define texto final de mensajes del parser
 
-Constant CONVERSATION_MSG2 "";
+Constant CONVERSATION_MSG2 "";	! Define texto de la extensión topicInventory.h
 
-Global flowers;					! Tipo de flor destacado en el relato (NOTA #1)
-Global next_track;				! Siguiente pista de audio a reproducir
+Global flowers;					! NOTA #1: Tipo de flor destacado en el relato
 
 
 !!==============================================================================
@@ -89,9 +99,9 @@ Replace InvWideSub;				! Rutinas para tomar INVENTARIO del personaje
 Replace LMode1Sub;				! Lookmode 1: Breve
 Replace LMode2Sub;				! Lookmode 2: Largo (establecido por defecto)
 Replace LMode3Sub;				! Lookmode 3: Superbreve
-Replace LookSub;				! Rutina para la acción #Look
+Replace LookSub;				! Rutina para la acción ##Look
 Replace VersionSub;				! Créditos detallados de la aplicación
-Replace WearSub;				! Rutina para la acción #Wear
+Replace WearSub;				! Rutina para la acción ##Wear
 
 
 !!==============================================================================
@@ -145,10 +155,6 @@ Include "gwincls.h";			! GWindows; Window Class Framework
 	5:	! evtype_Arrange     - some windows sizes have changed
 	6:	! evtype_Redraw      - graphic windows need redrawing
 	7:	! evtype_SoundNotify - sound finished playing
-		if (next_track ~= 0) {
-			Damusix.Tocar(next_track, 1);
-			next_track = 0;
-		}
 	8:	! evtype_Hyperlink   - selection of a hyperlink in a window
 	}
 	ev = context + abortres; ! (para evitar alertas del compilador)
@@ -203,66 +209,67 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 ];
 
 !!------------------------------------------------------------------------------
-!!	Cada vez que se inicia el relato se selecciona de manera aleatoria un tipo 
-!!	de flor de entre el siguiente conjunto de valores posibles {crisantemos, 
-!!	gladiolos, jazmines, madreselvas, narcisos, rosas, tulipanes, violetas}. La 
-!!	variable global "flowers" (NOTA #1) guardará el tipo de flor seleccionado.
+!! Cada vez que se inicia el relato se selecciona de manera aleatoria un tipo 
+!! de flor de entre el siguiente conjunto de valores posibles {crisantemos, 
+!! gladiolos, jazmines, madreselvas, malvas, narcisos, rosas, tulipanes, 
+!! violetas}. La variable global *flowers* (ver NOTA #1) guardará el tipo de 
+!! flor seleccionado.
 !!------------------------------------------------------------------------------
 [ GetFlowerType;
-	switch (random(8)) {
-		1:	return crisantemos;
-		2:	return gladiolos;
-		3:	return jazmines;
-		4:	return madreselvas;
-		5:	return malvas;
-		6:	return narcisos;
-		7:	return rosas;
-		8:	return tulipanes;
-		9:	return violetas;
+	switch (random(9)) {
+		1:	return OBJ_crisantemos;
+		2:	return OBJ_gladiolos;
+		3:	return OBJ_jazmines;
+		4:	return OBJ_madreselvas;
+		5:	return OBJ_malvas;
+		6:	return OBJ_narcisos;
+		7:	return OBJ_rosas;
+		8:	return OBJ_tulipanes;
+		9:	return OBJ_violetas;
 	}
 ];
 
-Object	crisantemos "crisantemos"
+Object	OBJ_crisantemos "crisantemos"
  with	name_mp	'crisantemos', 
 		gender	G_MASCULINO + G_PLURAL, 
  has	male pluralname scenery;
 
-Object	gladiolos "gladiolos"
+Object	OBJ_gladiolos "gladiolos"
  with	name_mp	'gladiolos', 
 		gender	G_MASCULINO + G_PLURAL, 
  has	male pluralname scenery;
 
-Object	jazmines "jazmines"
+Object	OBJ_jazmines "jazmines"
  with	name_mp	'jazmines', 
 		gender G_MASCULINO + G_PLURAL, 
  has	male pluralname scenery;
 
-Object	madreselvas "madreselvas"
+Object	OBJ_madreselvas "madreselvas"
  with	name_fp	'madreselvas', 
 		gender G_FEMENINO + G_PLURAL, 
  has	female pluralname scenery;
 
-Object	malvas "malvas"
+Object	OBJ_malvas "malvas"
  with	name_fp	'malvas', 
 		gender G_FEMENINO + G_PLURAL, 
  has	female pluralname scenery;
 
-Object	narcisos "narcisos"
+Object	OBJ_narcisos "narcisos"
  with	name_mp	'narcisos', 
 		gender	G_MASCULINO + G_PLURAL, 
  has	male pluralname scenery;
 
-Object	rosas "rosas"
+Object	OBJ_rosas "rosas"
  with	name_fp	'rosas', 
 		gender	G_FEMENINO + G_PLURAL, 
  has	female pluralname scenery;
 
-Object	tulipanes "tulipanes"
+Object	OBJ_tulipanes "tulipanes"
  with	name_mp	'tulipanes', 
 		gender	G_MASCULINO + G_PLURAL, 
  has	male pluralname scenery;
 
-Object	violetas "violetas"
+Object	OBJ_violetas "violetas"
  with	name_fp	'violetas', 
 		gender	G_FEMENINO + G_PLURAL, 
  has	female pluralname scenery;
@@ -314,6 +321,10 @@ Object	violetas "violetas"
 	#Endif; ! DEMO_RELEASE;
 	#Endif; ! DEBUG;
 
+	#Ifdef DEBUG;
+	Damusix.DesactivarAudio();
+	#Endif; ! DEBUG;
+
 	MainMenu();					! Menú principal. Establece la localidad inicial
 
 	return 2;
@@ -333,7 +344,7 @@ Object	violetas "violetas"
 ];
 
 !!------------------------------------------------------------------------------
-!!	Menús iniciales (menú principal y menú con el índice de escenas).
+!!	Menús (menú principal y menú con el índice de escenas).
 !!------------------------------------------------------------------------------
 [ MainMenu i key;
 	EraseWindow();
@@ -357,7 +368,7 @@ Object	violetas "violetas"
 	roman_style();
 
 	key = KeyCharPrimitive();
-	location = cama;
+	location = OBJ_cama;
 	switch (key) {
 		'I', 'i': IndexMenu();
 		'R', 'r': EraseWindow(); print "Cargando partida...^"; <<Restore>>;
@@ -394,10 +405,10 @@ Object	violetas "violetas"
 
 	key = KeyCharPrimitive();
 	switch (key) {
-		'1': location = cama;
-		'2': location = CAFE;
-		'3': location = TAXI;
-		'4': location = SAN_ANTONIO;
+		'1': location = OBJ_cama;
+		'2': location = OBJ_CAFE;
+		'3': location = OBJ_TAXI;
+		'4': location = OBJ_SAN_ANTONIO;
 		default: MainMenu();
 	}
 
@@ -464,7 +475,7 @@ Include	"SpanishG.h";		! Gramática española
 Include	"SpanishEG.h";		! Gramática española extendida
 
 !!------------------------------------------------------------------------------
-!! #Audio, #AudioOn, #AudioOff
+!! ##Audio, ##AudioOn, ##AudioOff
 !!------------------------------------------------------------------------------
 #Ifdef TARGET_GLULX;
 Verb meta 'audio' 'music' 'musica' 'sonido' 'sonidos'
@@ -498,7 +509,7 @@ VerboIrregular "establecer la reproducción de audio"
 #Endif; ! TARGET_GLULX;
 
 !!------------------------------------------------------------------------------
-!! #CloseX
+!! ##CloseX
 !!------------------------------------------------------------------------------
 Extend	only 'corre' replace
 	* noun							-> CloseX
@@ -514,10 +525,10 @@ Extend	only 'corre' replace
 ];
 
 !!------------------------------------------------------------------------------
-!! #DisrobeX
+!! ##DisrobeX
 !! Los verbos "desnudar"/"desvestir" pueden invocarse sin indicar un objeto, de 
-!! manera que un objeto "clothing" pueda capturar la acción #DisrobeX en su 
-!! rutina "react_before" y lanzar la acción #Disrobe sobre sí mismo.
+!! manera que un objeto "clothing" pueda capturar la acción ##DisrobeX en su 
+!! rutina "react_before" y lanzar la acción ##Disrobe sobre sí mismo.
 !!------------------------------------------------------------------------------
 Verb	'desnuda' 'desviste'
 	*								-> DisrobeX
@@ -534,8 +545,9 @@ VerboIrregular "desvestir" with imperativo 'desnuda' 'desviste';
 ];
 
 !!------------------------------------------------------------------------------
-!! #FireAt
+!! ##FireAt
 !! TODO - Se puede usar la sintaxis noun=<Routine>. Ver DM4 IV.31
+!! TODO - Reimplementar *FireAtSub()*.
 !!------------------------------------------------------------------------------
 Verb	'apunta' 'dispara' 'tirotea'
 	*								-> FireAt
@@ -548,18 +560,18 @@ Verb	'apunta' 'dispara' 'tirotea'
 ;
 
 [ FireAtSub;
-	if (~~TestScope(revolver)) {
+	if (~~TestScope(OBJ_revolver)) {
 		if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
 			"Necesita un arma para hacer algo así.";
 		"Necesitaba un arma para hacer algo así.";
 	}
-	if (parent(revolver) ~= player) {
-		<Take revolver>;
-		if (parent(revolver) ~= player)
+	if (parent(OBJ_revolver) ~= player) {
+		<Take OBJ_revolver>;
+		if (parent(OBJ_revolver) ~= player)
 			return true;
 		new_line;
 	}
-	if (revolver.out_of_ammo()) {
+	if (OBJ_revolver.out_of_ammo()) {
 		if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
 			"El revólver está descargado. No puede disparar.";
 		"El revólver estaba descargado. No podía disparar.";
@@ -573,7 +585,7 @@ Verb	'apunta' 'dispara' 'tirotea'
 		"Frustrado, sentía ganas de disparar sobre algo. Aunque ponerse a 
 		disparar al aire probablemente no hubiese sido muy buena idea.";
 	}
-	if (noun == revolver) {
+	if (noun == OBJ_revolver) {
 		if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
 			"Eso no tiene sentido.";
 		"Eso no tenía sentido.";
@@ -593,7 +605,7 @@ Verb	'apunta' 'dispara' 'tirotea'
 ];
 
 !!------------------------------------------------------------------------------
-!! #GNA (sólo en modo de depuración)
+!! ##GNA (sólo en modo de depuración)
 !!------------------------------------------------------------------------------
 #Ifdef	DEBUG;
 Verb meta 'gna'
@@ -632,7 +644,7 @@ Verb meta 'gna'
 #Endif; ! DEBUG;
 
 !!------------------------------------------------------------------------------
-!! #Graphics, #GraphicsOn, #GraphicsOff
+!! ##Graphics, ##GraphicsOn, ##GraphicsOff
 !!------------------------------------------------------------------------------
 #Ifdef TARGET_GLULX;
 Verb meta 'grafico' 'graficos' 'graphic' 'graphics'
@@ -648,7 +660,7 @@ VerboIrregular "establecer ventana gráfica"
 	with imperativo 'grafico' 'graficos' 'graphic' 'graphics';
 
 !! FIXME - Cuando se cierra la ventana y se abre después, la imágen que se 
-!! mostraba deja de hacerlo
+!! mostraba deja de hacerlo.
 
 [ GraphicsSub;
 	if (GRAPHIC_WIN_FLAG) <<GraphicsOff>>;
@@ -671,7 +683,7 @@ VerboIrregular "establecer ventana gráfica"
 #Endif; ! TARGET_GLULX;
 
 !!------------------------------------------------------------------------------
-!! #HelpOn, #HelpOff
+!! ##HelpOn, ##HelpOff
 !!------------------------------------------------------------------------------
 Verb meta 'ayuda' 'ayudas' 'pista' 'pistas' 'sos' 'tutorial'
 	*								-> HelpOn
@@ -684,7 +696,7 @@ VerboIrregular "mostrar ayuda" with imperativo
 	'ayuda' 'ayudas' 'pista' 'pistas' 'sos' 'tutorial';
 
 !! TODO - Cuando el sistema de ayuda no tiene el atributo 'on', detener su 
-!! temporizador e imprimir la siguiente pista
+!! temporizador e imprimir la siguiente pista.
 
 [ HelpOnSub;
 	if (HelpSystem.has_ended()) {
@@ -709,14 +721,14 @@ VerboIrregular "mostrar ayuda" with imperativo
 ];
 
 !!------------------------------------------------------------------------------
-!! #LMode2
+!! ##LMode2
 !!------------------------------------------------------------------------------
 Extend only 'normal' replace
     *								-> LMode2
 ;
 
 !!------------------------------------------------------------------------------
-!! #NoSuchVerb
+!! ##NoSuchVerb
 !! Permite eliminar acciones definidas automáticamente por la librería Inform.
 !! Código extraído de <http://www.firthworks.com/roger/informfaq/vv.html#6>.
 !!------------------------------------------------------------------------------
@@ -736,7 +748,7 @@ Extend	'nada' replace
 ;
 
 !!------------------------------------------------------------------------------
-!! #OpenX
+!! ##OpenX
 !!------------------------------------------------------------------------------
 Verb	'descorre'
 	* noun							-> OpenX
@@ -752,7 +764,7 @@ Verb	'descorre'
 ];
 
 !!------------------------------------------------------------------------------
-!! #RemarkableObjects
+!! ##RemarkableObjects
 !!------------------------------------------------------------------------------
 Verb	meta 'objetos' 'objs'
 	*								-> RemarkableObjects
@@ -790,7 +802,7 @@ Global remarkableObjectsCount;
 ];
 
 !!------------------------------------------------------------------------------
-!! #TalkOn, #TalkTo
+!! ##TalkOn, ##TalkTo
 !!------------------------------------------------------------------------------
 Extend	'habla' replace
 	* noun							-> TalkTo
@@ -861,7 +873,7 @@ Verb	'conversa' 'platica'
 ];
 
 !!------------------------------------------------------------------------------
-!! #TopicInventory
+!! ##TopicInventory
 !!------------------------------------------------------------------------------
 Verb	meta 'temas' 't//'
 	*								-> TopicInventory
@@ -869,19 +881,13 @@ Verb	meta 'temas' 't//'
 VerboIrregular "mostrar inventario de temas" with imperativo 'temas' 't//';
 
 [ TopicInventorySub;
-	if (ConversationManager.is_running()) {
-		if (ConversationManager.topic_inventory_size() > 0) {
-			ConversationManager.show_topic_inventory();
-		} else {
-			print_ret (parser) "No hay temas disponibles en este momento.";
-		}
-	} else {
+	if (~~(ConversationManager.is_running()))
 		print_ret (parser) "No hay conversaciones activas en este momento.";
-	}
+	ConversationManager.show_topic_inventory(true);
 ];
 
 !!------------------------------------------------------------------------------
-!! #Wear
+!! ##Wear
 !! Basada en la implementación de *verblibm.h*. Si el objeto no está en 
 !! posesión del jugador, se le intenta pasar a su inventario automáticamente.
 !!------------------------------------------------------------------------------
@@ -904,11 +910,11 @@ Extend	'ponte' replace
 ];
 
 !!------------------------------------------------------------------------------
-!! #WearX
+!! ##WearX
 !! El verbo "vestir" ('vistete', 'vestirse', 'vestirte'...) puede invocarse sin 
 !! indicar un objeto, de manera que un objeto "clothing" pueda capturar la 
-!! acción #WearX en su rutina "react_before" y lanzar la acción #Wear sobre sí 
-!! mismo.
+!! acción ##WearX en su rutina "react_before" y lanzar la acción ##Wear sobre 
+!! sí mismo.
 !!------------------------------------------------------------------------------
 Extend	only 'vistete' 'vestirse' 'vestirte' 'vestirme' 'visteme' replace
 	*								-> WearX

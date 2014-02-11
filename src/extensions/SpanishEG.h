@@ -20,7 +20,7 @@
 !!
 !!	# NOTAS
 !!
-!!	Basada en "ExpertGrammar.h", de Emily Short (emshort@mindspring.com) 
+!!	Basada en "ExpertGrammar.h", de Emily Short <emshort@mindspring.com>
 !!	y en su traducción al castellano "GramaticaExperta.h", de Mapache.
 !!
 !!
@@ -47,19 +47,19 @@
 !!
 !!	# NUEVAS ACCIONES
 !!
-!!	<>	Dance
-!!	<>	GoDown
-!!	<>	GoUp
-!!	<>	KnockOn
-!!	<>	Masturbate
-!!	<>	Shout
-!!	<>	Sit
-!!	<>	SleepWith
-!!	<>	StandUp
-!!	<>	Untie
-!!	<>	Use
-!!	<>	Write
-!!	<>	Xyzzy
+!!	 *	Dance
+!!	 *	GoDown
+!!	 *	GoUp
+!!	 *	KnockOn
+!!	 *	Masturbate
+!!	 *	Shout
+!!	 *	Sit
+!!	 *	SleepWith
+!!	 *	StandUp
+!!	 *	Untie
+!!	 *	Use
+!!	 *	Write
+!!	 *	Xyzzy
 !!
 !!------------------------------------------------------------------------------
 

@@ -40,120 +40,6 @@
 	switch (obj) {
 
 !!------------------------------------------------------------------------------
-barra: switch(n) {
-1:	! description
-"Un alargado mostrador de azulejo y madera oscura. Detrás, la camarera estaba ocupada con los vasos sucios mientras, delante, varios clientes intercambiaban las noticias y los rumores de los últimos días entre susurros inseguros y rápidos tragos de cerveza.
-^^
-Justo al lado de la barra había un teléfono público.";
-}
-
-!!------------------------------------------------------------------------------
-billete: switch (n) {
-1:	! description
-print "Es el billete para una barcaza que sale del puerto de San Antonio con fecha de hoy a las 16:30.";
-}
-
-!!------------------------------------------------------------------------------
-billete_cafe: switch(n) {
-2:	! TODO mensaje al cogerlo
-"Hizo caso a Pablo y cogió el billete y el revólver. ¿Qué otra cosa podía hacer?
-^^
-Y ya nunca volvió a verlo. A pesar de sus palabras, Gabriel no le creyó. Él había crecido con esas historias de héroes, reales o inventados, que habían muerto por defender sus ideas. Hombres y mujeres de leyenda, más parecidas a dioses que ha personas como Pablo Ureta. Insensato para los conocidos, enemigo para los golpistas, y nadie para los demás. Tenía razón en parte: ya estaba muerto, porque su vida no le pertenecía. La había donado a un sueño que ahora se volvía contra él, no podía más que aceptar las consecuencias. Huir lo hubiese convertido en un fantasma, sin voz, sin memoria y sin sueños.";
-}
-
-!!------------------------------------------------------------------------------
-CAFE: switch(n) {
-1:	! initial
-"Debe abandonar el país ya que la situación se ha vuelto insostenible. Los militares han salido a la calle y ahora todos los del partido están en peligro de ser prendidos o encarcelados. O algo peor. La locura es máxima; desde el que cayó el gobierno, hacía menos de una semana, no había un día que no llegasen noticias de nuevas ejecuciones. Entre ellas la de Pablo Ureta, amigo de Gabriel. Todavía siente cómo la frente se le perla de un sudor frío al recordar la última vez que le vió, horas antes de su asesinato, en un bar de la avenida Bernardo O'Higgins:";
-2:	! description
-print "Las aspas de un gran ventilador giraban lentamente en el techo, removiendo el humo de tabaco y los ecos de casi una veintena de voces que se enroscaban y retorcían en el aire antes de terminar empotradas contra las amarillentas paredes del café. Tras la barra,";
-if (x1) print " la"; else print " una";
-print " camarera pasaba";
-if (x1) print " un"; else print " el";
-" trapo a los vasos sucios mientras los clientes repartidos por el local charlaban, fumaban y daban cuenta de sus bebidas.";
-}
-
-!!------------------------------------------------------------------------------
-calendario: switch (n) {
-1:	! description
-"En su mitad superior hay una copia a color de una pintura de Van Gogh: un bodegón floral de tonos cálidos en el que varios claveles anaranjados comparten jarra con otros blanquecinos de tallo más largo. La mitad inferior del calendario está ocupada por la cuadrícula ordenada de los días de septiembre y al final, en grandes números: ", (emph) "1973", ".";
-}
-
-!!------------------------------------------------------------------------------
-cama: switch (n) {
-1:	! before: JumpOver
-"Por algún motivo, recuerda de pronto un juego infantil que creía haber olvidado mucho tiempo atrás. Era algo que tenían absolutamente prohibido, de modo que, inevitablemente, saltar y columpiarse sobre las camas del orfanato se convirtió enseguida en uno de sus juegos favoritos. A pesar de la amenaza del castigo si los descubrían haciéndolo. O mejor dicho, seguramente por culpa de ello ---piensa mientras se palpa una vieja cicatriz de la espalda---, pues siempre ha habido algo de atractivo en la sensación de peligro. Una extraña satisfacción en desafiar las normas impuestas...
-^^
-En cualquier caso, esta vez no hay tiempo para juegos ---quita entonces la mano de encima de la cicatriz---. Tiene que ponerse en marcha tan pronto como sea posible.";
-}
-
-!!------------------------------------------------------------------------------
-camarera: switch (n) {
-1:	! description
-"Gabriel no se fijó demasiado en ella y ahora la recuerda apenas; una mujer alta, de mediana edad y cabello oscuro ---negro, o quizá castaño---. No especialmente bonita, sin duda, puesto que de lo contrario la recordaría mejor. Fregaba vasos sucios y atendía a los clientes desde el otro lado de la barra.";
-}
-
-!!------------------------------------------------------------------------------
-cliente: switch (n) {
-1:	! description
-print "La única persona que le interesaba era Pablo. Los demás ---entre veinte y treinta personas--- estaban repartidos entre un hueco frente a la barra y algunas de las mesas que ocupaban el resto del café.";
-2:	! description TODO
-print "El hombre del sombrero panamá se había ido. Los demás ---entre veinte y treinta personas--- estaban repartidos entre un hueco frente a la barra y algunas de las mesas que ocupaban el resto del café.";
-}
-
-!!------------------------------------------------------------------------------
-clientes: switch(n) {
-1:	! description
-print "Serían entre veintitantas o treintaitantas personas, repartidas entre un hueco frente a la barra y algunas de las mesas que ocupaban el resto del café.";
-2:	! before: Listen
-"Las conversaciones fluían y llenaban el local como cualquier otro día, pero se advertía en ellas un cierto aura de nerviosa preocupación. La caída de Salvador había golpeado más duramente a unos que a otros, pero estaba claro que la inquietud se había adueñado igualmente de todos.";
-3:	! before: TalkTo
-"No llegó a cruzar una sola palabra con ninguno. Era con Pablo con quién quería hablar.";
-}
-
-!!------------------------------------------------------------------------------
-cortinas: switch (n) {
-1:	! description
-print_ret (string) random(
-"Cerradas, apenas dejan pasar la luz del amanecer al interior, con lo que el cuarto permanece en penumbras.", 
-"Algunos finos haces de luz se cuelan por entre las rendijas que dejan las cortinas cerradas.", );
-2:	! description
-"La luz del sol entra a raudales en la habitación ahora que las cortinas están descorridas.";
-3:	! before: Open
-"El entarimado está caliente y cruje bajo sus pies descalzos. Dando tumbos a través de la oscuridad, cruza el cuarto para descorrer las cortinas y abrir la ventana, dejando que los tibios y reconfortantes rayos del sol inunden la estancia. El olor es inconfundible; a mar y a montaña, a clavelinas y a malvas. Los perfumes de su hogar. Pero hay algo más. Una... una impresión desagradable acompañando a la caricia del sol. Un temblor imperceptible que recorre en secreto desde las tablas del suelo hasta las manos y los ojos infinitos de Gabriel. Y al girarse lo ve: todo el dormitorio está completamente patas arriba, tal y como lo encontró al llegar a casa de madrugada. No había sido sólo un sueño. Era verdad. Al final le han encontrado.";
-}
-
-!!------------------------------------------------------------------------------
-desorden: switch (n) {
-1:	! description
-"Han dejado todo patas arriba. Por un instante se pregunta qué habría ocurrido de haber estado en casa anoche, a lo que le responde una repentina sensación de vértigo. Pero no sirve de nada pensar en lo que pudo ser. Ahora saben dónde vive. Tiene que salir de aquí cuanto antes.";
-2:	! description
-"Lo han dejado todo hecho un desastre... ya no puede perder más el tiempo. Tiene que ponerse en marcha antes de que decidan volver a por él.";
-}
-
-!!------------------------------------------------------------------------------
-HABITACION: switch (n) {
-1:	! initial
-"No debió ser así. Eso es lo primero que el joven Gabriel Mistral piensa al abrir los ojos y despertar en la sofocante oscuridad de la habitación. Aún permanece unos minutos en la cama, tumbado con la mirada perdida entre las sombras del techo mientras los recuerdos se agolpan en su cabeza. Una y otra vez ha repasado esas imágenes últimamente, convencido de que hay algo oculto en ellas que no puede ver. Una clave secreta de la que tal vez se pudiese ayudar para comprender lo ocurrido, pero que por más que se esfuerza es incapaz de desentrañar. ¿Cómo se podía haber torcido todo de esa manera? ¿Dónde se habían equivocado?
-^^
-Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) x1, " lo ocupa todo. Ella. Automáticamente tiende la mano a un lado, buscando a ciegas el tacto de su cuerpo, pero no está. Lo único que encuentra son las sábanas, húmedas y pegajosas. No, claro que no está, se dice. No aquí. La dejó durmiendo en el hotel antes de volverse a casa en mitad de la noche, solo de nuevo... Seguramente sea mejor así, al fin y al cabo ahora tiene cosas más importantes de las que preocuparse. Deja escapar un largo suspiro de resignación y se obliga a incorporarse finalmente en el colchón.";
-2:	! description
-"A su alrededor todo son penumbras. La escasa luz capaz de filtrarse a través de las cortinas cerradas sirve tan sólo para dibujar una estrecha franja blanca y zigzagueante sobre el suelo de la habitación.";
-3:	! description
-"Las cortinas cerradas no dejan pasar más que una fina franja de luz. Insuficiente todavía como para alejar las sombras que envuelven la habitación.";
-4:	! description
-"La intensa claridad del amanecer se cuela ahora por la ventana abierta, iluminando el caos de ropa, libros, papeles y otros trastos esparcidos por todo el dormitorio. Sólo su cama y el escritorio siguen aún en pie entre el tumulto.";
-5:	! before: Smell
-"Durante unos instantes permanece suspendido entre las tinieblas el perfume de ", (the) x1, ". Sin embargo, sabe que el olor está sólo en su cabeza, y se desvanece enseguida. Aquí y ahora el único aroma que hay es el acre del sudor que empapa las sábanas.";
-6:	! e_to	TODO
-"Está a punto de atravesar el umbral cuando algo le hace detenerse en seco, justo en el último momento. ¡Casi lo olvida! El billete. Automáticamente busca en el bolsillo, aunque ahí no está, desde luego. No, lo escondió en alguna parte. Maldice por lo bajo. Tiene que encontrarlo; no podrá llegar muy lejos sin él.";
-7:	! e_to TODO
-print_ret (string) random (
-"Antes tiene que encontrar el billete. Lo necesita. Sin él no podrá llegar muy lejos.", 
-"Necesita el billete. Sabe que lo escondió por aquí, en alguna parte. Tiene que encontrarlo antes de ponerse en camino.", );
-}
-
-!!------------------------------------------------------------------------------
 HelpSystem: switch (n) {
 1:
 print_ret (parser) 
@@ -233,7 +119,121 @@ print_ret (parser)
 }
 
 !!------------------------------------------------------------------------------
-humo: switch(n) {
+OBJ_barra: switch(n) {
+1:	! description
+"Un alargado mostrador de azulejo y madera oscura. Detrás, la camarera estaba ocupada con los vasos sucios mientras, delante, varios clientes intercambiaban las noticias y los rumores de los últimos días entre susurros inseguros y rápidos tragos de cerveza.
+^^
+Justo al lado de la barra había un teléfono público.";
+}
+
+!!------------------------------------------------------------------------------
+OBJ_billete: switch (n) {
+1:	! description
+print "Es el billete para una barcaza que sale del puerto de San Antonio con fecha de hoy a las 16:30.";
+}
+
+!!------------------------------------------------------------------------------
+OBJ_billete_cafe: switch(n) {
+2:	! TODO mensaje al cogerlo
+"Hizo caso a Pablo y cogió el billete y el revólver. ¿Qué otra cosa podía hacer?
+^^
+Y ya nunca volvió a verlo. A pesar de sus palabras, Gabriel no le creyó. Él había crecido con esas historias de héroes, reales o inventados, que habían muerto por defender sus ideas. Hombres y mujeres de leyenda, más parecidas a dioses que ha personas como Pablo Ureta. Insensato para los conocidos, enemigo para los golpistas, y nadie para los demás. Tenía razón en parte: ya estaba muerto, porque su vida no le pertenecía. La había donado a un sueño que ahora se volvía contra él, no podía más que aceptar las consecuencias. Huir lo hubiese convertido en un fantasma, sin voz, sin memoria y sin sueños.";
+}
+
+!!------------------------------------------------------------------------------
+OBJ_CAFE: switch(n) {
+1:	! initial
+"Debe abandonar el país ya que la situación se ha vuelto insostenible. Los militares han salido a la calle y ahora todos los del partido están en peligro de ser prendidos o encarcelados. O algo peor. La locura es máxima; desde el que cayó el gobierno, hacía menos de una semana, no había un día que no llegasen noticias de nuevas ejecuciones. Entre ellas la de Pablo Ureta, amigo de Gabriel. Todavía siente cómo la frente se le perla de un sudor frío al recordar la última vez que le vió, horas antes de su asesinato, en un bar de la avenida Bernardo O'Higgins:";
+2:	! description
+print "Las aspas de un gran ventilador giraban lentamente en el techo, removiendo el humo de tabaco y los ecos de casi una veintena de voces que se enroscaban y retorcían en el aire antes de terminar empotradas contra las amarillentas paredes del café. Tras la barra,";
+if (x1) print " la"; else print " una";
+print " camarera pasaba";
+if (x1) print " un"; else print " el";
+" trapo a los vasos sucios mientras los clientes repartidos por el local charlaban, fumaban y daban cuenta de sus bebidas.";
+}
+
+!!------------------------------------------------------------------------------
+OBJ_calendario: switch (n) {
+1:	! description
+"En su mitad superior hay una copia a color de una pintura de Van Gogh: un bodegón floral de tonos cálidos en el que varios claveles anaranjados comparten jarra con otros blanquecinos de tallo más largo. La mitad inferior del calendario está ocupada por la cuadrícula ordenada de los días de septiembre y al final, en grandes números: ", (emph) "1973", ".";
+}
+
+!!------------------------------------------------------------------------------
+OBJ_cama: switch (n) {
+1:	! before: JumpOver
+"Por algún motivo, recuerda de pronto un juego infantil que creía haber olvidado mucho tiempo atrás. Era algo que tenían absolutamente prohibido, de modo que, inevitablemente, saltar y columpiarse sobre las camas del orfanato se convirtió enseguida en uno de sus juegos favoritos. A pesar de la amenaza del castigo si los descubrían haciéndolo. O mejor dicho, seguramente por culpa de ello ---piensa mientras se palpa una vieja cicatriz de la espalda---, pues siempre ha habido algo de atractivo en la sensación de peligro. Una extraña satisfacción en desafiar las normas impuestas...
+^^
+En cualquier caso, esta vez no hay tiempo para juegos ---quita entonces la mano de encima de la cicatriz---. Tiene que ponerse en marcha tan pronto como sea posible.";
+}
+
+!!------------------------------------------------------------------------------
+OBJ_camarera: switch (n) {
+1:	! description
+"Gabriel no se fijó demasiado en ella y ahora la recuerda apenas; una mujer alta, de mediana edad y cabello oscuro ---negro, o quizá castaño---. No especialmente bonita, sin duda, puesto que de lo contrario la recordaría mejor. Fregaba vasos sucios y atendía a los clientes desde el otro lado de la barra.";
+}
+
+!!------------------------------------------------------------------------------
+OBJ_cliente: switch (n) {
+1:	! description
+print "La única persona que le interesaba era Pablo. Los demás ---entre veinte y treinta personas--- estaban repartidos entre un hueco frente a la barra y algunas de las mesas que ocupaban el resto del café.";
+2:	! description TODO
+print "El hombre del sombrero panamá se había ido. Los demás ---entre veinte y treinta personas--- estaban repartidos entre un hueco frente a la barra y algunas de las mesas que ocupaban el resto del café.";
+}
+
+!!------------------------------------------------------------------------------
+OBJ_clientes: switch(n) {
+1:	! description
+print "Serían entre veintitantas o treintaitantas personas, repartidas entre un hueco frente a la barra y algunas de las mesas que ocupaban el resto del café.";
+2:	! before: Listen
+"Las conversaciones fluían y llenaban el local como cualquier otro día, pero se advertía en ellas un cierto aura de nerviosa preocupación. La caída de Salvador había golpeado más duramente a unos que a otros, pero estaba claro que la inquietud se había adueñado igualmente de todos.";
+3:	! before: TalkTo
+"No llegó a cruzar una sola palabra con ninguno. Era con Pablo con quién quería hablar.";
+}
+
+!!------------------------------------------------------------------------------
+OBJ_cortinas: switch (n) {
+1:	! description
+print_ret (string) random(
+"Cerradas, apenas dejan pasar la luz del amanecer al interior, con lo que el cuarto permanece en penumbras.", 
+"Algunos finos haces de luz se cuelan por entre las rendijas que dejan las cortinas cerradas.", );
+2:	! description
+"La luz del sol entra a raudales en la habitación ahora que las cortinas están descorridas.";
+3:	! before: Open
+"El entarimado está caliente y cruje bajo sus pies descalzos. Dando tumbos a través de la oscuridad, cruza el cuarto para descorrer las cortinas y abrir la ventana, dejando que los tibios y reconfortantes rayos del sol inunden la estancia. El olor es inconfundible; a mar y a montaña, a clavelinas y a malvas. Los perfumes de su hogar. Pero hay algo más. Una... una impresión desagradable acompañando a la caricia del sol. Un temblor imperceptible que recorre en secreto desde las tablas del suelo hasta las manos y los ojos infinitos de Gabriel. Y al girarse lo ve: todo el dormitorio está completamente patas arriba, tal y como lo encontró al llegar a casa de madrugada. No había sido sólo un sueño. Era verdad. Al final le han encontrado.";
+}
+
+!!------------------------------------------------------------------------------
+OBJ_desorden: switch (n) {
+1:	! description
+"Han dejado todo patas arriba. Por un instante se pregunta qué habría ocurrido de haber estado en casa anoche, a lo que le responde una repentina sensación de vértigo. Pero no sirve de nada pensar en lo que pudo ser. Ahora saben dónde vive. Tiene que salir de aquí cuanto antes.";
+2:	! description
+"Lo han dejado todo hecho un desastre... ya no puede perder más el tiempo. Tiene que ponerse en marcha antes de que decidan volver a por él.";
+}
+
+!!------------------------------------------------------------------------------
+OBJ_HABITACION: switch (n) {
+1:	! initial
+"No debió ser así. Eso es lo primero que el joven Gabriel Mistral piensa al abrir los ojos y despertar en la sofocante oscuridad de la habitación. Aún permanece unos minutos en la cama, tumbado con la mirada perdida entre las sombras del techo mientras los recuerdos se agolpan en su cabeza. Una y otra vez ha repasado esas imágenes últimamente, convencido de que hay algo oculto en ellas que no puede ver. Una clave secreta de la que tal vez se pudiese ayudar para comprender lo ocurrido, pero que por más que se esfuerza es incapaz de desentrañar. ¿Cómo se podía haber torcido todo de esa manera? ¿Dónde se habían equivocado?
+^^
+Vuelve a cerrar los ojos un momento y entonces el perfume de ", (the) x1, " lo ocupa todo. Ella. Automáticamente tiende la mano a un lado, buscando a ciegas el tacto de su cuerpo, pero no está. Lo único que encuentra son las sábanas, húmedas y pegajosas. No, claro que no está, se dice. No aquí. La dejó durmiendo en el hotel antes de volverse a casa en mitad de la noche, solo de nuevo... Seguramente sea mejor así, al fin y al cabo ahora tiene cosas más importantes de las que preocuparse. Deja escapar un largo suspiro de resignación y se obliga a incorporarse finalmente en el colchón.";
+2:	! description
+"A su alrededor todo son penumbras. La escasa luz capaz de filtrarse a través de las cortinas cerradas sirve tan sólo para dibujar una estrecha franja blanca y zigzagueante sobre el suelo de la habitación.";
+3:	! description
+"Las cortinas cerradas no dejan pasar más que una fina franja de luz. Insuficiente todavía como para alejar las sombras que envuelven la habitación.";
+4:	! description
+"La intensa claridad del amanecer se cuela ahora por la ventana abierta, iluminando el caos de ropa, libros, papeles y otros trastos esparcidos por todo el dormitorio. Sólo su cama y el escritorio siguen aún en pie entre el tumulto.";
+5:	! before: Smell
+"Durante unos instantes permanece suspendido entre las tinieblas el perfume de ", (the) x1, ". Sin embargo, sabe que el olor está sólo en su cabeza, y se desvanece enseguida. Aquí y ahora el único aroma que hay es el acre del sudor que empapa las sábanas.";
+6:	! e_to	TODO
+"Está a punto de atravesar el umbral cuando algo le hace detenerse en seco, justo en el último momento. ¡Casi lo olvida! El billete. Automáticamente busca en el bolsillo, aunque ahí no está, desde luego. No, lo escondió en alguna parte. Maldice por lo bajo. Tiene que encontrarlo; no podrá llegar muy lejos sin él.";
+7:	! e_to TODO
+print_ret (string) random (
+"Antes tiene que encontrar el billete. Lo necesita. Sin él no podrá llegar muy lejos.", 
+"Necesita el billete. Sabe que lo escondió por aquí, en alguna parte. Tiene que encontrarlo antes de ponerse en camino.", );
+}
+
+!!------------------------------------------------------------------------------
+OBJ_humo: switch(n) {
 1:	! description
 "El humo de tabaco llenaba la estancia y se incrustraba en el techo y las paredes ---marcándolas con un feo tono amarillento---, y en la ropa, y las fosas nasales, y la garganta, y en los pulmones.";
 2:	! before: Smell
@@ -241,7 +241,7 @@ humo: switch(n) {
 }
 
 !!------------------------------------------------------------------------------
-libro_bolsillo: switch (n) {
+OBJ_libro_bolsillo: switch (n) {
 1:	! description
 "Es un pequeño tomo de tapas negras sin más adorno que el título: ", (emph) "@<<POEMAS@>>", ", impreso en tinta dorada en la portada.";
 2:	! before: Consult, Open, Read, Search
@@ -251,7 +251,7 @@ libro_bolsillo: switch (n) {
 }
 
 !!------------------------------------------------------------------------------
-LIMBO: switch (n) {
+OBJ_LIMBO: switch (n) {
 1:	! description
 print "Más allá de la barrera casi insuperable que separa la realidad de todo lo demás. Un lugar etéreo, donde la vida, la materia y la vitalidad no son necesariamente constantes; un lugar donde el tiempo y el espacio no existen tal y como los capta nuestro ser despierto..."; 
 if (obj hasnt visited) print (emph) " ¿Qué? ¿Cómo?... ¿cómo he llegado aquí?";
@@ -260,13 +260,13 @@ return true;
 }
 
 !!------------------------------------------------------------------------------
-maleta: switch (n) {
+OBJ_maleta: switch (n) {
 1:	! description
 print "Es un maletón de viaje forrado en cuero desgastado. Dentro lleva lo poco que guardará de la que ha sido su vida hasta ahora; algo de ropa y un par de libros. Nada más.";
 }
 
 !!------------------------------------------------------------------------------
-MrPanama: switch (n) {
+OBJ_MrPanama: switch (n) {
 1:	! description
 "Era un hombre de cierta estatura, corpulento, de ojos negros y rostro anguloso inmaculadamente afeitado. Vestía ropa elegante pero discreta, nada que llamase especialmente la atención salvo un sombrero panamá color marfil que llevaba calado hasta las cejas a pesar de encontrarse dentro del café.";
 2:	! description
@@ -288,7 +288,7 @@ MrPanama: switch (n) {
 }
 
 !!------------------------------------------------------------------------------
-oscuridad: switch (n) {
+OBJ_oscuridad: switch (n) {
 1:	! description
 "La habitación está completamente a oscuras. Una oscuridad rota tan sólo por la estrecha franja de luz que atraviesa las cortinas cerradas y se recorta, zigzagueante y blanca, sobre el suelo.";
 2:	! react_before: Consult, Examine, Look, LookUnder, Read, Search
@@ -301,7 +301,7 @@ print_ret (string) random(
 }
 
 !!------------------------------------------------------------------------------
-Pablo: switch(n) {
+OBJ_Pablo: switch(n) {
 1:	! describe
 print "Él ya se encontraba allí, tal y como habían quedado. Su rostro, apenas reconocible, estaba surcado por toda una colección de arrugas nuevas y marcado ferozmente por la tristeza y el cansancio. Pero seguía siendo su mismo rostro al fin y al cabo: duro, inteligente, familiar. Pablo bebía en silencio, sentado";
 if (x1) " frente a Gabriel.";
@@ -323,7 +323,7 @@ new_line;
 }
 
 !!------------------------------------------------------------------------------
-papeles_cajon: switch (n) {
+OBJ_papeles_cajon: switch (n) {
 1:	! description
 "Es difícil saber si han revuelto el interior del cajón o no. Siempre ha tenido ese mismo aspecto.";
 2:	! before: Take, Transfer
@@ -331,7 +331,7 @@ papeles_cajon: switch (n) {
 }
 
 !!------------------------------------------------------------------------------
-puerta_habitacion: switch (n) {
+OBJ_puerta_habitacion: switch (n) {
 1:	! door_to TODO
 "Gabriel se detiene a echar un último vistazo a la habitación y tuerce la boca en una media sonrisa al pensar en lo mucho que se parece a su propia vida; puesta toda patas arriba, llena de sueños rotos, pisoteados y tirados por el suelo... duda que tenga fuerzas para seguir adelante con aquello.";
 2:	! door_to TODO
@@ -339,7 +339,7 @@ puerta_habitacion: switch (n) {
 }
 
 !!------------------------------------------------------------------------------
-revolver: switch(n) {
+OBJ_revolver: switch(n) {
 1:	! description
 switch (x1) {
 	0:	print "No le quedan balas";
@@ -351,7 +351,7 @@ switch (x1) {
 }
 
 !!------------------------------------------------------------------------------
-ropa: switch (n) {
+OBJ_ropa: switch (n) {
 1:	! description
 print "Siempre ha vestido ropa barata y discreta. Estos son unos pantalones negros, camisa blanca de algodón, y un gran abrigo gris de tela basta, largo hasta las rodillas y de profundos bolsillos.";
 2:	! description
@@ -375,7 +375,7 @@ Termina de abrocharse los pantalones y se coloca el abrigo. De inmediato nota el
 }
 
 !!------------------------------------------------------------------------------
-TAXI: switch(n) {
+OBJ_TAXI: switch(n) {
 1:	! initial
 "Siente el frío peso del revólver en la mano un instante antes de comprender que juguetea con él, absorto, desde hace un rato, e inmediatamente lo vuelve a guardar en uno de los bolsillos del abrigo. Por suerte, el taxista tiene la atención puesta en la carretera y no parece prestar demasiada atención a nada más. No da señales de haber reparado en el arma, al menos. Gabriel respira hondo y se recuesta mejor en el asiento, intentando ahuyentar los recuerdos fijándose en los detalles de la ciudad que se va esfumando poco a poco tras las ventanillas.";
 2:	! description
@@ -389,7 +389,7 @@ TAXI: switch(n) {
 }
 
 !!------------------------------------------------------------------------------
-telefono: switch(n) {
+OBJ_telefono: switch(n) {
 1:	! description
 print "Se trataba de un teléfono público de fichas, con cajetín negro y un disco numérico de marcación. Tenía una placa con la siguiente inscripción: ", (code) "@<<PODRA CONVERSAR SIN INTERRUPCION MIENTRAS VEA FICHAS A TRAVES DEL VISOR. PUEDE RECUPERAR LAS FICHAS QUE NO UTILICE COLGANDO EL MICROTELEFONO@>>", ".^";
 switch (x1) {
@@ -399,7 +399,7 @@ switch (x1) {
 }}
 
 !!------------------------------------------------------------------------------
-ventilador: switch(n) {
+OBJ_ventilador: switch(n) {
 1:	! description
 "Las aspas del ventilador giraban sobre su cabeza con un zumbido apenas audible, empeñadas en hacer mínimamente respirable la viciada atmósfera llena de humo del café.";
 2:	! before: Listen

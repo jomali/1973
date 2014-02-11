@@ -13,37 +13,43 @@
 !!	System:			Inform-INFSP 6
 !!	Platform:		Máquina-Z / GLULX
 !!	Version:		0.1
-!!	Released:		2014/02/04
+!!	Released:		2014/02/11
 !!
 !!------------------------------------------------------------------------------
 !!
 !!	Copyright (c) 2014, J. Francisco Martín
 !!
-!!	This file is part of PROYECTO 1973.
+!!	Este archivo forma parte de PROYECTO 1973.
 !!
-!!	PROYECTO 1973 is free software: you can redistribute it and/or modify 
-!!	it under the terms of the GNU General Public License as published by 
-!!	the Free Software Foundation, either version 3 of the License, or 
-!!	(at your option) any later version.
+!!	PROYECTO 1973 es software libre: usted puede redistribuirlo y/o 
+!!	modificarlo bajo los términos de la Licencia Pública General GNU 
+!!	publicada por la Fundación para el Software Libre, ya sea la versión 
+!!	3 de la Licencia, o (a su elección) cualquier versión posterior.
 !!
-!!	PROYECTO 1973 is distributed in the hope that it will be useful, 
-!!	but WITHOUT ANY WARRANTY; without even the implied warranty of 
-!!	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-!!	GNU General Public License for more details.
+!!	PROYECTO 1973 se distribuye con la esperanza de que sea útil, pero 
+!!	SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o 
+!!	de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de 
+!!	la Licencia Pública General GNU para más información.
 !!
-!!	You should have received a copy of the GNU General Public License 
-!!	along with PROYECTO 1973. If not, see <http://www.gnu.org/licenses/>.
+!!	Debería haber recibido una copia de la Licencia Pública General GNU 
+!!	junto a PROYECTO 1973. En caso contrario, consulte
+!!	<http://www.gnu.org/licenses/>.
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	# TODO
+!!	# NOTAS
 !!
-!!	<>	Revisar sistema de ayuda cuando no se empieza desde la escena 1.
-!!	<>	Inicializaciones de la escena. Gabriel tiene que tener la ropa puesta 
-!!		pero los contenidos de los bolsillos no son los mismos que al final de 
-!!		la escena 1.
-!!	<>	Muestras de duda antes de coger el billete y el revólver y pasar a la 
-!!		escena 3.
+!!	General:
+!!	 *	FIXME - Llevar a cabo todas las inicializaciones de la escena. Además 
+!!		de modificar la flexión gramatical de los mensajes de la librería, el 
+!!		inventario del protagonista en esta escena es diferente del que tenía 
+!!		en la escena anterior.
+!!	 *	FIXME - Revisar la lógica del sistema de ayuda cuando el jugador no 
+!!		empieza el relato desde la escena 1.
+!!	 *	TODO - Cuando el protagonista coja el billete y el revólver que le da 
+!!		Pablo, se pone fin a la ESCENA 2 y se pasa a la siguiente. Como con 
+!!		toda acción clave para el desarrollo de la historia, antes de coger los 
+!!		objetos se deben mostrar signos de duda en el protagonista.
 !!
 !!------------------------------------------------------------------------------
 
@@ -52,7 +58,7 @@
 !!	CAFE: Café Blanca Florida
 !!------------------------------------------------------------------------------
 
-Room	CAFE "Café Blanca Florida"
+Room	OBJ_CAFE "Café Blanca Florida"
  with	name	'cafe' 'blanca' 'florida' 'cafeteria' 'bar' 'local' 'taberna' 
 				'meson' 'tasca' 'establecimiento',
 		initial [; if (self hasnt visited) {
@@ -62,8 +68,7 @@ Room	CAFE "Café Blanca Florida"
 			!! Inicializaciones multimedia -------------------------------------
 			#Ifdef TARGET_GLULX;
 			Damusix.AsignarCanal(BAR_ENVIRONMENT, 0, 50, -1);
-!! TODO
-!			Damusix.Tocar(BAR_ENVIRONMENT);
+			Damusix.Tocar(BAR_ENVIRONMENT);
 			#Endif; ! TARGET_GLULX;
 			!! Introducción ----------------------------------------------------
 			O__M(self, 1);
@@ -80,28 +85,32 @@ Room	CAFE "Café Blanca Florida"
 !!------------------------------------------------------------------------------
 !! Objetos con rutinas react_before:
 
-Atrezzo	silla_cafe "silla" CAFE
+!!	 *	FIXME - Nombres y adjetivos
+Atrezzo	OBJ_silla_cafe "silla" OBJ_CAFE
  class	SmartEnterable
  with	name_m	'asiento' 'taburete', 
 		name_f	'banqueta' 'silla', 
 		gender	G_FEMENINO, 
-		!! TODO - adjectives
+		!! FIXME - adjectives
 		clarification "sentado a una de las mesas", 
-		reach_objects mesa_cafe Pablo,
-		drop_on_object mesa_cafe,
+		reach_objects OBJ_mesa_cafe OBJ_Pablo OBJ_camarera,
+		drop_on_object OBJ_mesa_cafe,
 		description "Era una silla normal y corriente.", 
 		react_before [;
+			if (self.SmartEnterable::react_before()) return true;
 			TalkTo:
-				if ((parent(player) ~= self) && (noun == Pablo)
-						&& (conversacion_Pablo_01.counter == 0)) {
+				if ((parent(player) ~= self) && (noun == OBJ_Pablo)
+				&& (OBJ_conversacion_Pablo.get_counter() <= 1)) {
 					move player to self;
 					print "Atravesó el local hasta sentarse frente a él.^";
 					new_line;
 					return false;
 				}
-			if (self.SmartEnterable::react_before()) return true;
+				if ((parent(player) == self) && (noun == OBJ_camarera)) {
+					move player to location;
+				}
 			Examine, Look:
-				if (parent(player) == self && noun == telefono)
+				if (parent(player) == self && noun == OBJ_telefono)
 					"Un teléfono público negro. Desde la silla no podía ver 
 					mucho más.";
 		],
@@ -125,55 +134,8 @@ Atrezzo	silla_cafe "silla" CAFE
 !!------------------------------------------------------------------------------
 !! Atrezzo:
 
-Atrezzo	mesa_cafe "mesa" CAFE
- with	name_m	'mobiliario' 'moblaje' 'mueble',
-		name_f	'mesa',
-		name_mp	'muebles',
-		gender	G_FEMENINO,
-		adjectives
-			'corriente' 'funcional' 'normal' 'ordinaria' 'ordinario' 'sencilla' 
-			'sencillo' 'simple',
-		description [;
-			if (child(self)) {
-				print "Encima había ";
-				WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT);
-			} else print "Una simple mesa. No tenía nada de especial";
-			".";
-		],
-		before [;
-			Climb, Enter, Sit:
-				"No había ningún motivo para subirse ahí.";
-			Pull, Push, PushDir, Take, Turn:
-				print_ret (The) self, " ya estaba", (n) self, " bien donde 
-				estaba", (n) self, ". No había motivos para andar moviéndol", 
-				(o) self, ".";
-			Search:
-				if (child(self) ofclass Atrezzo)
-					"Sobre la mesa sólo estaba la bebida de Pablo.";
-		],
- has	female supporter transparent;
-
-Atrezzo	-> -> "bebida de Pablo"
- with	name_m	'tinto' 'vaso' 'vino', 
-		name_f	'bebida',
-		gender	G_FEMENINO, 
-		adjectives
-			'alcohol' 'alcoholica' 'color' 'oscura' 'oscuro' 'pablo' 'roja' 
-			'rojo' 'sangre',
-		description
-			"Pablo bebía un vaso de vino tinto. Oscuro como la sangre.",
-		before [;
-			Examine:
-				return false;
-			Drink, Pull, Push, PushDir, Take, Touch, Turn:
-				"Esa era la bebida de Pablo. No se la iba a quitar.";
-			default:
-				"Era un simple vaso de vino sin nada de especial. No hacía 
-				falta preocuparse por él.";
-		],
- has	female;
-
-Atrezzo	"mesas y sillas del café" CAFE
+!!	 *	FIXME - Nombres y adjetivos
+Atrezzo	"mesas y sillas del café" OBJ_CAFE
  with	name_m	'mobiliario' 'moblaje' 'mueble' 'taburete',
 		name_mp	'asientos' 'muebles' 'taburetes',
 		name_fp	'banquetas' 'mesas' 'sillas',
@@ -189,62 +151,47 @@ Atrezzo	"mesas y sillas del café" CAFE
 			Examine, Search, LookUnder:
 				return false;
 			Enter, Sit:
-				<<Enter silla_cafe>>;
+				<<Enter OBJ_silla_cafe>>;
 			Exit, StandUp:
-				<<Exit silla_cafe>>;
+				<<Exit OBJ_silla_cafe>>;
 			default:
 				"No era necesario preocuparse por eso. Después de todo, no 
 				tenía", (n) self, " nada de especial.";
 		],
  has	female pluralname;
 
-Atrezzo	barra "barra" CAFE
- with	name_m	'mobiliario' 'moblaje' 'mostrador' 'mueble',
-		name_f	'barra' 'repisa',
-		name_mp 'muebles',
-		gender	G_FEMENINO, 
-		!! TODO - adjectives
-		description [;
-			return O__M(self, 1);
-		], 
-		before [;
-			Pull, Push, PushDir, Turn:
-				"Le hubiese sido imposible mover eso.";
-			Take:
-				"Le hubiese sido imposible coger eso.";
-		],
- has	female;
-
-!!	<>	El atributo 'general' se activa después de que Mr. Panamá se haya ido.
-Atrezzo	cliente "cliente" CAFE
+!!	 *	El atributo 'general' se activa después de que Mr. Panamá se haya ido.
+!!	 *	FIXME - Nombres y adjetivos
+Atrezzo	OBJ_cliente "cliente" OBJ_CAFE
  with	name_m 'cliente' 'desconocido' 'extrano' 'hombre' 'parroquiano' 'senor',
 		gender G_MASCULINO,
-		adjectives 'sombrero' 'panama', !! TODO
+		adjectives 'sombrero' 'panama',
 		description [;
 			if (self hasnt general) O__M(self, 1);
 			else O__M(self, 2);
-			if (clientes hasnt general) {
+			if (OBJ_clientes hasnt general) {
 				print " ";
-				<<Listen clientes>>;
+				<<Listen OBJ_clientes>>;
 			}
 			new_line;
 			return true;
 		],
 		react_before [;
 			if (noun ~= self) return false;
-			Attack: <<Attack clientes second>>;
-			Listen: <<Listen clientes second>>;
-			Pull, Push: <<Pull clientes second>>;
-			TalkTo: <<TalkTo clientes second>>;
+			Attack: <<Attack OBJ_clientes second>>;
+			Listen: <<Listen OBJ_clientes second>>;
+			Pull, Push: <<Pull OBJ_clientes second>>;
+			TalkTo: <<TalkTo OBJ_clientes second>>;
 		],
- has	male; !! TODO - animate?
+ has	male; !! FIXME - animate?
 
-Atrezzo	clientes "clientes" CAFE
+!!	 *	FIXME - Nombres y adjetivos
+Atrezzo	OBJ_clientes "clientes" OBJ_CAFE
  with	name_f	'clientela' 'gente' 'persona',
 		name_mp	'chicos' 'clientes' 'hombres' 'mozos' 'parroquianos' 'senores',
 		name_fp	'chicas' 'mozas' 'mujeres' 'parroquinas' 'personas' 'senoras',
 		gender	G_MASCULINO + G_PLURAL,
-		!! TODO - adjectives
+		!! FIXME - adjectives
 		description [;
 			O__M(self, 1);
 			if (~~self.listen_flag) {
@@ -273,7 +220,8 @@ Atrezzo	clientes "clientes" CAFE
 		listen_flag false,
  has	animate male pluralname;
 
-Atrezzo	humo "humo" CAFE
+!!	 *	FIXME - Nombres y adjetivos
+Atrezzo	OBJ_humo "humo" OBJ_CAFE
  with	name_m	'cigarrillo' 'cigarro' 'humo' 'pitillo' 'puro' 'tabaco',
 		name_f	'fumarada' 'humarada',
 		name_mp	'cigarrillos' 'cigarros' 'pitillos' 'puros',
@@ -299,12 +247,41 @@ Atrezzo	humo "humo" CAFE
 		], 
  has	male;
 
-Atrezzo	telefono "teléfono público" CAFE
+!!	 *	FIXME - Nombres y adjetivos
+Atrezzo	OBJ_mesa_cafe "mesa" OBJ_CAFE
+ with	name_m	'mobiliario' 'moblaje' 'mueble',
+		name_f	'mesa',
+		name_mp	'muebles',
+		gender	G_FEMENINO,
+		adjectives
+			'corriente' 'funcional' 'normal' 'ordinaria' 'ordinario' 'pablo' 
+			'sencilla' 'sencillo' 'simple',
+		description [;
+			print "La mesa de Pablo era una de las que estaban más al fondo en 
+			el local";
+			if (child(self)) {
+				print " Encima había ";
+				WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT);
+			}
+			".";
+		],
+		before [;
+			Climb, Enter, Sit:
+				"No había ningún motivo para subirse ahí.";
+			Pull, Push, PushDir, Take, Turn:
+				print_ret (The) self, " ya estaba", (n) self, " bien donde 
+				estaba", (n) self, ". No había motivos para andar moviéndol", 
+				(o) self, ".";
+		],
+ has	concealed female supporter transparent;
+
+!!	 *	FIXME - Nombres y adjetivos
+Atrezzo	OBJ_telefono "teléfono público" OBJ_CAFE
  with	name_m	'auricular' 'cajetin' 'disco' 'microfono' 'microtelefono' 
 				'teclado' 'telef' 'telefono' 'telf' 'visor',
 		name_f	'cabina' 'inscripcion' 'placa' 'ruleta',
 		gender	G_MASCULINO,
-		adjectives !! TODO
+		adjectives
 			'aparato' 'ficha' 'fichas' 'negra' 'negro' 'numerico' 'publica' 
 			'publico' 'telefonica' 'telefonico',
 		description [;
@@ -316,11 +293,16 @@ Atrezzo	telefono "teléfono público" CAFE
 				"No tenía a nadie a quien llamar por teléfono en aquel 
 				momento.";
 		],
+		after [;
+			!! Se añade el tema del teléfono a la conversación con la camarera:
+			OBJ_conversacion_camarera.add_topic(OBJ_camarera_tema_telefono);
+		],
  private
 		tokens 0,
  has	male;
 
-Atrezzo	ventilador "ventilador" CAFE
+!!	 *	FIXME - Nombres y adjetivos
+Atrezzo	OBJ_ventilador "ventilador" OBJ_CAFE
  with	name_m	'ventilador', 
 		name_f	'aspa', 
 		name_fp	'aspas', 
@@ -340,10 +322,63 @@ Atrezzo	ventilador "ventilador" CAFE
 !!------------------------------------------------------------------------------
 !! Furniture:
 
+!!	 *	FIXME - Nombres y adjetivos
+Atrezzo	OBJ_barra "barra" OBJ_CAFE
+ with	name_m	'mobiliario' 'moblaje' 'mostrador' 'mueble',
+		name_f	'barra' 'repisa',
+		name_mp 'muebles',
+		gender	G_FEMENINO, 
+		!! FIXME - adjectives
+		describe [ i obj;
+			if (child(self) == nothing) return true;
+			objectloop(obj in self)
+				if (obj hasnt concealed or scenery or static)
+					i++;
+			if (i == 0) return true;
+			if ((i == 1) && (OBJ_cerveza_Gabriel in self))
+				"^La cerveza de Gabriel estaba sobre la barra.";
+			print "^Sobre la barra podía ver ";
+			WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT + PARTINV_BIT);
+			".";
+		],
+		description [ i obj;
+			!! Se añade el tema del teléfono a la conversación con la camarera:
+			OBJ_conversacion_camarera.add_topic(OBJ_camarera_tema_telefono);
+			!! Descripción de la barra:
+			O__M(self, 1);
+			new_line;
+			if (child(self) == nothing) return true;
+			objectloop(obj in self)
+				if (obj hasnt concealed or scenery or static)
+					i++;
+			if (i == 0) return true;
+			if ((i == 1) && (OBJ_cerveza_Gabriel in self))
+				"La cerveza de Gabriel estaba sobre la barra.";
+			print "Sobre la barra podía ver ";
+			WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT + PARTINV_BIT);
+			".";
+		], 
+		before [;
+			Pull, Push, PushDir, Turn:
+				"Le hubiese sido imposible mover eso.";
+			Take:
+				"Le hubiese sido imposible coger eso.";
+		],
+		after [ i obj;
+			LetGo, Receive:
+				objectloop(obj in self)
+					if (obj hasnt concealed or scenery or static)
+						i++;
+				if (i == 0) give self concealed;
+				else give self ~concealed;
+		], 
+ has	concealed female supporter;
+
 !!------------------------------------------------------------------------------
 !! Items:
 
-Item	cerveza "cerveza de Gabriel" LIMBO
+!!	 *	FIXME - Nombres y adjetivos
+Item	OBJ_cerveza_Gabriel "cerveza de Gabriel" OBJ_LIMBO
  with	name_m	'botellin', 
 		name_f	'bebida' 'botella' 'cerveza', 
 		gender	G_FEMENINO,
@@ -367,7 +402,30 @@ Item	cerveza "cerveza de Gabriel" LIMBO
 		counter 0, ! Indica la cantidad de bebida que queda
  has	female;
 
-Item	vino "vino de Pablo" LIMBO
+!!	 *	Su atributo *general* se activa cuando Pablo se acaba la bebida.
+!!	 *	FIXME - Nombres y adjetivos
+Item	OBJ_vaso_vacio "bebida de Pablo" OBJ_mesa_cafe
+ with	name_m	'tinto' 'vaso' 'vino',
+		name_f	'bebida',
+		gender	G_MASCULINO,
+		adjectives 'alcohol' 'alcoholica' 'pablo' 'vacio',
+		description [;
+			if (self has general)
+				"Pablo jugueteaba con el vaso vacío mientras esperaba a que 
+				Gabriel fuese a por otra bebida.";
+			"Un vaso de vino tinto casi vacío.";
+		],
+		before [;
+			Examine:
+				return false;
+			default:
+				"No tenía nada especial por lo que mereciese la pena perder el 
+				tiempo con ello.";
+		],
+ has	female;
+
+!!	 *	FIXME - Nombres y adjetivos
+Item	OBJ_vino_Pablo "vino de Pablo" OBJ_LIMBO
  with	name_m	'tinto' 'vaso' 'vino',
 		name_f	'bebida',
 		gender	G_MASCULINO,
@@ -384,7 +442,8 @@ Item	vino "vino de Pablo" LIMBO
 		],
  has	male;
 
-Item	billete_cafe "billete" LIMBO
+!!	 *	FIXME - Nombres y adjetivos
+Item	OBJ_billete_cafe "billete" OBJ_LIMBO
  with	name_m	'billete' 'papel' 'pase', 
 		gender	G_MASCULINO, 
 		adjectives 'antonio' 'barcaza' 'pedazo' 'san' 'trozo',
@@ -393,30 +452,31 @@ Item	billete_cafe "billete" LIMBO
 !!------------------------------------------------------------------------------
 !! Camarera:
 
-NPC		camarera "camarera" CAFE
+!!	 *	FIXME - Nombres y adjetivos
+NPC		OBJ_camarera "camarera" OBJ_CAFE
  with	name_m	'camarero' 'despensero',
 		name_f	'camarera' 'chica' 'dama' 'despensera' 'joven' 'moza' 
 				'muchacha' 'mujer' 'persona' 'senora' 'senorita',
 		gender	G_FEMENINO,
-		!! TODO - adjectives
-		description [;
-			return O__M(self, 1);
-		],
+		!! FIXME - adjectives
+		description [; return O__M(self, 1); ],
 		before [;
 			Attack, Pull, Push:
 				"No era el momento ni el lugar para comenzar una pelea.";
 			TalkTo:
-				ConversationManager.start(conversacion_camarera);
+				ConversationManager.start(OBJ_conversacion_camarera);
 				return true;
 		],
 		conversation_flag false,
  has	female concealed;
 
-Conversation conversacion_camarera
- with	topics camarera_tema_02, 
-		temporal_topics camarera_tema_01,
-		talker camarera,
-		initial_message [;
+Conversation OBJ_conversacion_camarera
+ with	talker [; print "Hablas con ", (the) OBJ_camarera; ],
+		initial_action [;
+			self.add_topic(OBJ_camarera_tema_cerveza);
+			if (child(self)) {
+				self.add_temporal_topic(OBJ_camarera_tema_temporal);
+			}
 			print "Gabriel se acercó hasta la barra.^";
 			new_line;
 			print (string) random (
@@ -429,52 +489,55 @@ Conversation conversacion_camarera
 			new_line;
 			return true;
 		],
-		inter_message
+		inter_action
 			"La camarera observaba a Gabriel desde el otro lado de la barra.",
-		final_message
-			"No llegó a cruzar ninguna otra palabra con ella. Era con Pablo con 
-			quien necesitaba hablar.";
+		final_action
+			"No llegó a cruzar ninguna otra palabra con ella. Era con Pablo 
+			con quien necesitaba hablar.";
 
-ConversationTopic camarera_tema_01
- class	TextSequence
- with	entry [;
-			print "no pedir ", (strong) "nada";
-		],
-		keys !! TODO
-			'nada' 'pedir' 'pide',
+ConversationTopic OBJ_camarera_tema_temporal
+ with	entry [; print "no pedir ", (strong) "nada"; ],
+		!! FIXME - keys
+		keys
+			'cosa' 'nada' 'ninguna' 'pedir' 'pedirla' 'pedirte' 'pide' 'pidela' 
+			'pidete',
 		reply [;
 			give self ~visited;
-			"No quería nada en realidad. Dió las gracias a la mujer y se alejó 
+			"No quería nada en realidad. Dio las gracias a la mujer y se alejó 
 			de nuevo de la barra.";
 		],
-		reaction [;
-			ConversationManager.end();
-		];
+		reaction [; ConversationManager.end(); ];
 
-ConversationTopic camarera_tema_02
+ConversationTopic OBJ_camarera_tema_cerveza
+ with	entry [; print "pedir una ", (strong) "bebida", " para Gabriel"; ],
+		!! FIXME - keys
+		keys
+			'bebida' 'cerveza' 'gabriel' 'pedir' 'pedirla' 'pedirte' 'pide' 
+			'pidela' 'pidete' 'trago',
+		reply
+			"---¿Puede ponerme una cerveza, por favor?
+			^^
+			Un momento después la camarera le sirvió un botellín de cerveza.";
+
+ConversationTopic OBJ_camarera_tema_bebida
  class	TextSequence
  with	entry [;
-			print "pedir una ", (strong) "bebida para Gabriel";
+			if (OBJ_cerveza_Gabriel in OBJ_LIMBO)
+				print "pedir ", (strong) "bebidas";
+			else print "pedir una ", (strong) "bebida para Pablo";
 		],
-		keys !! TODO
-			'pedir' 'pide' 'bebida' 'gabriel',
-		reply [;
-			"La camarera le sirvió una cerveza.";
-		],
-		reaction [;
-		];
-
-ConversationTopic camarera_tema_03
- class	TextSequence
- with	description
+		!! FIXME - keys
+		keys
+			'pedir' 'pide' 'bebidas' 'bebida' 'pablo',
+		description
 		[;
-			if (cerveza in LIMBO)
+			if (OBJ_cerveza_Gabriel in OBJ_LIMBO)
 				"---Ponme una cerveza y un tinto, por favor.";
 			"---Ponme un tinto, por favor.";
 		]
 			"---Claro."
 		[ x;
-			if (cerveza in LIMBO) x = true;
+			if (OBJ_cerveza_Gabriel in OBJ_LIMBO) x = true;
 			print "La camarera le sirvió";
 			if (x) print " las bebidas"; else print " la bebida";
 			print " y después Gabriel volvió hasta la mesa con";
@@ -482,19 +545,9 @@ ConversationTopic camarera_tema_03
 		]
 			"---Ahí tienes, Pablo."
 			"---Gracias, chico.",
-		entry [;
-			if (cerveza in LIMBO) print "pedir ", (emph) "bebidas";
-			else print "pedir una ", (emph) "bebida para Pablo";
-		],
-		keys !! TODO
-			'pedir' 'pide' 'bebidas' 'bebida' 'pablo',
-		reply [;
-			self.display();
-		],
-		reaction [;
-		];
+		reply [; self.display(); ];
 
-ConversationTopic camarera_tema_04
+ConversationTopic OBJ_camarera_tema_telefono
  class	TextSequence
  with	description
 			"---Perdona, ¿para usar el teléfono?"
@@ -503,8 +556,9 @@ ConversationTopic camarera_tema_04
 			"La camarera le puso unas fichas sobre el mostrador."
 			"---Ahí tienes.",
 		entry [;
-			print "pedir ", (emph) " fichas para el teléfono";
+print "preguntar por el ", (strong) "teléfono";
 		],
+		!! FIXME - keys
 		keys
 			'pedir' 'pide' 'ficha' 'fichas' 'telefono' 'telef' 'telf' 'tlf',
 		reply [;
@@ -514,171 +568,145 @@ ConversationTopic camarera_tema_04
 		];
 
 !!------------------------------------------------------------------------------
-!! Mr. Panamá:
-
-NPC		MrPanama "hombre del sombrero" LIMBO
- with	name_m 'cliente' 'desconocido' 'extrano' 'hombre' 'parroquiano' 'senor',
-		gender G_MASCULINO,
-		adjectives 'sombrero' 'panama', !! TODO
-		description [;
-			if (~~self.telephone_flag) return O__M(self, 1);
-			else return O__M(self, 2);
-		],
-		react_before [;
-			Look:
-				!! Si el jugador intenta mirar la localidad cuando está activo 
-				!! alguno de los indicadores de movimiento de Mr. Panamá, se 
-				!! lanza la acción examinar a Mr. Panamá en su lugar para que 
-				!! se imprima el texto del movimiento.
-				if (noun == nothing)
-					if (self.movement_1_flag || self.movement_2_flag 
-						|| self.movement_3_flag)
-						<<Examine self>>;
-			Examine, Search:
-				!! Si el jugador intenta mirar al teléfono mientras Mr. Panamá 
-				!! está hablando por él, se imprime la descripción del hombre.
-				if (noun == telefono && self.telephone_flag)
-					<<Examine self>>;
-				!! Si el jugador intenta examinar a Mr. Panamá o a la clientela 
-				!! cuando está activo alguno de los indicadores de movimiento, 
-				!! se imprime el texto del movimiento en lugar de la 
-				!! descripción del hombre o de los clientes.
-				if (noun == self or clientes) {
-					if (self.movement_1_flag) {
-						self.movement_1_flag = false;
-						return O__M(self, 3);
-					}
-					if (self.movement_2_flag) {
-						self.movement_2_flag = false;
-						return O__M(self, 4);
-					}
-					if (self.movement_3_flag) {
-						self.movement_3_flag = false;
-						return O__M(self, 5);
-					}
-				}
-			!! TODO - Comportamiento de TalkTo
-		],
-		before [;
-			Attack, Pull, Push, PushDir:
-				!! TODO - Cambiar mensaje
-				"No era el momento ni el lugar para empezar una pelea.";
-			Listen:
-				if (~~self.telephone_flag) return O__M(self, 6);
-				if (self.listen_flag) return O__M(self, 8);
-				self.listen_flag = true;
-				return O__M(self, 7);
-			TalkTo:
-				return O__M(self, 9);
-		],
-		!! TODO - Gestión de los movimientos del personaje, usando daemon o 
-		!! temporizadores.
- private
-		listen_flag		false,
-		movement_1_flag	false,
-		movement_2_flag	false,
-		movement_3_flag	false,
-		telephone_flag	false,
- has	concealed male;
-
-!!------------------------------------------------------------------------------
 !! Pablo:
 
-NPC		Pablo "Pablo" CAFE
+!!	 *	FIXME - Nombres y adjetivos
+NPC		OBJ_Pablo "Pablo" OBJ_CAFE
  with	name_m	'pablo' 'ureta' 'amigo' 'hombre', 
 		name_f	'persona', 
 		gender	G_MASCULINO, 
-		!! TODO: adjectives
+		!! FIXME - adjectives
 		describe [;
 			new_line;
 			if (~~self.describe_flag) {
 				self.describe_flag = true;
-				return O__M(self, 1, (parent(player) == silla_cafe));
+				return O__M(self, 1, (parent(player) == OBJ_silla_cafe));
 			}
-			return O__M(self, 2, (parent(player) == silla_cafe));
+			return O__M(self, 2, (parent(player) == OBJ_silla_cafe));
 		],
 		description [;
-			return O__M(self, 3, (parent(player) == silla_cafe));
+			return O__M(self, 3, (parent(player) == OBJ_silla_cafe));
 		],
 		before [;
 			TalkTo:
-!				if (parent(MrPanama) ~= parent(self)) {
-!					move cliente to LIMBO;
-!					move MrPanama to parent(self);
-!					!! TODO - Activar temporizador de Mr. Panamá.
-!				}
-				ConversationManager.start(conversacion_Pablo_01);
+				!! TODO - Añadir a Mr. Panamá al café
+				ConversationManager.start(OBJ_conversacion_Pablo);
 				return true;
+		],
+		gets_angry [ i;
+			if (i == 0) self.disposition++;
+			else self.disposition = self.disposition + i;
 		], 
  private
 		describe_flag false,	! indica si el objeto ha sido descrito
+		disposition 0,			! disposición de Pablo hacia Gabriel
  has	male proper;
 
-Conversation conversacion_Pablo_01
- with	talker Pablo,
-		topics Pablo_tema_02 Pablo_tema_01,
-		initial_message [;
-			switch (conversacion_Pablo_01.counter) {
-			0:	conversacion_Pablo_01.counter++;
+Conversation OBJ_conversacion_Pablo
+ with	talker [; print "Hablas con ", (the) OBJ_Pablo; ],
+		initial_action [;
+			switch (self.counter) {
+			0:	self.counter++;
+				self.add_topic(OBJ_Pablo_tema_02);
+				self.add_topic(OBJ_Pablo_tema_01);
 				"---Ahí estás. Llegas tarde, chico.";
+			1:	"---¿Qué, chico? Tarde, pero has venido. ¿Es que ahora no vas a 
+				decir nada?";
+			2:	PrintOrRun(self, inter_action);
+				return true;
 			default:
-				"Pablo hizo un gesto a Gabriel con la cabeza.";
+				PrintOrRun(self, inter_action);
+				return true;
 			}
 		],
-		inter_message
-			"Pablo miraba paciente a Gabriel.",
-		counter 0;
-
-ConversationTopic Pablo_tema_01
- class	TextSequence
- with	description
-			"---Si, lo sé. Lo siento. He tenido que dar un rodeo enorme para 
-			llegar hasta aquí. Hay soldados por toda la ciudad."
-			"---¡No me digas! Claro que hay soldados, carajo... Ya no hay sitio 
-			seguro en toda la capital. Sin Allende, todo está perdido. Es no 
-			más cuestión de tiempo que nos agarren esos mamones con pistola. 
-			---Terminó lo que le quedaba en el vaso con un trago rápido y luego 
-			hizo un ademán para señalar la diana del otro extremo del bar. 
-			---Ven, juguemos.",
-		entry [;
-			print "pedir ", (strong) "disculpas";
+		inter_action [;
+			switch (self.counter) {
+			1:	"---¿Y bien? ¿Es que no vas a decir nada?";
+			2:	"Pablo señaló el vaso vacío que tenía delante.
+				^^
+				---Hazme el favor y pídeme otro, ¿quieres?";
+			default:
+				"Pablo miraba paciente a Gabriel.";
+			}
 		],
+		get_counter [; return self.counter; ],
+		set_counter [ i; self.counter = i; ],
+		increase_counter [ i;
+			if (i == 0) self.counter++;
+			else self.counter = self.counter + i;
+		],
+ private counter 0;
+
+ConversationTopic OBJ_Pablo_tema_01
+ class	TextSequence
+ with	entry [;
+print "pedirle ", (strong) "perdón";
+		],
+		!! FIXME - keys
 		keys
-			'disculparte' 'disculpas' 'excusarte' 'excusas' 'pedir' 'pedirle' 
-			'perdon' 'pide',
-		reply [;
-			self.display();
-		],
+'disculparse' 'disculparte' 'disculpa' 'disculpas' 'excusarse' 'excusarte' 'excusas' 'pedir' 'pedirle' 'pedirte' 'perdon' 'perdone' 'perdonarle' 'perdonarte' 'perdonase' 'pide' 'pidele',
+		description
+"---Siento llegar tarde. He tenido que dar un rodeo enorme para llegar hasta aquí. Hay soldados por toda la ciudad."
+"---Lo sé, lo sé. No te disculpes. Ya no hay sitio seguro en toda la capital. Tal como están las cosas, es no más cuestión de tiempo que nos agarren esos mamones con pistola... sin Allende, todo está perdido."
+"Terminó lo que le quedaba en el vaso y se quedó en silencio, con la boca torcida en una mueca extraña y la mirada perdida en algún lugar lejos de aquel bar. Finalmente volvió en si. Fijó los ojos, primero en el vaso vacío que sostenía en la mano, y luego en Gabriel."
+"---Hazme un favor, chico. Pídeme otro, ¿quieres?",
+		reply [; self.display(); ],
 		reaction [;
-			parent(self).remove_topic(Pablo_tema_02);
+			!! FIXME - Cambiar descripciones de Pablo.
+			OBJ_conversacion_Pablo.set_counter(2);
+			!! Se modifica la conversación con la camarera:
+			OBJ_conversacion_camarera
+				.remove_topic(OBJ_camarera_tema_cerveza, true);
+			OBJ_conversacion_camarera.add_topic(OBJ_camarera_tema_bebida);
 		],
-		subtopics Pablo_tema_03 Pablo_tema_04;
+		relatives OBJ_Pablo_tema_02,
+		subtopics OBJ_Pablo_tema_03 OBJ_Pablo_tema_04;
 
-ConversationTopic Pablo_tema_02
+ConversationTopic OBJ_Pablo_tema_02
  class	TextSequence
- with	description !! TODO
-			"---¿Es que estás loco, Pablo? ¿Cómo se te ha ocurrido citarme 
-			aquí justo ahora? La ciudad parece un hormiguero lleno de 
-			soldados."
-			"Terminó lo que le quedaba en el vaso con un trago rápido y luego 
-			señaló con un ademán la diana de dardos colgada al otro extremo del 
-			bar. ---Ven, juguemos.",
-		entry [;
-			print (strong) "llamarle loco", " por citarle allí en un momento 
-			como aquel";
+ with	entry [;
+print "llamarle ", (strong) "loco", " por citarle allí en un momento como aquel";
 		],
-		keys !! TODO
-			'decir' 'decirle' 'desequilibrado' 'llamar' 'llamarle' 'loco',
-		reply [;
-			self.display();
-		],
+		!! FIXME - keys
+		keys
+'llama' 'llamale' 'llamar' 'llamarle' 'loco' 'citarle' 'momento' 'aquel',
+		description
+"---¿Es que estás loco, Pablo? ¿Cómo se te ha ocurrido citarme aquí justo ahora? La ciudad está llena de soldados. He tenido que dar un rodeo enorme para no cruzarme a nadie de camino."
+"---¡Noticias frescas! Claro que hay soldados, la capital entera se ha convertido en un hormiguero, carajo. Es no más cuestión de tiempo que nos agarren esos mamones con pistola... sin Allende, todo está perdido."
+"Terminó lo que le quedaba en el vaso y se quedó en silencio, con la boca torcida en una mueca extraña y la mirada perdida en algún lugar lejos de aquel bar. Finalmente volvió en si. Fijó los ojos, primero en el vaso vacío que sostenía en la mano, y luego en Gabriel."
+"---Haz algo, chico. Pídeme otro, ¿quieres?",
+		reply [; self.display(); ],
 		reaction [;
-			parent(self).remove_topic(Pablo_tema_01);
-			!! TODO - Cambiar disposición de Pablo *
+			!! FIXME - Cambiar descripciones de Pablo.
+			OBJ_Pablo.gets_angry();
+			OBJ_conversacion_Pablo.set_counter(2);
+			!! Se modifica la conversación con la camarera:
+			OBJ_conversacion_camarera
+				.remove_topic(OBJ_camarera_tema_cerveza, true);
+			OBJ_conversacion_camarera.add_topic(OBJ_camarera_tema_bebida);
 		],
-		subtopics Pablo_tema_03 Pablo_tema_04;
+		relatives OBJ_Pablo_tema_01,
+		subtopics OBJ_Pablo_tema_03 OBJ_Pablo_tema_04;
 
-ConversationTopic Pablo_tema_03
+ConversationTopic OBJ_Pablo_tema_03
+ with	entry [; print "pedirle otro ", (strong) "vino"; ],
+		!! FIXME - keys
+		keys 'pide' 'pidele' 'pedir' 'pedirle' 'otro' 'vino' 'tinto' 'bebida',
+		reply "---Muy bien. Espera un momento.",
+		relatives OBJ_Pablo_tema_04;
+
+ConversationTopic OBJ_Pablo_tema_04
+ with	entry [; print "decirle que no debía seguir ", (strong) "bebiendo"; ],
+		!! FIXME - keys
+		keys 'di' 'dile' 'decir' 'decirle' 'debia' 'beber' 'bebiendo' 'mas',
+		reply "---No creo que debas seguir bebiendo.",
+		reaction [; OBJ_Pablo.gets_angry(); ],
+		relatives OBJ_Pablo_tema_03;
+
+
+
+
+ConversationTopic _Pablo_tema_03
  class	TextSequence
  with	description
 			"Pablo se hizo hasta la barra para devolver el vaso vacío y pedir 
@@ -711,10 +739,10 @@ ConversationTopic Pablo_tema_03
 			self.display();
 		],
 		reaction [;
-			parent(self).remove_topic(Pablo_tema_04);
+			parent(self).remove_topic(_Pablo_tema_04);
 		];
 
-ConversationTopic Pablo_tema_04
+ConversationTopic _Pablo_tema_04
  class	TextSequence
  with	description
 			"---No creo que sea buena idea llamar la atención.",
@@ -728,11 +756,11 @@ ConversationTopic Pablo_tema_04
 			self.display();
 		],
 		reaction [;
-			parent(self).remove_topic(Pablo_tema_03);
+			parent(self).remove_topic(_Pablo_tema_03);
 		],
-		subtopics Pablo_tema_05 Pablo_tema_06;
+		subtopics _Pablo_tema_05 _Pablo_tema_06;
 
-ConversationTopic Pablo_tema_05
+ConversationTopic _Pablo_tema_05
  class	TextSequence
  with	description
 			"---Vale. Echemos una partida.",
@@ -745,10 +773,10 @@ ConversationTopic Pablo_tema_05
 			self.display();
 		],
 		reaction [;
-			parent(self).remove_topic(Pablo_tema_06);
+			parent(self).remove_topic(_Pablo_tema_06);
 		];
 
-ConversationTopic Pablo_tema_06
+ConversationTopic _Pablo_tema_06
  class	TextSequence
  with	description
 			"---Tal y como están las cosas, no creo que sea buena idea llamar 
@@ -762,18 +790,18 @@ ConversationTopic Pablo_tema_06
 			self.display();
 		],
 		reaction [;
-			parent(self).remove_topic(Pablo_tema_05);
+			parent(self).remove_topic(_Pablo_tema_05);
 			!! TODO - Cambiar disposición de Pablo *
 		],
 		subtopics;
 
-!! TODO - Pablo_tema_07 sólo tiene que estar disponible si el jugador ha 
+!! TODO - _Pablo_tema_07 sólo tiene que estar disponible si el jugador ha 
 !! llegado a ver a Mr. Panamá.
 
 Conversation conversacion_Pablo_02
- with	topics Pablo_tema_10 Pablo_tema_09 Pablo_tema_08 Pablo_tema_07;
+ with	topics _Pablo_tema_10 _Pablo_tema_09 _Pablo_tema_08 _Pablo_tema_07;
 
-ConversationTopic Pablo_tema_07
+ConversationTopic _Pablo_tema_07
  class	TextSequence
  with	description
 			"---¿Conoces a ese hombre?",
@@ -788,7 +816,7 @@ ConversationTopic Pablo_tema_07
 		reaction [;
 		];
 
-ConversationTopic Pablo_tema_08
+ConversationTopic _Pablo_tema_08
  class	TextSequence
  with	description
 			"Le tendió los dardos de nuevo a Pablo. ---¿Llegará ayuda?"
@@ -808,7 +836,7 @@ ConversationTopic Pablo_tema_08
 		reaction [;
 		];
 
-ConversationTopic Pablo_tema_09
+ConversationTopic _Pablo_tema_09
  class	TextSequence
  with	description
 			"---¿Y qué hay de los demás? ¿El resto de la gente de Unidad?",
@@ -823,7 +851,7 @@ ConversationTopic Pablo_tema_09
 		reaction [;
 		];
 
-ConversationTopic Pablo_tema_10
+ConversationTopic _Pablo_tema_10
  class	TextSequence
  with	description
 			"---¿Nosotros no podríamos reorganizar al pueblo y...?"
@@ -845,7 +873,7 @@ ConversationTopic Pablo_tema_10
 		reaction [;
 		];
 
-ConversationTopic Pablo_tema_11
+ConversationTopic _Pablo_tema_11
  class	TextSequence
  with	description
 		[;
@@ -884,7 +912,7 @@ ConversationTopic Pablo_tema_11
 		reaction [;
 		];
 
-ConversationTopic Pablo_tema_12
+ConversationTopic _Pablo_tema_12
  class	TextSequence
  with	description
 			"---No soy un cobarde, Pablo. No pienso huir."
@@ -901,7 +929,7 @@ ConversationTopic Pablo_tema_12
 		reaction [;
 		];
 
-ConversationTopic Pablo_tema_13
+ConversationTopic _Pablo_tema_13
  class	TextSequence
  with	description
 			"---De ninguna manera, Pablo. Me da igual lo que digas. No me 
@@ -919,7 +947,7 @@ ConversationTopic Pablo_tema_13
 			!! TODO - Cambiar disposición de Pablo
 		];
 
-ConversationTopic Pablo_tema_14
+ConversationTopic _Pablo_tema_14
  class	TextSequence
  with	description
 			"---¿De verdad no conoces a ese hombre del sombrero?",
@@ -935,7 +963,7 @@ ConversationTopic Pablo_tema_14
 		reaction [;
 		];
 
-ConversationTopic Pablo_tema_15
+ConversationTopic _Pablo_tema_15
  class	TextSequence
  with	description
 			"---¿Vendréis conmigo, Pablo?"
@@ -960,7 +988,7 @@ ConversationTopic Pablo_tema_15
 		reaction [;
 		];
 
-ConversationTopic Pablo_tema_16
+ConversationTopic _Pablo_tema_16
  class	TextSequence
  with	description
 			"---¿Qué? Pero... ¿pero no acabáis de decir? ¿Estáis loco o es que 
@@ -984,7 +1012,7 @@ ConversationTopic Pablo_tema_16
 		reaction [;
 		];
 
-ConversationTopic Pablo_tema_17
+ConversationTopic _Pablo_tema_17
  class	TextSequence
  with	description
 			"---¿Por qué me abandonáis?",
@@ -1000,7 +1028,7 @@ ConversationTopic Pablo_tema_17
 		reaction [;
 		];
 
-ConversationTopic Pablo_tema_18
+ConversationTopic _Pablo_tema_18
  class	TextSequence
  with	description
 			"---Eres un cobarde, Pablo.",
@@ -1016,7 +1044,7 @@ ConversationTopic Pablo_tema_18
 			!! TODO - Cambiar disposición de Pablo **
 		];
 
-ConversationTopic Pablo_tema_19
+ConversationTopic _Pablo_tema_19
  class	TextSequence
  with	description
 			"Gabriel guardó silencio.",
@@ -1031,7 +1059,7 @@ ConversationTopic Pablo_tema_19
 		reaction [;
 		];
 
-ConversationTopic Pablo_tema_20
+ConversationTopic _Pablo_tema_20
  class	TextSequence
  with	description
 			"Aún queda la esperanza de volver, Pablo..."
@@ -1090,7 +1118,7 @@ ConversationTopic Pablo_tema_20
 		reaction [;
 		];
 
-ConversationTopic Pablo_tema_21
+ConversationTopic _Pablo_tema_21
  class	TextSequence
  with	description
 			"---De verdad crees que ésta es la única opción, ¿no es cierto?",
@@ -1106,7 +1134,7 @@ ConversationTopic Pablo_tema_21
 		reaction [;
 		];
 
-ConversationTopic Pablo_tema_22
+ConversationTopic _Pablo_tema_22
  class	TextSequence
  with	description
 			"---Si tú no piensas huir, yo tampoco. No voy a dejarte solo, 
@@ -1125,8 +1153,77 @@ ConversationTopic Pablo_tema_22
 		];
 
 !!------------------------------------------------------------------------------
+!! Mr. Panamá:
 
-!! TODO
+!!	 *	FIXME - Nombres y adjetivos
+NPC		OBJ_MrPanama "hombre del sombrero" OBJ_LIMBO
+ with	name_m 'cliente' 'desconocido' 'extrano' 'hombre' 'parroquiano' 'senor',
+		gender G_MASCULINO,
+		adjectives 'sombrero' 'panama',
+		description [;
+			if (~~self.telephone_flag) return O__M(self, 1);
+			else return O__M(self, 2);
+		],
+		react_before [;
+			Look:
+				!! Si el jugador intenta mirar la localidad cuando está activo 
+				!! alguno de los indicadores de movimiento de Mr. Panamá, se 
+				!! lanza la acción examinar a Mr. Panamá en su lugar para que 
+				!! se imprima el texto del movimiento.
+				if (noun == nothing)
+					if (self.movement_1_flag || self.movement_2_flag 
+						|| self.movement_3_flag)
+						<<Examine self>>;
+			Examine, Search:
+				!! Si el jugador intenta mirar al teléfono mientras Mr. Panamá 
+				!! está hablando por él, se imprime la descripción del hombre.
+				if (noun == OBJ_telefono && self.telephone_flag)
+					<<Examine self>>;
+				!! Si el jugador intenta examinar a Mr. Panamá o a la clientela 
+				!! cuando está activo alguno de los indicadores de movimiento, 
+				!! se imprime el texto del movimiento en lugar de la 
+				!! descripción del hombre o de los clientes.
+				if (noun == self or OBJ_clientes) {
+					if (self.movement_1_flag) {
+						self.movement_1_flag = false;
+						return O__M(self, 3);
+					}
+					if (self.movement_2_flag) {
+						self.movement_2_flag = false;
+						return O__M(self, 4);
+					}
+					if (self.movement_3_flag) {
+						self.movement_3_flag = false;
+						return O__M(self, 5);
+					}
+				}
+			!! TODO - Comportamiento de TalkTo
+		],
+		before [;
+			Attack, Pull, Push, PushDir:
+				!! TODO - Cambiar mensaje
+				"No era el momento ni el lugar para empezar una pelea.";
+			Listen:
+				if (~~self.telephone_flag) return O__M(self, 6);
+				if (self.listen_flag) return O__M(self, 8);
+				self.listen_flag = true;
+				return O__M(self, 7);
+			TalkTo:
+				return O__M(self, 9);
+		],
+		!! TODO - Gestión de los movimientos del personaje, usando daemon o 
+		!! temporizadores.
+ private
+		listen_flag		false,
+		movement_1_flag	false,
+		movement_2_flag	false,
+		movement_3_flag	false,
+		telephone_flag	false,
+ has	concealed male;
+
+!!------------------------------------------------------------------------------
+
+!! FIXME
 [ LanzaDardo result;
 	result = AimAndFire();
 	if (result == -2)	return 10;
