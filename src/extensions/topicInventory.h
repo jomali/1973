@@ -13,15 +13,18 @@
 !!	Language:		ES (Castellano)
 !!	System:			Inform-INFSP 6
 !!	Platform:		Z-Machine / Glulx
-!!	Version:		2.0
+!!	Version:		0.2
 !!	Released:		2014/02/10
 !!
 !!------------------------------------------------------------------------------
 !!
 !!	# HISTORIAL DE VERSIONES
 !!
-!!	2.0: 2014/02/10	Mejor gestión en el cambio de conversaciones activas en el 
-!!					gestor y añadidos temas con presencia temporizada.
+!!	0.2: 2014/02/10	Versión preliminar de la versión 2.0. Mejora la gestión del 
+!!					cambio de distintas conversaciones y añade temas con 
+!!					presencia temporizada, temas relacionados (análogos a los 
+!!					subtopics, pero a la inversa; se eliminan al eliminar un 
+!!					tema), y otras pequeñas modificaciones.
 !!	1.8: 2014/02/05	Cambiado el nombre de la clase *ConversationEntry* por 
 !!					*ConversationTopic* y otras pequeñas correcciones.
 !!	1.7: 2014/01/29	Cambiados los nombres de las clases y pequeñas correcciones.
@@ -284,6 +287,10 @@ Class	ConversationTopic
 		reply 0, 
 		!! Acciones a ejecutar después de tratar el tema
 		reaction 0,
+		!! Vector de temas relacionados. Cuando éste se elimina, todos sus 
+		!! parientes se eliminan a la vez (y se marcan además como tratados si 
+		!! lo está también él).
+		relatives 0,
 		!! Lista de subtemas que añadir a la conversacion tras tratar este tema
 		subtopics 0, 
 		!! Si está establecido a 'true' se fuerza que el turno en que se trata 
@@ -351,9 +358,22 @@ Class	Conversation
 			}
 			return true;
 		],
-		remove_topic [ topic visited_flag;
+		remove_topic [ topic visited_flag obj i;
 			if (parent(topic) ~= self) return false;
 			if (visited_flag) give topic visited;
+			!! Se elimina a los parientes del tema:
+			if (topic.relatives ~= 0) {
+				for (obj=child(self) : obj~=nothing : obj=sibling(obj)) {
+					for (i=0 : i<(topic.#relatives)/WORDSIZE : i++) {
+						if (obj == topic.&relatives-->i) {
+							if (topic has visited) give obj visited;
+							remove obj;
+							break;
+						}
+					}
+				}
+			}
+			!! Se elimina el tema:
 			remove topic;
 			return true;
 		], 
@@ -604,12 +624,6 @@ Object ConversationManager "(Conversation Manager)"
 					self.topic_inventory_flag
 						= self.topic.append_topic_inventory;
 
-					!! Se modifica la entrada de usuario para que la librería 
-					!! lance la acción de apoyo ##NPCTalk (referenciada con la 
-					!! palabra clave 'npc.talk')
-					parse-->1 = 'npc.talk';
-					num_words = 1;
-
 					!! Se elimina el tema seleccionado si está agotado y se 
 					!! añaden a la conversación todos sus subtemas, si los hay
 					if (self.topic has visited)
@@ -618,6 +632,12 @@ Object ConversationManager "(Conversation Manager)"
 
 					if (self.topic.reaction ~= 0)
 						PrintOrRun(self.topic, reaction);
+
+					!! Se modifica la entrada de usuario para que la librería 
+					!! lance la acción de apoyo ##NPCTalk (referenciada con la 
+					!! palabra clave 'npc.talk')
+					parse-->1 = 'npc.talk';
+					num_words = 1;
 
 					!! A partir de este punto, la librería lanzará la acción 
 					!! ##NPCTalk, que imprimirá el inventario de temas 
