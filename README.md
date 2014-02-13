@@ -6,22 +6,22 @@ Un relato interactivo.
 
 Árbol de directorios del proyecto:
 
-* 'src/' : Código fuente del relato.
-	* 'DaGWindows12/' : Archivos de la lib. DA-Gwindows v1.2*
-	* 'extensions/' : Extensiones a la librería original
-		* 'discarded/' : Extensiones no utilizadas.
-	* 'InformLibrary611/' : Lib. Inform v6/11 con correcciones de R. Pérez.
-	* 'INFSP6/' : Lib. INFSP6 v0.9 con modificaciones de J.F. Martín.
-	* 'resources/' : Recursos multimedia.
-* 'web/' : Archivos de la web en construcción sobre el proyecto.
-	* 'articles/'
-		* 'bib/'
-	* 'fonts/'
-	* 'images/'
-		* 'bg/'
-		* 'ico/'
-	* 'scripts/'
-	* 'stylesheets/'
+* `src/` : Código fuente del relato.
+	* `DaGWindows12/` : Archivos de la lib. DA-Gwindows v1.2*
+	* `extensions/` : Extensiones a la librería original
+		* `discarded/` : Extensiones no utilizadas.
+	* `InformLibrary611/` : Lib. Inform v6/11 con correcciones de R. Pérez.
+	* `INFSP6/` : Lib. INFSP6 v0.9 con modificaciones de J.F. Martín.
+	* `resources/` : Recursos multimedia.
+* `web/` : Archivos de la web en construcción sobre el proyecto.
+	* `articles/`
+		* `bib/`
+	* `fonts/`
+	* `images/`
+		* `bg/`
+		* `ico/`
+	* `scripts/`
+	* `stylesheets/`
 
 -------
 
