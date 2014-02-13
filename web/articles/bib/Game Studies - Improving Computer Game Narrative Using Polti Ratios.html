@@ -1,0 +1,3339 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="verify-v1" content="YQVlVtFNYsYaDnRzcKhCy35S+Nkba9/lmYZ38IqR/oA=" />
+
+<title>Game Studies - Improving Computer Game Narrative Using Polti Ratios</title>
+<style type="text/css">
+<!--
+@import url("http://gamestudies.org/newStyle.css");
+-->
+</style>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-6218621-1");
+pageTracker._trackPageview();
+pageTracker = _gat._getTracker("UA-6214772-1");
+pageTracker._trackPageview();
+</script>
+</head>
+
+<body>
+<div id="container">
+	<div id="header">
+		<h1 onclick="location.href='http://gamestudies.org/0801/';" style="cursor: pointer;"><a href="http://gamestudies.org/0801/">Game Studies</a></h1>
+		<div id="vol_issue">
+			<span class="volume">volume 8</span>
+			<span class="issueno">issue 1</span>
+			<span class="date">September 2008</span>
+			<span class="issn">ISSN:1604-7982</span>
+		</div>
+		<div id="tagline">the international journal of<br />computer game research</div>
+	</div>
+	<ul id="topmenu">
+		<li><a href="http://gamestudies.org/0801">home</a></li>
+		<li><a href="http://gamestudies.org/0801/about">about</a></li>
+		<li><a href="http://gamestudies.org/0801/archive">archive</a></li>
+        <li><a href="http://gamestudies.org/rss.php">RSS</a></li>
+		<li>
+		<!-- Google Search -->
+        <form action="http://www.google.com/u/gamestudies" method="get" id="searchbar">
+          <input id="search" type="text" name="q" value="" size="15" maxlength="155" /><input type="submit" id="searchbtn" name="sa" value="Search" />
+        </form>
+		</li>
+<!-- Search Google -->
+	</ul>
+<div id="metainfo"><h4>Richard Hall</h4>
+			Richard Hall is currently a senior software engineer at Melbourne University Virtual Environments for Simulation <a href="http://www.muves.unimelb.edu.au/">http://www.muves.<br>unimelb.edu.au/</a>. His research interests are computational story modelling, visualisation and haptics.
+
+<h4>Kirsty Baird</h4>
+			Kirsty Baird has been working on community based film and video projects for the last five years. She has been involved with numerous communities including indigenous women, homeless young people, prisoners and children. Kirsty has recently completed two short films funded by the Federal Attorney-General's Department about young people, alcohol and safety which will screen on 35mm in cinemas over summer.
+kirsty@dork.com.au
+</div><div id="main">
+  		<div id="article"><h2>Improving Computer Game Narrative Using Polti Ratios</h2><small><em>by</em> Richard Hall, Kirsty Baird</small><h3>Abstract </h3>
+  <p><span >Computer games are criticised sometimes as
+    lacking in narrative. In this paper we introduce a model of stories (Polti
+    ratios) into which computer games (meeting particular criteria) can be
+    abstracted. Using this model, we designed a process to analyse and explore
+    computer game narrative. We give a highly detailed example of applying this
+    process to a computer game treatment currently under production called <i>Street Survivor</i>. </span></p>
+  <h3>1. Introduction</h3>
+  <p><span >The question of whether computer games </span><i><span
+ >should</span></i><span
+> be analysed using stories has been intensely debated (Frasca,
+    2003). This discussion aside, we believe that stories </span><i><span
+ >will</span></i><span
+> be used for such analysis due partly to their universality. Stories
+    have acted as the primary structure of communication for millennia in many
+    cultures (Chambers, 1984), and they easily transcend cultural boundaries
+    (Colby, Kennedy and Milanesi, 1991). Explanations come from several academic
+    ﬁelds. Historians claim that narrative fashions human experience into
+    structures of meaning that are generally human rather than culture-speciﬁc
+    (White, 1991). Philosophers have argued that stories have the highest degree of
+    structure in the world (Bakhtin, 1981 Holquist, 1990).</span></p>
+  <p><span >In addition, psychologists have
+    demonstrated that stories play an important role in cognition and in modelling
+    the world (Graesser, 1995 Zwaan and Magliano, 1995). S</span><span 
+>tudie</span><span
+>s have shown the </span><span  
+>superiorit</span><span >y </span><span
+ >o</span><span
+>f </span><span  >storie</span><span >s </span><span 
+>ove</span><span
+>r </span><span  >othe</span><span >r </span><span 
+>informatio</span><span
+>n </span><span  >form</span><span >s </span><span 
+>i</span><span
+>n </span><span  >variou</span><span >s </span><span 
+>ways</span><span
+>. </span><span  >Narrativ</span><span >e </span><span 
+>text</span><span
+>s </span><span  >too</span><span >k </span><span 
+>hal</span><span
+>f </span><span  >th</span><span >e </span><span 
+>readin</span><span
+>g </span><span  >tim</span><span >e </span><span 
+>o</span><span
+>f </span><span  >expositor</span><span >y </span><span 
+>text</span><span
+>s </span><span  >(Graesse</span><span >r, </span><span 
+>1995)</span><span
+>. </span><span  >Th</span><span >e </span><span 
+>recal</span><span
+>l </span><span  >accurac</span><span >y </span><span 
+>o</span><span
+>f </span><span  >word</span><span >s </span><span 
+>organise</span><span
+>d </span><span  >i</span><span >n a </span><span 
+>stor</span><span
+>y </span><span  >i</span><span >s </span><span  
+>twic</span><span >e </span><span
+ >a</span><span
+>s </span><span  >goo</span><span >d </span><span 
+>a</span><span
+>s </span><span  >randoml</span><span >y </span><span 
+>organise</span><span
+>d </span><span  >word</span><span >s </span><span 
+>(Bowe</span><span
+>r </span><span  >an</span><span >d </span><span 
+>Clar</span><span
+>k, </span><span  >1969</span><span >) </span><span 
+>an</span><span
+>d the same with </span><span  
+>expositor</span><span >y </span><span
+ >tex</span><span
+>t </span><span  >(Haberland</span><span >t </span><span 
+>an</span><span
+>d </span><span  >Graesse</span><span >r, </span><span 
+>1985)</span><span
+>. </span><span  >Also</span><span >, </span><span 
+>juror</span><span
+>s </span><span  >structur</span><span >e </span><span 
+>volume</span><span
+>s </span><span  >o</span><span >f </span><span  
+>unordere</span><span >d </span><span
+ >an</span><span
+>d </span><span  >conﬂictin</span><span >g </span><span 
+>evidenc</span><span
+>e </span><span  >a</span><span >s </span><span  
+>storie</span><span >s </span><span
+ >(Penningto</span><span
+>n </span><span  >an</span><span >d </span><span 
+>Hasti</span><span
+>e, </span><span  >1991)</span><span >.</span></p>
+  <p><span >However, narrative is not the only tool for
+    computer game analysis in town there are other crucial aspects to successful computer
+    games such as game playability (Fabricatore et. al., 2002). Nonetheless, within
+    the scope of this paper we are going to naively assume that these aspects are
+    independent for example, <i>good</i> narrative does not logically imply <i>bad</i> game playability. Integrated models must necessarily explore and define the
+    conditions for which such relations hold in order to properly subsume these
+    aspects.</span></p>
+  <p><span >So we focus on stories, but there are
+    hundreds of ways in which stories can be modelled (see the </span><i><span  
+>Dictionar</span><span >y </span></i><i><span  
+>o</span><span >f </span></i><i><span  
+>Narratolog</span><span >y</span></i><span
+> </span><span  >Princ</span><span >e, </span><span 
+>1987). We wanted
+    the model to be described by quantitative measures so that any story, however
+    complex, could be boiled down into single numbers. Such reduction can be
+    justifiably accused of a corresponding loss of nutrition, for instance, how can <i>good</i> narrative equal a <i>high</i> number? Accordingly, these numbers
+    alone will not necessarily show that on</span><span >e </span><span
+ >stor</span><span
+>y </span><span  >i</span><span >s </span><span  
+>“better</span><span >” </span><span
+ >tha</span><span
+>n </span><span  >anothe</span><span >r, because there are so many
+    dimensions to stories and our measures will ignore many of these. </span><span
+ >But
+    whatever their drawbacks, and however they are constructed, scores are
+    undeniably easy to grasp, discuss and compare.</span><span > </span></p>
+  <p><span  >Since </span><span >scores are easy to compare, we could
+    possibly exhaustively analyse and compare current popular games, such as <i>The
+    Sims</i> or <i>Grand Theft Auto</i>, or go beyond the computer game context
+    into other media such as film or literature. But the purpose of this paper is
+    to go beyond evaluation our project is to invent a simple and practical way to
+    improve the narrative in a computer game design treatment. There are certainly
+    aspects of evaluation, but the target audience of this paper is practicians
+    rather than theoreticians.</span></p>
+  <p><span >The organisation of this paper is as
+    follows. In Section 2 we discuss the classes of story model that have been used
+    in computational story modelling, under the assumption that such models might
+    be amenable to the creation of quantitative measures. The story model we chose
+    to describe in terms of these measures has the following three properties: it
+    can differentiate between computer games that contain stories and those that do
+    not (Section 3) it can be used to specify the characteristics of artificial
+    characters in computer games (Section 4), and it can be used to evaluate and
+    reconceive stories quantitatively (Section 5). The first property is important
+    because a proper story model should be able to distinguish between a story and
+    a non-story. The second property is important because our distinguishing
+    feature is precisely that stories contain characters and we should be able to
+    say what a character is. We then move to application in Section 6 we consider
+    a real computer game design treatment (for a game called <i>Street Survivor</i>) as an extended case study. We apply our story
+    model to this game and reconceive the story within the model (which was largely
+    adopted).</span></p>
+  <h3>2. The Appeal of Polti’s Dramatic Situations</h3>
+  <p><span >Computational story models appear to have
+    two fundamental characteristics: a certain level of abstraction and a top-down
+    or bottom-up construction (from a systems theory point of view). By abstraction
+    we mean that components can be defined vaguely (e.g. “the impact was positive”
+    à la <i>plot units, </i>Lehnert, 1982) or precisely (e.g. “Joe ordered a
+    hamburger” à la <i>scripts</i>, Schank and Abelson, 1977). By top-down we mean
+    that the model defines a sequence of components (like a template) that must be
+    filled in (e.g. “starting equilibrium, falling event, rising event, turning
+    point, final equilibrium” à la the <i>Aristotelian model</i>, Cassady, 1991).
+    By bottom-up we mean the model defines a number of components that can be
+    combined and used in any desired manner (e.g. “subsumption state, cause of
+    termination event, problem-state description” à la <i>points</i>, Wilensky,
+    1982). </span></p>
+  <p><span >Within this framework, <a
+href="http://en.wikipedia.org/wiki/The_Thirty-Six_Dramatic_Situations"><span
+>Polti’</span><span
+>s </span><span 
+>situation</span><span >s</span></a> (Polti, 1895 Lucille, 1977, Hall et al, 2000, see
+    Appendix 1) are highly abstract but have varying levels of detail. Some
+    situations are explicit regarding what happens to whom in what relationships,
+    while in others these details are omitted. For an example of an explicit
+    situation, consider </span><u><span  
+>rivalr</span><span >y </span></u><u><span
+ >o</span><span
+>f </span></u><u><span  
+>superio</span><span >r </span></u><u><span
+ >an</span><span
+>d </span></u><u><span  
+>inferior</span></u><span >. Clearly,
+    relations exist between characters and these relations entail norms that should
+    not (but are) compromised. For an example of a less explicit situation consider </span><u><span  >erro</span><span >r </span></u><u><span 
+>o</span><span
+>f </span></u><u><span  
+>judgment</span></u><span >. In this
+    situation character(s) A makes a mistake of some kind, but no description of
+    the mistake is given. It requires the audience to recognise that A has made the
+    mistake.</span></p>
+  <p><span >In terms of systems theory, Polti’s
+    situations can be characterised largely as bottom-up. Polti does not specify
+    how to combine or synthesise his units his project is identifying the minimum
+    number of units (reviewing over a thousand stories). Many units do describe
+    short causal sequences (e.g. </span><u><span  
+>crim</span><span >e </span></u><u><span
+ >pursue</span><span
+>d </span></u><u><span  
+>b</span><span >y </span></u><u><span
+ >vengeance</span></u><span
+>) that are internally top-down but with respect to the other units
+    are bottom-up. In terms of events occurring in a story, it appears that
+    multiple units can be concatenated or nested as long as (most of the time) the
+    causal sequences are completely represented. For example, <u>pursuit</u> can
+    halt temporarily for various reasons.</span></p>
+  <p><span >The main advantage of these bottom-up
+    abstract units is that they are descriptive, as opposed to prescriptive. They
+    essentially provide a pattern language that can be either matched to existing
+    stories or used in story authoring. And they help us substantially in our quest
+    to create quantitative measures for stories in that these units and their
+    components are <i>countable</i>, by and large. But firstly we need to show that
+    this model can distinguish between a story and a non-story in particular,
+    between a story and a game.</span></p>
+  <h3>3. Is It a Game or a Story?</h3>
+  <p><span >Some authors distinguish between the two by
+    the role of the people engaged (Newman, 2002) and the linearity of the events
+    (Lindley, 2005). We’re going to take a slightly different tack, and initially
+    propose the theory that if people can explain what is going on in terms of at
+    least one of Polti’s units then the object that they are engaged with can be
+    labelled a story. Since these dramatic situations are extracted from stories,
+    this means that if there is a match, then people should be able to point to
+    other stories (or genres) which share similar events, and perhaps argue that
+    these objects are stories by analogy.</span></p>
+  <p><span >We now relate our theory to three levels of
+    game abstraction: <i>deﬁnition, game genre</i> and in terms of an <i>instance</i> <i>Tetris</i>, following previous academic work
+    (Ryan, 2001). At the level of </span><i><span  
+>deﬁnition</span></i><span
+>, suppose we use a 10-point deﬁnition of game components (Avedon and
+    Sutton-Smith, 1971): 1) purpose of the game, 2) procedure for action, 3) rules
+    governing action, 4) number of required participants, 5) roles of participants,
+    6) results or pay-off, 7) abilities and skills required for action, 8)
+    interaction patterns, 9) physical setting and environmental requirements, 10)
+    required equipment. Clearly, game component 6 (results or pay-off), can be
+    matched to Polti’s unit </span><u><span  
+>obtaining</span></u><span >, thus
+    these categories are blurred.</span></p>
+  <p><span >At the level of </span><i><span 
+>gam</span></i><span
+>e </span><i><span  
+>genre</span></i><span >, suppose we
+    consider Crawford’s taxonomy of computer games (Crawford, 1984). His two main categories,
+    skill/action games and strategy games, are equally blurred. A number of Polti’s
+    units are easily matched: </span><span  
+>th</span><span >e </span><span
+ >enigm</span><span
+>a (searcher), </span><span  
+>pursuit</span><span >, </span><span
+ >obtaining</span><span
+>, </span><span  >fallin</span><span >g </span><span 
+>pre</span><span
+>y </span><span  >t</span><span >o </span><span 
+>misfortune</span><span
+>, </span><span  >ambition</span><span >, </span><span 
+>disaster</span><span
+>, and </span><span  
+>darin</span><span >g </span><span
+ >enterprise</span><span
+>. Thus games in these genres blur with stories.</span></p>
+  <p><span >At the level of </span><i><span 
+>instance</span></i><span
+>, consider Tetris with respect to <a
+href="http://en.wikipedia.org/wiki/The_Thirty-Six_Dramatic_Situations"><span
+>Polti’</span><span
+>s </span><span 
+>situations</span></a>. It’s straightforward to
+    find at least two matches: </span><u><span  
+>obtainin</span><span >g</span></u><span
+> the player is continuously losing more and more ground and </span><u><span
+ >th</span><span
+>e </span></u><u><span  
+>enigm</span><span >a</span></u><span
+> the player is continuously searching for a way to get rid of all
+    the blocks. Murray’s analogy for this “a perfect enactment of the over tasked
+    lives of Americans in the 1990s-of the constant bombardment of tasks that
+    demand our attention and that we must somehow fit into our overcrowded
+    schedules and clear off our desks in order to make room for the next onslaught”
+    (Murray, 1997), has been derided as a projection (Eskelinen, 2001).
+    Nonetheless, this analogy matches Polti units, thus both are stories under the
+    current theory.</span></p>
+  <p><span  >Clearl</span><span >y </span><span 
+>ou</span><span
+>r </span><span  >initia</span><span >l </span><span 
+>theor</span><span
+>y </span><span  >require</span><span >s </span><span 
+>som</span><span
+>e </span><span  >wor</span><span >k </span><span 
+>a</span><span
+>s </span><span  >w</span><span >e </span><span  
+>currentl</span><span >y </span><span
+ >hav</span><span
+>e </span><span  >interpenetratin</span><span >g </span><span 
+>categorie</span><span
+>s </span><span  >a</span><span >t </span><span  
+>al</span><span >l </span><span
+ >level</span><span
+>s </span><span  >o</span><span >f </span><span  
+>gam</span><span >e </span><span
+ >abstraction</span><span
+>. </span><span  >T</span><span >o </span><span  
+>attemp</span><span >t </span><span
+ >clarification</span><span
+> </span><span  >w</span><span >e </span><span  
+>propos</span><span >e </span><span
+ >tw</span><span
+>o </span><span  >simpl</span><span >e </span><span 
+>sub-categorie</span><span
+>s </span><span  >o</span><span >f </span><span  
+>story</span><span >: </span><i><span
+ >embodie</span><span
+>d</span></i><span > </span><span 
+>an</span><span
+>d </span><i><span  
+>unembodied</span></i><span >. </span><span
+ >Th</span><span
+>e </span><span  >distinctio</span><span >n </span><span 
+>i</span><span
+>s </span><span  >tha</span><span >t </span><span 
+>a</span><span
+>n </span><span  >embodie</span><span >d </span><span 
+>stor</span><span
+>y </span><span  >generate</span><span >s </span><span 
+>characters i</span><span
+>n </span><span  >th</span><span >e </span><span 
+>min</span><span
+>d </span><span  >o</span><span >f </span><span  
+>th</span><span >e audience
+    of the story. </span><span  >Suc</span><span >h a </span><span 
+>deﬁnitio</span><span
+>n </span><span  >migh</span><span >t </span><span 
+>b</span><span
+>e </span><span  >contestabl</span><span >e </span><span 
+>an</span><span
+>d </span><span  >incomplete</span><span >, </span><span 
+>bu</span><span
+>t </span><span  >i</span><span >t </span><span  
+>doe</span><span >s </span><span
+ >pav</span><span
+>e </span><span  >th</span><span >e </span><span 
+>wa</span><span
+>y </span><span  >fo</span><span >r </span><span 
+>dialogue</span><span
+>. </span><i><span  
+>Embodie</span></i><span >d </span><span
+ >stories</span><span
+>, </span><span  >whic</span><span >h </span><span 
+>hav</span><span
+>e </span><span  >characters</span><span >, </span><span 
+>ar</span><span
+>e </span><span  >triviall</span><span >y </span><span 
+>eas</span><span
+>y </span><span  >t</span><span >o </span><span  
+>matc</span><span >h </span><span
+ >t</span><span
+>o </span><span  >Polti’</span><span >s </span><span 
+>units</span><span
+>, </span><span  >sinc</span><span >e </span><span 
+>thes</span><span
+>e </span><span  >unit</span><span >s </span><span 
+>essentiall</span><span
+>y </span><span  >describ</span><span >e </span><span 
+>situation</span><span
+>s </span><span  >o</span><span >f </span><span  
+>conflict</span><span > </span><span
+ >betwee</span><span
+>n </span><span  >characters</span><span >. </span><span 
+>O</span><span
+>n </span><span  >th</span><span >e </span><span 
+>othe</span><span
+>r </span><span  >hand</span><span >, </span><i><span 
+>unembodie</span></i><span
+>d </span><span  >storie</span><span >s </span><span 
+>requir</span><span
+>e </span><span  >a</span><span >n </span><span  
+>imaginativ</span><span >e </span><span
+ >reconceptualisatio</span><span
+>n </span><span  >o</span><span >f </span><span  
+>th</span><span >e </span><span
+ >event</span><span
+>s </span><span  >i</span><span >n </span><span  
+>term</span><span >s </span><span
+ >o</span><span
+>f </span><span  >character</span><span >s </span><span 
+>t</span><span
+>o </span><span  >achiev</span><span >e a </span><span 
+>match</span><span
+>. </span><span  >Suc</span><span >h </span><span 
+>reconceptualisatio</span><span
+>n </span><span  >require</span><span >s </span><span 
+>mor</span><span
+>e </span><span  >effort</span><span > </span><span 
+>t</span><span
+>o </span><span  >matc</span><span >h </span><span 
+>tha</span><span
+>n </span><span  >embodie</span><span >d </span><span 
+>storie</span><span
+>s </span><span  >an</span><span >d </span><span 
+>mus</span><span
+>t </span><span  >b</span><span >e </span><span  
+>achieve</span><span >d </span><span
+ >usin</span><span
+>g </span><span  >som</span><span >e </span><span 
+>sor</span><span
+>t </span><span  >o</span><span >f </span><span  
+>individua</span><span >l </span><span
+ >(an</span><span
+>d </span><span  >thu</span><span >s </span><span 
+>contestable</span><span
+>) </span><span  >justiﬁcation</span><span >.</span></p>
+  <p><span  >Ho</span><span >w </span><span 
+>d</span><span
+>o </span><span  >thes</span><span >e </span><span 
+>unembodie</span><span
+>d </span><span  >an</span><span >d </span><span 
+>embodie</span><span
+>d </span><span  >sub-categorie</span><span >s </span><span 
+>impac</span><span
+>t </span><span  >ou</span><span >r </span><span 
+>thre</span><span
+>e </span><span  >level</span><span >s </span><span 
+>o</span><span
+>f </span><span  >abstraction</span><span >? </span><span 
+>A</span><span
+>t </span><span  >th</span><span >e </span><i><span 
+>deﬁnitiona</span><span
+>l</span></i><span > </span><span 
+>level</span><span
+>, </span><span  >componen</span><span >t 6 </span><span 
+>(wher</span><span
+>e a </span><span  >resul</span><span >t </span><span 
+>o</span><span
+>r </span><span  >pay-off</span><span > </span><span 
+>i</span><span
+>s </span><span  >achieved</span><span >) </span><span 
+>ma</span><span
+>y </span><span  >impac</span><span >t </span><span 
+>characters</span><span
+>, </span><span  >producin</span><span >g </span><span 
+>a</span><span
+>n </span><span  >embodie</span><span >d </span><span 
+>story</span><span
+>, </span><span  >o</span><span >r </span><span  
+>vic</span><span >e </span><span
+ >versa</span><span
+>. </span><span  >A</span><span >s </span><span  
+>a</span><span >n </span><span
+ >unembodie</span><span
+>d </span><span  >story</span><span >, </span><span 
+>th</span><span
+>e </span><span  >stretchin</span><span >g </span><span 
+>require</span><span
+>d </span><span  >t</span><span >o </span><span  
+>reconceiv</span><span >e </span><span
+ >event</span><span
+>s </span><span  >an</span><span >d </span><span 
+>th</span><span
+>e </span><span  >necessar</span><span >y </span><span 
+>defenc</span><span
+>e </span><span  >o</span><span >f </span><span  
+>suc</span><span >h </span><span
+ >stretchin</span><span
+>g </span><span  >might</span><span >, </span><span 
+>o</span><span
+>n </span><span  >occasion</span><span >, </span><span 
+>b</span><span
+>e </span><span  >to</span><span >o </span><span 
+>wea</span><span
+>k </span><span  >t</span><span >o </span><span  
+>warran</span><span >t </span><span
+ >eve</span><span
+>n </span><span  >considerin</span><span >g </span><span 
+>thes</span><span
+>e </span><span  >gam</span><span >e </span><span 
+>i</span><span
+>n </span><span  >term</span><span >s </span><span 
+>o</span><span
+>f </span><span  >Polti’</span><span >s </span><span 
+>unit</span><span
+>s </span><span  >(o</span><span >r </span><span 
+>perhap</span><span
+>s </span><span  >an</span><span >y </span><span 
+>othe</span><span
+>r </span><span  >stor</span><span >y </span><span 
+>model)</span><span
+>. </span><span  >Ultimately</span><span >, </span><span 
+>i</span><span
+>f </span><span  >w</span><span >e </span><span  
+>agre</span><span >e </span><span
+ >tha</span><span
+>t </span><span  >n</span><span >o </span><span  
+>character</span><span >s </span><span
+ >exist</span><span
+>, </span><span  >an</span><span >d </span><span 
+>agre</span><span
+>e </span><span  >t</span><span >o </span><span  
+>loo</span><span >k </span><span
+ >throug</span><span
+>h </span><span  >Polti’</span><span >s </span><span 
+>lens</span><span
+>, </span><span  >componen</span><span >t 6 </span><span 
+>canno</span><span
+>t </span><span  >b</span><span >e </span><span  
+>matche</span><span >d </span><span
+ >t</span><span
+>o </span><u><span  
+>obtaining</span></u><span >. </span><span
+ >Suddenl</span><span
+>y </span><span  >th</span><span >e </span><span 
+>notion</span><span
+>s </span><span  >o</span><span >f </span><span  
+>gam</span><span >e </span><span
+ >an</span><span
+>d </span><span  >stor</span><span >y </span><span 
+>ca</span><span
+>n </span><span  >b</span><span >e </span><span  
+>separate</span><span >d </span><span
+ >int</span><span
+>o </span><span  >distinc</span><span >t </span><span 
+>categorie</span><span
+>s </span><span  >a</span><span >t </span><span  
+>thi</span><span >s </span><span
+ >abstrac</span><span
+>t </span><span  >leve</span><span >l </span><span 
+>usin</span><span
+>g a </span><span  >cleare</span><span >r </span><span 
+>notio</span><span
+>n </span><span  >o</span><span >f </span><span  
+>embodie</span><span >d </span><span
+ >stories</span><span
+>. </span><span  >A</span><span >t </span><span  
+>th</span><span >e </span><span
+ >les</span><span
+>s </span><span  >abstrac</span><span >t </span><span 
+>leve</span><span
+>l </span><span  >o</span><span >f </span><i><span 
+>gam</span></i><span
+>e </span><i><span  
+>genre</span></i><span >, </span><span
+ >w</span><span
+>e </span><span  >argue</span><span >d </span><span 
+>tha</span><span
+>t a </span><span  >numbe</span><span >r </span><span 
+>o</span><span
+>f </span><span  >Polti’</span><span >s </span><span 
+>unit</span><span
+>s </span><span  >wer</span><span >e </span><span 
+>matched</span><span
+>. </span><span  >Similarly</span><span >, </span><span 
+>analysi</span><span
+>s </span><span  >i</span><span >n </span><span  
+>term</span><span >s </span><span
+ >o</span><span
+>f </span><span  >storie</span><span >s </span><span 
+>i</span><span
+>s </span><span  >fine</span><span > </span><span 
+>when</span><span
+> </span><span  >genres</span><span > </span><span 
+>hav</span><span
+>e </span><span  >characters</span><span >.</span></p>
+  <p><span  >Wher</span><span >e </span><span 
+>doe</span><span
+>s </span><span  >thi</span><span >s </span><span 
+>leav</span><span
+>e </span><i><span 
+>Tetris</span></i><span
+>? </span><span  >W</span><span >e </span><span  
+>propose</span><span >d </span><span
+ >tw</span><span
+>o </span><span  >matches</span><span >: </span><u><span 
+>obtainin</span><span
+>g</span></u><span > </span><span 
+>an</span><span
+>d </span><u><span  
+>th</span><span >e </span></u><u><span
+ >enigma</span></u><span
+>. </span><span  >Neithe</span><span >r </span><span 
+>o</span><span
+>f </span><span  >thes</span><span >e </span><span 
+>matche</span><span
+>s </span><span  >generat</span><span >e </span><span 
+>character</span><span
+>s </span><span  >i</span><span >n </span><span  
+>th</span><span >e </span><span
+ >min</span><span
+>d </span><span  >o</span><span >f </span><span  
+>a</span><span >n </span><span
+ >observer</span><span
+>, </span><span  >thu</span><span >s </span><span 
+>Tetri</span><span
+>s </span><span  >canno</span><span >t </span><span 
+>b</span><span
+>e </span><span  >classiﬁe</span><span >d </span><span 
+>a</span><span
+>s </span><span  >a</span><span >n </span><span  
+>embodie</span><span >d </span><span
+ >stor</span><span
+>y </span><span  >vi</span><span >a </span><span 
+>ou</span><span
+>r </span><span  >deﬁnition</span><span >. </span><span 
+>Murray’</span><span
+>s </span><span  >interestin</span><span >g </span><span 
+>angl</span><span
+>e </span><span  >i</span><span >s </span><span  
+>fro</span><span >m </span><span
+ >th</span><span
+>e </span><span  >broade</span><span >r </span><span 
+>philosophica</span><span
+>l </span><span  >viewpoint</span><span >, </span><span 
+>whic</span><span
+>h </span><span  >ha</span><span >s </span><span 
+>bee</span><span
+>n </span><span  >considere</span><span >d </span><span 
+>bu</span><span
+>t </span><span  >exclude</span><span >d </span><span 
+>fro</span><span
+>m </span><span  >ou</span><span >r </span><span 
+>categor</span><span
+>y </span><span  >o</span><span >f </span><span  
+>story</span><span >. </span><span
+ >Tetri</span><span
+>s </span><span  >ca</span><span >n </span><span 
+>thu</span><span
+>s </span><span  >b</span><span >e </span><span  
+>classiﬁe</span><span >d </span><span
+ >a</span><span
+>s </span><span  >a</span><span >n </span><span  
+>unembodie</span><span >d </span><span
+ >story</span><span
+> </span><span  >th</span><span >e </span><span 
+>tw</span><span
+>o </span><span  >characterles</span><span >s </span><span 
+>matche</span><span
+>s </span><span  >w</span><span >e </span><span  
+>mad</span><span >e </span><span
+ >wit</span><span
+>h </span><span  >Polt</span><span >i </span><span 
+>ar</span><span
+>e </span><span  >not</span><span >, </span><span 
+>i</span><span
+>n </span><span  >ou</span><span >r </span><span 
+>opinion</span><span
+>, </span><span  >a</span><span >s </span><span  
+>interestin</span><span >g </span><span
+ >a</span><span
+>s </span><span  >th</span><span >e </span><span 
+>tangentia</span><span
+>l </span><span  >philosophica</span><span >l </span><span 
+>view</span><span
+>.</span></p>
+  <p><span  >I</span><span >n </span><span  
+>thi</span><span >s </span><span
+ >sectio</span><span
+>n </span><span  >w</span><span >e </span><span  
+>hav</span><span >e </span><span
+ >separate</span><span
+>d </span><span  >th</span><span >e </span><span 
+>categorie</span><span
+>s </span><span  >o</span><span >f </span><span  
+>gam</span><span >es </span><span
+ >an</span><span
+>d </span><span  >stories</span><span > </span><span 
+>vi</span><span
+>a </span><span  >analysi</span><span >s </span><span 
+>a</span><span
+>t </span><span  >thre</span><span >e </span><span 
+>level</span><span
+>s </span><span  >o</span><span >f </span><span  
+>gam</span><span >e </span><span
+ >abstraction</span><span
+>. </span><span  >W</span><span >e </span><span  
+>agre</span><span >e </span><span
+ >wit</span><span
+>h </span><span  >Eskeline</span><span >n </span><span 
+>tha</span><span
+>t </span><span  >th</span><span >e </span><span 
+>presenc</span><span
+>e </span><span  >o</span><span >f </span><span  
+>character</span><span >s </span><span
+ >i</span><span
+>s </span><span  >ke</span><span >y </span><span 
+>t</span><span
+>o </span><span  >justifyin</span><span >g </span><span 
+>th</span><span
+>e </span><span  >applicatio</span><span >n </span><span 
+>o</span><span
+>f </span><span  >stor</span><span >y </span><span 
+>model</span><span
+>s </span><span  >t</span><span >o </span><span  
+>game</span><span >s </span><span
+ >bu</span><span
+>t </span><span  >disagre</span><span >e </span><span 
+>tha</span><span
+>t </span><span  >philosophica</span><span >l </span><span 
+>viewpoint</span><span
+>s </span><span  >o</span><span >n </span><span  
+>game</span><span >s </span><span
+ >equat</span><span
+>e </span><span  >t</span><span >o </span><span  
+>‘interpretativ</span><span
+>e </span><span  >violence</span><span >’ </span><span 
+>(Eskeline</span><span
+>n, </span><span  >2001)</span><span >. </span><span 
+>W</span><span
+>e </span><span  >believ</span><span >e </span><span 
+>tha</span><span
+>t </span><span  >suc</span><span >h </span><span 
+>viewpoint</span><span
+>s </span><span  >ar</span><span >e </span><span 
+>perceptiv</span><span
+>e </span><span  >an</span><span >d </span><span 
+>worthwhile</span><span
+> </span><span  >articulatin</span><span >g </span><span 
+>bu</span><span
+>t </span><span  >hav</span><span >e </span><span 
+>n</span><span
+>o </span><span  >nee</span><span >d </span><span 
+>t</span><span
+>o </span><span  >b</span><span >e </span><span  
+>artificially</span><span > </span><span
+ >positione</span><span
+>d </span><span  >i</span><span >n </span><span  
+>th</span><span >e </span><span
+ >categor</span><span
+>y </span><span  >o</span><span >f </span><span  
+>narrativ</span><span >e </span><span
+ >t</span><span
+>o </span><span  >clai</span><span >m </span><span 
+>legitimacy</span><span
+>.</span></p>
+  <h3>4. Computer Games with “Characters” Have Stories</h3>
+  <p><span >In the previous section we made a
+    distinction that relied on the concept of a character without deﬁning what
+    characters are. Bringsjord previously proposed that computer generated
+    characters should have a minimum of five properties of (philosophical)
+    personhood: language, autonomy, creativity, phenomenal consciousness, and
+    reasoning capacity, and argued that since artificial autonomy is impossible,
+    computer generated characters are impossible (Bringsjord, 2001). Of course, it
+    would be great if artificial intelligence advanced to the point where all would
+    agree that a program had achieved personhood and we hope that one day it does.
+    However, we think Bringsjord is unreasonably raising the bar for characters to
+    necessarily require personhood. With characters, the notion of their personhood
+    exists only in the mind of an observer of a story. The internal mental state of
+    movie actors may not necessarily correlate to their external state.</span></p>
+  <p><span >Our speciﬁcation for characters is far less
+    ambitious than what Bringsjord has proposed. Rather than using philosophy as a
+    basis, we developed our requirements directly from our story model. That is, we
+    systematically identiﬁed a set of capabilities that characters should <i>appear</i> to have that would allow all of Polti’s thirty-six dramatic units to be
+    realised (Hall, 2002). These capabilities are summarised in Figure 1.</span></p>
+  <p><i><span  >Attribute</span><span >s</span></i><span >: All
+    attributes of character A which have an e</span><span 
+>ff</span><span
+>ect external to themselves in the situation should appear to have
+    their normal e</span><span  
+>ff</span><span >ect. For
+    example, if one character can run faster than another, the former would
+    normally win a foot race. </span></p>
+  <p><i><span  >Perceptio</span><span >n</span></i><span >: A should
+    appear to normally perceive their situation perfectly. For example, if A
+    perceives their situation incorrectly then they are much more likely to make
+    mistakes. </span></p>
+  <p><i><span  >Menta</span><span >l </span></i><i><span 
+>stat</span><span
+>e</span></i><span >: The normal mental state for A should
+    appear to be that their aim is to satisfy their goals, and every emotion which
+    A has towards other agents reﬂects a perceived relationship. For example, if
+    their actions do not reﬂect their internal goals then their behaviour would be
+    described (in pop psychology) as madness. </span></p>
+  <p><i><span  >Pursui</span><span >t</span></i><span >: The
+    position of A (being in a speciﬁc situation) should appear to be normally
+    independent of the position of other objects, and A can move freely around in
+    and between situations. For example, most </span><i><span 
+>A</span></i><span
+>s are not continuously pursuing something. </span></p>
+  <p><i><span  >Lov</span><span >e</span></i><span >: </span><i><span
+ >A</span></i><span
+>s should appear to be normally emotionally neutral towards other </span><i><span
+ >As</span></i><span
+>, unless special circumstances have caused them to exhibit the
+    important directed emotions of love or hate. For example, if </span><i><span
+ >A</span></i><span
+>1 is in love with another, the former will not appreciate the latter
+    being removed from those circumstances. </span></p>
+  <p><i><span  >Famil</span><span >y</span></i><span >: A should
+    appear to not belong to a family with all other characters, and special
+    conditions must occur for a family to exist. For example, members of the one
+    family happily coexisting in the same situation should not be enemies. </span></p>
+  <p><i><span  >Frien</span><span >d</span></i><span >: A should
+    appear to be normally friends with characters that they interact with, although
+    speciﬁc interactions can cause them to become enemies. For example, if </span><i><span
+ >A</span></i><span
+>1 is friends with </span><i><span  
+>A</span></i><span >2 but
+    enemies with </span><i><span  
+>A</span></i><span  
+>3</span><span >, </span><i><span
+ >A</span></i><span
+>1 will not appreciate </span><i><span  
+>A</span></i><span >2 being
+    friends with </span><i><span  
+>A</span></i><span  
+>3</span><span >. </span></p>
+  <p><i><span  >Powe</span><span >r</span></i><span >: A should
+    appear to normally not have power over other </span><i><span 
+>A</span></i><span
+>, although A may often be involved in power structures where they or
+    others have power. For example, if </span><i><span  
+>A</span></i><span >1 has
+    power over </span><i><span  >A</span></i><span  >2</span><span >, </span><i><span 
+>A</span></i><span
+>1 does not expect </span><i><span  
+>A</span></i><span >2 to try
+    to gain power over </span><i><span  
+>A</span></i><span  
+>1</span><span >. </span></p>
+  <p><i><span  >Exchang</span><span >e</span></i><span >: A
+    should appear to normally not exchange objects with other actors. Transactions
+    of objects do occur between situations, but not always according to the wishes
+    of the A involved. </span></p>
+  <p><i><span  >Intentio</span><span >n</span></i><span >: A
+    normally tries to produce the outcomes they desire. However there are four
+    possible reasons for action from the point of view of actors: choice, accident,
+    necessity, or irrelevant. Irrelevant means that the source of the deterministic
+    cause is not important. </span></p>
+  <p><span >Figure 1: Character capabilities</span></p>
+  <p><span >We believe that Bringsjord’s call for game
+    designers “to impel gamers to believe they are interacting with virtual people”
+    is unnecessary. Dramatically compelling entertainment, by deﬁnition, must be
+    able to be achieved via the realisation of Polti’s dramatic situations.
+    Computer games with characters with any of the above capabilities, who
+    represent corresponding Polti units, are thus computer games with narrative by
+    our account.</span></p>
+  <h3>5. Using Polti Ratios to Evaluate and Improve Stories</h3>
+  <p><span >In this paper we evaluate stories in terms
+    of simple measures related to <a
+href="http://en.wikipedia.org/wiki/The_Thirty-Six_Dramatic_Situations"><span
+>Polti’</span><span
+>s </span><span 
+>dramati</span><span >c </span><span >situations</span></a>. We use ratios because they are supposedly the
+    most informative scale (Reich, 1995). We’ve already broadly defined a story as
+    events in which people can identify at least one of Polti’s dramatic
+    situations. Intuitively, a small number of events, <i>E</i>, with a large number of Polti’s
+    units, <i>P</i>, correspond
+    with the notion of an intensely dramatic story but a small number of Polti’s
+    units with a large number of events correspond to a dull story. </span></p>
+  <p><i><span  
+>Leve</span></i><span >l </span><i><span
+ >o</span></i><span
+>f </span><i><span  
+>Drama</span></i><span 
+>(</span><i><span
+ >LoD</span></i><span
+ >)</span><span
+>= </span><i><span  
+>P/</span><span >E</span></i><span
+> </span></p>
+  <p><span >So how does this relate to games generally
+    and computer games speciﬁcally? In most games, there is potential for <i>E</i>�'∞,
+    thus LoD�'0. With <i>Tetris</i>, even
+    with at least </span><i><span  
+>P</span></i><span >=2, because <i>E</i>�'∞,</span><i><sub><span
+ 
+
+> </span></sub></i><span >LoD is still zero. Note
+    that, as time goes on, the blocks in <i>Tetris</i> fall faster so the game does become more exciting, but not in the sense of an
+    escalating drama.</span></p>
+  <p><span  >Bu</span><span 
+>t </span><span 
+>th</span><span  >e </span><span  >Lo</span><span 
+>D </span><span 
+>allow</span><span  >s
+    a </span><span  >singl</span><span 
+>e </span><span 
+>dramati</span><span  >c </span><span  >situatio</span><span 
+>n </span><span 
+>t</span><span  >o </span><span  >occu</span><span 
+>r </span><span 
+>repeatedly</span><span  >. </span><span  >Fo</span><span 
+>r </span><span 
+>example</span><span  >, </span><span  >th</span><span 
+>e </span><span 
+>enigm</span><span  >a </span><span  >ca</span><span 
+>n </span><span 
+>searc</span><span  >h </span><span  >fo</span><span 
+>r </span><span 
+>on</span><span  >e </span><span  >thing</span><span 
+>, </span><span 
+>the</span><span  >n </span><span  >another</span><span 
+>, </span><span 
+>the</span><span  >n </span><span  >anothe</span><span 
+>r </span><span 
+>(clue</span><span  >s </span><span  >leadin</span><span 
+>g </span><span 
+>t</span><span  >o </span><span  >mor</span><span 
+>e </span><span 
+>clue</span><span  >s </span><i><span  
+>a</span></i><i><span  >d </span></i><i><span
+ 
+>inﬁnitum</span></i><span 
+>)</span><span  >. </span><span  >W</span><span 
+>e </span><span 
+>wan</span><span  >t </span><span  >anothe</span><span 
+>r </span><span 
+>measur</span><span  >e </span><span  >fo</span><span 
+>r </span><span 
+>th</span><span  >e </span><span  >numbe</span><span 
+>r </span><span 
+>o</span><span  >f </span><span  >uniqu</span><span 
+>e </span><span 
+>Polti’</span><span  >s </span><span  >unit</span><span 
+>s <i>U</i> </span><span 
+>use</span><span  >d </span><span  >i</span><span 
+>n a </span><span 
+>story</span><span  >, </span><span  >whic</span><span 
+>h </span><span 
+>intuitivel</span><span  >y </span><span  >map</span><span 
+>s </span><span 
+>t</span><span  >o </span><span  >th</span><span 
+>e </span><span 
+>variet</span><span  >y </span><span  >o</span><span 
+>f </span><span 
+>dramati</span><span  >c </span><span  >situation</span><span 
+>. </span></p>
+  <p><span  >V</span><i><span
+ 
+>ariet</span></i><span 
+>y </span><i><span 
+>o</span></i><span  >f </span><i><span  >Drama</span></i><span 
+>(</span><span  >V</span><i><span
+ 
+>oD</span></i><span 
+>)</span><span  >= </span><i><span  >U/</span></i><span 
+>3</span><span  >6 </span></p>
+  <p><span >If most of Polti’s 36 dramatic situations
+    are used, VoD�'1 if few are used VoD�'0. To achieve VoD�'1 the
+    object in question must be categorised as an embodied story, since most of
+    Polti’s units require characters with particular capabilities (described
+    previously). Furthermore, these characters have classical Aristotelian roles:
+    major-protagonist and antagonist and minor-helper and hinderer (Aristotle
+    1973). The continuity of a single story requires major characters being
+    involved in the majority of the dramatic situations for most of the events.
+    Thus we create another measure for the continuity of characters’ involvement in
+    the set of unique dramatic situations </span><i><span 
+>U</span></i><span
+>, using major characters <i>M</i> and minor characters </span><i><span
+ >C</span></i><span
+>, and we weight minor characters by an (arbitrary) factor of 5 as a
+    penalty.</span></p>
+  <p><i><span  
+>Involvemen</span></i><span
+ >t </span><i><span
+ 
+>in</span></i><span 
+> </span><i><span 
+>Drama</span></i><span  
+>(</span><i><span
+ 
+>IiD</span></i><span 
+>)</span><span  >= </span><i><span  >U/</span></i><span 
+>(</span><i><span  >M</span></i><span
+ 
+>+</span><span  >5*</span><i><span  
+>C)</span></i></p>
+  <p><span >Thus a story with a high number of
+    characters has IiD0, but IiD�'zero faster with an increase in the number
+    of minor as opposed to major characters. For an unembodied story with zero
+    characters, IiD=1/0 which is mathematically undeﬁned. Thus we have another case
+    for questioning whether people should talk about unembodied stories (some
+    computer games) in terms of stories.</span></p>
+  <p><span  >S</span><span 
+>o </span><span 
+>no</span><span  >w </span><span  >w</span><span 
+>e </span><span 
+>hav</span><span  >e </span><span  >som</span><span 
+>e </span><span 
+>simpl</span><span  >e </span><span  >crud</span><span 
+>e </span><span 
+>quantitativ</span><span  >e </span><span  >measure</span><span 
+>s </span><span 
+>fo</span><span  >r </span><span  >evaluatin</span><span 
+>g </span><span 
+>storie</span><span  >s </span><span  >i</span><span 
+>n </span><span 
+>term</span><span  >s </span><span  >o</span><span 
+>f </span><span 
+>Polti’</span><span  >s </span><span  >dramati</span><span 
+>c </span><span 
+>situations</span><span  >: </span><span  >Leve</span><span 
+>l </span><span 
+>o</span><span  >f </span><span  >Dram</span><span 
+>a </span><span 
+>(LoD)</span><span  >, </span><span  >Variet</span><span 
+>y </span><span 
+>o</span><span  >f </span><span  >Dram</span><span 
+>a </span><span 
+>(VoD)</span><span  >, </span><span  >an</span><span 
+>d </span><span 
+>Involvemen</span><span  >t </span><span  >i</span><span 
+>n </span><span 
+>Dram</span><span  >a </span><span  >(IiD)</span><span 
+>. </span><span 
+>Fo</span><span  >r </span><span  >thes</span><span 
+>e </span><span 
+>thre</span><span  >e </span><span  >measures</span><span 
+>, a </span><span 
+>highe</span><span  >r </span><span  >scor</span><span 
+>e </span><span 
+>wa</span><span  >s </span><span  >regarde</span><span 
+>d </span><span 
+>a</span><span  >s </span><span  >better</span><span 
+>, </span><span 
+>i</span><span  >n </span><span  >som</span><span 
+>e </span><span 
+>sense</span><span  >, </span><span  >tha</span><span 
+>n a </span><span 
+>lowe</span><span  >r </span><span  >score</span><span 
+>. </span><span 
+>Bu</span><span  >t </span><span  >ho</span><span 
+>w </span><span 
+>d</span><span  >o </span><span  >thes</span><span 
+>e </span><span 
+>measure</span><span  >s </span><span  >interact</span><span 
+>? </span></p>
+  <p><span  >Considerin</span><span 
+>g </span><span 
+>thi</span><span  >s </span><span  >questio</span><span 
+>n </span><span 
+>lead</span><span  >s </span><span  >u</span><span 
+>s </span><span 
+>directl</span><span  >y </span><span  >t</span><span 
+>o </span><span 
+>th</span><span  >e </span><span  >notio</span><span 
+>n </span><span 
+>o</span><span  >f </span><span  >stor</span><span 
+>y </span><span 
+>reconceptualisation</span><span  >. </span><span  >I</span><span 
+>f </span><span 
+>w</span><span  >e </span><span  >wer</span><span 
+>e </span><span 
+>t</span><span  >o </span><span  >introduc</span><span 
+>e a </span><span 
+>ne</span><span  >w </span><span  >characte</span><span 
+>r </span><span 
+>int</span><span  >o </span><span  >th</span><span 
+>e </span><span 
+>story</span><span  >, </span><span  >thu</span><span 
+>s </span><span 
+>lowerin</span><span  >g </span><span  >ou</span><span 
+>r </span><span 
+>IiD</span><span  >, </span><span  >bu</span><span 
+>t </span><span 
+>potentiall</span><span  >y </span><span  >allowin</span><span 
+>g </span><span 
+>u</span><span  >s </span><span  >t</span><span 
+>o </span><span 
+>rais</span><span  >e </span><span  >ou</span><span 
+>r </span><span 
+>Lo</span><span  >D </span><span  >an</span><span 
+>d </span><span 
+>VoD</span><span  >, </span><span  >i</span><span 
+>s </span><span 
+>th</span><span  >e </span><span  >stor</span><span 
+>y </span><span 
+>better</span><span  >? </span><span  >Or</span><span 
+>, </span><span 
+>i</span><span  >f </span><span  >w</span><span 
+>e </span><span 
+>wer</span><span  >e </span><span  >t</span><span 
+>o </span><span 
+>eliminat</span><span  >e
+    a </span><span  >character</span><span 
+>, </span><span 
+>potentiall</span><span  >y </span><span  >lowerin</span><span 
+>g </span><span 
+>ou</span><span  >r </span><span  >Lo</span><span 
+>D </span><span 
+>an</span><span  >d </span><span  >VoD</span><span 
+>, </span><span 
+>i</span><span  >s </span><span  >th</span><span 
+>e </span><span 
+>stor</span><span  >y </span><span  >better</span><span 
+>? </span><span 
+>Or</span><span  >, </span><span  >i</span><span 
+>f </span><span 
+>w</span><span  >e </span><span  >wante</span><span 
+>d </span><span 
+>t</span><span  >o </span><span  >increas</span><span 
+>e </span><span 
+>ou</span><span  >r </span><span  >VoD</span><span 
+>, </span><span 
+>wha</span><span  >t </span><span  >i</span><span 
+>s </span><span 
+>th</span><span  >e </span><span  >cos</span><span 
+>t </span><span 
+>i</span><span  >n </span><span  >term</span><span 
+>s </span><span 
+>o</span><span  >f </span><span  >IiD</span><span 
+>? </span><span 
+>W</span><span  >e </span><span  >wil</span><span 
+>l </span><span 
+>no</span><span  >t </span><span  >b</span><span 
+>e </span><span 
+>attemptin</span><span  >g </span><span  >t</span><span 
+>o </span><span 
+>answe</span><span  >r </span><span  >thes</span><span 
+>e </span><span 
+>question</span><span  >s </span><span  >becaus</span><span 
+>e </span><span 
+>w</span><span  >e </span><span  >thin</span><span 
+>k </span><span 
+>thes</span><span  >e </span><span  >trade-offs</span><span 
+> </span><span 
+>mus</span><span  >t </span><span  >b</span><span 
+>e </span><span 
+>assesse</span><span  >d </span><span  >b</span><span 
+>y </span><span 
+>th</span><span  >e </span><span  >author/designer</span><span
+ >.</span></p>
+  <p><span  >However</span><span 
+>, </span><span 
+>i</span><span  >n </span><span  >th</span><span 
+>e </span><span 
+>extrem</span><span  >e </span><span  >cas</span><span 
+>e, </span><span 
+>ou</span><span  >r </span><span  >measure</span><span 
+>s </span><span 
+>lea</span><span  >d </span><span  >t</span><span 
+>o a </span><span 
+>limite</span><span  >d </span><span  >notio</span><span 
+>n </span><span 
+>o</span><span  >f
+    a </span><i><span  >Polti-idea</span></i><span
+ >l </span><span
+ 
+>story</span><span  >. </span><span  >I</span><span 
+>t </span><span 
+>practicall</span><span  >y </span><span  >canno</span><span 
+>t </span><span 
+>exis</span><span  >t </span><span  >becaus</span><span 
+>e </span><i><span 
+>P</span></i><span >�'∞</span><i><sub><span
+ 
+> </span></sub></i><span
+ 
+>(w</span><span  >e </span><span  >hav</span><span 
+>e </span><span 
+>a</span><span  >n </span><span  >inﬁnit</span><span 
+>e </span><span 
+>numbe</span><span  >r </span><span  >o</span><span 
+>f </span><span 
+>Polti’</span><span  >s </span><span  >dramati</span><span 
+>c </span><span 
+>situations</span><span  >) </span><span  >bu</span><span 
+>t </span><i><span 
+>E</span></i><span  
+>=</span><span
+ >1 </span><span
+ 
+>(storie</span><span 
+>s </span><span 
+>hav</span><span  >e </span><span  >t</span><span 
+>o </span><span 
+>describ</span><span  >e </span><span  >a</span><span 
+>t </span><span 
+>leas</span><span  >t </span><span  >on</span><span 
+>e </span><span 
+>event</span><span  >) </span><span  >thu</span><span 
+>s </span><span 
+>LoD=<i>P</i>/<i>E</i>=</span><span >∞</span><span
+ >. </span><span
+ 
+>I</span><span  >n </span><span  >addition</span><span 
+>, </span><span 
+>w</span><span  >e </span><span  >us</span><span 
+>e </span><span 
+>al</span><span  >l </span><span  >o</span><span 
+>f </span><span 
+>th</span><span  >e </span><span  >dramati</span><span 
+>c </span><span 
+>situation</span><span  >s </span><span  >thu</span><span 
+>s </span><span 
+>VoD=36/36=1</span><span  >. </span><span  >Furthermore</span><span 
+>, </span><span 
+>w</span><span  >e </span><span  >als</span><span 
+>o </span><span 
+>requir</span><span  >e </span><span  >tw</span><span 
+>o </span><span 
+>mai</span><span  >n </span><span  >character</span><span 
+>s </span><span 
+>(protagonis</span><span  >t </span><span  >an</span><span 
+>d </span><span 
+>antagonist</span><span  >) </span><span  >t</span><span 
+>o </span><span 
+>realis</span><span  >e </span><span  >th</span><span 
+>e </span><span 
+>majorit</span><span  >y </span><span  >o</span><span 
+>f </span><span 
+>Polti’</span><span  >s </span><span  >dramati</span><span 
+>c </span><span 
+>situation</span><span  >s </span><span  >thu</span><span 
+>s </span><span 
+>Ii</span><span  >D
+    = </span><span  >3</span><span 
+>6/</span><span 
+>(2+5*0</span><span  >)
+    = </span><span  >18</span><span 
+>. </span><span 
+>I</span><span  >n </span><span  >othe</span><span 
+>r </span><span 
+>words</span><span  >, </span><span  >th</span><span 
+>e </span><span 
+>Polti-idea</span><span  >l </span><span  >stor</span><span 
+>y </span><span 
+>ha</span><span  >s </span><span  >inﬁnitel</span><span 
+>y </span><span 
+>hig</span><span  >h </span><span  >an</span><span 
+>d </span><span 
+>maximu</span><span  >m </span><span  >variet</span><span 
+>y </span><span 
+>dram</span><span  >a </span><span  >wit</span><span 
+>h </span><span 
+>th</span><span  >e </span><span  >minimu</span><span 
+>m </span><span 
+>numbe</span><span  >r </span><span  >o</span><span 
+>f </span><span 
+>event</span><span  >s </span><span  >an</span><span 
+>d </span><span 
+>characters</span><span  >.</span></p>
+  <p><span  >Wha</span><span 
+>t </span><span 
+>i</span><span  >s </span><span  >th</span><span 
+>e </span><span 
+>poin</span><span  >t </span><span  >o</span><span 
+>f a </span><span 
+>Polti-idea</span><span  >l </span><span  >story</span><span 
+>? </span><span 
+>I</span><span  >t </span><span  >simpl</span><span 
+>y </span><span 
+>give</span><span  >s </span><span  >u</span><span 
+>s a </span><span 
+>targe</span><span  >t </span><span  >t</span><span 
+>o </span><span 
+>ai</span><span  >m </span><span  >at</span><span 
+>, </span><span 
+>allowin</span><span  >g </span><span  >author</span><span 
+>s </span><span 
+>(i</span><span  >n </span><span  >an</span><span 
+>y </span><span 
+>stor</span><span  >y </span><span  >media</span><span 
+>) </span><span 
+>t</span><span  >o </span><span  >conside</span><span 
+>r </span><span 
+>wha</span><span  >t </span><span  >tweak</span><span 
+>s </span><span 
+>the</span><span  >y </span><span  >coul</span><span 
+>d </span><span 
+>mak</span><span  >e </span><span  >t</span><span 
+>o a </span><span 
+>stor</span><span  >y </span><span  >t</span><span 
+>o </span><span 
+>improv</span><span  >e </span><span  >thes</span><span 
+>e </span><span 
+>simpl</span><span  >e </span><span  >number</span><span 
+>s </span><span 
+>i</span><span  >n </span><span  >th</span><span 
+>e </span><span 
+>directio</span><span  >n </span><span  >o</span><span 
+>f </span><span 
+>thi</span><span  >s </span><span  >ideal</span><span 
+>. </span><span 
+>Suc</span><span  >h
+    a </span><span  >notio</span><span 
+>n </span><span 
+>avoid</span><span  >s </span><span  >proposin</span><span 
+>g a </span><span 
+>wa</span><span  >y </span><span  >t</span><span 
+>o </span><span 
+>compar</span><span  >e </span><span  >tw</span><span 
+>o </span><span 
+>different</span><span  > </span><span  >storie</span><span 
+>s </span><span 
+>tha</span><span  >t </span><span  >despit</span><span 
+>e </span><span 
+>usin</span><span  >g </span><span  >different</span><span 
+> </span><span 
+>Polt</span><span  >i </span><span  >units</span><span 
+>, </span><span 
+>hav</span><span  >e </span><span  >identica</span><span 
+>l </span><span 
+>LoD</span><span  >, </span><span  >Vo</span><span 
+>D </span><span 
+>an</span><span  >d </span><span  >Iid</span><span 
+>. </span><span 
+>W</span><span  >e </span><span  >rightl</span><span 
+>y </span><span 
+>leav</span><span  >e </span><span  >suc</span><span 
+>h </span><span 
+>compariso</span><span  >n </span><span  >t</span><span 
+>o </span><span 
+>stor</span><span  >y </span><span  >critics</span><span 
+>.</span></p>
+  <p><span  >No</span><span 
+>w </span><span 
+>tha</span><span  >t </span><span  >we’v</span><span 
+>e </span><span 
+>go</span><span  >t </span><span  >thes</span><span 
+>e </span><span 
+>measures</span><span  >, </span><span  >wha</span><span 
+>t </span><span 
+>ca</span><span  >n </span><span  >w</span><span 
+>e </span><span 
+>d</span><span  >o </span><span  >wit</span><span 
+>h </span><span 
+>them</span><span  >? </span><span  >Th</span><span 
+>e </span><span 
+>purpos</span><span  >e </span><span  >o</span><span 
+>f </span><span 
+>developin</span><span  >g </span><span  >thes</span><span 
+>e </span><span 
+>ratio</span><span  >s </span><span  >i</span><span 
+>s </span><span 
+>t</span><span  >o </span><span  >giv</span><span 
+>e </span><span 
+>u</span><span  >s
+    a </span><span  >wa</span><span 
+>y </span><span 
+>t</span><span  >o </span><span  >abstrac</span><span 
+>t </span><span 
+>storie</span><span  >s </span><span  >an</span><span 
+>d </span><span 
+>the</span><span  >n </span><span  >reconceiv</span><span 
+>e </span><span 
+>them</span><span  >. </span><span  >First</span><span 
+>, </span><span 
+>ho</span><span  >w </span><span  >d</span><span 
+>o </span><span 
+>w</span><span  >e </span><span  >appl</span><span 
+>y </span><span 
+>thes</span><span  >e </span><span  >measure</span><span 
+>s </span><span 
+>t</span><span  >o
+    a </span><span  >stor</span><span 
+>y </span><span 
+>i</span><span  >n </span><span  >orde</span><span 
+>r </span><span 
+>t</span><span  >o </span><span  >evaluat</span><span 
+>e </span><span 
+>it</span><span  >? </span><span  >W</span><span 
+>e </span><span 
+>propos</span><span  >e </span><span  >th</span><span 
+>e </span><span 
+>followin</span><span  >g </span><span  >five</span><span 
+> </span><span 
+>steps</span><span  >:</span></p>
+  <p><span 
+>1<span  >               </span></span><span >Identify as many Polti units as possible </span><i><span
+ >P</span></i><span
+>. </span></p>
+  <p><span 
+>2<span  >               </span></span><span >Identify (roughly) the number of events </span><i><span
+ >E</span></i><span
+>. </span></p>
+  <p><span 
+>3<span  >               </span></span><span >From </span><i><span 
+>P</span></i><span
+>, identify the unique units </span><i><span 
+>U</span></i><span
+>. </span></p>
+  <p><span 
+>4<span  >               </span></span><span >Count and categorise the characters as major <i>M</i> or minor </span><i><span  >C</span></i><span >. </span></p>
+  <p><span 
+>5<span  >               </span></span><span >Plug all these numbers into the Polti ratios. </span></p>
+  <p><span >Second, how do we think about improving
+    these ratios? To improve the ”dramaticality” towards the Polti-ideal story we
+    want <i>P</i> and <i>U</i> to increase as much as possible while </span><i><span
+ >E</span></i><span
+>,<i>M</i> and <i>C</i> are minimal. We propose the following five
+    steps:</span></p>
+  <p><span 
+>1<span  >               </span></span><span >Eliminate irrelevant Polti’s units with respect
+    to the story. </span></p>
+  <p><span 
+>2<span  >               </span></span><span >Propose additional units with justiﬁcation to
+    increase </span><i><span  >M</span></i><span >. </span></p>
+  <p><span 
+>3<span  >               </span></span><span >Consider the implications of proposing these
+    units on the number of characters (<i>M</i> and <i>C</i>). </span></p>
+  <p><span 
+>1<span  >               </span></span><span >Reach some sort of satisfactory trade-off
+    between additional units and characters. </span></p>
+  <p><span 
+>2<span  >               </span></span><span >Plug the new numbers into the Polti ratios and
+    compare the abstract reconceived story with the original story. </span></p>
+  <p><span >We now give a worked example of exactly
+    this sort of story reconceptualisation, taking an input story for a computer
+    game, manually extracting our metrics, considering how to increase our LoD, VoD
+    and IiD, and factoring in other constraints. We then present a later version of
+    the story which has been created for this computer game.</span></p>
+  <h3>6. Extended Application: <i>Street
+    Survivor</i> </h3>
+  <p><i><span >Street
+    Sur</span></i><span >vivor is an independent computer game, conceived
+    and produced by independent ﬁlm maker Kirsty Baird and funded by Big hART Inc,
+    the City of Melbourne and the Australian Film Commission. It is a third person
+    action adventure game for the PC that thrusts players into the role of Sonya, a
+    recently homeless teenager, who spirals into a cycle of addiction, hunger,
+    violence and crime as she ﬂees from her past and searches for another kind of
+    future. </span></p>
+  <p><span  >Th</span><span 
+>e </span><span 
+>objectiv</span><span  >e </span><span  >o</span><span 
+>f </span><i><span  >Stree</span></i><i><span  >t </span></i><i><span  
+>Survivo</span></i><i><span  >r</span></i><span  > </span><span  >i</span><span 
+>s </span><span 
+>t</span><span  >o </span><span  >full</span><span 
+>y </span><span 
+>engag</span><span  >e </span><span  >th</span><span 
+>e </span><span 
+>playe</span><span  >r </span><span  >i</span><span 
+>n </span><span 
+>gam</span><span  >e </span><span  >pla</span><span 
+>y </span><span 
+>wher</span><span  >e </span><span  >symboli</span><span 
+>c </span><span 
+>informatio</span><span  >n </span><span  >function</span><span 
+>s </span><span 
+>withi</span><span  >n </span><span  >a</span><span 
+>n </span><span 
+>environmen</span><span  >t </span><span  >tha</span><span 
+>t </span><span 
+>i</span><span  >s </span><span  >inspire</span><span 
+>d </span><span 
+>b</span><span  >y </span><span  >th</span><span 
+>e </span><span 
+>experience</span><span  >s </span><span  >o</span><span 
+>f </span><span 
+>youn</span><span  >g </span><span  >peopl</span><span 
+>e </span><span 
+>wh</span><span  >o </span><span  >ma</span><span 
+>y </span><span 
+>ﬁn</span><span  >d </span><span  >themselve</span><span 
+>s </span><span 
+>homeles</span><span  >s </span><span  >o</span><span 
+>r </span><span 
+>i</span><span  >n </span><span  >simila</span><span 
+>r </span><span 
+>circumstances</span><span  >.</span> See trailer below.</p>
+  <object width="425" height="350"> <param name="movie" value="http://www.youtube.com/v/8JNgzrE4fXE"> </param> <embed src="http://www.youtube.com/v/8JNgzrE4fXE" type="application/x-shockwave-flash" width="425" height="350"> </embed> </object>
+  <p><span >The target audience for <i>Street Survivor</i> is young people who are
+    homeless or at risk of homelessness through the installation of the game in
+    frontline youth service agencies. The game does not offer easy answers but
+    provides opportunities for the player to make a range of choices under
+    pressure. <i>Street Survivor</i> game is
+    still being developed with the intention of producing a testable prototype or
+    complete small game. </span></p>
+  <p><span >The following is the original design and
+    story for <i>Street Survivor</i> which was
+    in the early stages of its development.</span></p>
+  <h3>6.1 Street Survivor Version 1 </h3>
+  <p><span >Cinematic: Sonya’s back story </span></p>
+  <p><span >I left home when I was 16. My mum had a new
+    boyfriend and he used to hit her when he was drunk. If I tried to stop him,
+    he’d lash out at me as well. I couldn’t take it anymore the ﬁghting... the
+    noise. I knew of a guy called Paddo, an old friend of my mum’s. I thought he
+    might be able to help me out. Last I heard he was in the city somewhere. So I
+    hit the streets.</span></p>
+  <h4>Level One: </h4>
+  <p><span >Location: The streets. Objective: To ﬁnd a
+    friend, to learn about and explore the environment Notes: First time on the
+    streets. Prototype level.</span></p>
+  <p><span >This level is set on the streets at about
+    6pm on a cold night. Sonya reaches the city for the ﬁrst time in search of an
+    old family friend, Paddo. She is cold and desperate and sad but determined to
+    ﬁnd him. She asks around. She meets Ray and Crystal and explores the city. The
+    player learns to click on objects and people and learns that this behaviour
+    gives them health points or information that helps them through the level. The
+    player also encounters the Dealer and learns that this character sends them into
+    another world, a distorted world and that this decreases their health points
+    and increases their habit points. At the end of this level, Sonya meets Paddo.
+    Paddo o</span><span  
+>ff</span><span >ers her
+    some “work”.</span></p>
+  <p><span >The Dealer: In this level Sonya connects
+    with the Dealer and has positive experiences. She goes into a distorted world
+    which gives her health and alleviates her pain. This includes loss of keyboard
+    controls. Some kinds of euphoria expressed visually and in the game mechanics. </span></p>
+  <p><span >Cinematic: Sonya is frightened by him and
+    runs away from him into the encroaching night.</span></p>
+  <h4>Level Two: </h4>
+  <p><span >Location: Squat. Objective: Looking for
+    somewhere to sleep the night/shelter </span></p>
+  <p><span >Sonya sees Ray again and again she asks him
+    for help. This time he is drunk, he doesn’t recognise her and he sends her to a
+    (dangerous) squat. The squat is a huge abandoned building in the city. Once she
+    is inside this squat it is like a house of horrors. It is very dark. She has to
+    negotiate her way through the space which is full of long corridors, big rooms
+    and stairways.</span></p>
+  <p><span >There are people in the squat but they are
+    unhelpful towards her they scare her off, chase her, threaten her, protecting
+    their space. She has to try to get through the space by avoiding these people.
+    She spends the night ﬁghting back</span></p>
+  <p><span >. </span></p>
+  <p><span >The Dealer: In this level when Sonya
+    connects with the Dealer her experiences in that other world become darker and
+    more threatening. The amount of health points that these experiences give her
+    decreases. She runs the risk of overdosing, if her habit is too high and her health
+    level is too low. She sees things in the distorted world that scare her. She
+    has to ﬁght.</span></p>
+  <p><span >Whilst she is in this level she encounters
+    the Dealer again and again. Each time she encounters the Dealer the experiences
+    she has in the distorted world get stronger and more full on. The squat morphs
+    and warps and distorts and the unfriendly people in the squat pursue her and
+    ﬁght her.</span></p>
+  <h4>Level Three: </h4>
+  <p><span >Location: Back on the Streets. Objective:
+    Money Notes: Downward spiral, full blown addiction, hanging out. Withdrawal. </span></p>
+  <p><span >If she survives the night she is back on
+    the streets. It is morning. Cold. The city is busy with people. It is chaotic
+    and confusing. She is very much the worse for wear, her clothing is dirty and
+    torn, she looks more haggard than before. She has had her back pack stolen and
+    has no possessions left and therefore has no money. She needs to score. She
+    goes in search of the Dealer but he won’t have a bar of her. He won’t help her
+    out unless she can ﬁnd money to score. He won’t give her any more free hits.
+    She is weak, shaking and coming down. She goes to the fast food joint looking
+    for someone who might help her. She ﬁnds Crystal there. Crystal sends her to
+    Tan. Tan gives her a parcel for Paddo. Once she has the parcel she is under
+    threat from new enemies. These are enemies that exist in the real world of the
+    city thugs who are rivals of Paddo’s. If she survives their attack she has no
+    choice but to do the work that he o</span><span  
+>ff</span><span
+>ered her in level one.</span></p>
+  <p><span >The Dealer: She is withdrawing. She
+    desperately wants to connect with the Dealer. She pursues him but she is weak
+    and he is indi</span><span  
+>ff</span><span >erent to her
+    e.g. Habit meter is at dangerous level if it is too low or too high.</span></p>
+  <h4>Level Four: </h4>
+  <p><span >Objective: To survive the car chase.
+    Location: Car on city streets. Notes: Car chase. Crime. </span></p>
+  <p><span >Suddenly she is driving a car through the
+    city streets and the game play is now ﬁrst person. A voice is yelling at her
+    from the back seat. It is Tan. In the passenger seat a person is inert and bleeding.
+    Tan is telling her to turn down certain streets and to keep driving. It is a
+    frantic situation. If she crashes the car she dies. But she doesn’t have to do
+    what Tan says. If she doesn’t take the turns he suggests she can ﬁnish the
+    level without dying. The car eventually crashes into a dead end and a cinematic
+    occurs. You always crash. The choice here is between dying and injury. </span></p>
+  <p><span >Extended cinematic: Car crash, injury,
+    arrest. Hospital. Court system.</span></p>
+  <h4>Level Five: </h4>
+  <p><span >Location: Jail Objective: To detox. Notes:
+    Realisation. Dream sequence. Doing time. Going through the motions. </span></p>
+  <p><span >Sonya is lying on a bed in a prison cell.
+    She is asleep. She is dreaming. In her dream she is back on the streets of the
+    distorted city she accesses through her interactions with the Dealer. A rapid
+    and intense ﬁght sequence takes place. During this ﬁght sequence she recognises
+    a distorted version of herself. She ﬁghts herself and wins. Requiem for a Dream
+    visual sequence ie: di</span><span  
+>ff</span><span >erent
+    camera. You can’t actually lose this level.</span></p>
+  <p><span >The Dealer: She ”seeks” him out. She
+    realises that he embodies her resistance to change. </span></p>
+  <p><span >End cinematic: </span></p>
+  <p><span >Something about home. Finding a home.
+    Meeting a friend. Very short.</span></p>
+  <h3>6.2 Evaluation of <i>Street Survivor</i> Story Draft 1</h3>
+  <p><span >We now follow our own process for story
+    evaluation on this original story design for <i>Street Survivor</i>. </span></p>
+  <p><span >1. Identify as many Polti units as possible </span><i><span  >P</span></i><span >. </span></p>
+  <p><span >We try to identify all Polti’s units level
+    by level. In Level 1 Sonya plays out </span><u><span 
+>th</span><span
+>e </span></u><u><span  
+>enigm</span><span >a</span></u><span
+> searching for Paddo, after </span><u><span 
+>fallin</span><span
+>g </span></u><u><span  
+>pre</span><span >y </span></u><u><span
+ >t</span><span
+>o </span></u><u><span  
+>misfortune</span></u><span >. She </span><u><span
+ >obtain</span><span
+>s</span></u><span > experiences from the Dealer and work
+    from Paddo. So P</span><i><span  
+>L</span></i><span 
+>1</span><span
+>=3. In Level 2 Sonya switches targets to <u>searching</u> for
+    somewhere to sleep. Her negotiation through the squat is a </span><u><span
+ >darin</span><span
+>g </span></u><u><span  
+>enterprise</span></u><span >, and
+    she continues to </span><u><span  
+>obtai</span><span >n</span></u><span
+> experiences from the Dealer. Thus P</span><i><span 
+>L</span></i><span
+ >2</span><span >=3. In Level 3 Sonya switches <u>search</u> target to the Dealer. She </span><u><span  
+>obtain</span><span >s</span></u><span
+> from Tan, but this creates fresh enemies </span><u><span
+ >fallin</span><span
+>g </span></u><u><span  
+>pre</span><span >y </span></u><u><span
+ >t</span><span
+>o </span></u><u><span  
+>misfortune</span></u><span >. Thus P</span><i><span
+ >L</span></i><span  
+>3</span><span >=3. Level 4
+    contains </span><u><span  >crim</span><span >e </span></u><u><span 
+>pursue</span><span
+>d </span></u><u><span  
+>b</span><span >y </span></u><u><span
+ >vengeanc</span><span
+>e</span></u><span > and branches to </span><u><span
+ >fata</span><span
+>l </span></u><u><span  
+>impudenc</span><span >e</span></u><span
+> so P</span><i><span  
+>L</span></i><span 
+>4</span><span
+>=2. In Level 5 Sonya ﬁghts herself </span><u><span 
+>enmit</span><span
+>y </span></u><u><span  
+>o</span><span >f </span></u><u><span
+ >kinsma</span><span
+>n</span></u><span > and <u>seeks</u> the Dealer. Thus P</span><i><span
+ >L</span></i><span  
+>5</span><span >=2. In the
+    denouement Sonya ﬁnds a home and a friend, tying up the </span><u><span
+ >fallin</span><span
+>g </span></u><u><span  
+>pre</span><span >y </span></u><u><span
+ >t</span><span
+>o </span></u><u><span  
+>misfortun</span><span >e</span></u><span
+> in Level 1. The summation is <i>P</i>=13.</span></p>
+  <p><span >2. Identify (roughly) the number of events </span><i><span
+ >E</span></i><span
+>. </span></p>
+  <p><span >We manually counted the events level by
+    level. Note that we’re not aiming for precise accuracy, just a rough estimate.
+    E</span><i><span  
+>L</span></i><span  
+>1 = </span><span >6, E</span><i><span 
+>L</span></i><span
+ >2 = </span><span >10, E</span><i><span
+ >L</span></i><span  >3 = </span><span
+>7, E</span><i><span  
+>L</span></i><span 
+>4 </span><span >=6 and E</span><i><span
+ >L</span></i><span  >5 = </span><span
+>3. Adding all these up gives E=32.</span></p>
+  <p><span 
+>3. </span>From P, identify the unique units U. <br>
+    Looking back through our list of P we identify unique units (the enigma,
+    falling prey to misfortune, obtaining, daring enterprise, crime pursued by
+    vengeance,fatal impudence, and enmity of kinsman). Thus U =7.</p>
+  <p>4. Count and categorise the characters as major M or minor C. <br>
+    The original story has a single main character Sonya (M=1) and ﬁve minor
+    characters Paddo, Ray, Crystal, Dealer and Tan (C=5). Despite the Dealer’s
+    frequent contact with Sonya, it was a game constraint that the Dealer was not
+    to be demonised as an antagonist, although Sonya’s relation to the Dealer is
+    certainly ambiguous. </p>
+  <p><span >5. Plug all these numbers into the Polti
+    ratios. </span></p>
+  <p><i><span  
+>Leve</span></i><span >l </span><i><span
+ >o</span></i><span
+>f </span><i><span  
+>Drama</span></i><span >(</span><i><span
+ >LoD</span></i><span
+>)= </span><i><span  
+>P/</span></i><span >E = 13</span><i><span
+ >/</span></i><span
+>32 ≈<sub><span > </span></sub>0</span><i><span
+ >.</span></i><span
+>4 </span></p>
+  <p><span >V</span><i><span 
+>ariet</span></i><span
+>y </span><i><span  
+>o</span></i><span >f </span><i><span
+ >Drama</span></i><span
+>(V </span><i><span  
+>oD</span></i><span >)= </span><i><span
+ >U/</span></i><span
+>36 = 7</span><i><span  
+>/</span></i><span >36≈<sub><span
+> </span></sub>0</span><i><span 
+>.</span></i><span
+>2 </span></p>
+  <p><i><span >Involvemen</span></i><span >t <i>in</i> <i>Drama</i>(<i>IiD</i>)= <i>U/</i>(M+5*<i>C</i>)=7<i>/</i>(1+5*<sub><span
+> </span></sub>5)=7<i>/</i>26 ≈<sub><span
+> </span></sub>0<i>.</i>27 </span></p>
+  <p><span >Thus we ended up with total scores of
+    LoD≈0.4, VoD≈0.2 and IiD≈0.27. So how do these numbers compare with the
+    Polti-ideal story (where LoD�'∞, VoD=1 and IiD=18)? Firstly, the number of
+    events counted (32) is contestable, given the scope the player of Sonya is
+    allowed to explore, particularly in Level 1. Thus the level of drama might be
+    much worse than 0.4. Secondly, the VoD is not so close to 1 that (in our
+    opinion) it appears likely to be highly difficult to introduce new Polti units
+    into the story. Also the IiD seems not so high that it will be difficult to
+    improve.</span></p>
+  <h3>6.3 Improving the Story Abstraction </h3>
+  <p><span >We now follow our approach to reconceiving
+    a story abstraction, to try to improve the ”dramaticality” towards the
+    Polti-ideal story essentially by increasing P and U and decreasing </span><i><span
+ >E</span></i><span
+>,M and C : </span></p>
+  <p><span >1. Eliminate irrelevant Polti’s units with
+    respect to the story. </span></p>
+  <p><span >There appear (from our point of view) to be
+    eighteen dramatic situations which have little relevance to this story without
+    signiﬁcant modiﬁcations: </span><u><span  
+>vengeanc</span><span >e </span></u><u><span
+ >take</span><span
+>n </span></u><u><span  
+>fo</span><span >r </span></u><u><span
+ >kindre</span><span
+>d </span></u><u><span  
+>upo</span><span >n </span></u><u><span
+ >kindred</span><span
+>, </span></u><u><span  
+>disaster</span><span >, </span></u><u><span
+ >revolt</span><span
+>, </span></u><u><span  
+>rivalr</span><span >y </span></u><u><span
+ >o</span><span
+>f </span></u><u><span  
+>kinsman</span><span >, </span></u><u><span
+ >ambition</span><span
+>, </span></u><u><span  
+>conﬂic</span><span >t </span></u><u><span
+ >wit</span><span
+>h a </span></u><u><span  
+>god</span><span >, </span></u><u><span
+ >adultery</span><span
+>, </span></u><u><span  
+>murderou</span><span >s </span></u><u><span
+ >adultery</span><span
+>, </span></u><u><span  
+>involuntar</span><span >y </span></u><u><span
+ >crime</span><span
+>s </span></u><u><span  
+>o</span><span >f </span></u><u><span
+ >love</span><span
+>, </span></u><u><span  
+>slayin</span><span >g </span></u><u><span
+ >o</span><span
+>f a </span></u><u><span  
+>kinsma</span><span >n </span></u><u><span
+ >unrecognised</span><span
+>, </span></u><u><span  
+>self-sacriﬁce</span><span >, </span></u><u><span
+ >rivalr</span><span
+>y </span></u><u><span  
+>o</span><span >f </span></u><u><span
+ >superio</span><span
+>r </span></u><u><span  
+>an</span><span >d </span></u><u><span
+ >inferior</span><span
+>, </span></u><u><span  
+>crime</span><span >s </span></u><u><span
+ >o</span><span
+>f </span></u><u><span  
+>love</span><span >, </span></u><u><span
+ >discover</span><span
+>y </span></u><u><span  
+>o</span><span >f </span></u><u><span
+ >dishonou</span><span
+>r </span></u><u><span  
+>o</span><span >f a </span></u><u><span
+ >love</span><span
+>d </span></u><u><span  
+>one</span><span >, </span></u><u><span
+ >obstacle</span><span
+>s </span></u><u><span  
+>t</span><span >o </span></u><u><span
+ >love</span><span
+>, </span></u><u><span  
+>a</span><span >n </span></u><u><span
+ >enem</span><span
+>y </span></u><u><span  
+>loved</span><span >, </span></u><u><span
+ >mistake</span><span
+>n </span></u><u><span  
+>jealousy</span><span >, </span></u><u><span
+ >an</span><span
+>d </span></u><u><span  
+>remorse</span></u><span >.</span></p>
+  <p><span >2. Propose additional units with
+    justiﬁcation to increase </span><i><span  
+>U</span></i><span >. </span></p>
+  <p><u><span  
+>supplicatio</span></u><u><span
+ >n </span></u><u><span
+ 
+>an</span></u><u><span 
+>d </span></u><u><span 
+>deliverance</span></u><span  >: </span><span  >Sony</span><span 
+>a </span><span 
+>request</span><span  >s </span><span  >tha</span><span 
+>t </span><span 
+>th</span><span  >e </span><span  >Deale</span><span 
+>r </span><span 
+>actuall</span><span  >y </span><span  >assis</span><span 
+>t </span><span 
+>he</span><span  >r </span><span  >i</span><span 
+>n </span><span 
+>som</span><span  >e </span><span  >wa</span><span 
+>y </span><span 
+>b</span><span  >y </span><span  >givin</span><span 
+>g </span><span 
+>he</span><span  >r </span><span  >th</span><span 
+>e </span><span 
+>drug</span><span  >, </span><span  >s</span><span 
+>o </span><span 
+>th</span><span  >e </span><span  >dru</span><span 
+>g </span><span 
+>ha</span><span  >s </span><span  >t</span><span 
+>o </span><span 
+>hav</span><span  >e </span><span  >som</span><span 
+>e </span><span 
+>positiv</span><span  >e </span><span  >sid</span><span 
+>e </span><span 
+>e</span><span  >ff</span><span 
+>ec</span><span  >t </span><span  >whic</span><span 
+>h </span><span 
+>someho</span><span  >w </span><span  >deliver</span><span 
+>s </span><span 
+>he</span><span  >r </span><span  >fro</span><span 
+>m </span><span 
+>someon</span><span  >e </span><span  >else</span><span 
+>.</span></p>
+  <p><u><span  
+>pursuit</span></u><span
+ >: </span><span
+ 
+>T</span><span  >o </span><span  >limi</span><span 
+>t </span><span 
+>Sonya’</span><span  >s </span><span  >dawdlin</span><span 
+>g </span><span 
+>exploratio</span><span  >n </span><span  >o</span><span 
+>f </span><span 
+>th</span><span  >e </span><span  >city</span><span 
+>, </span><span 
+>w</span><span  >e </span><span  >propos</span><span 
+>e a </span><span 
+>ne</span><span  >w </span><span  >characte</span><span 
+>r </span><span 
+>tha</span><span  >t </span><span  >continuall</span><span 
+>y </span><span 
+>chase</span><span  >s </span><span  >her</span><span 
+>. </span><span 
+>Give</span><span  >n </span><span  >th</span><span 
+>e </span><span 
+>theme</span><span  >s </span><span  >o</span><span 
+>f </span><span 
+>famil</span><span  >y </span><span  >breakdow</span><span 
+>n </span><span 
+>an</span><span  >d </span><span  >violenc</span><span 
+>e </span><span 
+>w</span><span  >e </span><span  >propos</span><span 
+>e </span><span 
+>thi</span><span  >s </span><span  >ne</span><span 
+>w </span><span 
+>characte</span><span  >r </span><span  >i</span><span 
+>s </span><span 
+>calle</span><span  >d </span><span  >th</span><span 
+>e </span><span 
+>Ste</span><span  >p </span><span  >Fathe</span><span 
+>r </span><span 
+>(elevatin</span><span  >g </span><span  >th</span><span 
+>e </span><span 
+>boyfrien</span><span  >d </span><span  >t</span><span 
+>o </span><span 
+>mai</span><span  >n </span><span  >characte</span><span 
+>r </span><span 
+>status)</span><span  >. </span><span  >Thi</span><span 
+>s </span><span 
+>uni</span><span  >t </span><span  >ca</span><span 
+>n </span><span 
+>b</span><span  >e </span><span  >linke</span><span 
+>d </span><span 
+>wit</span><span  >h </span><span  >th</span><span 
+>e </span><span 
+>previou</span><span  >s </span><span  >-th</span><span 
+>e </span><span 
+>dru</span><span  >g </span><span  >deliver</span><span 
+>s </span><span 
+>he</span><span  >r </span><span  >fro</span><span 
+>m </span><span 
+>th</span><span  >e </span><span  >pursui</span><span 
+>t </span><span 
+>o</span><span  >f </span><span  >he</span><span 
+>r </span><span 
+>Ste</span><span  >p </span><span  >Fathe</span><span 
+>r </span><span 
+>i</span><span  >n </span><span  >som</span><span 
+>e </span><span 
+>way</span><span  >. </span><span  >W</span><span 
+>e </span><span 
+>propose</span><span  >d </span><span  >tha</span><span 
+>t </span><span 
+>withou</span><span  >t </span><span  >th</span><span 
+>e </span><span 
+>drug</span><span  >, </span><span  >sh</span><span 
+>e </span><span 
+>canno</span><span  >t </span><span  >ru</span><span 
+>n </span><span 
+>fas</span><span  >t </span><span  >enoug</span><span 
+>h </span><span 
+>t</span><span  >o </span><span  >outru</span><span 
+>n </span><span 
+>th</span><span  >e </span><span  >Ste</span><span 
+>p </span><span 
+>Father</span><span  >. </span><span  >O</span><span 
+>n </span><span 
+>th</span><span  >e </span><span  >dru</span><span 
+>g </span><span 
+>sh</span><span  >e </span><span  >ca</span><span 
+>n </span><span 
+>outru</span><span  >n </span><span  >him</span><span 
+>, </span><span 
+>bu</span><span  >t </span><span  >th</span><span 
+>e </span><span 
+>penalt</span><span  >y </span><span  >o</span><span 
+>f </span><span 
+>usag</span><span  >e </span><span  >i</span><span 
+>s </span><span 
+>eventua</span><span  >l </span><span  >addictio</span><span 
+>n </span><span 
+>followe</span><span  >d </span><span  >b</span><span 
+>y </span><span 
+>withdrawa</span><span  >l </span><span  >o</span><span 
+>r </span><span 
+>potentia</span><span  >l </span><span  >overdose</span><span 
+>. </span></p>
+  <p><u><span  
+>crim</span></u><u><span
+ >e </span></u><u><span
+ 
+>pursue</span></u><u><span 
+>d </span></u><u><span 
+>b</span></u><u><span  >y </span></u><u><span  
+>vengeance</span></u><span
+ >: </span><span
+ 
+>Sony</span><span  >a </span><span  >ca</span><span 
+>n </span><span 
+>cultivat</span><span  >e </span><span  >ne</span><span 
+>w </span><span 
+>enemie</span><span  >s </span><span  >a</span><span 
+>s </span><span 
+>sh</span><span  >e </span><span  >seek</span><span 
+>s </span><span 
+>t</span><span  >o </span><span  >satisf</span><span 
+>y </span><span 
+>he</span><span  >r </span><span  >need</span><span 
+>s </span><span 
+>vi</span><span  >a </span><span  >crime</span><span 
+>. </span></p>
+  <p><u><span  
+>abduction</span></u><span
+ >: </span><span
+ 
+>Th</span><span  >e </span><span  >stree</span><span 
+>t </span><span 
+>ha</span><span  >s </span><span  >becom</span><span 
+>e </span><span 
+>Sonya’</span><span  >s </span><span  >hom</span><span 
+>e </span><span 
+>-t</span><span  >o </span><span  >remov</span><span 
+>e </span><span 
+>he</span><span  >r </span><span  >fro</span><span 
+>m </span><span 
+>th</span><span  >e </span><span  >stree</span><span 
+>t </span><span 
+>fo</span><span  >r </span><span  >variou</span><span 
+>s </span><span 
+>reason</span><span  >s </span><span  >i</span><span 
+>s </span><span 
+>contestabl</span><span  >y </span><span  >equivalen</span><span 
+>t </span><span 
+>t</span><span  >o </span><span  >abduction</span><span 
+>. </span><span 
+>Th</span><span  >e </span><span  >Ste</span><span 
+>p </span><span 
+>Father</span><span  >, </span><span  >i</span><span 
+>f </span><span 
+>h</span><span  >e </span><span  >catche</span><span 
+>s </span><span 
+>Sonya</span><span  >, </span><span  >ca</span><span 
+>n </span><span 
+>abduc</span><span  >t </span><span  >he</span><span 
+>r </span><span 
+>i</span><span  >n
+    a </span><span  >sense</span><span 
+>. </span></p>
+  <p><u><span  
+>enmit</span></u><u><span
+ >y </span></u><u><span
+ 
+>o</span></u><u><span 
+>f </span></u><u><span 
+>kinsman</span></u><span  >: </span><span  >Th</span><span 
+>e </span><span 
+>Ste</span><span  >p </span><span  >Fathe</span><span 
+>r </span><span 
+>i</span><span  >s </span><span  >th</span><span 
+>e </span><span 
+>antagonist</span><span  >. </span></p>
+  <p><u><span  
+>los</span></u><u><span
+ >s </span></u><u><span
+ 
+>o</span></u><u><span 
+>f </span></u><u><span 
+>love</span></u><u><span  >d </span></u><u><span  
+>on</span></u><u><span
+ >e </span></u><u><span
+ 
+>an</span></u><u><span 
+>d </span></u><u><span 
+>recover</span></u><u><span  >y </span></u><u><span  
+>o</span></u><u><span
+ >f a </span></u><u><span
+ 
+>los</span></u><u><span 
+>t </span></u><u><span 
+>one</span></u><span  >: </span><span  >Rathe</span><span 
+>r </span><span 
+>tha</span><span  >n </span><span  >Sony</span><span 
+>a </span><span 
+>simpl</span><span  >y </span><span  >ﬁndin</span><span 
+>g a </span><span 
+>hom</span><span  >e </span><span  >an</span><span 
+>d a </span><span 
+>frien</span><span  >d </span><span  >a</span><span 
+>t </span><span 
+>th</span><span  >e </span><span  >end</span><span 
+>, </span><span 
+>i</span><span  >t </span><span  >woul</span><span 
+>d </span><span 
+>b</span><span  >e </span><span  >mor</span><span 
+>e </span><span 
+>dramati</span><span  >c </span><span  >i</span><span 
+>f </span><span 
+>sh</span><span  >e </span><span  >foun</span><span 
+>d a </span><span 
+>famil</span><span  >y </span><span  >member</span><span 
+>. </span><span 
+>W</span><span  >e </span><span  >propose</span><span 
+>d </span><span 
+>anothe</span><span  >r </span><span  >famil</span><span 
+>y </span><span 
+>member</span><span  >, </span><span  >he</span><span 
+>r </span><span 
+>sister</span><span  >, </span><span  >whic</span><span 
+>h </span><span 
+>i</span><span  >s </span><span  >th</span><span 
+>e </span><span 
+>constan</span><span  >t </span><span  >targe</span><span 
+>t </span><span 
+>o</span><span  >f </span><span  >he</span><span 
+>r </span><span 
+>searc</span><span  >h </span><span  >throughou</span><span 
+>t </span><span 
+>th</span><span  >e </span><span  >game</span><span 
+>. </span></p>
+  <p><u><span  
+>madness</span></u><span
+ >: </span><span
+ 
+>Th</span><span  >e </span><span  >continua</span><span 
+>l </span><span 
+>chasin</span><span  >g </span><span  >o</span><span 
+>f </span><span 
+>th</span><span  >e </span><span  >Ste</span><span 
+>p </span><span 
+>Fathe</span><span  >r </span><span  >an</span><span 
+>d </span><span 
+>hi</span><span  >s </span><span  >backgroun</span><span 
+>d </span><span 
+>o</span><span  >f </span><span  >violenc</span><span 
+>e </span><span 
+>ca</span><span  >n </span><span  >b</span><span 
+>e </span><span 
+>attribute</span><span  >d </span><span  >t</span><span 
+>o </span><span 
+>som</span><span  >e </span><span  >sor</span><span 
+>t </span><span 
+>o</span><span  >f </span><span  >menta</span><span 
+>l </span><span 
+>breakdown</span><span  >. </span></p>
+  <p><span  >S</span><span 
+
+
+
+>o </span><span 
+>we ar</span><span  >e </span><span  >proposin</span><span 
+>g </span><span 
+>t</span><span  >o </span><span  >introduc</span><span 
+>e </span><span 
+>nin</span><span  >e </span><span  >possibl</span><span 
+>e </span><span 
+>Polt</span><span  >i </span><span  >dramati</span><span 
+>c </span><span 
+>situation</span><span  >s </span><span  >int</span><span 
+>o </span><span 
+>th</span><span  >e </span><span  >story</span><span 
+>.</span></p>
+  <p><span >3. Consider the implications of proposing
+    these units on the number of characters (M and C ). </span></p>
+  <p><span  >Clearl</span><span 
+>y </span><span 
+>Padd</span><span  >o </span><span  >ca</span><span 
+>n </span><span 
+>b</span><span  >e </span><span  >replace</span><span 
+>d </span><span 
+>b</span><span  >y </span><span  >Sonya’</span><span 
+>s </span><span 
+>sister</span><span  >, </span><span  >an</span><span 
+>d </span><span 
+>thi</span><span  >s </span><span  >dramati</span><span 
+>c </span><span 
+>situation</span><span  >, </span><span  >rathe</span><span 
+>r </span><span 
+>tha</span><span  >n </span><span  >ﬁnishin</span><span 
+>g </span><span 
+>a</span><span  >t </span><span  >th</span><span 
+>e </span><span 
+>ﬁrs</span><span  >t </span><span  >level</span><span 
+>, </span><span 
+>ca</span><span  >n </span><span  >b</span><span 
+>e </span><span 
+>stretche</span><span  >d </span><span  >throughou</span><span 
+>t </span><span 
+>th</span><span  >e </span><span  >game</span><span 
+>. </span><span 
+>We’v</span><span  >e </span><span  >introduce</span><span 
+>d </span><span 
+>on</span><span  >e </span><span  >mai</span><span 
+>n </span><span 
+>character</span><span  >, </span><span  >th</span><span 
+>e </span><span 
+>Ste</span><span  >p </span><span  >Father</span><span 
+>, </span><span 
+>wh</span><span  >o </span><span  >applie</span><span 
+>s </span><span 
+>ongoin</span><span  >g </span><span  >tensio</span><span 
+>n </span><span 
+>t</span><span  >o </span><span  >Sony</span><span 
+>a </span><span 
+>i</span><span  >n </span><span  >th</span><span 
+>e </span><span 
+>for</span><span  >m </span><span  >o</span><span 
+>f </span><span 
+>pursuit</span><span  >.</span></p>
+  <p><span >4. Reach some sort of satisfactory tradeoff
+    between additional units and characters. </span></p>
+  <p><span  >Th</span><span 
+>e </span><span 
+>Deale</span><span  >r </span><span  >maintain</span><span 
+>s </span><span 
+>hi</span><span  >s </span><span  >ambiguou</span><span 
+>s </span><span 
+>relatio</span><span  >n </span><span  >t</span><span 
+>o </span><span 
+>Sony</span><span  >a </span><span  >a</span><span 
+>s </span><span 
+>helper/hinderer</span><span  >. </span><span  >Bu</span><span 
+>t </span><span 
+>w</span><span  >e </span><span  >believ</span><span 
+>e </span><span 
+>tha</span><span  >t </span><span  >h</span><span 
+>e </span><span 
+>ca</span><span  >n </span><span  >ﬂexibl</span><span 
+>y </span><span 
+>absor</span><span  >b </span><span  >int</span><span 
+>o </span><span 
+>hi</span><span  >s </span><span  >rol</span><span 
+>e </span><span 
+>th</span><span  >e </span><span  >task</span><span 
+>s </span><span 
+>o</span><span  >f </span><span  >Ray</span><span 
+>, </span><span 
+>Crysta</span><span  >l </span><span  >an</span><span 
+>d </span><span 
+>Tan</span><span  >, </span><span  >wh</span><span 
+>o </span><span 
+>reall</span><span  >y </span><span  >ac</span><span 
+>t </span><span 
+>a</span><span  >s </span><span  >targe</span><span 
+>t </span><span 
+>redirector</span><span  >s </span><span  >fo</span><span 
+>r </span><span 
+>Sonya’</span><span  >s </span><span  >enigma</span><span 
+>. </span><span 
+>S</span><span  >o </span><span  >we’v</span><span 
+>e </span><span 
+>decrease</span><span  >d </span><span  >ou</span><span 
+>r </span><span 
+>mino</span><span  >r </span><span  >character</span><span 
+>s </span><span 
+>b</span><span  >y
+    3 </span><span  >an</span><span 
+>d </span><span 
+>increase</span><span  >d </span><span  >ou</span><span 
+>r </span><span 
+>mai</span><span  >n </span><span  >character</span><span 
+>s </span><span 
+>b</span><span  >y
+    1 </span><span  >an</span><span 
+>d </span><span 
+>w</span><span  >e </span><span  >no</span><span 
+>w </span><span 
+>hav</span><span  >e </span><span  >M=</span><span 
+>2 </span><span 
+>an</span><span  >d </span><span  >C=1</span><span 
+>.</span></p>
+  <p><span > 5. Plug the new numbers into the Polti
+    ratios and compare the abstract reconceived . </span></p>
+  <p><span >V<i>ariet</i>y <i>o</i>f <i>Drama</i>(V <i>oD</i>)= <i>U/</i>36 = (7+9)<i>/</i>36≈<sub><span > </span></sub>0<i>.</i>44 <br>
+    <i>Involvemen</i>t <i>in</i> <i>Drama</i>(<i>IiD</i>)= <i>U/</i>(M+5*C)=16<i>/</i>(2+5*1)=16</span><i><span
+ >/</span></i><span
+>7≈<sub><span > </span></sub>2</span><i><span
+ >.</span></i><span
+>29 </span></p>
+  <p><span >Let us assume that we’ve achieved the above
+    in roughly the same number of events. We don’t know yet how many it will take
+    in the story so we conservatively round it up to 40 from 32 (we need some
+    ﬂexibility to tie it all together). </span></p>
+  <p><i><span  
+>Leve</span></i><span >l </span><i><span
+ >o</span></i><span
+>f </span><i><span  
+>Drama</span></i><span >(</span><i><span
+ >LoD</span></i><span
+>)= </span><i><span  
+>P/</span></i><span >E = (13 + 9)</span><i><span
+ >/</span></i><span
+>40≈<sub><span > </span></sub>0</span><i><span
+ >.</span></i><span
+>55 </span></p>
+  <p><span >Lets compare. In the ﬁrst abstract version
+    of the story we had total scores of IiD≈0.27, LoD≈0.4 and VoD≈0.2. In our
+    reconceived abstract story we have IiD≈2.29, LoD≈0.55 and VoD≈0.44. All of
+    these ratios are higher in the second version, closer to the Polti-ideal. A
+    story based on these with this event budget should be more dramatic. We made a
+    trade-off between VoD and IiD to introduce more dramatic situations we
+    proposed a new character, the Step Father, but we were able to compensate for
+    that by eliminating several peripheral minor characters.</span></p>
+  <p><span >After discussions, Baird worked to realise
+    these dramatic situations within the actual story. The following is a later
+    (but not the latest) version of <i>Street
+    Survivor</i> which incorporates much of the above.</span></p>
+  <h3>6.4 <i>Street Survivor</i> Version 2 </h3>
+  <p><i><span >Street
+    Survivor</span></i><span > revolves around the story of a young girl
+    Sonya who has left a home disrupted by the violence of her Step Father. Sonya
+    goes into the city in search of her sister, Amy, who has left home before her
+    and disappeared. </span></p>
+  <p><span  >Th</span><span 
+>e </span><span 
+>playe</span><span  >r </span><span  >enter</span><span 
+>s </span><i><span  >Stree</span></i><i><span  >t </span></i><i><span  
+>Survivo</span></i><i><span  >r</span></i><span  > </span><span  >o</span><span 
+>n </span><span 
+>th</span><span  >e </span><span  >secon</span><span 
+>d </span><span 
+>leve</span><span  >l </span><span  >o</span><span 
+>f </span><span 
+>th</span><span  >e </span><span  >gam</span><span 
+>e </span><span 
+>whic</span><span  >h </span><span  >take</span><span 
+>s </span><span 
+>plac</span><span  >e </span><span  >o</span><span 
+>n </span><span 
+>th</span><span  >e </span><span  >street</span><span 
+>s </span><span 
+>o</span><span  >f
+    a </span><span  >generi</span><span 
+>c </span><span 
+>city</span><span  >. </span><span  >Sony</span><span 
+>a </span><span 
+>set</span><span  >s </span><span  >ou</span><span 
+>t </span><span 
+>i</span><span  >n </span><span  >searc</span><span 
+>h </span><span 
+>o</span><span  >f </span><span  >he</span><span 
+>r </span><span 
+>sister</span><span  >, </span><span  >askin</span><span 
+>g </span><span 
+>aroun</span><span  >d </span><span  >fo</span><span 
+>r </span><span 
+>help</span><span  >. </span><span  >Unfortunatel</span><span 
+>y </span><span 
+>he</span><span  >r </span><span  >searc</span><span 
+>h </span><span 
+>i</span><span  >s </span><span  >interrupte</span><span 
+>d </span><span 
+>b</span><span  >y </span><span  >th</span><span 
+>e </span><span 
+>appearanc</span><span  >e </span><span  >i</span><span 
+>n </span><span 
+>th</span><span  >e </span><span  >cit</span><span 
+>y </span><span 
+>o</span><span  >f </span><span  >he</span><span 
+>r </span><span 
+>Ste</span><span  >p </span><span  >Father</span><span 
+>. </span><span 
+>H</span><span  >e </span><span  >pursue</span><span 
+>s </span><span 
+>he</span><span  >r </span><span  >relentlessl</span><span 
+>y </span><span 
+>throughou</span><span  >t </span><span  >th</span><span 
+>e </span><span 
+>game</span><span  >, </span><span  >determine</span><span 
+>d </span><span 
+>t</span><span  >o </span><span  >tak</span><span 
+>e </span><span 
+>he</span><span  >r </span><span  >hom</span><span 
+>e </span><span 
+>an</span><span  >d </span><span  >t</span><span 
+>o </span><span 
+>preven</span><span  >t </span><span  >he</span><span 
+>r </span><span 
+>fro</span><span  >m </span><span  >ﬁndin</span><span 
+>g </span><span 
+>Amy</span><span  >. </span><span  >H</span><span 
+>e </span><span 
+>fears</span><span  >, </span><span  >quit</span><span 
+>e </span><span 
+>rightly</span><span  >, </span><span  >tha</span><span 
+>t </span><span 
+>whe</span><span  >n </span><span  >Sony</span><span 
+>a </span><span 
+>ﬁnd</span><span  >s </span><span  >Am</span><span 
+>y </span><span 
+>the</span><span  >y </span><span  >wil</span><span 
+>l </span><span 
+>tak</span><span  >e </span><span  >thei</span><span 
+>r </span><span 
+>storie</span><span  >s </span><span  >o</span><span 
+>f </span><span 
+>hi</span><span  >s </span><span  >violenc</span><span 
+>e </span><span 
+>t</span><span  >o </span><span  >th</span><span 
+>e </span><span 
+>polic</span><span  >e </span><span  >an</span><span 
+>d </span><span 
+>hav</span><span  >e </span><span  >hi</span><span 
+>m </span><span 
+>prosecuted</span><span  >.</span></p>
+  <p><span >Sonya takes a drug called Quick to avoid
+    being captured by her Step Father. This drug is available in the city from the
+    Dealer. The ﬁrst time she meets the Dealer he gives her a hit of Quick for free
+    but from then on she has to pay for it. Quick is addictive and by taking Quick
+    Sonya develops a Habit. In level one of Street Survivor, Sonya becomes caught
+    up in this web of conﬂicting needs she must avoid being captured by her Step
+    Father by taking Quick which she must buy from the Dealer and to which she
+    becomes addicted, whilst continuing her search for her sister and ﬁnding food
+    to keep up her energy. </span><span  
+>I</span><span
+ >f </span><span
+ 
+>sh</span><span  >e </span><span  >i</span><span 
+>s </span><span 
+>capture</span><span  >d </span><span  >b</span><span 
+>y </span><span 
+>he</span><span  >r </span><span  >Ste</span><span 
+>p </span><span 
+>Father</span><span  >, </span><span  >h</span><span 
+>e </span><span 
+>take</span><span  >s </span><span  >he</span><span 
+>r </span><span 
+>bac</span><span  >k </span><span  >hom</span><span 
+>e </span><span 
+>an</span><span  >d </span><span  >sh</span><span 
+>e </span><span 
+>ha</span><span  >s </span><span  >t</span><span 
+>o </span><span 
+>escap</span><span  >e </span><span  >again</span><span 
+>. </span><span 
+>Eac</span><span  >h </span><span  >tim</span><span 
+>e </span><span 
+>thi</span><span  >s </span><span  >happens</span><span 
+>, </span><span 
+>th</span><span  >e </span><span  >gam</span><span 
+>e </span><span 
+>restart</span><span  >s </span><span  >o</span><span 
+>n </span><span 
+>th</span><span  >e </span><span  >ﬁrs</span><span 
+>t </span><span 
+>leve</span><span  >l </span><span  >whic</span><span 
+>h </span><span 
+>i</span><span  >s
+    a </span><span  >trai</span><span 
+>n </span><span 
+>station</span><span  >. </span><span  >Sony</span><span 
+>a </span><span 
+>i</span><span  >s </span><span  >waitin</span><span 
+>g </span><span 
+>fo</span><span  >r </span><span  >th</span><span 
+>e </span><span 
+>trai</span><span  >n </span><span  >t</span><span 
+>o </span><span 
+>tak</span><span  >e </span><span  >he</span><span 
+>r </span><span 
+>bac</span><span  >k </span><span  >i</span><span 
+>n </span><span 
+>t</span><span  >o </span><span  >th</span><span 
+>e </span><span 
+>cit</span><span  >y </span><span  >t</span><span 
+>o </span><span 
+>resum</span><span  >e </span><span  >he</span><span 
+>r </span><span 
+>searc</span><span  >h </span><span  >fo</span><span 
+>r </span><span 
+>he</span><span  >r </span><span  >sister</span><span 
+>. </span><span 
+>Sh</span><span  >e </span><span  >ca</span><span 
+>n </span><span 
+>ﬁn</span><span  >d </span><span  >hersel</span><span 
+>f </span><span 
+>o</span><span  >n </span><span  >thi</span><span 
+>s </span><span 
+>leve</span><span  >l </span><span  >ove</span><span 
+>r </span><span 
+>an</span><span  >d </span><span  >ove</span><span 
+>r </span><span 
+>agai</span><span  >n </span><span  >throughou</span><span 
+>t </span><span 
+>th</span><span  >e </span><span  >gam</span><span 
+>e </span><span 
+>eac</span><span  >h </span><span  >tim</span><span 
+>e </span><span 
+>sh</span><span  >e </span><span  >i</span><span 
+>s </span><span 
+>capture</span><span  >d </span><span  >b</span><span 
+>y </span><span 
+>he</span><span  >r </span><span  >Ste</span><span 
+>p </span><span 
+>Father</span><span  >. </span><span  >I</span><span 
+>f </span><span 
+>sh</span><span  >e </span><span  >collapse</span><span 
+>s </span><span 
+>fro</span><span  >m </span><span  >exhaustion</span><span 
+>, </span><span 
+>lac</span><span  >k </span><span  >o</span><span 
+>f </span><span 
+>food</span><span  >, </span><span  >col</span><span 
+>d </span><span 
+>o</span><span  >r </span><span  >withdrawa</span><span 
+>l </span><span 
+>sh</span><span  >e </span><span  >wil</span><span 
+>l </span><span 
+>als</span><span  >o </span><span  >ﬁn</span><span 
+>d </span><span 
+>hersel</span><span  >f </span><span  >bac</span><span 
+>k </span><span 
+>o</span><span  >n </span><span  >th</span><span 
+>e </span><span 
+>trai</span><span  >n </span><span  >station</span><span 
+>.</span></p>
+  <p><span  >Whils</span><span 
+>t </span><span 
+>Sony</span><span  >a </span><span  >i</span><span 
+>s </span><span 
+>i</span><span  >n </span><span  >th</span><span 
+>e </span><span 
+>ﬁrs</span><span  >t </span><span  >leve</span><span 
+>l </span><span 
+>o</span><span  >f </span><span  >th</span><span 
+>e </span><span 
+>gam</span><span  >e </span><span  >i</span><span 
+>t </span><span 
+>get</span><span  >s </span><span  >dark</span><span 
+>. </span><span 
+>Whe</span><span  >n </span><span  >nigh</span><span 
+>t </span><span 
+>fall</span><span  >s </span><span  >th</span><span 
+>e </span><span 
+>thir</span><span  >d </span><span  >leve</span><span 
+>l </span><span 
+>o</span><span  >f </span><span  >th</span><span 
+>e </span><span 
+>gam</span><span  >e </span><span  >open</span><span 
+>s </span><span 
+>automatically</span><span  >. </span><span  >Thi</span><span 
+>s </span><span 
+>leve</span><span  >l </span><span  >i</span><span 
+>s </span><span 
+>abou</span><span  >t </span><span  >th</span><span 
+>e </span><span 
+>nee</span><span  >d </span><span  >fo</span><span 
+>r </span><span 
+>shelte</span><span  >r </span><span  >an</span><span 
+>d </span><span 
+>ﬁndin</span><span  >g
+    a </span><span  >plac</span><span 
+>e </span><span 
+>t</span><span  >o </span><span  >sleep</span><span 
+>. </span><span 
+>Th</span><span  >e </span><span  >gam</span><span 
+>e </span><span 
+>pla</span><span  >y </span><span  >take</span><span 
+>s </span><span 
+>plac</span><span  >e </span><span  >i</span><span 
+>n a </span><span 
+>derelic</span><span  >t </span><span  >buildin</span><span 
+>g </span><span 
+>tha</span><span  >t </span><span  >i</span><span 
+>s </span><span 
+>use</span><span  >d </span><span  >b</span><span 
+>y </span><span 
+>othe</span><span  >r </span><span  >homeles</span><span 
+>s </span><span 
+>peopl</span><span  >e </span><span  >a</span><span 
+>s a </span><span 
+>squat</span><span  >. </span><span  >Sony</span><span 
+>a </span><span 
+>ﬁnd</span><span  >s </span><span  >hersel</span><span 
+>f </span><span 
+>bein</span><span  >g </span><span  >attacke</span><span 
+>d </span><span 
+>i</span><span  >n </span><span  >thi</span><span 
+>s </span><span 
+>leve</span><span  >l </span><span  >b</span><span 
+>y </span><span 
+>othe</span><span  >r </span><span  >peopl</span><span 
+>e </span><span 
+>wh</span><span  >o </span><span  >ar</span><span 
+>e </span><span 
+>protectin</span><span  >g </span><span  >thei</span><span 
+>r </span><span 
+>spac</span><span  >e </span><span  >o</span><span 
+>r </span><span 
+>wantin</span><span  >g </span><span  >t</span><span 
+>o </span><span 
+>stea</span><span  >l </span><span  >Quic</span><span 
+>k </span><span 
+>o</span><span  >r </span><span  >mone</span><span 
+>y </span><span 
+>fro</span><span  >m </span><span  >her</span><span 
+>. </span><span 
+>Th</span><span  >e </span><span  >Squa</span><span 
+>t </span><span 
+>i</span><span  >s </span><span  >ful</span><span 
+>l </span><span 
+>o</span><span  >f </span><span  >obstacle</span><span 
+>s </span><span 
+>t</span><span  >o </span><span  >avoid</span><span 
+>, </span><span 
+>suc</span><span  >h </span><span  >a</span><span 
+>s </span><span 
+>hole</span><span  >s </span><span  >i</span><span 
+>n </span><span 
+>th</span><span  >e </span><span  >ﬂoor</span><span 
+>, </span><span 
+>an</span><span  >d </span><span  >ricket</span><span 
+>y </span><span 
+>stai</span><span  >r </span><span  >cases</span><span 
+>. </span><span 
+>Sony</span><span  >a </span><span  >ha</span><span 
+>s </span><span 
+>t</span><span  >o </span><span  >b</span><span 
+>e </span><span 
+>ver</span><span  >y </span><span  >carefu</span><span 
+>l </span><span 
+>a</span><span  >s </span><span  >sh</span><span 
+>e </span><span 
+>navigate</span><span  >s </span><span  >throug</span><span 
+>h </span><span 
+>th</span><span  >e </span><span  >building</span><span 
+>. </span><span 
+>Sh</span><span  >e </span><span  >wil</span><span 
+>l </span><span 
+>mov</span><span  >e </span><span  >betwee</span><span 
+>n </span><span 
+>level</span><span  >s
+    2 </span><span  >an</span><span 
+>d 3 </span><span 
+>unti</span><span  >l </span><span  >sh</span><span 
+>e </span><span 
+>ﬁnd</span><span  >s
+    a </span><span  >blanke</span><span 
+>t </span><span 
+>i</span><span  >n </span><span  >leve</span><span 
+>l 2 </span><span 
+>whic</span><span  >h </span><span  >enable</span><span 
+>s </span><span 
+>he</span><span  >r </span><span  >t</span><span 
+>o </span><span 
+>hav</span><span  >e
+    a </span><span  >slee</span><span 
+>p </span><span 
+>an</span><span  >d </span><span  >take</span><span 
+>s </span><span 
+>he</span><span  >r </span><span  >int</span><span 
+>o </span><span 
+>leve</span><span  >l </span><span  >4</span><span 
+>.</span></p>
+  <p><span >By level 4 of the game Sonya, who is back
+    on the streets of the city, has developed an addiction to Quick that is now
+    controlling her. She is dominated by her need to buy Quick from the Dealer to
+    escape from her Step Father but also to service the addiction she has
+    established. She needs money to buy the Quick so she turns to crime, begging,
+    mugging people and bag snatching. Her bad behaviour sees her develop more
+    enemies and she becomes more and more vulnerable to withdrawal and overdose
+    whilst still getting hungry, cold, and tired. She also needs to use clean
+    water, syringe bins and must continue to ask around for Amy. She can go back to
+    the Squat once in this level. In this level of the game Sonya develops her
+    ﬁghting skills as she spirals downwards into heavier addiction and worse
+    behaviour. If she gets captured by her Step Father in this level she goes back
+    home and then to the Train Station as before. If she collapses she gets rescued
+    by a stranger who takes her to a safe place and then back to the Train Station.</span></p>
+  <p><span >Eventually Sonya takes on a task for the
+    Dealer. She crosses town to deliver a parcel for him. In return she gets given
+    a hit of Quick, she overdoses and this takes her into level 5, the last level
+    of the game. Level 5 is set in a dream like hospital. Sonya meets and ﬁghts a
+    version of herself. This version of herself is her nemesis, her alter ego once
+    she gives up (stops fighting) and gets beaten the game ends.</span></p>
+  <h3>7. Conclusion </h3>
+  <p><span >In this paper we made three contributions.
+    First, we created a theory of stories which distinguishes between games and
+    stories at several levels of game abstraction, based primarily on the existence
+    of characters, whose capabilities are derived from Polti’s thirty-six dramatic
+    situations. Games that lack characters require considerable stretching to
+    metamorphose into Polti’s units, thus their analysis in terms of stories is
+    contestable. Second, we developed measures of the ”dramaticality” of stories
+    called Polti ratios and proposed a Polti-ideal story to which all abstractions
+    could be compared.</span></p>
+  <p><span  >Finally</span><span 
+>, </span><span 
+>w</span><span  >e </span><span  >develope</span><span 
+>d a </span><span 
+>proces</span><span  >s </span><span  >fo</span><span 
+>r </span><span 
+>exploring abstraction</span><span  >s </span><span  >o</span><span 
+>f </span><span 
+>stories</span><span  > </span><span  >an</span><span 
+>d </span><span 
+>demonstrate</span><span  >d this process on </span><span  
+>th</span><span
+ >e </span><span
+ 
+>gam</span><span  >e </span><span  >narrativ</span><span 
+>e </span><span 
+>fo</span><span  >r </span><span  >th</span><span 
+>e </span><span 
+>compute</span><span  >r </span><span  >gam</span><span 
+>e </span><span 
+>Stree</span><span  >t </span><span  >Survivor</span><span 
+>. </span><span 
+>I</span><span  >n </span><span  >ou</span><span 
+>r extended </span><span 
+>analysis</span><span  >, </span><span  >w</span><span 
+>e </span><span 
+>counte</span><span  >d </span><span  >relevan</span><span 
+>t </span><span 
+>stor</span><span  >y </span><span  >component</span><span 
+>s </span><span 
+>i</span><span  >n </span><span  >Stree</span><span 
+>t </span><span 
+>Survivo</span><span  >r </span><span  >versio</span><span 
+>n 1 </span><span 
+>the</span><span  >n </span><span  >plugge</span><span 
+>d </span><span 
+>thes</span><span  >e </span><span  >number</span><span 
+>s </span><span 
+>int</span><span  >o </span><span  >measure</span><span 
+>s </span><span 
+>w</span><span  >e </span><span  >calle</span><span 
+>d </span><span 
+>Polt</span><span  >i </span><span  >ratios</span><span 
+>, </span><span 
+>t</span><span  >o </span><span  >ge</span><span 
+>t </span><span 
+>som</span><span  >e </span><span  >sens</span><span 
+>e </span><span 
+>o</span><span  >f </span><span  >ho</span><span 
+>w </span><span 
+>clos</span><span  >e </span><span  >thi</span><span 
+>s </span><span 
+>stor</span><span  >y </span><span  >wa</span><span 
+>s </span><span 
+>t</span><span  >o
+    a </span><span  >theoreticall</span><span 
+>y </span><span 
+>idea</span><span  >l </span><span  >bu</span><span 
+>t </span><span 
+>unrealisabl</span><span  >e </span><span  >story</span><span 
+>. </span><span 
+>Subsequently</span><span  >, </span><span  >w</span><span 
+>e attempted to </span><span
+ 
+>improv</span><span  >e </span><span  >th</span><span 
+>e </span><span 
+>“dramaticality</span><span  >” </span><span  >o</span><span 
+>f a </span><span 
+>stor</span><span  >y </span><span  >b</span><span 
+>y </span><span 
+>introducin</span><span  >g </span><span  >nove</span><span 
+>l </span><span 
+>Polt</span><span  >i </span><span  >unit</span><span 
+>s </span><span 
+>withou</span><span  >t </span><span  >payin</span><span 
+>g a </span><span 
+>cos</span><span  >t </span><span  >i</span><span 
+>n </span><span 
+>numbe</span><span  >rs </span><span  >o</span><span 
+>f </span><span 
+>characters</span><span  >. </span><span  >W</span><span 
+>e </span><span 
+>plugge</span><span  >d </span><span  >thes</span><span 
+>e new </span><span 
+>number</span><span  >s </span><span  >bac</span><span 
+>k </span><span 
+>int</span><span  >o </span><span  >Polt</span><span 
+>i </span><span 
+>ratio</span><span  >s </span><span  >t</span><span 
+>o assess </span><span 
+>movemen</span><span  >t </span><span  >toward</span><span 
+>s </span><span 
+>th</span><span  >e </span><span  >idea</span><span 
+>l </span><span 
+>story</span><span  >.
+    We </span><span  >showe</span><span 
+>d a </span><span 
+>late</span><span  >r </span><span  >versio</span><span 
+>n </span><span 
+
+
+>o</span><span  >f </span><span  >Stree</span><span 
+>t </span><span 
+>Survivo</span><span  >r </span><span  >whic</span><span 
+>h </span><span 
+>incorporate</span><span  >d </span><span  >ou</span><span 
+
+
+
+
+
+>r </span><span 
+>propose</span><span  >d </span><span  >changes</span><span 
+>.</span></p>
+  <p><span  >While
+    Version 2 of <i>Street Survivor</i> did
+    appear to be more highly dramatic than Version 1, the ways in which a player
+    would interact with the game remained largely constant. The reason for this was
+    sheer momentum the game prototype was being developed while the game treatment
+    was being developed whatever narrative we produced had to be able to be
+    implemented atop working code due to tight budgets. In this case, game
+    narrative could be considered independently of game playability because the game
+    already implemented characters and we minimally modified these.</span></p>
+  <p><span  >Ther</span><span 
+>e </span><span 
+>ar</span><span  >e </span><span  >a</span><span 
+>t </span><span 
+>leas</span><span  >t
+    five </span><span  >questions to investigate in</span><span
+ > </span><span 
+>futur</span><span  >e </span><span  >work</span><span 
+>. </span><span 
+>D</span><span  >o
+    people in general (with an understanding of </span><span 
+>Polti’</span><span  >s </span><span  >units) detect exactly the same units
+    in the same story?</span><span  > </span><span  >C</span><span 
+>an </span><span 
+>computer-aide</span><span  >d </span><span  >tool</span><span 
+>s </span><span 
+>assis</span><span  >t </span><span  >peopl</span><span 
+>e </span><span 
+>bot</span><span  >h </span><span  >wit</span><span 
+>h </span><span 
+>evaluatio</span><span  >n </span><span  >an</span><span 
+>d </span><span 
+>th</span><span  >e </span><span  >reconceptualisation of narrative?</span><span
+ > Can other models of
+    computer games (e.g. game playability) be integrated with Polti ratios? </span><span
+ 
+>T</span><span  >o what degree can Polti ratios be used standalone for analysis and
+    comparison of computer games? Finally, how can these crude measures be
+    improved?</span></p>
+  <h3>References</h3>
+  <p><span >Aristotle. </span><i><span 
+>Poetics</span></i><span
+>. 2 edition. trans Bywater I. in: R.McKeon (Ed.), Introduction to
+    Aristotle Univ of Chicago Press, Chicago, Ill., 1973. </span></p>
+  <p><span >Avedon, Elliott M. and Brian Sutton-Smith. </span><i><span
+ >Th</span></i><span
+>e </span><i><span  
+>Stud</span></i><span >y </span><i><span
+ >o</span></i><span
+>f </span><i><span  
+>Games</span></i><span >. First
+    edition. John Wiley and Sons, Inc., 1971. </span></p>
+  <p><span >Bakhtin, M. </span><i><span 
+>Th</span></i><span
+>e </span><i><span  
+>Dialogi</span></i><span >c </span><i><span
+ >Imagination</span></i><span
+>: </span><i><span  
+>Fou</span></i><span >r </span><i><span
+ >essay</span></i><span
+>s </span><i><span  
+>b</span></i><span >y </span><i><span
+ >M</span></i><span
+>. </span><i><span  
+>M</span></i><span >. </span><i><span
+ >Bakhtin</span></i><span
+>. ed. Michael Holquist / trans Caryl Emerson and Michael Holquist.
+    Austin Texas: University of Texas, 1981. </span></p>
+  <p><span >Bower, G. and M. Clark. “Narrative stories
+    as mediators for serial learning.” </span><i><span  
+>Psychonomi</span></i><span
+>c </span><i><span  
+>Scienc</span></i><span >e 14 (1969):
+    181-182. </span></p>
+  <p><span >Bringsjord, Selmer. “Is It Possible to
+    Build Dramatically Compelling Interactive Digital Entertainment (in the form,
+    e.g., of computer games)?.” </span><i><span  
+>Gam</span></i><span >e </span><i><span
+ >Studie</span></i><span
+>s 1 (2001). </span></p>
+  <p><span >Cassady, M. </span><i><span 
+>Creatin</span></i><span
+>g </span><i><span  
+>storie</span></i><span >s </span><i><span
+ >fo</span></i><span
+>r </span><i><span  
+>storytelling</span></i><span >. San
+    Jose, California : Resource Publications, 1991. </span></p>
+  <p><span >Chambers, R. </span><i><span 
+>Stor</span></i><span
+>y </span><i><span  
+>an</span></i><span >d </span><i><span
+ >Situation</span></i><span
+
+>: </span><i><span  
+>Narrativ</span></i><span >e </span><i><span
+ >Seductio</span></i><span
+>n </span><i><span  
+>an</span></i><span >d </span><i><span
+ >th</span></i><span
+>e </span><i><span  
+>Powe</span></i><span >r </span><i><span
+ >o</span></i><span
+>f </span><i><span  
+>Fiction</span></i><span >.
+    Minnesota: University of Minnesota Press, 1984. </span></p>
+  <p><span >Colby, B., S. Kennedy, and L. Milanesi.
+    “Content Analysis, Cultural Grammars, and Computers.” </span><i><span
+ >Qualitativ</span></i><span
+>e </span><i><span  
+>Sociolog</span></i><span >y 14
+    (1991): 373-387. </span></p>
+  <p><span >Crawford, Chris. </span><i><span
+ >Th</span></i><span
+>e </span><i><span  
+>Ar</span></i><span >t </span><i><span
+ >o</span></i><span
+>f </span><i><span  
+>Compute</span></i><span >r </span><i><span
+ >Gam</span></i><span
+>e </span><i><span  
+>Design</span></i><span >. Berkeley,
+    CA, USA: Osborne/McGraw-Hill, 1984. </span></p>
+  <p><span >Eskelinen, Markku. “The Gaming Situation.” </span><i><span
+ >Gam</span></i><span
+>e </span><i><span  
+>Studie</span></i><span >s 1 (2001). </span></p>
+  <p><span >Fabricatore, C., Nussbaum, M, Rosas, R.,
+    “Playability in Action Videogames: A Qualitative Design Model” <i>Human-Computer
+    Interaction</i> 2002 17:4, 311-368</span></p>
+  <p><span >Frasca, Gonzalo. “Ludologists love stories,
+    too: notes from a debate that never took place.” (November 2003): 92-99. </span></p>
+  <p><span >Graesser, A. “Why Stories?” </span><i><span
+ >Knowledg</span></i><span
+>e </span><i><span  
+>an</span></i><span >d </span><i><span
+ >memory</span></i><span
+>: </span><i><span  
+>th</span></i><span >e </span><i><span
+ >rea</span></i><span
+>l </span><i><span  
+>story</span></i><span >. </span><i><span
+lang=DE >Hillsdale</span></i><span
+lang=DE>, </span><i><span lang=DE >N.J.</span></i><span lang=DE>: </span><i><span lang=DE
+>Lawrenc</span></i><span
+lang=DE>e </span><i><span lang=DE >Erlbau</span></i><span lang=DE>m 8 (1995): 121-132. </span></p>
+  <p><span lang=DE>Haberlandt, K. and A. Graesser. </span><span
+>“Component processes in text comprehension and some of their
+    interactions.” </span><i><span  
+>Journa</span><span >l </span></i><i><span
+ >o</span><span
+>f </span></i><i><span  
+>Experimenta</span><span >l</span></i><span
+> </span><i><span  
+>Psychology</span></i><span >: </span><i><span
+ >Genera</span></i><span
+>l 114 (1985): 357-374. </span></p>
+  <p><span >Hall R. Pham B. Yearwood, J. `A Story-Based
+    Phenotype for Self-Interested Affective Agents  Second International ICSC
+    Symposium on Engineering of Intelligent Systems, EIS 2000, June, Paisley,
+    Scotland, 2000</span></p>
+  <p><span >Hall, R. A Computational Story Model Based
+    On A Story Grammar That Represents Conﬂict. PhD Dissertation, University of
+    Ballarat, 2002. </span></p>
+  <p><span >Holquist, M. </span><i><span 
+>Bakhti</span></i><span
+>n </span><i><span  
+>an</span></i><span >d </span><i><span
+ >hi</span></i><span
+>s </span><i><span  
+>worl</span></i><span >d / </span><i><span
+ >Michae</span></i><span
+>l </span><i><span  
+>Holquist</span></i><span >. London,
+    New York, 1990. </span></p>
+  <p><span >Lehnert, W. “Plot Units: A narrative
+    summarization strategy.” </span><i><span  
+>Strategie</span></i><span >s </span><i><span
+ >fo</span></i><span
+>r </span><i><span  
+>natura</span></i><span >l </span><i><span
+ >languag</span></i><span
+>e </span><i><span  
+>processin</span></i><span >g (1982):
+    375-411. </span></p>
+  <p><span >Lindley, Craig A. “The Semiotics of Time
+    Structure in Ludic Space As a Foundation for Analysis and Design.” </span><i><span
+ >Gam</span></i><span
+>e </span><i><span  
+>Studie</span></i><span >s 5 (2005). </span></p>
+  <p><span >Lucille, R. </span><i><span 
+>Th</span></i><span
+>e </span><i><span  
+>3</span></i><span >6 </span><i><span
+ >dramati</span></i><span
+>c </span><i><span  
+>situation</span></i><span >s / </span><i><span
+ >George</span></i><span
+>s </span><i><span  
+>Polti</span></i><span >. Boston: The
+    writer inc., 1977. </span></p>
+  <p><span >Murray, J. </span><i><span 
+
+>Hamle</span></i><span
+>t </span><i><span  
+>o</span></i><span >n </span><i><span
+ >th</span></i><span
+>e </span><i><span  
+>Holodeck</span></i><span >: </span><i><span
+ >Th</span></i><span
+>e </span><i><span  
+>Futur</span></i><span >e </span><i><span
+ >o</span></i><span
+>f </span><i><span  
+>Narrativ</span></i><span >e </span><i><span
+ >i</span></i><span
+>n </span><i><span  
+>Cyberspace</span></i><span >. The
+    Free Press, New York, 1997. </span></p>
+  <p><span >Newman, James. “The Myth of the Ergodic
+    Videogame-Some thoughts on player-character relationships in videogames.” </span><i><span  >Gam</span></i><span >e </span><i><span 
+>Studie</span></i><span
+>s 2 (2002). </span></p>
+  <p><span >Pennington, N. and R. Hastie. “A cognitive
+    theory of juror decision making: The story model.” </span><i><span 
+>Cardoz</span></i><span
+>o </span><i><span  >La</span></i><span >w </span><i><span 
+>Revie</span></i><span
+>s 13 (1991): 519-557. </span></p>
+  <p><span >Polti, G. </span><i><span 
+>Le</span></i><span
+>s </span><i><span  >trente-si</span></i><span >x </span><i><span 
+>situation</span></i><span
+>s </span><i><span  >dramatique</span></i><span >s / </span><i><span 
+>pa</span></i><span
+>r </span><i><span  >George</span></i><span >s </span><i><span 
+>Polti</span></i><span
+>. </span><span >Paris: Edition du ‘Mercure de France’, 1895. </span></p>
+  <p><span >Prince, Gerald. A </span><i><span
+ >Dictionar</span></i><span
+>y </span><i><span  
+>o</span></i><span >f </span><i><span
+ >Narratology</span></i><span
+>. University of Nebraska Press, 1987. </span></p>
+  <p><span >Reich, Y. “Measuring the value of
+    knowledge.” </span><i><span  
+>Internationa</span></i><span >l </span><i><span
+ >Journa</span></i><span
+>l </span><i><span  
+>o</span></i><span >f </span><i><span
+ >Human-Compute</span></i><span
+>r </span><i><span  
+>Studie</span></i><span >s 42 (1995):
+    3-30. </span></p>
+  <p><span >Ryan, Marie-Laure. “Beyond Myth and
+    Metaphor -The Case of Narrative in Digital Media.” </span><i><span 
+>Gam</span></i><span
+>e </span><i><span  
+>Studie</span></i><span >s 1 (2001). </span></p>
+  <p><span >Schank, R. and R. Abelson. </span><i><span
+ >Scripts</span></i><span
+>, </span><i><span  
+>Plans</span></i><span >, </span><i><span
+ >Goal</span></i><span
+>s </span><i><span  
+>an</span></i><span >d </span><i><span
+ >Understanding</span></i><span
+>. Hillsdale, NJ: Erlbaum, 1977. </span></p>
+  <p><span >White, H. </span><i><span 
+>Narrativ</span></i><span
+>e </span><i><span  
+>an</span></i><span >d </span><i><span
+ >History</span></i><span
+>. <i>On Narrative</i>. Chicago:
+    University of Chicago Press., 1991. </span></p>
+  <p><span >Wilensky, R. </span><i><span 
+>Chapte</span></i><span
+>r </span><i><span  
+>13</span></i><span >. </span><i><span
+ >Points</span></i><span
+>: A </span><i><span  
+>Theor</span></i><span >y </span><i><span
+ >o</span></i><span
+>f </span><i><span  
+>th</span></i><span >e </span><i><span
+ >Structur</span></i><span
+>e </span><i><span  
+>o</span></i><span >f </span><i><span
+ >Storie</span></i><span
+>s </span><i><span  
+>i</span></i><span >n </span><i><span
+ >Memory</span></i><span
+>. Strategies for Natural Language Processing, pp. 345-374,
+    Hillsdale, NJ: Erlbaum, 1982. </span></p>
+  <p><span >Zwaan, A.,R. Graesser and J. Magliano.
+    “Dimensions of Situation Model Construction in Narrative Comprehension.” </span><i><span
+ >Journa</span></i><span
+>l </span><i><span  
+>o</span></i><i><span >f</span></i><span > </span><i><span
+ >Experimenta</span></i><span
+>l </span><i><span  
+>Psychology</span></i><span >: </span><i><span
+ >Learning</span></i><span
+>, </span><i><span  
+>Memory</span></i><span >, </span><i><span
+ >an</span></i><span
+>d </span><i><span  
+>Cognitio</span></i><span >n 21
+    (1995): 386-397.</span></p>
+  <h3>Appendix 1: <a name=top></a><a
+href="http://en.wikipedia.org/wiki/The_Thirty-Six_Dramatic_Situations"><span
+ >The Thirty-Six Dramatic
+    Situations</span></a></h3>
+  <p><span >From Wikipedia, the free encyclopedia
+    (4/9/2007)</span></p>
+  <p><i><span >The Thirty-Six Dramatic Situations</span></i><span
+> is a descriptive list which was created by Georges Polti to categorize
+    every dramatic situation that might occur in a story or performance. To do this
+    Polti analyzed classical Greek texts, plus classical and contemporaneous French
+    works. He also analyzed a handful of non-French authors. In his introduction,
+    Polti claims to be continuing the work of Carlo Gozzi, who also identified 36
+    situations.</span></p>
+  <p><span >This list was published in a book of the same
+    name, which contains extended explanations and examples. The original
+    French-language book was written in the 19th century. An English translation
+    was published in 1917 and continues to be reprinted to this day.</span></p>
+  <p><span >The list is popularized as an aid for writers,
+    but it is also used by dramatists, storytellers and many others. Other similar
+    lists have since been made, some more attuned to modern sensibilities, but
+    Poltis guide remains one of the most popular and enduring.</span></p>
+  <h3><a name="The_36_Situations"></a><span ><span 
+>The 36 Situations</span></span></h3>
+  <p 
+><span  
+>1.<span  >              </span></span><span  >Supplication </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Persecutor a Supplicant a
+    Power in authority, whose decision is doubtful. </span></p>
+  <p 
+><span  
+>2.<span  >              </span></span><span  >Deliverance </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >an Unfortunate a Threatener a
+    Rescuer </span></p>
+  <p 
+><span  
+>3.<span  >              </span></span><span  >Crime pursued by vengeance </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >an Avenger a Criminal </span></p>
+  <p 
+><span  
+>4.<span  >              </span></span><span  >Vengeance taken for kin upon
+    kin </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >an Avenging Kinsman Guilty
+    Kinsman remembrance of the Victim, a relative of both </span></p>
+  <p 
+><span  
+>5.<span  >              </span></span><span  >Pursuit </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >Punishment a Fugitive </span></p>
+  <p 
+><span  
+>6.<span  >              </span></span><span  >Disaster </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Vanquished Power a
+    Victorious Enemy <i>or</i> a Messenger </span></p>
+  <p 
+><span  
+>7.<span  >              </span></span><span  >Falling prey to
+    cruelty/misfortune </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >an Unfortunate a Master <i>or</i> a Misfortune </span></p>
+  <p 
+><span  
+>8.<span  >              </span></span><span  >Revolt </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Tyrant a Conspirator </span></p>
+  <p 
+><span  
+>9.<span  >              </span></span><span  >Daring enterprise </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Bold Leader an Object an
+    Adversary </span></p>
+  <p 
+><span  
+>10.<span  >           </span></span><span  >Abduction </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >an Abductor the Abducted a
+    Guardian </span></p>
+  <p 
+><span  
+>11.<span  >           </span></span><span  >The enigma </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >an Interrogator a Seeker a
+    Problem </span></p>
+  <p 
+><span  
+>12.<span  >           </span></span><span  >Obtaining </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >(a Solicitor &amp; an Adversary
+    who is refusing) <i>or</i> (an Arbitrator &amp; Opposing Parties) </span></p>
+  <p 
+><span  
+>13.<span  >           </span></span><span  >Enmity of kin </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Malevolent Kinsman a Hatred <i>or</i> a reciprocally-hating Kinsman </span></p>
+  <p 
+><span  
+>14.<span  >           </span></span><span  >Rivalry of kin </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >the Preferred Kinsman the
+    Rejected Kinsman the Object of Rivalry </span></p>
+  <p 
+><span  
+>15.<span  >           </span></span><span  >Murderous adultery </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >two Adulterers a Betrayed
+    Spouse </span></p>
+  <p 
+><span  
+>16.<span  >           </span></span><span  >Madness </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Madman a Victim </span></p>
+  <p 
+><span  
+>17.<span  >           </span></span><span  >Fatal imprudence </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >the Imprudent a Victim <i>or</i> an Object Lost </span></p>
+  <p 
+><span  
+>18.<span  >           </span></span><span  >Involuntary crimes of love </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Lover a Beloved a Revealer </span></p>
+  <p 
+><span  
+>19.<span  >           </span></span><span  >Slaying of kin unrecognized </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >the Slayer an Unrecognized
+    Victim </span></p>
+  <p 
+><span  
+>20.<span  >           </span></span><span  >Self-sacrifice for an ideal </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Hero an Ideal a Creditor <i>or</i> a Person/Thing sacrificed </span></p>
+  <p 
+><span  
+>21.<span  >           </span></span><span  >Self-sacrifice for kin </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Hero a Kinsman a Creditor <i>or</i> a Person/Thing sacrificed </span></p>
+  <p 
+><span  
+>22.<span  >           </span></span><span  >All sacrificed for passion </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Lover an Object of fatal
+    Passion the Person/Thing sacrificed </span></p>
+  <p 
+><span  
+>23.<span  >           </span></span><span  >Necessity of sacrificing loved
+    ones </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Hero a Beloved Victim the
+    Necessity for the Sacrifice </span></p>
+  <p 
+><span  
+>24.<span  >           </span></span><span  >Rivalry of superior v. inferior </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Superior Rival an Inferior
+    Rival the Object of Rivalry </span></p>
+  <p 
+><span  
+>25.<span  >           </span></span><span  >Adultery </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >two Adulterers a Deceived
+    Spouse </span></p>
+  <p 
+><span  
+>26.<span  >           </span></span><span  >Crimes of love </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Lover the Beloved </span></p>
+  <p 
+><span  
+>27.<span  >           </span></span><span  >Discovery of the dishonour of a
+    loved one </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Discoverer the Guilty One </span></p>
+  <p 
+><span  
+>28.<span  >           </span></span><span  >Obstacles to love </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >two Lovers an Obstacle </span></p>
+  <p 
+><span  
+>29.<span  >           </span></span><span  >An enemy loved </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Lover the Beloved Enemy the
+    Hater </span></p>
+  <p 
+><span  
+>30.<span  >           </span></span><span  >Ambition </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >an Ambitious Person a Thing
+    Coveted an Adversary </span></p>
+  <p 
+><span  
+>31.<span  >           </span></span><span  >Conflict with a god </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Mortal an Immortal </span></p>
+  <p 
+><span  
+>32.<span  >           </span></span><span  >Mistaken jealousy </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Jealous One an Object of
+    whose Possession He is Jealous a Supposed Accomplice a Cause <i>or</i> an
+    Author of the Mistake </span></p>
+  <p 
+><span  
+>33.<span  >           </span></span><span  >Erroneous judgement </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Mistaken One a Victim of the
+    Mistake a Cause <i>or</i> Author of the Mistake the Guilty One </span></p>
+  <p 
+><span  
+>34.<span  >           </span></span><span  >Remorse </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Culprit a Victim <i>or</i> the Sin an Interrogator </span></p>
+  <p 
+><span  
+>35.<span  >           </span></span><span  >Recovery of a lost one </span></p>
+
+  <p 
+><span  >§<span  >     </span></span><span  >a Seeker the One Found </span></p>
+  <p 
+><span  
+>36.<span  >           </span></span><span  >Loss of loved ones </span></p>
+  <p 
+><span  >§<span  >     </span></span><span  >a Kinsman Slain a Kinsman
+    Spectator an Executioner </span></p>
+  <p><span >All text in this Appendix is available under
+    the terms of the <a
+href="http://en.wikipedia.org/wiki/Wikipedia:Text_of_the_GNU_Free_Documentation_License"
+title="Wikipedia:Text of the GNU Free Documentation License">GNU Free
+    Documentation License</a>. (See <b><a
+href="http://en.wikipedia.org/wiki/Wikipedia:Copyrights"
+title="Wikipedia:Copyrights">Copyrights</a></b> for details.)</span></p></div></div><hr style="clear:both"/>
+<div class='articlecopyright'>
+&copy;2001 - 2008 Game Studies Copyright for articles published in this journal is retained by the journal, except for the right to republish in printed paper publications, which belongs to the authors, but with first publication rights granted to the journal. By virtue of their appearance in this open access journal, articles are free to use, with proper attribution, in educational and other non-commercial settings.
+</div>
+</div>
+</body>
+</html>

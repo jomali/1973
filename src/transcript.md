@@ -143,7 +143,7 @@ Pistas de audio:
 
 Debe abandonar el país ya que la situación se ha vuelto insostenible. Los militares han salido a la calle y ahora todos los del partido están en peligro de ser prendidos o encarcelados. O algo peor. La locura es máxima; desde el que cayó el gobierno, hacía menos de una semana, no había un día que no llegasen noticias de nuevas ejecuciones. Entre ellas la de Pablo Ureta, amigo de Gabriel. Todavía siente cómo la frente se le perla de un sudor frío al recordar la última vez que le vió, horas antes de su asesinato, en un bar de la avenida Bernardo O'Higgins:
 
-Las aspas de un gran ventilador giraban lentamente en el techo, removiendo el humo de tabaco y los ecos de casi una treintena de voces que se enroscaban y retorcían en el aire antes de acabar empotrándose contra las amarillentas paredes del café. Tras la barra, una camarera pasaba el trapo a los vasos sucios mientras los clientes repartidos por el local charlaban, fumaban y daban cuenta de sus bebidas. Había también, en una esquina, una diana de dardos.
+Las aspas de un gran ventilador giraban lentamente en el techo, removiendo el humo de tabaco y los ecos de casi una treintena de voces que se enroscaban y retorcían en el aire antes de acabar empotrándose contra las amarillentas paredes del café. Tras la barra, una camarera pasaba el trapo a los vasos sucios mientras los clientes repartidos por el local charlaban, fumaban y daban cuenta de sus bebidas.
 
 Él ya se encontraba allí, tal y como habían quedado. Su rostro, apenas reconocible, estaba surcado por toda una colección de arrugas nuevas y marcado ferozmente por la tristeza y el cansancio. Pero seguía siendo su mismo rostro al fin y al cabo: duro, inteligente, familiar. Pablo bebía en silencio, sentado solo en una de las mesas más alejadas.
 
@@ -173,21 +173,37 @@ No había ninguna ficha en el visor en aquel momento.
 
 ---¿Quieres alguna cosa?
 
-[Puedes escoger entre pedir una bebida, pedir fichas para el teléfono o no pedir nada.]
+[Puedes preguntar por el teléfono, pedir una bebida para Gabriel o no pedir nada.]
 
-*no pedir nada* No le apetecía tomar nada en realidad. Dió las gracias a la mujer y se alejó de nuevo sin pedir una bebida.
+*no pedir nada* No quería nada en realidad. Dio la gracias a la mujer y se alejó de nuevo de la barra.
 
-*Pablo* Estaba sentado en una de las mesas del fondo, con la vista clavada en su bebida. En un par de días parecía haber envejecido años; su espesa barba negra estaba más salpicada de canas que nunca, varias arrugas nuevas surcaban su frente y el contorno de sus ojos y, si bien es cierto que parte de su pelo había empezado a esfumarse hacía ya tiempo, el claro de piel enrrojecida que se revelaba entre los rizos color carbón de la coronilla era cada vez mayor.
+*Pablo* Estaba sentado en una de las mesas del fondo, con la vista clavada en su vaso de tinto. En un par de días parecía haber envejecido años; su espesa barba negra estaba más salpicada de canas que nunca, varias arrugas nuevas surcaban su frente y el contorno de sus ojos y, si bien es cierto que parte de su pelo había empezado a esfumarse hacía ya tiempo, el claro de piel enrrojecida que se revelaba entre los rizos color carbón de la coronilla era cada vez mayor.
 
 *habla con Pablo* Atravesó el local hasta la mesa en que se encontraba Pablo.
 
 ---Ahí estás. Llegas tarde, chico.
 
-[Puedes escoger entre pedir disculpas por el retraso, llamar loco a Pablo por citarle allí en un momento como aquel o guardar silencio.]
+[Puedes pedirle perdón por el retraso o llamarle loco por citarle allí en un momento como aquel.]
 
-*pedir disculpas* ---Si, lo sé. Lo siento. He tenido que dar un rodeo enorme para llegar hasta aquí. Hay soldados por toda la ciudad.
+*pedirle perdón* ---Siento llegar tarde. He tenido que dar un rodeo enorme para llegar hasta aquí. Hay soldados por toda la ciudad.
 
----¡No me digas! Claro que hay soldados, carajo... Ya no hay sitio seguro en toda la capital. Sin Allende, todo está perdido. Es no más cuestión de tiempo que nos agarren esos mamones con pistola. ---Terminó lo que le quedaba en el vaso con un trago rápido y luego hizo un ademán para señalar la diana del otro extremo del bar. ---Ven, juguemos.
+---Lo sé, lo sé. No te disculpes. Ya no hay sitio seguro en toda la capital. Tal como están las cosas, es no más cuestión de tiempo que nos agarren esos mamones con pistola... sin Allende, todo está perdido.
+
+Terminó lo que le quedaba en el vaso y se quedó en silencio, con una mueca desagradable en la cara y la mirada perdida en algún lugar, lejos de aquel bar. Cuando volvió en si, fijó los ojos en el vaso vacío que sostenía en la mano y en Gabriel a continuación.
+
+---Hazme un favor, chico. Pídeme otro, ¿quieres?
+
+*temas* [Hablas con Pablo: Puedes decirle que no debería seguir bebiendo, pedirle otro vino o preguntarle por Allende.]
+
+*habla con camarera* Gabriel se acercó hasta la barra.
+
+---¿Qué tomas?
+
+[Puedes preguntar por el teléfono, pedir bebidas para Gabriel y Pablo o no pedir nada.]
+
+*pedir bebidas* Pidió una cerveza y un tinto y volvió luego hasta la mesa con las bebidas. Mientras cogía su vaso, Pablo señaló la diana que había colgada en una esquina.
+
+---No te sientes. Ven, juguemos.
 
 [Puedes escoger entre aceptar la partida o decirle que no era buena idea llamar la atención.]
 

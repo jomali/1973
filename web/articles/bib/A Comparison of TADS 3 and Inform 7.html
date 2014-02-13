@@ -1,0 +1,1442 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>A Comparison of TADS 3 and Inform 7</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="author" content="Eric Eve" />
+<meta name="keywords" content="tads 3 inform 7 interactive fiction" />
+<meta name="description" content="Noted interactive fiction author Eric Eve compares and contrasts the two leading interactive fiction langauges." />
+<link rel="stylesheet" href="/css/print.css" type="text/css" media="print" />
+<link rel="stylesheet" href="/css/main.css" type="text/css"/>
+<link rel="stylesheet" href="/css/article.css" type="text/css" />
+<link rel="stylesheet" href="/css/review.css" type="text/css" />
+</head>
+<body>
+
+<center>
+<div id="topbar">
+  <div id="toppic"><a href="/"><img width="348" height="83" border="0"
+    src="/graphics/lanternlongtop.gif" alt="Brass Lantern"></a></div>
+  <div id="bottompic"><img width="348" height="21" border="0"
+    src="/graphics/lanternlongbottom.gif"
+    alt="the adventure game web site"></div>
+</div>
+</center>
+
+<div class="breadcrumbs">
+<a href="/">Home</a>
+&gt;
+<a href="/writers/">Writers</a>
+&gt;
+<a href="/writers/iftheory/">IF Theory</a>
+&gt;
+<span class="currentPage">TADS 3 and Inform 7</span>
+</div>
+
+<div id="leftcontent"> 
+  <div id="navbox"> 
+    <a href="/beginners/">Beginners</a><br />
+    <a href="/players/">Players</a><br />
+    <a href="/writers/">Writers</a><br />
+    <div id="innernavbox">
+      <a href="../iftheory/"><span class="current">IF Theory</span></a><br />
+      <a href="../design/">Game Design</a><br />
+      <a href="../howto/">How To</a><br />
+    </div>
+    <a href="/reviews/">Reviews</a><br />
+    <a href="/editorials/">Editorials</a><br />
+    <a href="/community/">Community</a><br />
+    <a href="/news/">News</a><br />
+  </div>
+
+  <form class="inputbox" name="searchform" method="get"
+  action="http://www.google.com/custom">
+    <p><a href="http://www.google.com/search">Search</a><br />
+    <input class="leftbox" type="text" name="q" maxlength="255"
+    value="" /><input type="hidden" name="cof"
+    value="S:http://brasslantern.org;GL:0;VLC:#000044;AH:center;LH:104;LC:#336699;L:http://brasslantern.org/graphics/lantern.gif;LW:348;AWFID:efaf8a0ba493624b;"
+    /><input type="hidden" name="domains" value="brasslantern.org"
+    /><input type="hidden" name="sitesearch" value="brasslantern.org" /></p>
+  </form>
+
+</div>
+
+<div id="rightcontent"> 
+
+<h2 class="articlehead">A Comparison of TADS 3 and Inform 7</h2>
+
+<h4 class="byline">by <a href="mailto:eric.eve@hmc.ox.ac.uk">Eric Eve</a></h4>
+
+<div class="articletext">
+
+<p>Today's interactive fiction writer has a fair variety of authoring
+systems to choose from, but the two which seem currently to be the
+most state-of-the-art are TADS 3 and Inform 7. Although both are
+powerful and sophisticated tools, their design philosophies are rather
+different, as are their target consituencies. As I understand it,
+Inform 7 was (at least partly) designed to attract the non-programmer,
+whereas TADS 3 was aimed more at the power user. But it would be a
+grave mistake to assume from this that Inform 7 is <i>only</i>
+suitable for the beginner; it too has a lot to offer the power
+user. So while TADS 3 may seem impossibly inaccessible to many of the
+people attracted to Inform 7, many more experienced authors may face a
+genuine choice between the two.</p>
+
+<p>From time to time discussions occur on <a
+href="/community/discussion/usenet.html">the Usenet newsgroup
+rec.arts.int-fiction</a> or elsewhere extolling the comparative
+virtues of these two systems. These discussions tend to focus on a few
+of the more obvious differences between them, such as natural language
+vs.  C-style coding, rule-based vs object-oriented programming, and
+the greater complexity of the TADS 3 world model. While these obvious
+differences <i>are</i> important, they are not the only ones, and may
+not necessarily be the most significant ones when it comes to choosing
+which system to use for a particular project. The present article is
+not an attempt to argue than one system is better than the other (in
+my opinion they are both very good at what they do), but rather to
+give a more rounded comparison of the two systems, dealing not only
+with some of the commonly observed differences but also with some of
+the subtler ones that are often missed.</p>
+
+<p>A wide selection of extensions is available for both systems, and
+game authors can generally add many other features in their own code,
+should they need them. The principle comparison I shall be making,
+therefore, is not what between what is possible in each system, but
+what each system offers "out of the box" in terms of the default
+features built into its language and standard library. In this
+context, "out of the box" and "built in" will often be used in a
+minimalistic sense: more or less the adv3 library in the case of TADS
+3 and the Standard Rules in the case of Inform 7 (the rationale for
+this will be explained below). The comparison will be between the
+latest versions of the two systems at the time of writing (Inform 5U92
+and TADS 3.0.17).</p>
+
+<h3 class="subhead">Some Fundamental Similarities</h3>
+
+<p>Before embarking on a discussion of the differences between Inform
+7 and TADS 3, it may first be worth calling to attention to
+certain ways in which they are fundamentally alike:</p>
+
+<ol>
+<li>At root, they both work with the same idea of what an IF
+world-model should look like. At the highest level are one or more
+rooms which may be interconnected, typically along a compass
+direction. Each room typically represents a distinct region of space
+within which everything it contains is (with certain common
+exceptions) immediately available to the player. Everything else in
+play must be either directly or indirectly within a room or
+rooms. Certain other kinds of objects can also contain other objects,
+and some can also contain actors, but a given object can only support
+one kind of containment. That is, you can't have an object you can
+both put things inside and on top of, though you can of course fake
+this by using multiple objects that look like a single object to the
+player. Certain objects can be picked up and carried around by the
+player character and other actors, while others are fixed in
+place.</li>
+
+<li>Both systems assume that the game will be advanced by the player
+entering commands at the command prompt. Both therefore provide
+analogous (if different in detail) mechanisms for parsing the commands
+and resolving them to the appropriate actions and objects. Both
+systems assume that, in addition to laying out the game map and the
+objects occupying it, one of the game author's main tasks will be to
+code non-default responses to attempts to manipulate in-game objects
+or converse with NPCs. To assist the game author, both systems provide
+a substantial range of standard built-in actions with sensible default
+responses, actions which are often more-or-less similar in both
+systems. Although the list of standard actions differs between the two
+systems, there is a considerable degree of overlap.</li>
+
+<li>Both systems cater well for the common need to output variable
+text. Although the details of the syntax vary considerably, in essence
+the various "[ ]" constructs in Inform 7 and the "&lt;&lt; &gt;&gt;"
+construct in TADS 3 allow alternative output within displayed text, or
+allow the display of text to trigger some other side effect. Both
+systems provide mark-up to allow authors to display bold and italic
+text. Both have mechanisms whereby lists of items may be displayed in
+various different types of random order.</li>
+
+<li>Both systems implement common mechanisms for triggering actions on
+specified turns such as fuses and daemons (even if they go under
+different names in Inform 7) useful to a turn-based environment.</li>
+
+<li>Both systems provide programming languages particularly tailored
+to the writing of interactive fiction. Both languages, however
+different they appear on the surface, provide most of the common
+looping and conditional constructs, user-defined functions, a range of
+data types and the like, all of which combine to provide authors with
+the kind of power and flexibility they need to make interesting things
+happen in their games.</li>
+
+<li>The addition of lists, indexed texts and regular expressions to
+Inform 7 has also provided it with many features long present in TADS
+3 that earlier versions of Inform 7 lacked.</li>
+</ol>
+
+<p>These similarities are far from accidental, of course. Not only are
+both systems trying to achieve many of the same goals (providing
+authors with the tools to write parser-based interactive fiction
+according to a fairly-well recognized set of established conventions),
+they have both been created by people who have long experience with
+creating successful IF authoring systems and an excellent
+understanding of the problems involved. Moreover, both systems have
+benefited considerably from a great deal of user
+feedback. Nonetheless, the similarities are far from trivial; it is by
+no means inevitable that all IF authoring systems should share all
+these features, while the fact that TADS 3 and Inform 7 do means that
+many games can be equally well implemented in either system.</p>
+
+<h3 class="subhead">Some Obvious Differences</h3>
+
+<p>Many of the more obvious differences between TADS 3 and Inform 7
+have been rehearsed many times before, so here I shall deal with them
+only quite briefly. I shall also try to call attention to some of the
+less-discussed consequences of these differences.</p>
+
+<h4 class="subhead">Not Just a Language: Workbench vs I7 IDE</h4>
+
+<p>Inform 7 is more than a language, library and compiler; it is a
+complete system for the authoring of Interactive Fiction. The same
+could be said of TADS 3 on Windows, for which the TADS 3 Workbench is
+available. The I7 IDE and the TADS 3 Workbench are very different in
+look and feel, but broadly comparable in overall functionality; they
+do not provide precisely the same set of features, of course, but
+there is a considerable amount of overlap. For example, both have a
+built-in editor, both allow the documentation to be viewed from within
+the IDE, both support one-click compilation and play-testing of game
+code from within the IDE, both automatically record the play-testing
+commands and allow the previous session to be replayed at the click of
+the button, and both provide facilities for publishing the final
+game. That said, there are many things they do very differently, in
+part because they are designed to work with very different kinds of
+language.</p>
+
+<p>Perhaps the most significant difference is that, while the Inform 7
+IDE is available on all major platforms, TADS 3 Workbench (though not
+TADS 3 itself) is effectively limited to Windows; a detailed
+comparison of Workbench with the I7 IDE would therefore not be all
+that relevant to non-Windows users.  So in place of a detailed
+feature-by-feature comparison I shall just offer a few brief initial
+remarks (supplemented by a few further incidental remarks in the
+course of this article).</p>
+
+<p>Clearly a huge amount of thought has gone into the design of the
+Inform 7 IDE to provide an uncluttered-looking user-friendly interface
+that nevertheless offers a wide range of features (such as indexes,
+integrated documentation, the transcript, the skein, and the world
+map) to aid the authoring of Interactive Fiction. Workbench also
+provides a huge amount of functionality, presented to the user through
+a neat but seemingly more complex interface using a considerably
+larger number of menu options, dialogue boxes and task bar buttons. At
+a first approximation, Inform 7 presents itself as an author-friendly
+tool while TADS 3 Workbench presents itself as a programmer-friendly
+tool.</p>
+
+<p>One way in which the Inform 7 presents itself is more
+author-friendly is that instructions for its use are built into the
+"Writing with Inform" manual and explained in the opening chapter,
+while the instructions for using Workbench come in a help file of
+their own (readily accessible from the help menu or the appropriate
+taskbar button) and may seem a bit more technically daunting to the
+new user; Workbench makes less effort to appear novice-friendly and to
+present itself as an essential component of the system (which it is
+not, although it is an exceedingly valuable one).  On the other hand
+the Workbench interface is much more customizable; the user is given
+far greater control over such matters as window layout and syntax
+colouring than the Inform 7 IDE caters for (as well as a host of other
+options besides). If you don't like the way Workbench looks out of the
+box the chances are you'll be able to change it to something you do
+like.</p>
+
+<p>At least on my Windows machine, Workbench can often seem quite a
+bit faster than the Inform 7 IDE. On occasion, both the Inform 7
+editor and the built-in interpreter can seem relatively sluggish
+compared with their Workbench equivalents (or, indeed, compared with
+standalone Windows interpreters for Inform games such as Frotz or
+Glulxe). Every now and again I've experienced the Inform editor almost
+grind to a halt when I've been trying to edit something (for reasons
+I've yet to work out in detail, but which seem to be related to having
+a large amount of text in the source file being edited), and of course
+commenting or uncommenting a large block of text in a large file can
+be a bit slow. I've seldom encountered this kind of problem with the
+Workbench editor.  When running a game from Workbench, responses to
+player commands generally seem almost instantaneous, while in the
+Inform IDE it feels like there's a very slight lag. This scarcely
+matters when entering individual commands but can add up to a
+substantial speed difference when replaying a previous session through
+a stored script (Workbench) or the Skein (Inform). TADS 3 also allows
+separate compilation of each source file, so that if a game is
+recompiled, only the effected source file need be recompiled, leading
+to a much shorter recompile time (see further below). Taken together,
+these two factors make Workbench feel like a significantly faster
+application when it comes to recompiling a game and replaying the
+previous session to test the effect of a small change in the source
+code.</p>
+
+<p>Speed apart, both the Inform 7 IDE and TADS Workbench have a great
+deal to recommend them, and both do a good job with providing game
+authors with the toolset they need to work with their respective
+systems. For the Windows user, there is little reason to prefer one
+system to the other on the basis of the IDEs, other than as a matter
+of personal preference and taste. For the non-Windows user the
+situation is different: if the convenience of a fully-featured IDE is
+important to you, then Inform 7 will score heavily over TADS 3 in this
+regard. If, on the other hand, you are the sort of person who prefers
+to use their favourite programming editor and is quite happy using
+command-line tools, then you may be quite happy with TADS 3.</p>
+
+<h4 class="subhead">Source Files and Compilation</h4>
+
+<p>Inform 7 expects an entire game to be written in one large source
+file (apart from any extensions employed), whereas TADS 3 (with or
+without Workbench) allows a game to be split over as many files as the
+author likes (and also supplies its standard library as a collection
+of different source files). It has been suggested that the TADS 3
+approach makes it easier for game authors to organize and navigate
+their source code, since it can be conveniently divided into
+reasonably short chunks. Personal preferences apart, however, it's not
+obvious to me that there's much functional difference between TADS 3
+and Inform 7 in this respect, since the Inform IDE provides so many
+tools to assist authors in navigating their source files. In Workbench
+(or whatever other editor you use to edit your source code) you'd
+click on a tab to switch source files. In Inform 7 you'd click on
+"Contents" and then click on a section title to jump to a particular
+section of code. From the point of view of navigation, dividing source
+into separate files in TADS 3 is not much different from dividing it
+into sections in Inform 7. From the point of view of editing code the
+one potential disadvantage of the Inform 7 approach is the occasional
+slow-down that seems to occur when trying to edit a very large source
+file (unless this is just an idiosyncrasy of my machine).</p>
+
+<p>What is far more significant about the ability to split game code
+over multiple source files in TADS 3 is that TADS 3 supports
+<i>separate compilation</i>. This means that TADS 3 compiles each
+source file separately (both author code and the files that make up
+the library), writing the compiled version out to a series of object
+files, and then links the object files to form the final game image
+file. Then, when a game is recompiled, only those source files that
+have changed since the last compilation need be compiled again. The
+object files then need to be relinked, of course, but this takes very
+little time. Thus, once a TADS 3 game has been compiled for the first
+time, subsequent recompiles are generally very fast, often much faster
+than recompiling an Inform 7 game of comparable size. Recompiling an
+Inform 7 game requires recompiling everything &ndash; game code,
+extension code, Standard Rules and all &ndash; over again from
+scratch, whereas recompiling a TADS 3 game may only require the
+recompilation of a single (and perhaps quite small) source file. An
+Inform 7 recompile is thus inevitably much slower since the Inform 7
+compiler has so much more work to do.</p>
+
+<p>There's no suggestion here that the TADS 3 compiler is otherwise
+inherently more efficient than the Inform 7 compiler. Indeed,
+compiling a minimal game from scratch seems to me to take just
+slightly longer in TADS 3 than in Inform 7 (probably because TADS 3
+has a larger default library), but compiling a game for the first time
+from scratch is something one generally only needs to do once. If your
+development method involves frequent cycles of making a few changes to
+source code, recompiling and then testing the result, TADS 3's
+separate compilation can become a significant time-saver.</p>
+
+<h4 class="subsubhead">Natural Language vs C-Style Coding</h4>
+
+<p>It is well known that Inform 7 code resembles natural language (or
+at least, a subset of English), while TADS code resembles a more
+traditional programming language like C++ (on which it is in any case
+based). Which of these is intrinsically better for writing interactive
+fiction is scarcely worth discussing, since in the end this is likely
+to come down to subjective preference, which in turn is likely to be
+greatly influenced by previous experience. While certain natural
+language constructs may appear more verbose than their TADS 3
+equivalents (e.g. <code>increase index by 1</code> as against
+<code>index++</code>) it is far from obvious to me that one language
+works out as more verbose than the other overall. That any given
+individual may find one language easier to read than the other is
+unsurprising. People not used to coding in a traditional programming
+language are likely to find Inform 7 code easier to read. People more
+used to coding in C-like languages may well find they can mentally
+parse TADS 3 code more readily; this may in part be due to the way in
+which code is typically laid out in the two languages, with well laid
+out TADS 3 code typically employing more white space, together with
+indentation and braces that make the structure of the code more
+immediately apparent.</p>
+
+<p>That said, to regard Inform's English-like syntax as a form of
+syntactic sugar designed to reassure the non-programmer is to miss the
+point, which is that this style of syntax can often provide a clear
+and economical way of expressing powerful constructs. Inform 7's
+approach really comes into its own with the power and elegance of
+statements like:</p>
+
+<div class="i7code">
+now every dangerous door is closed.
+</div>
+
+<p>To be sure, the savvy TADS 3 programmer can also achieve the same
+result in one line of code, but what a line of code it is:</p>
+
+<div class="i7code">
+forEachInstance(Door, new function(x) { if(x.isDangerous) x.makeOpen(nil); } );
+</div>
+
+<p>Not only is the meaning of the TADS 3 version less immediately
+apparent than the Inform 7 version, but the TADS 3 version is
+noticeably less compact (and thus provides a useful counter-example to
+the suggestion that Inform 7 code is more verbose in general).</p>
+
+<p>The Inform 7 approach also offers great economy in object
+definition. For example, to make a red ball object, one can simply
+define:</p>
+<div class="i7code">
+The red ball is in the garden.
+</div>
+<p>This creates an object which can be referred to as the red ball in source code, will be called 'red ball' in inventory and room listings, and can be referred to as 'red ball' by the player on the command line. To achieve the same effect in TADS 3 it would be necessary to write:</p>
+<div class="i7code">
+redBall:Thing 'red ball' 'red ball' @garden;
+</div>
+
+<p>Yet although the TADS 3 does require repetition of the words "red
+ball", it does allow the TADS 3 author more control, particularly in
+the case where she wants the internal name, display name and
+vocabulary words to differ. To be sure, they can be made to differ in
+Inform 7 easily enough too, but this then requires additional work
+which negates the advantage over TADS 3. More importantly, the Inform
+7 approach is prone to silent name clash errors, while such errors are
+readily apparent in TADS 3. For example, if in an Inform 7 game I
+create an object called 'red ball' and later create another object
+called 'big red ball', the Inform 7 compiler can become confused about
+which object 'red ball' in my code is meant to refer to, sometimes
+resulting in quite baffling bugs. This can hardly occur in TADS 3
+since the compiler will catch any name clash error and refuse to
+compile the game until the author fixes it.</p>
+
+<p>Some people feel that a disadvantage of Inform 7's English-like
+syntax is that it is more difficult to remember what the correct
+syntax is, since statements that look equally correct in English may
+not in fact be equally valid I7 syntax. There is <i>some</i> force in
+this point &mdash; at least, I've often found myself caught
+out in this way &mdash but in part it comes down to gaining
+familiarity with the language. I've also been caught out with silly
+syntax errors such as hard-to-track-down mismatched brackets in TADS
+3. Part of the problem may be that Inform 7's language is in some
+respects more complex than TADS 3's. The distinction between language
+and library is less distinct (from the author's point of view) in
+Inform 7 than TADS 3, so to some extent the Inform 7 language ends up
+being more expressive and encompasses a wider range of concepts (the
+same jobs in TADS 3 being accomplished by method or function
+calls). Again, to someone used to using a C-like language, TADS 3 is
+likely to appear more systematically consistent. But all this adds up
+to is a series of explanations why certain individuals may find one
+language easier to work with than the other; it does not make one
+language objectively better than the other, and, for the most part, I
+haven't found either language intrinsically easier to use than the
+other. In my experience, the difficult problems in writing interactive
+fiction tend to have more to do with design than with implementation,
+and the trickier implementation problems have more to do with getting
+the logic right than getting the syntax right. I also find myself
+equally capable of committing syntactical blunders in any
+language.</p>
+
+<p>The TADS 3 language does have one clear advantage, however, and
+that is that the library is written in the same language that game
+authors code their game in. That in principle makes the entire TADS 3
+library accessible and modifiable without the author needing to be
+familiar with another language. The Inform 7 library, in contrast, is
+written in Inform 6. The TADS 3 language also contains keywords such
+as <code>inherited</code>, <code>replace</code> and
+<code>modify</code> which in theory make it straightforward to replace
+or modify any part of the standard library's code in one's own. In
+practice, of course, it may not be quite that easy, since parts of
+TADS 3's standard library are so complex that only the most stout of
+heart will make the attempt. The capability is nonetheless there, and
+not all parts of the library are particularly hard to figure out if
+one wants to customise their behaviour.</p>
+
+<p>This commonality of language confers a further advantage. In TADS 3
+one can step through both game and library code one statement at a
+time in the Workbench debugger, provided one has a computer than runs
+Workbench. While Inform 7 has a range of high-level debugging tools
+which TADS 3 to some extent lacks (like RULES ON or SHOWME), these
+never quite allow you to trace the execution of your program through
+your Inform 7 code. Although in practice I've generally managed to
+track down bugs without too much difficulty (once I know they're
+there) in my Inform 7 work, the ability to step through the source
+code as I can in TADS 3 Workbench is certainly something I've
+missed. The low-level debugging marvel provided by Workbench does have
+a downside, in that it can become a bit confusing tracing execution
+through some of the more complex parts of the library. It nevertheless
+remains an invaluable debugging aid that Inform 7 struggles to match,
+and I'm not sure that a debugger that stepped through Inform 7 code
+would be even possible (though neither do I know that it wouldn't
+be).</p>
+
+<h4 class="subsubhead">Object-Orientation vs. Rules</h4>
+
+<p>It is also well known that TADS 3 takes a strictly object-oriented
+approach while Inform 7 takes a rules-based approach to programming
+IF. To my mind, this is important in determining what kind of coding
+style works best for each system but utterly irrelevant in determining
+which system is better. Despite theoretical objections I've seen to
+each approach, in practice I've found both to be equally serviceable
+in getting done the things I've wanted to get done. If you need to
+make an arbitrary choice of what object to define a method on in TADS
+3, ninety-nine times out of a hundred you just get on and do it and
+there's no practical difficulty. If you need to define your own rule
+ordering in Inform 7, you just get on and do it using the statements
+provided for the purpose, and again there's no real problem in
+practice. The main difficulty, I think, is the mental change of gear
+needed to get the best out of one approach when one is used to working
+with the other.</p>
+
+<p>This is not to say that neither has the advantage over the other in
+certain particular cases. Multiple inheritance and the encapsulation
+of code and data clearly enable programming strategies that can be
+pursued readily in TADS 3 but only with difficulty in Inform 7 &mdash;
+this is one barrier I've found to providing an Inform 7 version of the
+TADS conversation system I'm really happy with. At the least, they
+might prove a bit cumbersome in Inform 7 since it has not been
+designed with that kind of programming structure in mind. Conversely
+Inform 7 rules can allow a flexibility not always easy to achieve in
+practice in TADS 3, for example by slotting a custom rule into the
+turn sequence rules. While the same effect could no doubt be obtained
+in TADS 3 by modifying the appropriate function or method, the problem
+is to track down which one that is, and then &mdash; in the worst case
+&mdash; finding one has to copy and paste the whole of a large and
+complex method just to insert one's custom step.</p>
+
+<p>In certain cases TADS 3's object-orientation can feel as if it is
+imposing a more structured approach, particularly in the way one
+writes action processing code. In Inform 7 I find it's possible to end
+up writing a bunch of before, instead, check, carry out, after and
+report rules which do the job but which can feel perilously <i>ad
+hoc</i> (because I've ended up choosing which rulebooks to use just to
+make things happen in the right order rather than following a
+well-ordered system), whereas TADS 3 almost forces one to use the
+various action processing object methods (preCond, remap, verify,
+check, and action) in a consistently systematic manner, since each has
+a clearly defined function. To be sure, the Inform 7 action processing
+rulebooks do have functions that are reasonably well defined in
+"Writing in Inform", but in practice I find it's easier to end up
+blurring them than would be the case in TADS 3. It's also easier to
+override an action-processing method on a TADS 3 subclass than it is
+to bypass an action-processing rule in Inform 7. In TADS 3 you can
+simply override the check method (say) on the subclass or individual
+object. If you've written a 'check frobbing something' rule in Inform
+7, however, the only ways you can stop it applying to a sub-kind of
+Thing or a particular Thing object are either with a procedural rule
+(too many of which can impact on run-time efficiency) or by writing
+special case exceptions into the check frobbing rule (possible but
+potentially a bit messy).</p>
+
+<p>This, however, may simply be the perspective of someone who's more
+used to working in TADS 3 than Inform 7. I suspect that the main
+lesson here is that rule-based and object-oriented designs lend
+themselves to somewhat different coding strategies, and that one needs
+to learn to work with the grain of the system one is employing, rather
+than trying to import coding habits from the other system.</p>
+
+<h4 class="subsubhead">The Relative Complexity of the TADS 3 World
+Model</h4>
+
+<p>The other difference between TADS 3 and Inform 7 that is frequently
+remarked upon is that TADS 3's world model is far more complex. While
+this is true to an extent, it is often exaggerated and sometimes
+misunderstood.</p>
+
+<p>First, some of the supposed additional complexity of TADS 3 is more
+real than apparent. For one thing, since TADS 3 follows a consistently
+object-oriented approach, it necessarily has a much richer class
+library than Inform 7, since it is using objects and classes to do
+jobs that Inform 7 performs in other ways. There are, for example,
+quite a few classes TADS 3 uses for parsing and object resolution;
+likewise, TADS 3 actions are implemented as classes. Again, TADS 3
+often uses classes to do what Inform 7 does with propeties. So, for
+example, TADS 3 has a Container class where Inform 7 has a container
+kind. TADS 3 then has a number of subclasses of Container to provide
+what Inform 7 implements through container properties. A TADS 3
+OpenableContainer (a subclass of Container) is equivalent in
+functionality to an Inform 7 openable container (a container with the
+openable property).</p>
+
+<p>Secondly, when it comes to making a comparison of available
+features, the question arises what exactly we should compare with
+what. A statement to the effect that TADS 3 provides a much richer
+world model than Inform 7 probably has in mind that that the standard
+TADS 3 library (adv3) provides a much richer world model than Inform
+7's Standard Rules, which is true, but not exactly the whole
+story. For one thing, in practice an author writing a game of any
+complexity in either system is likely to use one or more extensions,
+which are entirely straightforward to include in either system, but
+which then add functionality beyond that of the base library. For
+another, Inform 7 comes with a large number of examples (presented
+throughout "Writing With Inform" and organized more topically in "The
+Reciple Book"), which the authors of Inform 7 regard as providing an
+extended code library by other means (the user of Inform 7 is actively
+invited to copy and paste code from the examples into his or her own
+project). In the interests of clarity we should therefore take a
+detour through extensions and examples before proceeding to a
+comparison of the features offered by TADS 3 and Inform 7.</p>
+
+<p>Both the standard TADS 3 and the standard Inform 7 installations
+come supplied with a number of extensions, and further third-party
+extensions are available for both systems. Inform 7 does a rather
+better job than TADS 3 of actively promoting the use of both standard
+and third-party extensions, both through the Inform 7 Extensions web
+page and the integration of extensions into the documentation pane of
+the IDE. Also, Inform 7 provides a more coherent set of extensions as
+standard, seemingly selected to offer commonly needed kinds of
+functionality which can be added to projects with a simple "Include"
+statement (some of these extensions, like Emily Short's Plurality and
+Basic Screen Effects are so widely useful that one half wonders why
+they weren't included in the Standard Rules). On the other hand, the
+extensions that come included with TADS 3 are a rather more ad-hoc
+collection, for which I myself am almost entirely to blame, since in
+the main Mike Roberts has simply included the extensions I asked him
+to, the main principles of selection being either (a) that the
+extension was written by Mike Roberts or (b) that the extension is
+referred to in some piece of documentation I've written (that said,
+these are extensions I hope many authors will find genuinely
+useful). In the main, though, it's probably fair to say that many of
+the extensions supplied with Inform 7 provide fairly basic
+functionality that comes already included in the TADS 3 standard
+library, while many of the extensions that come with TADS 3 offer
+further sophistication to the already highly sophisticated adv3
+library. To a lesser extent the same could be said of many of the
+third-party extensions available for both systems, although there are
+some TADS 3 extensions designed to give Inform 7 like features such as
+rules, relations and pathfinding to TADS 3, as well as a number of
+Inform 7 extensions design to give TADS-like features to Inform 7.</p>
+
+<p>The Inform examples (to which there is no direct TADS 3 equivalent)
+are a further complication. So far as I can see, they are intended to
+perform a double, if not a triple role. On the other hand they are
+clearly part of the documentation, and are clearly presented as
+such. Within the documentation they seem to wear a double aspect. In
+the context of "Writing with Inform" they seem primarily designed to
+illustrate the subject matter of the section in which they're
+located. In the context of the Recipe Book they seem more intended to
+show how to implement all sorts of clever and ingenious things like
+ropes, fires, liquids, and looking from one room into another. Yet the
+introduction to the Recipe Book suggests that, at least in this
+context, the examples are not there simply to be perused, but to be
+copied and pasted into user code in order to implement the
+functionality they illustrate. Potentially, they offer a world-model
+far richer and more complex than that provided by the Standard
+Rules.</p>
+
+<p>Some qualification of this claim would seem to be in order,
+however. The adv3 library that comes with TADS 3 is an integrated
+whole, with all parts designed to work together. One can thus fairly
+speak of <i>the</i> TADS 3 world model. It is far less clear to me
+that one could cut and paste code from all the Inform 7 examples and
+end up with a coherent world model where all the parts would work
+together in the same way, so I'm not all sure one can speak of
+<i>the</i> world model provided by the examples. Indeed, presumably
+much of the point of providing functionality this way is to allow game
+authors to mix and match just the bits they need for their games, so
+that each game can end up with a world model tailored to its own
+particular needs.</p>
+
+<p>A further consideration is the relative convenience to the user of
+having a fairly rich world model supplied in a ready-made code library
+(as in TADS 3) as against having a potentially rich (and somewhat
+variable) world model supplied largely in the form of a set of
+examples from which users are invited to copy and paste code snippets
+as needed. While Inform 7 users are free to pick and choose the bits
+they want to use, they must then do some work to locate the relevant
+example, understand it well enough to identify the code needed, and
+then perhaps to adapt it for use in their own code. My suspicion is
+that this will often feel like more work than using some feature
+already incorporated in the TADS 3 library. To be sure, the TADS 3
+author still has to identify which library class or function to use,
+and then to gain a sufficient understanding of it from the
+documentation to make effective use of it, but in general I feel this
+is probably a bit less work (although this may be due to my greater
+familiarity with TADS 3). This may partly be a documentation issue: at
+least to me, it feels that the TADS 3 Library Reference Manual makes
+it easier to find what I want quickly and gain a basic understanding
+of it than the Inform 7 Recipe Book. But this is only part of the
+reason. With TADS 3 the code is already in place in the library
+without any further work on my part, and I don't necessarily have to
+gain any great understanding of how it works so long as I know what it
+does. Often I can read the documentation to see which properties and
+methods I need to override, and treat the rest of it as a black box
+whose inner workings need not concern me. I'd be more nervous about
+treating code copied from an example in quite the same way.</p>
+
+<p>To the game author who doesn't mind the work of locating the
+relevant example, taking the trouble to understand it, and then
+adapting it for use into his or her own code, the Inform 7 examples
+undoubtedly provide a veritable treasure trove of ingenious solutions,
+many of which provide functionality not found in the adv3 library. And
+to be fair, many of the example are neither that hard to find, nor
+that hard to understand or adapt. Again, it may arguably be a good
+thing to make authors think about what features they actually need or
+want to include in their particular projects rather than simply using
+what's there because there's so much of it; in some respects a
+poorly-written TADS 3 game can feel clunkier than a poorly-written
+Inform 7 game simply because there's more depth of under-implemented
+world model, while the sparseness of an under-implemented Inform game
+may get away with masquerading as stylish economy. On the other hand
+it would, I think, be a misperception to regard the richer world model
+supplied by TADS 3 as necessarily more rigid just because so much more
+of it is provided in an integrated form. The TADS 3 language makes it
+reasonably straightforward to modify and override any library class,
+method or property in one's own code, so that if the library
+implementation doesn't do what you want, it's generally possible (and
+frequently not all that difficult) to change it.</p>
+
+<p>But the point I'm concerned to establish here is not so much
+whether the Inform 7 examples are a good or a bad way of providing
+library code, but what should be compared with what in discussing the
+alleged greater complexity of the TADS 3 world model.  For the
+purposes of an initial comparison it may be best to stick to TADS 3
+with its standard adv3 library (and no more) and Inform 7 with the
+Standard Rules (and no more). Clearly this is not a comparison of the
+full capabilities of the two systems, but it is a comparison of what
+they supply by default, or, perhaps more accurately, a comparison of
+what each system offers as its <i>minimal</i> feature set (minimal,
+that is, without an author actively trying to reduce the feature set
+by suppressing all or part of adv3 or the Standard Rules). The
+comparison is thus between what we might call "minimal TADS 3" and
+"minimal Inform 7" (or perhaps "default TADS 3" and "default Inform
+7").</p>
+
+<p>The reason for choosing to compare systems in their minimal (or
+default) form is fourfold: (a) it provides a conveniently fixed base
+point &mdash; once one allows the addition of extensions and examples
+its not clear where to stop, and the comparison risks becoming
+somewhat arbitrary; (b) it serves to illustrate the difference in
+design philosophies between the two systems; (c) it should help us
+more clearly define the perceived complexity of the TADS 3 world model
+relative to Inform 7; and (d) it seems to be this comparison that many
+people have in mind in stating that the TADS 3 world model is
+significantly more complex that than of Inform 7, so it is probably
+worth unpacking this widely-held view on the basis of what the people
+who make it most probably have in mind.</p>
+
+<p> The following lists make no claim to be exhaustive,
+but should contain the most significant distinctive features of each
+system in its minimal form:</p>
+
+<ul>
+<li>A sophisticated built-in conversation system</li>
+<li>The AgendaItem mechanism for directing NPC actions</li>
+<li>Items have weight and bulk, and containment can be limited by weight and/or bulk</li>
+<li>Items can be contained under and behind others (as well as in or on)</li>
+<li>Complex Containers simulate multiple types of containment in the same object (e.g. a bed you can put things both on and under; they do this by combining a number of different objects, each with only one type of containment, a Surface plus a Container say, and making them appear to the player to be a single object)</li>
+<li>Room Parts (walls, floor, ceiling or roof) as standard, along with different types of Room (e.g. indoor and outdoor), and the ability to associate particular objects with a particular room part (e.g. a painting hanging on the north wall)</li>
+<li>Postures (actors are either standing, sitting, or lying) along with correspondingly different types of enterable supporters (platforms, chairs and beds)</li>
+<li>Multiple lighting levels (not just light or dark)</li>
+<li>Sophisticated Sense passing (allowing not only passing sensory information between locations but controlling how it is passed)</li>
+<li>Sensory Emanations (objects that represent smells and sounds)</li>
+<li>Sensory Events (which observers can react to)</li>
+<li>Lockable objects (doors and containers) can be locked/unlocked with multiple keys or none (I7 assumes each lockable has one and only one matching key).</li>
+<li>An adaptive hints system</li>
+<li>A number of different scoring mechanisms, one of which has the ability to automate the calculation of the maximum score</li>
+<li>A number of special classes such as LightSource, Flashlight, Button, Lever and Dial that provide functionality that has to be custom-coded in Inform 7</li>
+<li>The ability to create objects dynamically</li>
+<li>The ability to switch narration between the present and past tenses, and between the first, second and third persons</li>
+<li>Floating point maths, with a range of values from 10<sup>32767</sup> to 10<sup>-32767</sup> and up to 65,000 decimal digits in a value</li>
+<li>Buffering textual output through the transcript</li>
+<li>A wide range of built-in (and easily extensible) implicit actions (automatically picking up objects before putting them somewhere, opening doors before going through them and the like)</li>
+</ul>
+
+
+<p>Some I7 features not in minimal TADS 3:</p>
+<ul>
+<li>Scenes</li>
+<li>Regions</li>
+<li>Relations</li>
+<li>Path-finding (through the map or through other relations) [but note that while path-finding isn't built into TADS 3, it is supplied in an extension that forms part of the standard TADS 3 distribution]</li>
+<li>The concept of one object being part of another (without being contained within it, as a TADS 3 Component is)</li>
+<li>Keeping track of the time of day</li>
+<li>Scheduling events to occur at a particular time of day</li>
+<li>Tables (though a variety of TADS 3 data structures can be used to offer broadly the same functionality)</li>
+<li>User-defined values (above and beyond the TADS 3 enums) and units</li>
+<li>Creation of an EPS game map from game code</li>
+</ul>
+
+<p>A pattern emerges from these lists, in that the TADS 3 features
+that minimal I7 lacks tend to have more to do with concrete details of
+the physical world model than the I7 features that minimal TADS 3
+lacks, which tend to be at a more abstract level. This largely
+reflects the difference in design philosophy between the two systems:
+in particular, Inform deliberately opts for a minimalistic default
+world-model in order to encourage game authors to build their own or
+choose a suitable extension, thus promoting variety and
+experimentation, or else to mix and match what they need from the code
+supplied in the examples in order to provide a solution more closely
+tailored to a particular game. The fact that the TADS 3 list appears
+longer than the Inform 7 does not mean that TADS 3 is better than
+Inform 7, not least because not all these features are of equal
+significance. More to the point, not all are equally relevant to any
+particular project an author may have in mind, and several of the
+missing ones in either system may be relatively easy to add via an
+extension or custom code (or, in the case of Inform 7, code taken from
+one of the supplied examples). However, other things being equal, it
+may make sense to pick the system for which the default list of
+features best meets the needs of the project in hand.</p>
+
+<p>This is not the place to explore all these features in depth, but
+it may be worth briefly expanding on a couple of them, taking one from
+each list. I'll start with the Inform 7 part-of relation, since it may
+not be immediately obvious how an Inform 7 part differs from a TADS 3
+Component. At first sight, the following Inform 7 and TADS code
+snippets might look equivalent:</p>
+
+<div class="i7code">
+[Inform 7 Version]<br />
+The brown suitcase is an openable container.<br />
+<br />
+The carrying handle is part of the brown suitcase.<br />
+<br />
+/* TADS 3 Version */<br />
+suitcase: OpenableContainer 'brown suitcase' 'brown suitcase';<br />
+<br />
++ handle: Component 'carrying handle' 'carrying handle';<br />
+</div>
+
+<p>In fact, however, whereas the Inform 7 version is fine, the TADS 3
+version is a typical beginner's blunder. Inform 7 will assume that the
+handle is attached to the outside of the suitcase, which is presumably
+what the author intended. TADS 3, however, will consider the handle to
+be <i>inside</i> the suitcase (since this is what the programmer has
+in fact coded by using the containment relationship to associate the
+handle with the case) so that the handle will be out of scope when the
+suitcase is closed. The right way of coding the TADS 3 version takes a
+little more work:</p>
+
+<div class="i7code">
+suitcase: ComplexContainer 'brown suitcase' 'brown suitcase'<br />
+&nbsp;&nbsp;&nbsp;subContainer: ComplexComponent, OpenableContainer { }
+;<br />
+<br />
++ handle: Component 'carrying handle' 'carrying handle';
+</div>
+
+<p>This is fine, but it's all too easy to forget to do it this way,
+particularly if one first creates the suitcase as an OpenableContainer
+and subsequently decides to add a handle at a later date. In this
+instance the Inform 7 way of doing things makes life quite a bit
+easier for the game author.</p>
+
+<p>From the TADS 3 feature list I'll just briefly expand on the point
+about buffering through the transcript. In a TADS 3 game virtually no
+text is output directly to the screen. Instead, any text that the
+program code tries to output is stored in a list of report objects
+that collectively form the transcript. This is then typically output
+to the screen once per turn, with game and library code first having
+the opportunity to massage the text from the various report objects
+before displaying them. A game author could use this, for example, to
+summarize a number of reports into a single report: "You take seven
+coins" rather than seven instances of "<b>Coin:</b> Taken" one after
+the other. The library principally uses it to combine implicit action
+reports, for example "(first unlocking the door with the brass key,
+then opening it)" and to distinguish failed implicit actions from
+successful ones, for example displaying "(first trying to open the
+door)" rather than the potentially misleading "(first opening the
+door)" when the door did not in fact open. This allows a slightly
+neater output than is readily possible with Inform 7 (even with my
+Implicit Actions extension), and also leads quite neatly into the next
+section.</p>
+
+<h3 class="subhead">Parsing and Action Handling Differences</h3>
+
+<p>My discussion of the more obvious differences between TADS 3 and
+Inform 7 ended with some of the more subtle ones. A lot of these more
+subtle differences have to do with how the two systems handle parsing,
+object resolution and action responses. This is best discussed by
+means of an illustration. Suppose we have a minimal game with a single
+room, one supporter, one container, and a number of objects with
+potentially confusable names. Let's see how this might be handled by
+first Inform 7 and then TADS 3.</p>
+
+<h4 class="subhead">The Inform 7 Version</h4>
+
+<div class="i7code">
+The Kitchen is a room. "A brown door leads north and a black door
+south. There's a cabinet mounted on the wall."<br />
+<br />
+The table is a supporter in the Kitchen.<br />
+<br />
+On the table are an orange, an orange mug, and a brown mug.<br />
+The orange is edible.<br />
+<br />
+The cabinet is a closed scenery openable container in the Kitchen.<br />
+<br />
+A door is usually scenery.<br />
+<br />
+The brown door is an openable door. It is north of the Kitchen.<br />
+The black door is an openable door. It is south of the Kitchen.
+</div>
+
+<p>From this we might get a transcript like this:</p>
+
+<p><b>&gt;take orange</b><br />
+Which do you mean, the orange or the orange mug?</p>
+
+<p><b>&gt;take mug</b><br />
+Which do you mean, the orange mug or the brown mug?</p>
+
+<p><b>&gt;orange</b><br />
+Taken.
+
+<p><b>&gt;take brown</b><br />
+(the brown mug)<br />
+Taken.</p>
+
+<p><b>&gt;open brown</b><br />
+(the brown mug)<br />
+That's not something you can open.</p>
+
+<p><b>&gt;drop brown</b><br />
+(the brown mug)<br />
+Dropped.</p>
+
+<p><b>&gt;open brown</b><br />
+(the brown mug)<br />
+That's not something you can open.</p>
+
+<p><b>&gt;open brown door</b><br />
+You open the brown door.</p>
+
+<p><b>&gt;close door</b><br />
+Which do you mean, the brown door or the black door?</p>
+
+<p><b>&gt;brown</b><br />
+You close the brown door.</p>
+
+<p><b>&gt;put brown in cabinet</b><br />
+(the brown mug in the cabinet)<br />
+You need to be holding the brown mug before you can put it into something else.</p>
+
+<p><b>&gt;take brown</b><br />
+(the brown mug)<br />
+Taken.</p>
+
+<p><b>&gt;put brown in cabinet</b><br />
+(the brown mug in the cabinet)<br />
+The cabinet is closed.</p>
+
+<p><b>&gt;open cabinet</b><br />
+You open the cabinet.</p>
+
+<p><b>&gt;put brown in cabinet</b><br />
+(the brown mug in the cabinet)<br />
+You put the brown mug into the cabinet.</p>
+
+<h4 class="subsubhead">The TADS 3 Version</h4>
+<p>The TADS 3 equivalent would be:</p>
+
+<div class="i7code">
+me: Actor<br />
+&nbsp;&nbsp;location = kitchen<br />
+;<br />
+<br />
+kitchen: Room 'Kitchen'<br />
+&nbsp;&nbsp;"A brown door leads north and a black door south. Theres a cabinet mounted on the wall. "<br />
+&nbsp;&nbsp;north = brownDoor<br />
+&nbsp;&nbsp;south = blackDoor<br />
+;<br />
+<br />
++ brownDoor: Door 'brown door' 'brown door';<br />
+<br />
++ blackDoor: Door 'black door' 'black door';<br />
+<br />
++ Surface, Heavy 'table' 'table';<br />
+<br />
+++ Food 'orange' 'orange';<br />
+<br />
+++ Thing 'orange mug' 'orange mug';<br />
+<br />
+++ Thing 'brown mug' 'brown mug';<br />
+<br />
+++ OpenableContainer, Fixture 'cabinet' 'cabinet';
+</div>
+
+<p>From which the equivalent transcript might look like this:</p>
+
+<p>&gt;<b>take orange</b><br />
+Taken.</p>
+
+<p>&gt;<b>take mug</b><br />
+Which mug do you mean, the brown mug, or the orange mug?</p>
+
+<p>&gt;<b>orange</b><br />
+Taken.</p>
+
+<p>&gt;<b>take brown</b><br />
+Taken.</p>
+
+<p>&gt;<b>open brown</b><br />
+Opened.</p>
+
+<p>&gt;<b>drop brown</b><br />
+Dropped.</p>
+
+<p>&gt;<b>close door</b><br />
+Closed.</p>
+
+<p>&gt;<b>put brown in cabinet</b><br />
+(first taking the brown mug, then opening the cabinet)<br />
+Done.</p>
+
+<h4 class="subsubhead">The Versions Compared</h4>
+
+<p>At a first approximation, the TADS 3 version is better at doing
+what the player wants without making a fuss about it, while the Inform
+7 version is better at telling the player what it's doing.</p>
+
+<p>When it comes to choosing between the orange (fruit) and the orange
+mug, Inform 7 leaves the player no way to refer to the fruit (of course
+this can be fixed with a "does the player mean" statement or by using
+Jon Ingold's Disambiguation Control extension; I'm just comparing how
+things work "out of the box"). For the TADS 3 version this isn't a
+problem, since the TADS 3 parser recognizes "orange" in "orange mug"
+as an adjective and automatically prefers the noun match. This is an
+advantage in most typical cases, but makes it a bit harder to define
+objects described by non-standard noun phrases such as "the path to
+the north" (which an I7 Understand statement would have no
+particular difficulty with).</p>
+
+<p>The TADS 3 parser is smart enough to work out that the mugs (but
+not the doors) are portable while the doors (but not the mugs) are
+openable, so that TAKE and DROP probably refer to the former and OPEN
+and CLOSE to the latter. This allows TADS 3 to avoid a whole lot of
+disambiguation questions asked by Inform 7. The TADS 3 parser also
+knows it's more logical to close an open door than a closed one, so it
+avoids asking which door the player means in response to CLOSE DOOR
+when only one door is open. On the other hand TADS 3's responses to
+these actions are so laconic that it may not be immediately obvious to
+the player what effect his/her command has just had.</p>
+
+<p>Finally (in this example), TADS 3 does a much better job of
+handling PUT BROWN IN CABINET by performing a sequence of implicit
+actions rather than forcing players explicitly to do the obvious
+intermediate actions of taking the brown mug and opening the
+cabinet. TADS 3 also neatly gathers all the explicit action reports
+together into a single parenthesised summary. Although much of this
+functionality can be made available in Inform 7 by using my Implicit
+Actions extension, the TADS 3 implementation is more robust and, I
+think, easier to customize for exceptional cases. Part of the reason
+for that is that TADS 3 buffers all output through what it calls the
+"transcript" before displaying it on the screen, so that, for example,
+it can gather all implicit action reports into one before displaying
+them. My Inform 7 Implicit Actions extensions tries to do the same
+thing, but (a) can't manage every case and (b) comes horribly unstuck
+if used in conjuction with a debugging command like RULES, which could
+then try to write to the temporary text buffer with potentially
+catastrophic results.</p>
+
+<p>That said, one can certainly add in many of the TADS 3 features
+mentioned above into an I7 game using extensions and various language
+features, just as one can make the TADS 3 version give better feedback
+on how it is interpreting the player's commands. Moreover, just
+because there are clear differences in the way the two systems behave,
+it doesn't mean that those differences are always important. In many
+games the behaviour of one system or the other 'out of the box' or
+with easily included extensions may be quite good enough. Nonetheless
+there are differences here: in the foregoing example, the TADS 3
+version is arguably giving players a smoother player experience than
+the I7 version; or, to put it another way, the I7 author has a bit
+more work to do to make the I7 version carry out the intelligent
+disambiguation and implicit actions that come as standard with TADS
+3.</p>
+
+<p>It's also arguably the case that the TADS 3 implementation of these
+features is easier to customize than the I7 equivalents (though this
+perception may be due to my greater familiarity with TADS 3). For
+example, while in I7 you have to specify in an action definition
+whether objects need to be touchable or visible for that action, or
+whether the action applies to something preferably held, in TADS 3
+this is defined on the class or object by the same mechanism that
+triggers implicit actions. So, for example, if I need to be holding
+the pen but not the mountain to show one or the other object to an
+actor, I can define an objHeld precondition on the pen and a
+objVisible precondition on the mountain (for the ShowTo
+action). Ultimately, it is perhaps a matter of taste whether this is
+more straightforward than carrying out the equivalent job in Inform 7
+(for which see Emily Short's <a href="http://emshort.wordpress.com/2008/10/23/the-aesthetics-of-if-languages/">final post in the 'Aesthetics of IF
+Languages' thread on her blog</a>).</p>
+
+<p>Likewise, although Jon Ingold's Disambiguation Control extension
+goes a considerable way to closing the gap, I'm inclined to think that
+TADS 3's verify() methods provide rather a neat way to do what one
+needs a combination of check rules and "does the player mean" rules in
+Inform 7, and ends up with something that's arguably a bit more
+flexible (or, to put it another way), something that allows finer
+degrees of control). The TADS 3 standard library takes full advantage
+of this to implement the kind of out-of-the-box intelligent
+disambiguation illustrated above (although it's clear that the I7 has
+at least some equivalent features built in). Once one wants to move
+beyond the standard library default behaviour, though, some authors
+may find optimal use of TADS 3 verify statements harder to master than
+that of I7's check and 'does the player mean' rules.</p>
+
+<p>One further parsing feature this example did not illustrate is that
+the TADS 3 parser is better able that Inform 7's to cope with this
+kind of disambiguation nightmare:</p>
+
+<p><b>&gt;take apple</b><br />
+Which did you mean, the apple, the apple or the apple?</p>
+
+<p><b>&gt;take box</b><br />
+Which did you mean, the small box or the box?</p>
+
+<p>In the first case the player of the Inform 7 version would have no
+way to tell the parser which apple she wanted, and so would be left
+unable to take any apple. In the second case the Inform 7 player would
+be able to take the small box, but not the box. The player of the TADS
+3 version would not be so stymied, however, since she could specify
+which she meant with a response like "the first", "the second" or
+"the last", referring to the position of the desired object in the
+disambiguation list. Analogous functionality can be added to Inform 7
+using Aaron Reed's "Numbered Disambiguation Choices" extension, but
+once again we are comparing what each system offers out of the
+box.</p>
+
+<h4 class="subsubhead">A Further Parsing Example &mdash; Locative Qualifiers</h4>
+
+<p>The TADS 3 parser is also a little smarter at recognizing locative
+qualifies such as 'on the table' or 'in the box'. This may be
+illustrated by a further pair of transcripts from the same small game
+we've already been considering. Here's the transcript from the TADS 3
+Version:</p>
+
+<p><b>Kitchen</b><br />
+A brown door leads north and a black door south. There's a cabinet mounted on the wall.<br /> 
+<br />
+On the table are an orange, an orange mug, and a brown mug.</p>
+
+<p>&gt;<b>put orange mug in cabinet</b><br />
+(first taking the orange mug, then opening the cabinet)<br />
+Done.</p>
+
+<p>&gt;<b>take mug on table</b><br />
+Taken.</p>
+
+<p>&gt;<b>take mug in cabinet</b><br />
+Taken.</p>
+
+<p>&gt;<b>put brown on table</b><br />
+You put the brown mug on the table.</p>
+
+<p>&gt;<b>x mug on table</b><br />
+You see nothing unusual about it.</p> 
+
+
+<p>Inform 7 struggles with this a bit, as the following I7 version transcript illustrates:</p>
+
+<p><b>Kitchen</b><br />
+A brown door leads north and a black door south. There's a cabinet mounted on the wall.<br />
+<br />
+You can see a table (on which are an orange, an orange mug and a brown mug) here.</p>
+
+<p>&gt;<b>take orange mug</b><br />
+Taken.</p>
+
+<p>&gt;<b>open cabinet</b><br />
+You open the cabinet.</p>
+
+<p>&gt;<b>put mug in cabinet</b><br />
+(the orange mug in the cabinet)<br />
+You put the orange mug into the cabinet.</p>
+
+<p>&gt;<b>take mug on table</b><br />
+You can't see any such thing.</p>
+
+<p>&gt;<b>take mug from table</b><br />
+Taken.</p>
+
+<p>&gt;<b>take mug in cabinet</b><br />
+You can't see any such thing.</p>
+
+<p>&gt;<b>take mug from cabinet</b><br />
+Taken.</p>
+
+<p>&gt;<b>put brown mug on table</b><br />
+You put the brown mug on the table.</p>
+
+<p>&gt;<b>x mug on table</b><br />
+You can't see any such thing.</p>
+
+<p>To be sure, it would be possible to make the Inform 7 version work
+more like the TADS 3 version here by taking advantage of Inform 7's
+capability to understand things by relations. The relevant example
+from the Inform 7 documentation is:</p>
+
+<div class="i7code">
+A box is a kind of container. Understand "box in [something related by reversed 
+containment]" as a box. 
+</div>
+
+<p>The point is not that Inform 7 is unable to match the TADS 3's
+locative-qualifier parsing, but that it does not do so out of the box,
+so that once again the author may have to do more work. On the other
+hands, Inform 7's more generalized understanding by relation may allow
+other kinds of parser trick not so easily implemented in TADS 3.
+
+<h4 class="subsubhead">Parser Flexibility</h4>
+
+<p>Although the last few examples have largely stressed TADS 3's
+advantages over Inform 7, when it comes to parsing issues the
+advantages are not all one side. In many cases Inform 7 is more
+flexible, at least to the extent of making it easier for the author to
+deal with special cases. For example, in <i>Nightfall</i> there is a
+single doorbell, and for that object alone it makes sense to treat
+RING BELL as equivalent to PUSH BELL. Inform 7 handles this with
+elegant simplicity:</p>
+
+<div class="i7code">Understand "ring [bell]" as pushing.</div>
+
+<p>If there's a way of doing this in TADS 3 I have yet to discover
+it. In particular there may be some way of defining new tokens of
+grammar in TADS 3, but that aspect of the parser is totally opaque to
+me, whereas in a case like the above, in I7 it is completely
+straightforward. In TADS 3 one would have to define a new ring action
+plus its grammar, plus its default behaviour on the Thing class, and
+then finally on the bell add a line like:</p>
+
+<div class="i7code">dobjFor(Ring) asDobjFor(Push)</div>
+
+<p>This is doable, but a lot more work.</p>
+
+<p>Likewise, Inform 7 makes it easier to define vocabulary words that
+may or may not refer to an object depending on its state. For example,
+in Inform 7 we can define:</p>
+
+<div class="i7code">
+The vase can be broken or unbroken.<br />
+Understand the unbroken property as describing the vase.
+</div>
+
+<p>There are several ways one can achieve the same effect in TADS 3,
+but all of them involve more busywork than the Inform 7
+method. Perhaps the most robust of the TADS 3 approaches would be
+along the following lines:</p>
+
+<div class="i7code">
+brokenState: ThingState<br />
+&nbsp;&nbsp;stateTokens = ['broken']<br />
+;<br />
+<br />
+unbrokenState: ThingState<br />
+&nbsp;&nbsp;stateTokens = ['unbroken']<br />
+;<br />
+<br />
+vase: Container 'broken unbroken vase' 'vase'<br />
+&nbsp;&nbsp;allStates = [brokenState, unbrokenState]<br />
+&nbsp;&nbsp;getState = (isBroken ? brokenState: unbrokenState)<br />
+&nbsp;&nbsp;isBroken = nil<br />
+;
+</div>
+
+<p>To be sure, this is not too bad, but gives the TADS 3 author rather
+more work to do than the Inform 7 author. The difference would, of
+course, become less significant in a game that contained several
+objects that could be either broken or unbroken, since the ThingState
+objects would only need to be defined once for the whole set of
+objects, and it may be that the ThingState objects could be used for
+further purposes that could not so readily be achieved with Inform 7's
+broken/unbroken property. The fact nevertheless remains that Inform 7
+seems generally more nimble-footed when it comes to this kind of
+one-off special case.</p>
+
+
+<h3 class="subhead">Conclusions</h3>
+
+<p>This comparison between TADS 3 and Inform 7 is probably more than
+long enough for most readers, even though it is far from comprehensive
+(the only way to make a fully comprehensive comparison would be to
+study the full set of documentation supplied by each system). Again,
+while I have tried to be as fair as I can, no more than any other
+writer can I claim to be entirely neutral, objective and free of
+bias. The fact is that I know TADS 3 better than I know Inform 7; I
+have written four substantial games and several smaller ones in TADS
+3, but only one substantial Inform 7 game (<i>Nightfall</i>) and one
+very small one (<i>Dreadwine</i>); in addition I have written a
+substantial amount of documentation for TADS 3 but none at all for
+Inform 7. It would be surprising if that didn't give me some pro-TADS
+3 biases, if only because in some places I have a much better
+understanding of how TADS 3 goes about things than how Inform 7 does,
+which in turn could well make the TADS 3 way of going about certain
+things appear clearer or better structured to me. Rather than pretend
+to be unbiased, the honest course is to make sure the reader is aware
+f my biases.</p>
+
+<p>I am not, in any case, trying to argue that TADS 3 is better than
+Inform 7, any more than I am trying to argue the reverse. In fact, I
+find it very difficult to sum up what I feel the difference between
+them to be in any neat formulation that isn't more misleading than
+helpful. I do not think it is the case, as some have suggested, that
+TADS 3 is better for simulation-intensive games and Inform 7 is a
+better story-telling medium (though I understand why some people may
+have that perception). This comparison underplays both Inform 7's
+simulation capabilities and the narrative potential of TADS 3's great
+NPCs and conversation tools. I might be tempted to say that it
+sometimes feel as if Inform 7 can be more flexible and TADS 3 more
+robust, but it would be misleading to suggest either that Inform 7
+lacks robustness or that TADS 3 lacks flexibility. What I perhaps have
+in mind is that Inform 7 sometimes lets authors get away with
+short-cuts that TADS 3 would tend to disallow, demanding that the
+author take a more robustly systematic approach, but no doubt anyone
+could quickly come up with half a dozen exceptions even to this
+generalization, and here my gut perception may in any case differ from
+that of other people. Even if my generalization were in any sense
+correct, it would not make one system better than the other; at most
+it might make one more suited to a particular author's
+preferences.</p>
+
+<p>Many games can be equally well implemented in either system, and
+the quality of games produced with either system will depend far more
+heavily on the skill and application of the author than on the choice
+of system. Moreover, most people who write interactive fiction do so
+largely for fun, so it makes perfect sense to choose whichever system
+you feel most comfortable with, or whichever you most enjoy working
+with. On the assumption that you're facing a genuine choice between
+Inform 7 and TADS 3, however, there are some factors that may make one
+system or the other a better choice for the particular kind of game
+you want to write.</p>
+
+<p>Other things being equal, it makes sense to ask which set of
+features distinctive to either system is most important to the type of
+game you have in mind. If, for example, you are planning a game in
+which room parts, postures, sense passing and TADS 3 style
+conversation are all going to play a significant role, then it makes
+better sense to use TADS 3 than to attempt to graft all these features
+onto Inform 7. Conversely if you're writing a game that makes little
+use of the more specialized parts of the TADS 3 world model, but which
+could benefit from using the Inform 7 scenes mechanism then Inform 7
+is probably the better choice. Sometimes the choice may appear less
+clear-cut. It should in any case be borne in mind that quite a few
+TADS features (implicit actions, limiting capacity by bulk and so
+forth) can easily be added to an Inform 7 via an extension, and many
+others are reasonably easy to code in Inform 7. Ultimately it will be
+a matter of individual judgement where the tipping point comes; that
+is, where it becomes better to use the features built into TADS 3
+rather than trying to add them to Inform 7. If nothing else, built-in
+features are likely to have the advantages of being better integrated
+into their respective libraries and more thoroughly
+tested. Conversely, if you positively do not want some of the more
+arcane features supplied by the TADS 3 world model, say, because your
+game is better suited to a leaner or different world model, then you
+are likely to be better off building your own world model in Inform 7
+then trying to suppress the unwanted or contrary features in TADS
+3.</p>
+
+<p>Size, speed and portability can also be relevant considerations. A
+fully-featured HTML TADS interpreter is currently available only for
+Windows, although text-mode TADS interpreters are available for other
+systems. Glulx interpreters are available for a wider range of
+systems, but there currently seem to be some issues over how well all
+of them support all of Inform 7's features. On the other hand, z-code
+interpreters are available for a wide range of interpreters. Other
+things being equal, this may make Inform 7 the better choice for a
+game that is going to be small enough to fit into Z-Code (although it
+may not always be easy to judge whether this will turn out to be the
+case). The fact that smaller games are less likely to call on all the
+features of the TADS 3 library would tend to reinforce this
+choice.</p>
+
+<p>As the projected game gets larger, so TADS 3 may gain some
+advantage. In a large game, the ability to split the game code over
+separate TADS 3 source files becomes increasingly valuable. The point
+is not so much ease of finding one's way around one's code &mdash;
+opinions will vary over whether that's made easier by splitting source
+code over multiple files or by the variety of code-navigation tools
+built into the Inform 7 IDE. Rather, the point is that this enables
+TADS 3 to recompile a large game very much faster than Inform 7
+can. In particular, if you make a small change to your TADS 3 game and
+recompile, the compiler only needs to recompile the one or two source
+files affected, and the recompilation may seem almost
+instantaneous. If you make similar changes to a comparable Inform 7
+game and then recompile, the Inform 7 compiler not only has to
+recompile the whole game, library and all, but has to translate your
+Inform 7 code into Inform 6 code and then compile that. This is
+inevitably much slower because the Inform 7 compiler has so much more
+to do. To be sure doing a full compile the first time in TADS 3 (or a
+full recompile of everything) may not seem much faster that compiling
+in Inform 7, but the partial recompilation that one typically employs
+in TADS 3 is <i>very</i> much faster, and the speed difference can
+feel quite significant if your working method is to recompile and test
+each time after a few small changes or additions.</p>
+
+<p> A secondary advantage of TADS 3 in larger games is that the larger
+the game, the more objects and other entities it is likely to contain,
+and the higher the probabity of creating an unintentional name-clash
+error; while the TADS 3 compiler will generally catch such errors, the
+Inform 7 compiler may not, resulting in subtle bugs that can be hard
+to track down (admittedly this may be less of an issue for the more
+experienced Inform 7 author who is wise to the problem and careful to
+avoid it).</p>
+
+<p>A comparison of execution speeds of the compiled code is harder to
+make, since apart from anything else it's hard to know whether one is
+looking at compiler efficiency or interpreter efficiency. It is
+notable, for example, that the same Glulx game will run very much
+faster on Windows Git than on Windows Glulx. The former can almost
+eliminate path-finding delays that are very noticeable on the
+latter. That said, my suspicion (which is admittedly not supported by
+systematic testing or a huge amount of empirical data) is that
+computationally-heavy games, such as ones that do a lot of string
+manipulation or regular expression handling, are likely to run a bit
+faster in TADS 3. On the other hand, I suspect that only a small
+minority of games will be sufficiently computationally heavy for this
+difference to be all that significant in practice. (As an example, my
+perception is that my GO TO/CONTINUE commands work a bit faster in
+<i>Blighted Isle</i> than in <i>Nightfall</i>, though this is partly
+because TADS 3 lets me cache the route calculated in GO TO for use in
+CONTINUE).</p>
+
+<p>I do think TADS 3 has a slight edge in terms of player interface:
+the advantages are quite subtle, but overall the parser is a bit
+better at interpreting player input in doubtful cases, the handling of
+implicit actions is better at minimizing player frustration, and the
+transcript buffering mechanism can make for slightly neater output. I
+also think that this edge can be largely blunted by an incompetent
+TADS 3 author and largely overcome by a competent Inform 7 one, but
+that the TADS 3 probably retains this slight edge over Inform 7 if one
+assumes authors of equal competence (or one and the same author using
+both systems). I may be influenced in this judgement by the fact that
+the paucity of implicit actions (e.g. being forced to explicitly pick
+up an object before putting it in or on something) is one of my pet
+gripes about the majority of Inform games (whether Inform 7 or Inform
+6). In any case I don't think the slight edge TADS 3 has in this
+respect is enough to determine any author's choice of system unless
+every other consideration ends up very finely balanced.</p>
+
+<p>This article will not persuade anyone already committed either to
+TADS 3 or to Inform 7 to switch their allegiance to the other system;
+neither do I have the remotest desire to that it should. What I do
+hope this article will achieve (if you'll pardon my expressing it this
+way) is to help both the choice between systems and discussions of
+their relative merits to become a tad better informed.</p>
+
+
+<div class="articleCopyInfo">
+  <p>This article copyright &copy; 2008-2009, Eric Eve.</p>
+</div>
+
+
+</div>
+
+</div>
+
+<div class="ie5winhack">
+<div class="bottombar">
+<p><a href="/about.html">About Us</a>
+|
+<a href="/contact.html">Contact Us</a>
+|
+<a href="/tech.html">Technical Info</a>
+|
+<a href="/history.html">History</a><br>
+
+<span class="bottomcopyinfo">Copyright &copy; 1997-2010, Stephen Granade.</span></p>
+</div>
+</div>
+
+
+</body>
+</html>

@@ -444,12 +444,13 @@ Class	TextSequence
 			if ((self provides description) && (self.description ~= 0)) {
 				for (i=0 : i<(self.#description)/WORDSIZE : i++) {
 					if (i ~= 0) new_line;
-					if (metaclass(self.&description-->i) == String)
+					if (metaclass(self.&description-->i) == String) {
 						print (string) self.&description-->i;
+						new_line;
+					}
 					else if (metaclass(self.&description-->i) == Routine)
 						indirect(self.&description-->i);
 					else break;
-					new_line;
 					if ((self hasnt general) && ~~(flag)) flag = PressAnyKey();
 				}
 			}
@@ -461,9 +462,11 @@ Class	TextSequence
 !!	LIMBO: En algún lugar
 !!------------------------------------------------------------------------------
 
-Room	OBJ_LIMBO "En algún lugar"
+Room	obj_LIMBO "En algún lugar"
+ class	TextSequence
  with	name	'limbo' 'lugar' 'sueno' 'vacio',
-		description [; return O__M(self, 1); ];
+		description [; return O__M(self, 1); ],
+		clarification 0;
 
 !!	 *	El atributo *general* se activa tras imprimir el primer mensaje en la 
 !!		rutina react_after.
@@ -515,10 +518,10 @@ Object	HelpSystem "(Help System)"
 			!! Acción ##Examine
 			if (self.examine_clue_flag && ~~self.examine_clue_printed) {
 				if (~~flag) new_line;
-				if (OBJ_HABITACION.has_light_flag()) {
-					return self.examine_clue_a(OBJ_ropa);
+				if (obj_HABITACION.has_light_flag()) {
+					return self.examine_clue_a(obj_ropa);
 				} else {
-					return self.examine_clue_a(OBJ_cortinas);
+					return self.examine_clue_a(obj_cortinas);
 				}
 			}
 			!! Acción ##Open
@@ -533,9 +536,9 @@ Object	HelpSystem "(Help System)"
 			!! Acción ##Take
 			if (self.take_clue_flag && ~~self.take_clue_printed) {
 				if (~~flag) new_line;
-				if (~~IndirectlyContains(player, OBJ_ropa))
-					return self.take_clue_a(OBJ_ropa);
-				return self.take_clue_a(OBJ_maleta);
+				if (~~IndirectlyContains(player, obj_ropa))
+					return self.take_clue_a(obj_ropa);
+				return self.take_clue_a(obj_maleta);
 			}
 			!! Acción ##Inv
 			if (self.inv_clue_flag && ~~self.inv_clue_printed) {
@@ -622,7 +625,7 @@ Object	HelpSystem "(Help System)"
 					StartTimer(self, 3);
 				}
 			Open:
-				if (noun == OBJ_cortinas) {
+				if (noun == obj_cortinas) {
 					if (~~self.open_clue_a_printed) 
 						self.open_clue_a_printed = true;
 					if (~~self.open_clue_b_printed)
@@ -660,7 +663,7 @@ Object	HelpSystem "(Help System)"
 				}
 		], 
 		react_after [;
-			if ((self hasnt general) && (location == OBJ_HABITACION)) {
+			if ((self hasnt general) && (location == obj_HABITACION)) {
 				give self general;
 				new_line;
 				return O__M(self, 1);
@@ -798,7 +801,7 @@ Object	HelpSystem "(Help System)"
  has	on scenery;
 
 Atrezzo	"paredes" 
- with	found_in OBJ_HABITACION OBJ_CAFE, 
+ with	found_in obj_HABITACION obj_CAFE, 
 		name_m	'muro',
 		name_mp	'muros',
 		name_f	'pared' 'esquina',

@@ -58,7 +58,7 @@
 !!	CAFE: Café Blanca Florida
 !!------------------------------------------------------------------------------
 
-Room	OBJ_CAFE "Café Blanca Florida"
+Room	obj_CAFE "Café Blanca Florida"
  with	name	'cafe' 'blanca' 'florida' 'cafeteria' 'bar' 'local' 'taberna' 
 				'meson' 'tasca' 'establecimiento',
 		initial [; if (self hasnt visited) {
@@ -86,31 +86,32 @@ Room	OBJ_CAFE "Café Blanca Florida"
 !! Objetos con rutinas react_before:
 
 !!	 *	FIXME - Nombres y adjetivos
-Atrezzo	OBJ_silla_cafe "silla" OBJ_CAFE
+Atrezzo	obj_silla_cafe "silla" obj_CAFE
  class	SmartEnterable
  with	name_m	'asiento' 'taburete', 
 		name_f	'banqueta' 'silla', 
 		gender	G_FEMENINO, 
 		!! FIXME - adjectives
 		clarification "sentado a una de las mesas", 
-		reach_objects OBJ_mesa_cafe OBJ_Pablo OBJ_camarera,
-		drop_on_object OBJ_mesa_cafe,
+		reach_objects obj_mesa_cafe obj_pablo obj_camarera,
+		drop_on_object obj_mesa_cafe,
 		description "Era una silla normal y corriente.", 
 		react_before [;
 			if (self.SmartEnterable::react_before()) return true;
 			TalkTo:
-				if ((parent(player) ~= self) && (noun == OBJ_Pablo)
-				&& (OBJ_conversacion_Pablo.get_counter() <= 1)) {
+				if ((parent(player) ~= self) && (noun == obj_pablo) 
+				&& (obj_pablo.get_state() < 2)) {
 					move player to self;
-					print "Atravesó el local hasta sentarse frente a él.^";
+					print "Atravesó el local hasta la mesa en que se encontraba 
+					Pablo.^";
 					new_line;
 					return false;
 				}
-				if ((parent(player) == self) && (noun == OBJ_camarera)) {
+				if ((parent(player) == self) && (noun == obj_camarera)) {
 					move player to location;
 				}
 			Examine, Look:
-				if (parent(player) == self && noun == OBJ_telefono)
+				if (parent(player) == self && noun == obj_telefono)
 					"Un teléfono público negro. Desde la silla no podía ver 
 					mucho más.";
 		],
@@ -135,7 +136,7 @@ Atrezzo	OBJ_silla_cafe "silla" OBJ_CAFE
 !! Atrezzo:
 
 !!	 *	FIXME - Nombres y adjetivos
-Atrezzo	"mesas y sillas del café" OBJ_CAFE
+Atrezzo	"mesas y sillas del café" obj_CAFE
  with	name_m	'mobiliario' 'moblaje' 'mueble' 'taburete',
 		name_mp	'asientos' 'muebles' 'taburetes',
 		name_fp	'banquetas' 'mesas' 'sillas',
@@ -151,9 +152,9 @@ Atrezzo	"mesas y sillas del café" OBJ_CAFE
 			Examine, Search, LookUnder:
 				return false;
 			Enter, Sit:
-				<<Enter OBJ_silla_cafe>>;
+				<<Enter obj_silla_cafe>>;
 			Exit, StandUp:
-				<<Exit OBJ_silla_cafe>>;
+				<<Exit obj_silla_cafe>>;
 			default:
 				"No era necesario preocuparse por eso. Después de todo, no 
 				tenía", (n) self, " nada de especial.";
@@ -162,37 +163,38 @@ Atrezzo	"mesas y sillas del café" OBJ_CAFE
 
 !!	 *	El atributo 'general' se activa después de que Mr. Panamá se haya ido.
 !!	 *	FIXME - Nombres y adjetivos
-Atrezzo	OBJ_cliente "cliente" OBJ_CAFE
+Atrezzo	obj_cliente "cliente" obj_CAFE
  with	name_m 'cliente' 'desconocido' 'extrano' 'hombre' 'parroquiano' 'senor',
 		gender G_MASCULINO,
 		adjectives 'sombrero' 'panama',
 		description [;
 			if (self hasnt general) O__M(self, 1);
 			else O__M(self, 2);
-			if (OBJ_clientes hasnt general) {
+			if (obj_clientes hasnt general) {
 				print " ";
-				<<Listen OBJ_clientes>>;
+				<<Listen obj_clientes>>;
 			}
 			new_line;
 			return true;
 		],
 		react_before [;
 			if (noun ~= self) return false;
-			Attack: <<Attack OBJ_clientes second>>;
-			Listen: <<Listen OBJ_clientes second>>;
-			Pull, Push: <<Pull OBJ_clientes second>>;
-			TalkTo: <<TalkTo OBJ_clientes second>>;
+			Attack: <<Attack obj_clientes second>>;
+			Listen: <<Listen obj_clientes second>>;
+			Pull, Push: <<Pull obj_clientes second>>;
+			TalkTo: <<TalkTo obj_clientes second>>;
 		],
  has	male; !! FIXME - animate?
 
 !!	 *	FIXME - Nombres y adjetivos
-Atrezzo	OBJ_clientes "clientes" OBJ_CAFE
+Atrezzo	obj_clientes "clientes" obj_CAFE
  with	name_f	'clientela' 'gente' 'persona',
 		name_mp	'chicos' 'clientes' 'hombres' 'mozos' 'parroquianos' 'senores',
 		name_fp	'chicas' 'mozas' 'mujeres' 'parroquinas' 'personas' 'senoras',
 		gender	G_MASCULINO + G_PLURAL,
 		!! FIXME - adjectives
 		description [;
+			SetPronoun('-les', self);
 			O__M(self, 1);
 			if (~~self.listen_flag) {
 				print " ";
@@ -221,7 +223,7 @@ Atrezzo	OBJ_clientes "clientes" OBJ_CAFE
  has	animate male pluralname;
 
 !!	 *	FIXME - Nombres y adjetivos
-Atrezzo	OBJ_humo "humo" OBJ_CAFE
+Atrezzo	obj_humo "humo" obj_CAFE
  with	name_m	'cigarrillo' 'cigarro' 'humo' 'pitillo' 'puro' 'tabaco',
 		name_f	'fumarada' 'humarada',
 		name_mp	'cigarrillos' 'cigarros' 'pitillos' 'puros',
@@ -248,7 +250,7 @@ Atrezzo	OBJ_humo "humo" OBJ_CAFE
  has	male;
 
 !!	 *	FIXME - Nombres y adjetivos
-Atrezzo	OBJ_mesa_cafe "mesa" OBJ_CAFE
+Atrezzo	obj_mesa_cafe "mesa" obj_CAFE
  with	name_m	'mobiliario' 'moblaje' 'mueble',
 		name_f	'mesa',
 		name_mp	'muebles',
@@ -276,9 +278,9 @@ Atrezzo	OBJ_mesa_cafe "mesa" OBJ_CAFE
  has	concealed female supporter transparent;
 
 !!	 *	FIXME - Nombres y adjetivos
-Atrezzo	OBJ_telefono "teléfono público" OBJ_CAFE
+Atrezzo	obj_telefono "teléfono público" obj_CAFE
  with	name_m	'auricular' 'cajetin' 'disco' 'microfono' 'microtelefono' 
-				'teclado' 'telef' 'telefono' 'telf' 'visor',
+				'teclado' 'telef' 'telefono' 'telf' 'tlf' 'visor',
 		name_f	'cabina' 'inscripcion' 'placa' 'ruleta',
 		gender	G_MASCULINO,
 		adjectives
@@ -295,14 +297,14 @@ Atrezzo	OBJ_telefono "teléfono público" OBJ_CAFE
 		],
 		after [;
 			!! Se añade el tema del teléfono a la conversación con la camarera:
-			OBJ_conversacion_camarera.add_topic(OBJ_camarera_tema_telefono);
+			obj_conversacion_camarera.add_topic(obj_camarera_tema_telefono);
 		],
  private
 		tokens 0,
  has	male;
 
 !!	 *	FIXME - Nombres y adjetivos
-Atrezzo	OBJ_ventilador "ventilador" OBJ_CAFE
+Atrezzo	obj_ventilador "ventilador" obj_CAFE
  with	name_m	'ventilador', 
 		name_f	'aspa', 
 		name_fp	'aspas', 
@@ -323,7 +325,7 @@ Atrezzo	OBJ_ventilador "ventilador" OBJ_CAFE
 !! Furniture:
 
 !!	 *	FIXME - Nombres y adjetivos
-Atrezzo	OBJ_barra "barra" OBJ_CAFE
+Atrezzo	obj_barra "barra" obj_CAFE
  with	name_m	'mobiliario' 'moblaje' 'mostrador' 'mueble',
 		name_f	'barra' 'repisa',
 		name_mp 'muebles',
@@ -335,7 +337,7 @@ Atrezzo	OBJ_barra "barra" OBJ_CAFE
 				if (obj hasnt concealed or scenery or static)
 					i++;
 			if (i == 0) return true;
-			if ((i == 1) && (OBJ_cerveza_Gabriel in self))
+			if ((i == 1) && (obj_cerveza_gabriel in self))
 				"^La cerveza de Gabriel estaba sobre la barra.";
 			print "^Sobre la barra podía ver ";
 			WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT + PARTINV_BIT);
@@ -343,18 +345,17 @@ Atrezzo	OBJ_barra "barra" OBJ_CAFE
 		],
 		description [ i obj;
 			!! Se añade el tema del teléfono a la conversación con la camarera:
-			OBJ_conversacion_camarera.add_topic(OBJ_camarera_tema_telefono);
+			obj_conversacion_camarera.add_topic(obj_camarera_tema_telefono);
 			!! Descripción de la barra:
 			O__M(self, 1);
-			new_line;
 			if (child(self) == nothing) return true;
 			objectloop(obj in self)
 				if (obj hasnt concealed or scenery or static)
 					i++;
 			if (i == 0) return true;
-			if ((i == 1) && (OBJ_cerveza_Gabriel in self))
-				"La cerveza de Gabriel estaba sobre la barra.";
-			print "Sobre la barra podía ver ";
+			if ((i == 1) && (obj_cerveza_gabriel in self))
+				"^La cerveza de Gabriel estaba sobre la barra.";
+			print "^Sobre la barra podía ver ";
 			WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT + PARTINV_BIT);
 			".";
 		], 
@@ -374,11 +375,21 @@ Atrezzo	OBJ_barra "barra" OBJ_CAFE
 		], 
  has	concealed female supporter;
 
+!!	 *	FIXME - Nombres y adjetivos
+Furniture	obj_diana "diana de dardos" obj_CAFE
+ with	name_f	'diana',
+		name_mp	'dardos',
+		gender	G_FEMENINO,
+		description [;
+			return O__M(self, 1);
+		],
+ has	concealed female;
+
 !!------------------------------------------------------------------------------
 !! Items:
 
 !!	 *	FIXME - Nombres y adjetivos
-Item	OBJ_cerveza_Gabriel "cerveza de Gabriel" OBJ_LIMBO
+Item	obj_cerveza_gabriel "cerveza de Gabriel" obj_LIMBO
  with	name_m	'botellin', 
 		name_f	'bebida' 'botella' 'cerveza', 
 		gender	G_FEMENINO,
@@ -404,7 +415,7 @@ Item	OBJ_cerveza_Gabriel "cerveza de Gabriel" OBJ_LIMBO
 
 !!	 *	Su atributo *general* se activa cuando Pablo se acaba la bebida.
 !!	 *	FIXME - Nombres y adjetivos
-Item	OBJ_vaso_vacio "bebida de Pablo" OBJ_mesa_cafe
+Item	obj_vaso_vacio "bebida de Pablo" obj_mesa_cafe
  with	name_m	'tinto' 'vaso' 'vino',
 		name_f	'bebida',
 		gender	G_MASCULINO,
@@ -425,7 +436,7 @@ Item	OBJ_vaso_vacio "bebida de Pablo" OBJ_mesa_cafe
  has	female;
 
 !!	 *	FIXME - Nombres y adjetivos
-Item	OBJ_vino_Pablo "vino de Pablo" OBJ_LIMBO
+Item	obj_vino_pablo "vino de Pablo" obj_LIMBO
  with	name_m	'tinto' 'vaso' 'vino',
 		name_f	'bebida',
 		gender	G_MASCULINO,
@@ -443,7 +454,7 @@ Item	OBJ_vino_Pablo "vino de Pablo" OBJ_LIMBO
  has	male;
 
 !!	 *	FIXME - Nombres y adjetivos
-Item	OBJ_billete_cafe "billete" OBJ_LIMBO
+Item	obj_billete_cafe "billete" obj_LIMBO
  with	name_m	'billete' 'papel' 'pase', 
 		gender	G_MASCULINO, 
 		adjectives 'antonio' 'barcaza' 'pedazo' 'san' 'trozo',
@@ -453,7 +464,7 @@ Item	OBJ_billete_cafe "billete" OBJ_LIMBO
 !! Camarera:
 
 !!	 *	FIXME - Nombres y adjetivos
-NPC		OBJ_camarera "camarera" OBJ_CAFE
+NPC		obj_camarera "camarera" obj_CAFE
  with	name_m	'camarero' 'despensero',
 		name_f	'camarera' 'chica' 'dama' 'despensera' 'joven' 'moza' 
 				'muchacha' 'mujer' 'persona' 'senora' 'senorita',
@@ -464,18 +475,18 @@ NPC		OBJ_camarera "camarera" OBJ_CAFE
 			Attack, Pull, Push:
 				"No era el momento ni el lugar para comenzar una pelea.";
 			TalkTo:
-				ConversationManager.start(OBJ_conversacion_camarera);
+				ConversationManager.start(obj_conversacion_camarera);
 				return true;
 		],
 		conversation_flag false,
  has	female concealed;
 
-Conversation OBJ_conversacion_camarera
- with	talker [; print "Hablas con ", (the) OBJ_camarera; ],
+Conversation obj_conversacion_camarera
+ with	talker [; print "Hablas con ", (the) obj_camarera; ],
 		initial_action [;
-			self.add_topic(OBJ_camarera_tema_cerveza);
+			self.add_topic(obj_camarera_tema_cerveza);
 			if (child(self)) {
-				self.add_temporal_topic(OBJ_camarera_tema_temporal);
+				self.add_temporal_topic(obj_camarera_tema_temporal);
 			}
 			print "Gabriel se acercó hasta la barra.^";
 			new_line;
@@ -492,86 +503,116 @@ Conversation OBJ_conversacion_camarera
 		inter_action
 			"La camarera observaba a Gabriel desde el otro lado de la barra.",
 		final_action
-			"No llegó a cruzar ninguna otra palabra con ella. Era con Pablo 
-			con quien necesitaba hablar.";
+			"No llegó a cruzar ninguna otra palabra con ella.";
 
-ConversationTopic OBJ_camarera_tema_temporal
+ConversationTopic	obj_camarera_tema_temporal
  with	entry [; print "no pedir ", (strong) "nada"; ],
-		!! FIXME - keys
 		keys
-			'cosa' 'nada' 'ninguna' 'pedir' 'pedirla' 'pedirte' 'pide' 'pidela' 
-			'pidete',
-		reply [;
-			give self ~visited;
+			'cosa' 'nada' 'ninguna' 'pedir' 'pedirla' 'pide' 'pidela',
+		reply
 			"No quería nada en realidad. Dio las gracias a la mujer y se alejó 
-			de nuevo de la barra.";
-		],
-		reaction [; ConversationManager.end(); ];
+			de nuevo de la barra.",
+		reaction [; ConversationManager.end(); ],
+		persistent true;
 
-ConversationTopic OBJ_camarera_tema_cerveza
- with	entry [; print "pedir una ", (strong) "bebida", " para Gabriel"; ],
-		!! FIXME - keys
+ConversationTopic	obj_camarera_tema_cerveza
+ with	entry [; print "pedir una ", (strong) "bebida"; ],
 		keys
-			'bebida' 'cerveza' 'gabriel' 'pedir' 'pedirla' 'pedirte' 'pide' 
-			'pidela' 'pidete' 'trago',
+			'bebida' 'cerveza' 'pedir' 'pedirla' 'pide' 'pidela' 'trago',
 		reply
 			"---¿Puede ponerme una cerveza, por favor?
 			^^
-			Un momento después la camarera le sirvió un botellín de cerveza.";
+			---Claro, ---un momento después le puso un botellín de cerveza 
+			sobre la barra. ---Ahí tiene.",
+		reaction [;
+			!! FIXME
+			move obj_cerveza_gabriel to obj_barra;
+			give obj_barra ~concealed;
+		];
 
-ConversationTopic OBJ_camarera_tema_bebida
- class	TextSequence
+ConversationTopic	obj_camarera_tema_bebida
  with	entry [;
-			if (OBJ_cerveza_Gabriel in OBJ_LIMBO)
-				print "pedir ", (strong) "bebidas";
-			else print "pedir una ", (strong) "bebida para Pablo";
+			if (obj_cerveza_gabriel in obj_LIMBO)
+				print "pedir un ", (strong) "par de bebidas";
+			else
+				print "pedir un ", (strong) "vino";
 		],
-		!! FIXME - keys
 		keys
-			'pedir' 'pide' 'bebidas' 'bebida' 'pablo',
-		description
-		[;
-			if (OBJ_cerveza_Gabriel in OBJ_LIMBO)
-				"---Ponme una cerveza y un tinto, por favor.";
-			"---Ponme un tinto, por favor.";
-		]
-			"---Claro."
-		[ x;
-			if (OBJ_cerveza_Gabriel in OBJ_LIMBO) x = true;
-			print "La camarera le sirvió";
-			if (x) print " las bebidas"; else print " la bebida";
-			print " y después Gabriel volvió hasta la mesa con";
-			if (x) " ellas."; else " ella.";
-		]
-			"---Ahí tienes, Pablo."
-			"---Gracias, chico.",
-		reply [; self.display(); ];
-
-ConversationTopic OBJ_camarera_tema_telefono
- class	TextSequence
- with	description
-			"---Perdona, ¿para usar el teléfono?"
-			"---Si, te vendo yo las fichas, si quieres."
-			"---Bien. ¿Puedes darme alguna, por favor?"
-			"La camarera le puso unas fichas sobre el mostrador."
-			"---Ahí tienes.",
-		entry [;
-print "preguntar por el ", (strong) "teléfono";
-		],
-		!! FIXME - keys
-		keys
-			'pedir' 'pide' 'ficha' 'fichas' 'telefono' 'telef' 'telf' 'tlf',
+			'bebida' 'bebidas' 'cerveza' 'copa' 'copas' 'pedir' 'pedirla' 
+			'pide' 'pidela' 'tinto' 'trago' 'tragos' 'vino',
 		reply [;
-			self.display();
+			if (obj_cerveza_gabriel in obj_LIMBO)
+				print "Pidió una cerveza y un tinto a la camarera, y volvió 
+				hasta la mesa con las bebidas.";
+			else
+				print "Pidió un tinto a la camarera y volvió luego hasta la 
+				mesa con la bebida.";
+			" Mientras cogía su vaso, Pablo señaló la diana que había colgada 
+			en una esquina.
+			^^
+			---No te sientes. Ven, juguemos.";
 		],
 		reaction [;
+			!! Se modifica la situación con la camarera:
+			if ((obj_camarera_tema_telefono has visited) 
+			&& (obj_camarera_tema_desconocido has visited)) {
+				give obj_conversacion_camarera general;
+				ConversationManager.end();
+			}
+			!! Se modifica la situación con Pablo:
+			give obj_pablo_tema_03 visited;
+			give obj_pablo_tema_04 visited;
+			give obj_pablo_tema_05 visited;
+			obj_conversacion_pablo.remove_topic(obj_pablo_tema_03);
+			obj_conversacion_pablo.remove_topic(obj_pablo_tema_04);
+			obj_conversacion_pablo.remove_topic(obj_pablo_tema_05);
+			obj_conversacion_pablo.add_topic(obj_pablo_tema_06);
+			obj_conversacion_pablo.add_topic(obj_pablo_tema_07);
+			obj_conversacion_pablo.set_state(3);
+			new_line;
+			ConversationManager.start(obj_conversacion_pablo, true);
+		],
+		append_topic_inventory false;
+
+ConversationTopic	obj_camarera_tema_telefono
+ with	entry [; print "preguntar por el ", (strong) "teléfono"; ],
+		keys
+			'pregunta' 'preguntala' 'preguntar' 'preguntarla' 'telef' 
+			'telefono' 'telf' 'tlf',
+		reply [;
+"---¿El teléfono funciona?
+^^
+---Si, claro. Tienes que meterle fichas para llamar. ¿Quieres comprar alguna?
+^^
+Se lo pensó un segundo, pero en realidad no sabía muy bien a quién podría telefonear. Conocía a gente, por supuesto, solía salir con compañeros del partido o del Instituto Pedagógico, sin embargo, apenas tenía amigos de verdad. Pablo era de los pocos, y ya estaba con él. Dio las gracias a la camarera, y con la misma volvió a alejarse de la barra, sin comprar nada.";
+		],
+		reaction [;
+			!! Se modifica la situación con la camarera:
+			if (obj_camarera_tema_desconocido has visited)
+				give obj_conversacion_camarera general;
+			ConversationManager.end();
+		];
+
+!! TODO - Terminar de implementar
+ConversationTopic	obj_camarera_tema_desconocido
+ with	entry [;
+			print "preguntarla por el ", (strong) "hombre", " del sombrero";
+		],
+		keys
+			'hombre' 'sombrero' 'desconocido',
+		reaction [;
+			!! Se modifica la situación con la camarera:
+			if (obj_camarera_tema_telefono has visited) {
+				give obj_conversacion_camarera general;
+				ConversationManager.end();
+			}
 		];
 
 !!------------------------------------------------------------------------------
 !! Pablo:
 
 !!	 *	FIXME - Nombres y adjetivos
-NPC		OBJ_Pablo "Pablo" OBJ_CAFE
+NPC		obj_pablo "Pablo" obj_CAFE
  with	name_m	'pablo' 'ureta' 'amigo' 'hombre', 
 		name_f	'persona', 
 		gender	G_MASCULINO, 
@@ -580,133 +621,279 @@ NPC		OBJ_Pablo "Pablo" OBJ_CAFE
 			new_line;
 			if (~~self.describe_flag) {
 				self.describe_flag = true;
-				return O__M(self, 1, (parent(player) == OBJ_silla_cafe));
+				return O__M(self, 1);
 			}
-			return O__M(self, 2, (parent(player) == OBJ_silla_cafe));
+			switch (self.state) {
+				0:	return O__M(self, 2, (parent(player) ~= obj_silla_cafe));
+				1:	return O__M(self, 3, (parent(player) ~= obj_silla_cafe));
+				2:	return O__M(self, 4);
+				3:	return O__M(self, 5);
+				default: return O__M(self, 6);
+			}
 		],
 		description [;
-			return O__M(self, 3, (parent(player) == OBJ_silla_cafe));
+			switch (self.state) {
+				0:	if (parent(player) ~= obj_silla_cafe)
+						print "Estaba sentado en una de las mesas del fondo, 
+						con la vista clavada en su vaso de tinto. ";
+					return O__M(self, 7);
+				1:	if (parent(player) ~= obj_silla_cafe)
+						print "Estaba sentado en una de las mesas del fondo, 
+						con la mirada perdida en algún lugar desconocido. ";
+					return O__M(self, 7);
+				2:	return O__M(self, 7);
+				3:	return O__M(self, 8);
+				default: return O__M(self, 9);
+			}
 		],
 		before [;
 			TalkTo:
 				!! TODO - Añadir a Mr. Panamá al café
-				ConversationManager.start(OBJ_conversacion_Pablo);
+				ConversationManager.start(obj_conversacion_pablo);
 				return true;
 		],
-		gets_angry [ i;
+		!! Funciones de acceso y modificación de los atributos privados:
+		get_drink_flag [;
+			return self.drink_flag;
+		],
+		get_state [;
+			return self.state;
+		],
+		increase_disposition [ i;
 			if (i == 0) self.disposition++;
 			else self.disposition = self.disposition + i;
-		], 
+			return true;
+		],
+		set_drink_flag [ i;
+			self.drink_flag = i;
+			return true;
+		],
+		set_state [ i;
+			if (i < 0) return false;
+			self.state = i;
+			return true;
+		],
  private
-		describe_flag false,	! indica si el objeto ha sido descrito
-		disposition 0,			! disposición de Pablo hacia Gabriel
+		!! (booleano) Indica si la propiedad *describe* del objeto se ha 
+		!! ejecutado o no:
+		describe_flag false,
+		!! (entero) Disposición de Pablo hacia Gabriel. Cuanto mayor es el 
+		!! valor, más enfadado está con él:
+		disposition 0,
+		!! (booleano) Indica si Gabriel ha intentado convencer a Pablo de que 
+		!! no siga bebiendo:
+		drink_flag false,
+		!! (entero) Estado de Pablo.
+		!!	 *	0: Bebe sentado en una de las mesas del café.
+		!!	 *	1: Sentado en una mesa, con el vaso vacío.
+		!!	 *	2: Sentado en una mesa, proponiendo una partida a Gabriel.
+		!!	 *	3: Jugando a los dardos.
+		!!	 *	4: Espera a que Gabriel coja el billete y el revólver.
+		state 0,
  has	male proper;
 
-Conversation OBJ_conversacion_Pablo
- with	talker [; print "Hablas con ", (the) OBJ_Pablo; ],
+Conversation obj_conversacion_pablo
+ with	talker [; print "Hablas con ", (the) obj_pablo; ],
 		initial_action [;
-			switch (self.counter) {
-			0:	self.counter++;
-				self.add_topic(OBJ_Pablo_tema_02);
-				self.add_topic(OBJ_Pablo_tema_01);
-				"---Ahí estás. Llegas tarde, chico.";
-			1:	"---¿Qué, chico? Tarde, pero has venido. ¿Es que ahora no vas a 
-				decir nada?";
-			2:	PrintOrRun(self, inter_action);
-				return true;
-			default:
-				PrintOrRun(self, inter_action);
-				return true;
+			switch (self.state) {
+				0:	self.set_state(1);
+					self.add_topic(obj_pablo_tema_01);
+					self.add_topic(obj_pablo_tema_02);
+					"---Ahí estás. Llegas tarde, chico.";
+				1:	"---¿Qué, chico? Tarde, pero has venido. ¿Es que ahora no 
+					vas a decir nada?";
+				2:	PrintOrRun(self, inter_action);
+					return true;
+				3:	"---Venga, juguemos.";
+				default:
+					PrintOrRun(self, inter_action);
+					return true;
 			}
 		],
 		inter_action [;
-			switch (self.counter) {
-			1:	"---¿Y bien? ¿Es que no vas a decir nada?";
-			2:	"Pablo señaló el vaso vacío que tenía delante.
-				^^
-				---Hazme el favor y pídeme otro, ¿quieres?";
-			default:
-				"Pablo miraba paciente a Gabriel.";
+			switch (self.state) {
+				1:	"---¿Y bien? ¿Es que no vas a decir nada?";
+				2:	"Pablo señaló el vaso vacío que tenía delante.
+					^^
+					---Hazme el favor y pídeme otro, ¿quieres?";
+				3:	"---¿A qué esperas? Vamos.";
+				default:
+					"Pablo miraba paciente a Gabriel.";
 			}
 		],
-		get_counter [; return self.counter; ],
-		set_counter [ i; self.counter = i; ],
-		increase_counter [ i;
-			if (i == 0) self.counter++;
-			else self.counter = self.counter + i;
+		!! Funciones de acceso y modificación de los atributos privados:
+		get_state [;
+			return self.state;
 		],
- private counter 0;
+		set_state [ i;
+			if (i < 0) return false;
+			self.state = i;
+			switch (self.state) {
+				0,1: obj_pablo.set_state(0);
+				2: obj_pablo.set_state(1);
+				3: obj_pablo.set_state(2);
+				!! FIXME - Resto de estados
+			}
+			self.state = i;
+			return true;
+		],
+ private
+		!! (entero) Estado de la conversación:
+		!!	 *	0: Estado inicial, antes de empezar la conversación.
+		!!	 *	1: Conversación iniciada, antes de que Gabriel conteste.
+		!!	 *	2: Pablo esperando a que Gabriel le traiga otra copa.
+		!!	 *	3: Pablo espera a que Gabriel acepte la partida a los dardos.
+		!!	 *	FIXME - Documentar resto de estados.
+		state 0;
 
-ConversationTopic OBJ_Pablo_tema_01
- class	TextSequence
- with	entry [;
-print "pedirle ", (strong) "perdón";
-		],
-		!! FIXME - keys
+ConversationTopic	obj_pablo_tema_01
+ with	entry [; print "pedirle ", (strong) "perdón", " por el retraso"; ],
 		keys
-'disculparse' 'disculparte' 'disculpa' 'disculpas' 'excusarse' 'excusarte' 'excusas' 'pedir' 'pedirle' 'pedirte' 'perdon' 'perdone' 'perdonarle' 'perdonarte' 'perdonase' 'pide' 'pidele',
-		description
-"---Siento llegar tarde. He tenido que dar un rodeo enorme para llegar hasta aquí. Hay soldados por toda la ciudad."
-"---Lo sé, lo sé. No te disculpes. Ya no hay sitio seguro en toda la capital. Tal como están las cosas, es no más cuestión de tiempo que nos agarren esos mamones con pistola... sin Allende, todo está perdido."
-"Terminó lo que le quedaba en el vaso y se quedó en silencio, con la boca torcida en una mueca extraña y la mirada perdida en algún lugar lejos de aquel bar. Finalmente volvió en si. Fijó los ojos, primero en el vaso vacío que sostenía en la mano, y luego en Gabriel."
-"---Hazme un favor, chico. Pídeme otro, ¿quieres?",
-		reply [; self.display(); ],
+			'disculpa' 'discupas' 'excusas' 'pedir' 'pedirle' 'perdon' 'pide' 
+			'pidele' 'retraso' 'tarde',
+		reply
+"---Siento llegar tarde. He tenido que dar un rodeo enorme para llegar hasta aquí. Hay soldados por toda la ciudad.
+^^
+---Lo sé, lo sé. No te disculpes. Ya no hay sitio seguro en toda la capital. Tal como están las cosas, es no más cuestión de tiempo que nos agarren esos mamones con pistola... sin Allende, todo está perdido.
+^^
+Terminó lo que le quedaba en el vaso y se quedó en silencio, con una mueca desagradable en la cara y la mirada perdida en algún lugar, lejos de aquel bar. Cuando volvió en si, un momento después, agitó suavemente el vaso vacío que sostenía en la mano.
+^^
+---Hazme un favor, chico. Pídeme otro, ¿quieres?",
 		reaction [;
-			!! FIXME - Cambiar descripciones de Pablo.
-			OBJ_conversacion_Pablo.set_counter(2);
-			!! Se modifica la conversación con la camarera:
-			OBJ_conversacion_camarera
-				.remove_topic(OBJ_camarera_tema_cerveza, true);
-			OBJ_conversacion_camarera.add_topic(OBJ_camarera_tema_bebida);
+			!! Se modifica la situación con Pablo:
+			obj_conversacion_pablo.set_state(2);
+			!! Se modifica la situación con la camarera:
+			give obj_camarera_tema_cerveza visited;
+			obj_conversacion_camarera.remove_topic(obj_camarera_tema_cerveza);
+			obj_conversacion_camarera.add_topic(obj_camarera_tema_bebida);
 		],
-		relatives OBJ_Pablo_tema_02,
-		subtopics OBJ_Pablo_tema_03 OBJ_Pablo_tema_04;
+		relatives obj_pablo_tema_02,
+		subtopics obj_pablo_tema_03 obj_pablo_tema_04 obj_pablo_tema_05,
+		append_topic_inventory false;
 
-ConversationTopic OBJ_Pablo_tema_02
- class	TextSequence
+ConversationTopic	obj_pablo_tema_02
  with	entry [;
-print "llamarle ", (strong) "loco", " por citarle allí en un momento como aquel";
+			print "llamarle ", (strong) "loco", " por citarle allí en un 
+			momento como aquel";
 		],
-		!! FIXME - keys
 		keys
-'llama' 'llamale' 'llamar' 'llamarle' 'loco' 'citarle' 'momento' 'aquel',
-		description
-"---¿Es que estás loco, Pablo? ¿Cómo se te ha ocurrido citarme aquí justo ahora? La ciudad está llena de soldados. He tenido que dar un rodeo enorme para no cruzarme a nadie de camino."
-"---¡Noticias frescas! Claro que hay soldados, la capital entera se ha convertido en un hormiguero, carajo. Es no más cuestión de tiempo que nos agarren esos mamones con pistola... sin Allende, todo está perdido."
-"Terminó lo que le quedaba en el vaso y se quedó en silencio, con la boca torcida en una mueca extraña y la mirada perdida en algún lugar lejos de aquel bar. Finalmente volvió en si. Fijó los ojos, primero en el vaso vacío que sostenía en la mano, y luego en Gabriel."
-"---Haz algo, chico. Pídeme otro, ¿quieres?",
-		reply [; self.display(); ],
+			'aquel' 'citarle' 'llama' 'llamale' 'llamar' 'llamarle' 'loco' 
+			'momento',
+		reply
+"---¿Es que estás loco, Pablo? ¿Cómo se te ha ocurrido citarme aquí justo ahora? Hay soldados por todas partes, maldita sea. He tenido que dar un rodeo enorme para llegar hasta aquí sin cruzarme con ninguno.
+^^
+---¡Noticias frescas! Claro que hay soldados. La ciudad entera se ha convertido en un hormiguero, carajo. Tal como están las cosas, es no más cuestión de tiempo que nos agarren esos mamones con pistola... sin Allende, todo está perdido.
+^^
+Terminó lo que le quedaba en el vaso y se quedó en silencio, con una mueca desagradable en la cara y la mirada perdida en algún lugar, lejos de aquel bar. Cuando volvió en si, un momento después, agitó suavemente el vaso vacío que sostenía en la mano.
+^^
+---Haz algo, chico. Pídeme otro, ¿quieres?",
 		reaction [;
-			!! FIXME - Cambiar descripciones de Pablo.
-			OBJ_Pablo.gets_angry();
-			OBJ_conversacion_Pablo.set_counter(2);
-			!! Se modifica la conversación con la camarera:
-			OBJ_conversacion_camarera
-				.remove_topic(OBJ_camarera_tema_cerveza, true);
-			OBJ_conversacion_camarera.add_topic(OBJ_camarera_tema_bebida);
+			!! Se modifica la situación con Pablo:
+			obj_pablo.increase_disposition();
+			obj_conversacion_pablo.set_state(2);
+			!! Se modifica la situación con la camarera:
+			give obj_camarera_tema_cerveza visited;
+			obj_conversacion_camarera.remove_topic(obj_camarera_tema_cerveza);
+			obj_conversacion_camarera.add_topic(obj_camarera_tema_bebida);
 		],
-		relatives OBJ_Pablo_tema_01,
-		subtopics OBJ_Pablo_tema_03 OBJ_Pablo_tema_04;
+		relatives obj_pablo_tema_01,
+		subtopics obj_pablo_tema_03 obj_pablo_tema_04 obj_pablo_tema_05,
+		append_topic_inventory false;
 
-ConversationTopic OBJ_Pablo_tema_03
- with	entry [; print "pedirle otro ", (strong) "vino"; ],
-		!! FIXME - keys
-		keys 'pide' 'pidele' 'pedir' 'pedirle' 'otro' 'vino' 'tinto' 'bebida',
-		reply "---Muy bien. Espera un momento.",
-		relatives OBJ_Pablo_tema_04;
+ConversationTopic	obj_pablo_tema_03
+ with	entry [; print "preguntarle por ", (strong) "Allende"; ],
+		keys
+			'allende' 'pregunta' 'preguntale' 'preguntar' 'preguntarle',
+		reply
+"---Es verdad, ¿no es cierto? Eso que dicen. Que Allende...
+^^
+---Para, para un momento. No me hagas hablar con la garganta seca, anda... hoy menos que ningún otro día.",
+		append_topic_inventory false;
 
-ConversationTopic OBJ_Pablo_tema_04
- with	entry [; print "decirle que no debía seguir ", (strong) "bebiendo"; ],
-		!! FIXME - keys
-		keys 'di' 'dile' 'decir' 'decirle' 'debia' 'beber' 'bebiendo' 'mas',
-		reply "---No creo que debas seguir bebiendo.",
-		reaction [; OBJ_Pablo.gets_angry(); ],
-		relatives OBJ_Pablo_tema_03;
+ConversationTopic	obj_pablo_tema_04
+ with	entry [; print "ir a pedirle otro ", (strong) "vino"; ],
+		keys
+			'bebida' 'copa' 'otro' 'pedir' 'pedirle' 'pide' 'pidele' 'tinto' 
+			'vino',
+		reply
+"---Vale. Ahora te lo traigo, espera un momento.",
+		reaction [;
+			move player to location;
+		],
+		relatives obj_pablo_tema_03 obj_pablo_tema_05,
+		append_topic_inventory false;
+
+ConversationTopic	obj_pablo_tema_05
+ with	entry [; print "decirle que no debería seguir ", (strong) "bebiendo"; ],
+		keys
+			'bebiendo' 'deberia' 'decir' 'decirle' 'di' 'dile' 'no' 'seguir',
+		reply
+"---Tal vez no deberías beber más, ¿no crees?
+^^
+---¿Qué? ¿Qué se supone que quieres decir con eso, chico? Deja de hacer el gilipollas y haz el favor de traerme otra condenada copa.",
+		reaction [;
+			!! Se modifica la situación con Pablo:
+			obj_pablo.increase_disposition();
+			obj_pablo.set_drink_flag(true);
+		],
+		append_topic_inventory false;
+
+!!	 *	El atributo *general* se activa al tratar el tema *obj_pablo_tema_07*.
+ConversationTopic	obj_pablo_tema_06
+ with	entry [;
+			if (self has general) print "ceder y ";
+			print (strong) "aceptar", " la partida";
+		],
+		keys
+			'acepta' 'aceptar' 'cede' 'ceder' 'dardos' 'juego' 'partida',
+		reply
+"Gabriel hubiese preferido permanecer sentado en aquella mesa, al fondo del café, donde más desapercibidos podían pasar. Pero decidió seguir a Pablo hasta la diana, esperando que nadie se fijase mucho en ellos.
+^^
+---Has oído lo que ha ocurrido, ¿verdad? ---hablaba mientras cogía los dardos y se colocaba frente a la diana.",
+		relatives obj_pablo_tema_07 obj_pablo_tema_08;
+
+ConversationTopic	obj_pablo_tema_07
+ with	entry [;
+			print "decirle que no les convenía ", (strong) "llamar la atención";
+		],
+		keys
+			'atencion' 'convenia' 'decir' 'decirle' 'di' 'dile' 'llamar',
+		reply [;
+print "---No creo que sea buena idea. Deberíamos procurar llamar la atención lo menos posible, Pablo. Nunca se sabe quién podría estar mirando.
+^^";
+		if (obj_pablo.get_drink_flag())
+"---¿Y qué llama la atención de dos amigos jugando a los dardos en un bar? ¿O es que te preocupa que esté demasiado borracho como para poder tirar unos dardos? ¿Eh? Siempre pecas de ser demasiado prudente, chico. Venga.";
+		else
+"---¿Y qué llama la atención de dos amigos jugando a los dardos en un bar? Siempre pecas de ser demasiado prudente, chico. Venga, juguemos. ¿Quién iba a fijarse en nosotros por eso?";
+		],
+		reaction [; give obj_pablo_tema_06 general; ],
+		subtopics obj_pablo_tema_08;
+
+ConversationTopic	obj_pablo_tema_08
+ with	entry [;
+			print "insistir en que no les convenía ", (strong) "llamar la 
+			atención";
+		],
+		keys
+			'atencion' 'convenia' 'insiste' 'insistele' 'insistir' 'insistirle' 
+			'llamar',
+		reply 
+"---De verdad, Pablo. Es peligroso.
+^^
+Le espetó que dejase de ser un mojigato y acto seguido se levantó bruscamente de la mesa, ante la mirada curiosa de un par de personas sentadas cerca, y se dirigió hacia la diana. Gabriel lo siguió. ¿Qué otra cosa podía hacer?
+^^
+---Has oído lo que ha ocurrido, ¿verdad? ---hablaba mientras cogía los dardos y se colocaba frente a la diana.",
+		reaction [;
+			obj_pablo.increase_disposition();
+		],
+		relatives obj_pablo_tema_06;
 
 
 
 
-ConversationTopic _Pablo_tema_03
+
+
+ConversationTopic _pablo_tema_03
  class	TextSequence
  with	description
 			"Pablo se hizo hasta la barra para devolver el vaso vacío y pedir 
@@ -739,10 +926,10 @@ ConversationTopic _Pablo_tema_03
 			self.display();
 		],
 		reaction [;
-			parent(self).remove_topic(_Pablo_tema_04);
+			parent(self).remove_topic(_pablo_tema_04);
 		];
 
-ConversationTopic _Pablo_tema_04
+ConversationTopic _pablo_tema_04
  class	TextSequence
  with	description
 			"---No creo que sea buena idea llamar la atención.",
@@ -756,11 +943,11 @@ ConversationTopic _Pablo_tema_04
 			self.display();
 		],
 		reaction [;
-			parent(self).remove_topic(_Pablo_tema_03);
+			parent(self).remove_topic(_pablo_tema_03);
 		],
-		subtopics _Pablo_tema_05 _Pablo_tema_06;
+		subtopics _pablo_tema_05 _pablo_tema_06;
 
-ConversationTopic _Pablo_tema_05
+ConversationTopic _pablo_tema_05
  class	TextSequence
  with	description
 			"---Vale. Echemos una partida.",
@@ -773,10 +960,10 @@ ConversationTopic _Pablo_tema_05
 			self.display();
 		],
 		reaction [;
-			parent(self).remove_topic(_Pablo_tema_06);
+			parent(self).remove_topic(_pablo_tema_06);
 		];
 
-ConversationTopic _Pablo_tema_06
+ConversationTopic _pablo_tema_06
  class	TextSequence
  with	description
 			"---Tal y como están las cosas, no creo que sea buena idea llamar 
@@ -790,18 +977,18 @@ ConversationTopic _Pablo_tema_06
 			self.display();
 		],
 		reaction [;
-			parent(self).remove_topic(_Pablo_tema_05);
+			parent(self).remove_topic(_pablo_tema_05);
 			!! TODO - Cambiar disposición de Pablo *
 		],
 		subtopics;
 
-!! TODO - _Pablo_tema_07 sólo tiene que estar disponible si el jugador ha 
+!! TODO - _pablo_tema_07 sólo tiene que estar disponible si el jugador ha 
 !! llegado a ver a Mr. Panamá.
 
-Conversation conversacion_Pablo_02
- with	topics _Pablo_tema_10 _Pablo_tema_09 _Pablo_tema_08 _Pablo_tema_07;
+Conversation conversacion_pablo_02
+ with	topics _pablo_tema_10 _pablo_tema_09 _pablo_tema_08 _pablo_tema_07;
 
-ConversationTopic _Pablo_tema_07
+ConversationTopic _pablo_tema_07
  class	TextSequence
  with	description
 			"---¿Conoces a ese hombre?",
@@ -816,7 +1003,7 @@ ConversationTopic _Pablo_tema_07
 		reaction [;
 		];
 
-ConversationTopic _Pablo_tema_08
+ConversationTopic _pablo_tema_08
  class	TextSequence
  with	description
 			"Le tendió los dardos de nuevo a Pablo. ---¿Llegará ayuda?"
@@ -836,7 +1023,7 @@ ConversationTopic _Pablo_tema_08
 		reaction [;
 		];
 
-ConversationTopic _Pablo_tema_09
+ConversationTopic _pablo_tema_09
  class	TextSequence
  with	description
 			"---¿Y qué hay de los demás? ¿El resto de la gente de Unidad?",
@@ -851,7 +1038,7 @@ ConversationTopic _Pablo_tema_09
 		reaction [;
 		];
 
-ConversationTopic _Pablo_tema_10
+ConversationTopic _pablo_tema_10
  class	TextSequence
  with	description
 			"---¿Nosotros no podríamos reorganizar al pueblo y...?"
@@ -873,7 +1060,7 @@ ConversationTopic _Pablo_tema_10
 		reaction [;
 		];
 
-ConversationTopic _Pablo_tema_11
+ConversationTopic _pablo_tema_11
  class	TextSequence
  with	description
 		[;
@@ -912,7 +1099,7 @@ ConversationTopic _Pablo_tema_11
 		reaction [;
 		];
 
-ConversationTopic _Pablo_tema_12
+ConversationTopic _pablo_tema_12
  class	TextSequence
  with	description
 			"---No soy un cobarde, Pablo. No pienso huir."
@@ -929,7 +1116,7 @@ ConversationTopic _Pablo_tema_12
 		reaction [;
 		];
 
-ConversationTopic _Pablo_tema_13
+ConversationTopic _pablo_tema_13
  class	TextSequence
  with	description
 			"---De ninguna manera, Pablo. Me da igual lo que digas. No me 
@@ -947,7 +1134,7 @@ ConversationTopic _Pablo_tema_13
 			!! TODO - Cambiar disposición de Pablo
 		];
 
-ConversationTopic _Pablo_tema_14
+ConversationTopic _pablo_tema_14
  class	TextSequence
  with	description
 			"---¿De verdad no conoces a ese hombre del sombrero?",
@@ -963,7 +1150,7 @@ ConversationTopic _Pablo_tema_14
 		reaction [;
 		];
 
-ConversationTopic _Pablo_tema_15
+ConversationTopic _pablo_tema_15
  class	TextSequence
  with	description
 			"---¿Vendréis conmigo, Pablo?"
@@ -988,7 +1175,7 @@ ConversationTopic _Pablo_tema_15
 		reaction [;
 		];
 
-ConversationTopic _Pablo_tema_16
+ConversationTopic _pablo_tema_16
  class	TextSequence
  with	description
 			"---¿Qué? Pero... ¿pero no acabáis de decir? ¿Estáis loco o es que 
@@ -1012,7 +1199,7 @@ ConversationTopic _Pablo_tema_16
 		reaction [;
 		];
 
-ConversationTopic _Pablo_tema_17
+ConversationTopic _pablo_tema_17
  class	TextSequence
  with	description
 			"---¿Por qué me abandonáis?",
@@ -1028,7 +1215,7 @@ ConversationTopic _Pablo_tema_17
 		reaction [;
 		];
 
-ConversationTopic _Pablo_tema_18
+ConversationTopic _pablo_tema_18
  class	TextSequence
  with	description
 			"---Eres un cobarde, Pablo.",
@@ -1044,7 +1231,7 @@ ConversationTopic _Pablo_tema_18
 			!! TODO - Cambiar disposición de Pablo **
 		];
 
-ConversationTopic _Pablo_tema_19
+ConversationTopic _pablo_tema_19
  class	TextSequence
  with	description
 			"Gabriel guardó silencio.",
@@ -1059,7 +1246,7 @@ ConversationTopic _Pablo_tema_19
 		reaction [;
 		];
 
-ConversationTopic _Pablo_tema_20
+ConversationTopic _pablo_tema_20
  class	TextSequence
  with	description
 			"Aún queda la esperanza de volver, Pablo..."
@@ -1118,7 +1305,7 @@ ConversationTopic _Pablo_tema_20
 		reaction [;
 		];
 
-ConversationTopic _Pablo_tema_21
+ConversationTopic _pablo_tema_21
  class	TextSequence
  with	description
 			"---De verdad crees que ésta es la única opción, ¿no es cierto?",
@@ -1134,7 +1321,7 @@ ConversationTopic _Pablo_tema_21
 		reaction [;
 		];
 
-ConversationTopic _Pablo_tema_22
+ConversationTopic _pablo_tema_22
  class	TextSequence
  with	description
 			"---Si tú no piensas huir, yo tampoco. No voy a dejarte solo, 
@@ -1156,7 +1343,7 @@ ConversationTopic _Pablo_tema_22
 !! Mr. Panamá:
 
 !!	 *	FIXME - Nombres y adjetivos
-NPC		OBJ_MrPanama "hombre del sombrero" OBJ_LIMBO
+NPC		obj_MrPanama "hombre del sombrero" obj_LIMBO
  with	name_m 'cliente' 'desconocido' 'extrano' 'hombre' 'parroquiano' 'senor',
 		gender G_MASCULINO,
 		adjectives 'sombrero' 'panama',
@@ -1177,13 +1364,13 @@ NPC		OBJ_MrPanama "hombre del sombrero" OBJ_LIMBO
 			Examine, Search:
 				!! Si el jugador intenta mirar al teléfono mientras Mr. Panamá 
 				!! está hablando por él, se imprime la descripción del hombre.
-				if (noun == OBJ_telefono && self.telephone_flag)
+				if (noun == obj_telefono && self.telephone_flag)
 					<<Examine self>>;
 				!! Si el jugador intenta examinar a Mr. Panamá o a la clientela 
 				!! cuando está activo alguno de los indicadores de movimiento, 
 				!! se imprime el texto del movimiento en lugar de la 
 				!! descripción del hombre o de los clientes.
-				if (noun == self or OBJ_clientes) {
+				if (noun == self or obj_clientes) {
 					if (self.movement_1_flag) {
 						self.movement_1_flag = false;
 						return O__M(self, 3);

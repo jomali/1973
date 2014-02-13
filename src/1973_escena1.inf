@@ -139,7 +139,7 @@
 !!		Damusix.Tocar(TRACK_1_DENOUEMENT, 1);
 !!------------------------------------------------------------------------------
 
-Room	OBJ_HABITACION
+Room	obj_HABITACION
  with	name	'alcoba' 'alojamiento' 'apartamento' 'aposento' 'casa' 'cuarto' 
 				'dormitorio' 'estancia' 'habitacion' 'morada' 'vivienda', 
 		short_name " ", 
@@ -244,19 +244,19 @@ Room	OBJ_HABITACION
 			!! así se consigue más control sobre el orden en que se verifican.
 			if (~~self.light_flag)
 				"Con la habitación a oscuras no acierta a alcanzar ", 
-				(the) OBJ_puerta_habitacion, ".";
-			if (OBJ_ropa notin player || OBJ_ropa hasnt worn)
+				(the) obj_puerta_habitacion, ".";
+			if (obj_ropa notin player || obj_ropa hasnt worn)
 				"Será mejor que se vista antes. No tiene ninguna intención de 
 				pasearse por ahí desnudo.";
-			if (~~IndirectlyContains(player, OBJ_maleta)) {
-				PronounNotice(OBJ_maleta);
+			if (~~IndirectlyContains(player, obj_maleta)) {
+				PronounNotice(obj_maleta);
 				"No puede dejarse la maleta aquí.";
 			}
-			if (OBJ_puerta_habitacion hasnt open) {
-				<Open OBJ_puerta_habitacion>;
+			if (obj_puerta_habitacion hasnt open) {
+				<Open obj_puerta_habitacion>;
 				new_line;
 			}
-			if (~~IndirectlyContains(player, OBJ_billete)) {
+			if (~~IndirectlyContains(player, obj_billete)) {
 				if (~~self.exit_flag) {
 					self.exit_flag = true;
 					return O__M(self, 6);
@@ -264,7 +264,7 @@ Room	OBJ_HABITACION
 				return O__M(self, 7);
 			}
 			!! Todas las restricciones han sido satisfechas:
-			return OBJ_puerta_habitacion;
+			return obj_puerta_habitacion;
 		], 
 		out_to [;
 			return self.e_to();
@@ -278,37 +278,37 @@ Room	OBJ_HABITACION
 		!! Establece si la habitación está o no iluminada.
 		set_light_flag [ status;
 			if (status == true) {
-				give OBJ_oscuridad general;
-				move OBJ_oscuridad to OBJ_LIMBO;
-				give OBJ_cortinas ~remarkable;
-				give OBJ_cama ~concealed;
-				give OBJ_escritorio remarkable;
-				give OBJ_puerta_habitacion remarkable;
-				give OBJ_ropa remarkable;
-				give OBJ_revolver remarkable;
-				give OBJ_maleta remarkable;
-				give OBJ_libro_bolsillo remarkable;
-				give OBJ_billete remarkable;
+				give obj_oscuridad general;
+				move obj_oscuridad to obj_LIMBO;
+				give obj_cortinas ~remarkable;
+				give obj_cama ~concealed;
+				give obj_escritorio remarkable;
+				give obj_puerta_habitacion remarkable;
+				give obj_ropa remarkable;
+				give obj_revolver remarkable;
+				give obj_maleta remarkable;
+				give obj_libro_bolsillo remarkable;
+				give obj_billete remarkable;
 				self.light_flag = true;
 				self.inhibit_object_list = false;
 			}
 			if (status == false) {
-				give OBJ_cortinas remarkable;
-				give OBJ_cama concealed;
-				give OBJ_escritorio ~remarkable;
-				give OBJ_puerta_habitacion ~remarkable;
-				if (~~IndirectlyContains(player, OBJ_ropa))
-					give OBJ_ropa ~remarkable;
-				if (~~IndirectlyContains(player, OBJ_revolver))
-					give OBJ_revolver ~remarkable;
-				if (~~IndirectlyContains(player, OBJ_maleta))
-					give OBJ_maleta ~remarkable;
-				if (~~IndirectlyContains(player, OBJ_libro_bolsillo))
-					give OBJ_libro_bolsillo remarkable;
-				if (~~IndirectlyContains(player, OBJ_billete))
-					give OBJ_billete remarkable;
-				move OBJ_oscuridad to OBJ_HABITACION;
-				give OBJ_oscuridad ~general;
+				give obj_cortinas remarkable;
+				give obj_cama concealed;
+				give obj_escritorio ~remarkable;
+				give obj_puerta_habitacion ~remarkable;
+				if (~~IndirectlyContains(player, obj_ropa))
+					give obj_ropa ~remarkable;
+				if (~~IndirectlyContains(player, obj_revolver))
+					give obj_revolver ~remarkable;
+				if (~~IndirectlyContains(player, obj_maleta))
+					give obj_maleta ~remarkable;
+				if (~~IndirectlyContains(player, obj_libro_bolsillo))
+					give obj_libro_bolsillo remarkable;
+				if (~~IndirectlyContains(player, obj_billete))
+					give obj_billete remarkable;
+				move obj_oscuridad to obj_HABITACION;
+				give obj_oscuridad ~general;
 				self.light_flag = false;
 				self.inhibit_object_list = true;
 			}
@@ -324,7 +324,7 @@ Room	OBJ_HABITACION
 !!------------------------------------------------------------------------------
 !! Objetos con rutinas react_before:
 
-Furniture	OBJ_cama "cama" OBJ_HABITACION
+Furniture	obj_cama "cama" obj_HABITACION
  class	SmartEnterable
  with	name_m	'camastro' 'catre' 'colchon' 'jergon' 'lecho' 'mobiliario' 
 				'moblaje' 'mueble' 'somier', 
@@ -345,7 +345,7 @@ Furniture	OBJ_cama "cama" OBJ_HABITACION
 					i++;
 			if (i == 0)
 				return true;
-			if (i == 1 && OBJ_ropa in self)
+			if (i == 1 && obj_ropa in self)
 				"^Tiene la ropa hecha un rebujo sobre la cama.";
 			print "^Sobre la cama puede ver ";
 			WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT + PARTINV_BIT);
@@ -425,7 +425,7 @@ Furniture	OBJ_cama "cama" OBJ_HABITACION
 				if (i == 0) give self concealed;
 				else give self ~concealed;
 		], 
-		drop_on_object OBJ_HABITACION, ! Ver SmartEnterable
+		drop_on_object obj_HABITACION, ! Ver SmartEnterable
  private
 		jumpOver_flag false,	! indica si Gabriel ha saltado sobre la cama
 		standUp_flag false, 	! indica si Gabriel se ha levantado de la cama
@@ -433,7 +433,7 @@ Furniture	OBJ_cama "cama" OBJ_HABITACION
 
 !!	 *	El atributo *general* se activa para evitar las comprobaciones que hay 
 !!		en la rutina react_before del objeto.
-Atrezzo	OBJ_oscuridad "oscuridad" OBJ_HABITACION
+Atrezzo	obj_oscuridad "oscuridad" obj_HABITACION
 with	name_f	'lobreguez' 'negrura' 'oscuridad' 'penumbra' 'tenebrosisdad', 
 		name_fp	'penumbra' 'sombras' 'tinieblas', 
 		gender	G_FEMENINO, 
@@ -453,15 +453,15 @@ with	name_f	'lobreguez' 'negrura' 'oscuridad' 'penumbra' 'tenebrosisdad',
 					return false;
 				if (IndirectlyContains(player, noun))
 					return false;
-				if (noun == OBJ_cama)
+				if (noun == obj_cama)
 					return false;
-				if (noun == OBJ_cortinas)
+				if (noun == obj_cortinas)
 					return false;
 				"No acierta a dar con ", (the) noun, " en la oscuridad.";
 			Close:
 				if (noun hasnt openable)
 					return false;
-				if (noun == OBJ_cortinas)
+				if (noun == obj_cortinas)
 					return false;
 				if (noun hasnt open)
 					"En la oscuridad de la habitación no es capaz de dar con ", 
@@ -471,9 +471,9 @@ with	name_f	'lobreguez' 'negrura' 'oscuridad' 'penumbra' 'tenebrosisdad',
 			Consult, Examine, Look, LookUnder, Read, Search:
 				if (noun == nothing or player or self)
 					return false;
-				if (noun == OBJ_HABITACION)
+				if (noun == obj_HABITACION)
 					return false;
-				if (noun == OBJ_cortinas)
+				if (noun == obj_cortinas)
 					return false;
 				return O__M(self, 2);
 			Dance:
@@ -499,7 +499,7 @@ with	name_f	'lobreguez' 'negrura' 'oscuridad' 'penumbra' 'tenebrosisdad',
 			Open:
 				if (noun hasnt openable)
 					return false;
-				if (noun == OBJ_cortinas)
+				if (noun == obj_cortinas)
 					return false;
 				if (noun has open)
 					"En la oscuridad de la habitación no es capaz de dar con ", 
@@ -518,7 +518,7 @@ with	name_f	'lobreguez' 'negrura' 'oscuridad' 'penumbra' 'tenebrosisdad',
 				"Decide que no es buena idea andar columpiándose por ningún 
 				lado con la habitación a oscuras.";
 			Wear:
-				if (noun == OBJ_ropa)
+				if (noun == obj_ropa)
 					"Intenta ponerse la ropa, pero no acierta a dar con ella 
 					en la oscuridad.";
 		], 
@@ -534,7 +534,7 @@ with	name_f	'lobreguez' 'negrura' 'oscuridad' 'penumbra' 'tenebrosisdad',
 !! Atrezzo:
 
 !!	 *	El atributo *general* se activa al abrir el objeto por primera vez.
-Atrezzo	OBJ_cortinas "cortinas" OBJ_HABITACION
+Atrezzo	obj_cortinas "cortinas" obj_HABITACION
  with	name_m	'cortinaje' 'ventanal' 'visillo',
 		name_mp	'cortinajes' 'visillos', 
 		name_f	'colgadura' 'cortina' 'persiana' 'ventana', 
@@ -566,7 +566,7 @@ Atrezzo	OBJ_cortinas "cortinas" OBJ_HABITACION
 		], 
 		after [ flag;
 			Close:
-				OBJ_HABITACION.set_light_flag(false);
+				obj_HABITACION.set_light_flag(false);
 				print (string) random(
 					"Corre las cortinas de nuevo.^", 
 					"Cierra las cortinas.^", 
@@ -575,7 +575,7 @@ Atrezzo	OBJ_cortinas "cortinas" OBJ_HABITACION
 				new_line;
 				<<Look>>;
 			Open:
-				OBJ_HABITACION.set_light_flag(true);
+				obj_HABITACION.set_light_flag(true);
 				if (self has general) {
 					print (string) random(
 						"Descorre las cortinas de nuevo.^", 
@@ -608,7 +608,7 @@ Atrezzo	OBJ_cortinas "cortinas" OBJ_HABITACION
 		time_out [; give self ~on; ], 
  has	female openable pluralname remarkable;
 
-Atrezzo	OBJ_puerta_habitacion "puerta" OBJ_HABITACION
+Atrezzo	obj_puerta_habitacion "puerta" obj_HABITACION
  with	name_m	'paso' 'porton', 
 		name_f	'entrada' 'puerta' 'salida', 
 		gender	G_FEMENINO, 
@@ -655,14 +655,14 @@ Atrezzo	OBJ_puerta_habitacion "puerta" OBJ_HABITACION
 			#Endif; ! DEMO_RELEASE;
 			!!------------------------------------------------------------------
 			new_line;
-			return OBJ_CAFE;
+			return obj_CAFE;
 		], 
 		time_left, 
 		time_out [; give self ~on; ], 
  has	door female ~open openable transparent;
 
 !!	 *	FIXME - Nombres y adjetivos
-Atrezzo	OBJ_calendario "calendario de pared" OBJ_puerta_habitacion
+Atrezzo	obj_calendario "calendario de pared" obj_puerta_habitacion
  with	name_m	'almanaque' 'anuario' 'calendario' 'cuadro' 'dibujo' 'bodegon', 
 		name_f	'pintura', 
 		name_mp	'claveles', 
@@ -680,8 +680,8 @@ Atrezzo	OBJ_calendario "calendario de pared" OBJ_puerta_habitacion
 		], 
 		react_before [;
 			FireAt:
-				if (noun == nothing or OBJ_puerta_habitacion)
-					<<FireAt self OBJ_revolver>>;
+				if (noun == nothing or obj_puerta_habitacion)
+					<<FireAt self obj_revolver>>;
 		],
 		before [;
 			Close, Open:
@@ -703,7 +703,7 @@ Atrezzo	OBJ_calendario "calendario de pared" OBJ_puerta_habitacion
 				controlar el impulso. Con decisión, levanta el revólver y 
 				apunta a la puerta...";
 				result = AimAndFire();
-				OBJ_revolver.ammo--;
+				obj_revolver.ammo--;
 				print " y dispara.^";
 				new_line;
 				if (result == -2) {
@@ -724,7 +724,7 @@ Atrezzo	OBJ_calendario "calendario de pared" OBJ_puerta_habitacion
 		fire_count 0, 
  has	male;
 
-Atrezzo	OBJ_desorden "desorden absoluto" OBJ_HABITACION
+Atrezzo	obj_desorden "desorden absoluto" obj_HABITACION
  with	name_m	'alboroto' 'bartulo' 'barullo' 'caos' 'cisco' 'desastre' 
 				'desbarajuste' 'desconcierto' 'desorden' 'follon' 'jaleo' 
 				'trasto' 'tumulto' 'vidrio',
@@ -757,7 +757,7 @@ Atrezzo	OBJ_desorden "desorden absoluto" OBJ_HABITACION
 		description_flag false,	! indica si el objeto ha sido descrito
  has	male;
 
-Atrezzo	OBJ_papeles_habitacion "montón de papeles" OBJ_HABITACION
+Atrezzo	obj_papeles_habitacion "montón de papeles" obj_HABITACION
  with	name_mp	'papeles', 
 		name_fp	'hojas',
 		gender	G_MASCULINO, 
@@ -779,7 +779,7 @@ Atrezzo	OBJ_papeles_habitacion "montón de papeles" OBJ_HABITACION
  has	male;
 
 !!	 *	FIXME - Nombres y adjetivos
-Atrezzo	OBJ_libros "libros tirados" OBJ_HABITACION
+Atrezzo	obj_libros "libros tirados" obj_HABITACION
  with	name_m	'cuaderno' 'ejemplar' 'libro' 'tomo' 'volumen',
 		name_f	'libreta', 
 		name_mp	'cuadernos' 'ejemplares' 'libros' 'tomos' 'volumenes',
@@ -870,7 +870,7 @@ Atrezzo	OBJ_libros "libros tirados" OBJ_HABITACION
  has	male pluralname;
 
 !!	 *	FIXME - Nombres y adjetivos
-Atrezzo	"estanterías" OBJ_HABITACION
+Atrezzo	"estanterías" obj_HABITACION
  with	name_m	'anaquel' 'estante' 'pluteo',
 		name_f	'balda' 'estanteria' 'repisa',
 		name_mp	'anaqueles' 'estantes' 'pluteos',
@@ -879,7 +879,7 @@ Atrezzo	"estanterías" OBJ_HABITACION
 		adjectives 'vacia' 'vacias' 'vacio' 'vacio',
 		before [;
 			Examine, Search:
-				<<Examine OBJ_libros>>;
+				<<Examine obj_libros>>;
 			default:
 				print "Ya no tiene sentido que se preocupe por ";
 				SpanishNominativePronoun(self);
@@ -888,7 +888,7 @@ Atrezzo	"estanterías" OBJ_HABITACION
  has	female pluralname;
 
 !!	 *	FIXME - Nombres y adjetivos
-Atrezzo	"almohada" OBJ_cama
+Atrezzo	"almohada" obj_cama
  with	name_m	'almohadon' 'cojin',
 		name_f	'almohada',
 		gender	G_FEMENINO,
@@ -908,22 +908,22 @@ Atrezzo	"almohada" OBJ_cama
  has	female;
 
 !!	 *	FIXME - Nombres y adjetivos
-Atrezzo	"sábanas" OBJ_cama
+Atrezzo	"sábanas" obj_cama
  with	name_f	'manta' 'sabana',
 		name_fp	'mantas' 'sabanas',
 		gender	G_FEMENINO + G_PLURAL,
 		adjectives 'arrugada' 'arrugadas' 'deshecha' 'deshechas',
 		before [;
 			Enter, Sleep:
-				<<Sleep OBJ_cama>>;
+				<<Sleep obj_cama>>;
 			Examine:
 				"Descansa",(n) self," sobre la cama ech",(o) self," un rebujo.";
 			Iron:
-				<<Iron OBJ_cama>>;
+				<<Iron obj_cama>>;
 			Search, LookUnder:
 				"No hay nada escondido entre ", (the) self, ".";
 			Smell:
-				<<Smell OBJ_cama>>;
+				<<Smell obj_cama>>;
 			Take, Pull, Push, PushDir:
 				"No l", (o) self, " necesita para nada.";
 			default:
@@ -935,7 +935,7 @@ Atrezzo	"sábanas" OBJ_cama
 !! Furniture:
 
 !!	 *	FIXME - Nombres y adjetivos
-Furniture	OBJ_escritorio "escritorio" OBJ_HABITACION
+Furniture	obj_escritorio "escritorio" obj_HABITACION
  with	name_m	'escritorio' 'mobiliario' 'moblaje' 'mueble' 'pupitre', 
 		name_f	'mesa', 
 		name_mp	'muebles', 
@@ -949,20 +949,20 @@ Furniture	OBJ_escritorio "escritorio" OBJ_HABITACION
 				WriteListFrom(child(self), CONCEAL_BIT + ENGLISH_BIT);
 			}
 			print ". Tiene un único cajón, que en estos momentos está";
-			if (OBJ_cajon hasnt open) " cerrado.";
+			if (obj_cajon hasnt open) " cerrado.";
 			print " abierto.";
-			if (~~child(OBJ_cajon)) " Dentro no hay nada.";
+			if (~~child(obj_cajon)) " Dentro no hay nada.";
 			print " Dentro alcanza a ver ";
-			WriteListFrom(child(OBJ_cajon), CONCEAL_BIT + ENGLISH_BIT);
+			WriteListFrom(child(obj_cajon), CONCEAL_BIT + ENGLISH_BIT);
 			".";
 		], 
 		before [;
 			Climb, Enter, Sit:
 				"En realidad no tiene motivos para subirse ahí.";
 			Close:
-				<<Close OBJ_cajon>>;
+				<<Close obj_cajon>>;
 			Open:
-				<<Open OBJ_cajon>>;
+				<<Open obj_cajon>>;
 			Pull, Push, PushDir, Take, Turn:
 				print_ret (The) self, " pesa", (n) self, " demasiado para andar 
 				moviéndol", (o) self, ".";
@@ -970,7 +970,7 @@ Furniture	OBJ_escritorio "escritorio" OBJ_HABITACION
  has	male concealed supporter transparent;
 
 !!	 *	FIXME - Nombres y adjetivos
-Furniture	OBJ_cajon "cajón" OBJ_HABITACION
+Furniture	obj_cajon "cajón" obj_HABITACION
  class	Receptacle, 
  with	name_m	'cajon' 'cajoncillo' 'compartimento', 
 		name_f	'gaveta',
@@ -988,13 +988,13 @@ Furniture	OBJ_cajon "cajón" OBJ_HABITACION
 		after [;
 			Close:
 				if (self.papers_inside) {
-					move OBJ_papeles_cajon to OBJ_LIMBO;
-					move OBJ_papeles_habitacion to OBJ_HABITACION;
+					move obj_papeles_cajon to obj_LIMBO;
+					move obj_papeles_habitacion to obj_HABITACION;
 				}
 			Open:
 				if (self.papers_inside) {
-					move OBJ_papeles_cajon to self;
-					move OBJ_papeles_habitacion to OBJ_LIMBO;
+					move obj_papeles_cajon to self;
+					move obj_papeles_habitacion to obj_LIMBO;
 				}
 		],
 		capacity_size 3,
@@ -1002,7 +1002,7 @@ Furniture	OBJ_cajon "cajón" OBJ_HABITACION
 		papers_inside true, ! indica si hay papeles dentro del cajón
  has	male concealed container openable ~open;
 
-Item	OBJ_papeles_cajon "montón desordenado de papeles" OBJ_LIMBO
+Item	obj_papeles_cajon "montón desordenado de papeles" obj_LIMBO
  with	name_mp	'papeles', 
 		name_fp	'hojas',
 		gender	G_MASCULINO, 
@@ -1015,7 +1015,7 @@ Item	OBJ_papeles_cajon "montón desordenado de papeles" OBJ_LIMBO
 		], 
 		react_before [;
 			Search:
-				if (noun == OBJ_cajon)
+				if (noun == obj_cajon)
 					<<Search self>>;
 		],
 		before [;
@@ -1024,9 +1024,9 @@ Item	OBJ_papeles_cajon "montón desordenado de papeles" OBJ_LIMBO
 			Search:
 				<<Take self>>;
 			Take, Transfer:
-				move self to OBJ_LIMBO;
-				move OBJ_papeles_habitacion to OBJ_HABITACION;
-				move OBJ_libro_bolsillo to OBJ_cajon;
+				move self to obj_LIMBO;
+				move obj_papeles_habitacion to obj_HABITACION;
+				move obj_libro_bolsillo to obj_cajon;
 				return O__M(self, 2);
 			default:
 				"Ya no tiene sentido seguir preocupándose por eso. Tiene que 
@@ -1040,7 +1040,7 @@ Item	OBJ_papeles_cajon "montón desordenado de papeles" OBJ_LIMBO
 !!	 *	El atributo *general* se activa al vestir el objeto por primera vez.
 !!	 *	TODO - Comportamiento cuando la ropa está quitada
 !!	 *	FIXME - Nombres y adjetivos
-Item	OBJ_ropa "ropa" OBJ_cama
+Item	obj_ropa "ropa" obj_cama
  class	Receptacle
  with	name_m	'abrigo' 'atuendo' 'bolsillo' 'chaqueton' 'gaban' 'pantalon' 
 				'sobretodo' 'tejano' 'vaquero' 'vestuario',
@@ -1083,7 +1083,7 @@ Item	OBJ_ropa "ropa" OBJ_cama
 				if (self.trousers_flag)
 					return O__M(self, 7);
 				O__M(self, 1);
-				if (self in OBJ_cama) " Está hecha un rebujo sobre la cama.";
+				if (self in obj_cama) " Está hecha un rebujo sobre la cama.";
 				if (self in real_location) " Está hecha un rebujo en el suelo.";
 				if (self in player && self has worn && child(self)) {
 					print "^^En los bolsillos del abrigo hay ";
@@ -1134,7 +1134,7 @@ Item	OBJ_ropa "ropa" OBJ_cama
 			Disrobe:
 				if (self hasnt worn)
 					return false;
-				if (real_location == OBJ_HABITACION)
+				if (real_location == obj_HABITACION)
 					return false;
 				if (GRAMMATICAL_INFLECTION == THIRD_PERSON_PRESENT)
 					"No piensa pasearse por ahí desnud", (o) player, ".";
@@ -1197,7 +1197,7 @@ Item	OBJ_ropa "ropa" OBJ_cama
 				give self open;
 				if (self hasnt general) {
 					give self general;
-					move OBJ_revolver to self;
+					move obj_revolver to self;
 					return O__M(self, 9, flowers);
 				}
 				return false;
@@ -1272,7 +1272,7 @@ Item	OBJ_ropa "ropa" OBJ_cama
 !!	 *	TODO - descarga revolver
 !!	 *	TODO - vacia el cargador
 !!	 *	FIXME - Nombres y adjetivos
-Item	OBJ_revolver "revólver" OBJ_LIMBO
+Item	obj_revolver "revólver" obj_LIMBO
  with	name_m	'barrilete' 'canon' 'revolver' 'tambor', 
 		name_f	'arma' 'cacha' 'culata' 'empunadura' 'pistola', 
 		name_fp	'cachas', 
@@ -1292,20 +1292,20 @@ Item	OBJ_revolver "revólver" OBJ_LIMBO
  has	male;
 
 !!	 *	FIXME - Nombres y adjetivos
-Item	OBJ_maleta "maleta de viaje" OBJ_HABITACION
+Item	obj_maleta "maleta de viaje" obj_HABITACION
  with	name_m	'equipaje' 'maleton', 
 		name_f	'maleta',
 		gender	G_FEMENINO, 
 		adjectives 'cuero' 'desgastada' 'desgastado' 'gran' 'grande' 'viaje', 
 		invent [;
-			if (inventory_stage == 1 && self in OBJ_HABITACION) {
+			if (inventory_stage == 1 && self in obj_HABITACION) {
 				print "su maleta de viaje, ya preparada y apoyada junto a la 
 				puerta";
 				return true;
 			}
 		],
 		describe [;
-			if (self in OBJ_TAXI)
+			if (self in obj_TAXI)
 				"^La maleta reposa sobre el asiento de al lado.";
 		],
 		description [;
@@ -1323,7 +1323,7 @@ Item	OBJ_maleta "maleta de viaje" OBJ_HABITACION
 			Empty:
 				"No va a deshacer ", (the) self, " ahora.";
 			Open, Receive:
-				if (location == OBJ_HABITACION)
+				if (location == obj_HABITACION)
 					"Ya tiene dentro todo cuanto puede llevar consigo.";
 				else
 					"Ahora no necesita nada de lo que lleva dentro de ", 
@@ -1340,7 +1340,7 @@ Item	OBJ_maleta "maleta de viaje" OBJ_HABITACION
  has	female openable ~open;
 
 !!	 *	FIXME - Nombres y adjetivos
-Item	OBJ_libro_bolsillo "librito de poemas" OBJ_LIMBO
+Item	obj_libro_bolsillo "librito de poemas" obj_LIMBO
  with	name_m	'ejemplar' 'librito' 'libro' 'poemario' 'tomo' 'volumen',
 		gender	G_MASCULINO,
 		adjectives
@@ -1361,9 +1361,9 @@ Item	OBJ_libro_bolsillo "librito de poemas" OBJ_LIMBO
 					if (AttemptToTakeObject(self))
 						return true;
 				O__M(self, 2);
-				if (OBJ_billete hasnt general) {
-					give OBJ_billete general;
-					move OBJ_billete to real_location;
+				if (obj_billete hasnt general) {
+					give obj_billete general;
+					move obj_billete to real_location;
 					new_line;
 					return O__M(self, 3);
 				}
@@ -1371,9 +1371,9 @@ Item	OBJ_libro_bolsillo "librito de poemas" OBJ_LIMBO
 			Receive:
 				if (noun == self or player && second == self)
 					"Eso no tiene sentido.";
-				if (noun == OBJ_billete && second == self)
+				if (noun == obj_billete && second == self)
 					"Ya no necesita tenerlo ahí escondido.";
-				if (noun ~= OBJ_billete && second == self)
+				if (noun ~= obj_billete && second == self)
 					"No se puede esconder algo así entre las páginas de un 
 					libro.";
 		], 
@@ -1382,7 +1382,7 @@ Item	OBJ_libro_bolsillo "librito de poemas" OBJ_LIMBO
 
 !!	 *	El atributo *general* se activa al descubrir el billete.
 !!	 *	FIXME - Nombres y adjetivos
-Item	OBJ_billete OBJ_LIMBO
+Item	obj_billete obj_LIMBO
  with	short_name [;
 			if (self.description_flag) print "billete";
 			else print "trozo de papel";
@@ -1397,7 +1397,7 @@ Item	OBJ_billete OBJ_LIMBO
 				print "Si, es él. ";
 			}
 			O__M(self, 1);
-			if (real_location == OBJ_HABITACION)
+			if (real_location == obj_HABITACION)
 				" Aún hay tiempo, pero no puede entretenerse. Tiene que salir 
 				de aquí.";
 			new_line;

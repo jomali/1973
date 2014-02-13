@@ -14,7 +14,7 @@
 !!	System:			Inform-INFSP 6
 !!	Platform:		Z-Machine / Glulx
 !!	Version:		0.2
-!!	Released:		2014/02/10
+!!	Released:		2014/02/12
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -166,14 +166,17 @@ System_file;
 !! Vector para guardar palabras temporalmente:
 Array tmp_text -> 64;
 
+!! Estilo y textos por defecto de la extensión:
 Default CONVERSATION_STYLE	1; ! (0-3)
 Default CONVERSATION_PREFIX	"(";
 Default CONVERSATION_SUFIX	")";
 Default CONVERSATION_MSG1	"Puedes ";
 Default CONVERSATION_MSG2	"escoger entre ";
-Default CONVERSATION_MSG3	"Hablas con ";
 Default CONVERSATION_OR		" o ";
 Default CONVERSATION_NO_MSG	"No hay temas que tratar";
+
+!! Objeto de apoyo para reordenar los temas de una conversación:
+Object	TopicBag "(Topic Bag)";
 
 !!==============================================================================
 !!	Funciones de depuración
@@ -200,8 +203,8 @@ Default CONVERSATION_NO_MSG	"No hay temas que tratar";
 !!==============================================================================
 !!	Compara una palabra de la entrada del usuario con una de las palabras de 
 !!	diccionario. La palabra de entrada se pasa a la función a través de 
-!!	'num_word_prompt', un número que indica el orden de la palabra en el vector 
-!!	de entrada, y la palabra de diccionario se pasa a través de 'dictword' 
+!!	*num_word_prompt*, un número que indica el orden de la palabra en el vector 
+!!	de entrada, y la palabra de diccionario se pasa a través de *dictword* 
 !!	(hay que volcarla en un vector antes de hacer la comprobación).
 !!
 !!	Se retorna 1 si las palabras son iguales, o 0 si son diferentes
@@ -209,7 +212,7 @@ Default CONVERSATION_NO_MSG	"No hay temas que tratar";
 
 [ CompareWord num_word_prompt dictword i len;
 
-	!! A) Se vuelca la palabra de diccionario a un array
+	!! A) Se vuelca la palabra de diccionario a un array:
 
 	#Ifdef TARGET_ZCODE;
 	@output_stream 3 tmp_text;
@@ -225,7 +228,7 @@ Default CONVERSATION_NO_MSG	"No hay temas que tratar";
 	!! con la conversión de infitivos y los diccionarios en informATE --> NO 
 	!! DEBE HABER NUNCA PALABRAS EN INFINITIVO EN EL DICCIONARIO. No vale para 
 	!! palabras que antes de ponerles la coma tengan 9 o más caracteres 
-	!! (limitación de Inform)
+	!! (limitación de Inform):
 
 	if (tmp_text->(len+WORDSIZE-1) == ',') {
 		tmp_text->(len+WORDSIZE-1) = 0;	! Se elimina el caracter del buffer
@@ -240,63 +243,66 @@ Default CONVERSATION_NO_MSG	"No hay temas que tratar";
 
 	!! Si la longitud de las palabras no es igual, se retorna NO coincidente. 
 	!! (NOTA: Hay que contemplar el caso especial de palabras de más de 9 
-	!! caracteres por las limitaciones de Inform)
+	!! caracteres por las limitaciones de Inform):
 	if (WordLength(num_word_prompt) ~= len && 
 			~~(WordLength(num_word_prompt) > 9 && len == 9)) 
 		return 0;
 
 	!! Si las palabras tienen la misma longitud, se comparan caracter a 
-	!! caracter y se retorna NO coincidente si se encuentra una diferencia
+	!! caracter y se retorna NO coincidente si se encuentra una diferencia:
 	for (i = 0: i < len: i++) {
 		if (WordAddress(num_word_prompt)->i ~= tmp_text->(i+WORDSIZE))
 			return 0;
 	}
 
-	!! Las palabras son iguales
+	!! Las palabras son iguales:
 	return 1;
 ];
 
 !!==============================================================================
-!!	Representa un tema sobre el que se puede hablar en una conversación. Cuando 
-!!	el gestor trata un tema, automáticamente le da el atributo "visited" para 
-!!	marcarlo como tema tratado y al final lo elimina de la conversación. Se 
-!!	puede forzar, sin embargo, que un tema esté siempre disponible si en la 
-!!	función reaction() se le quita el atributo "visited". Ej:
-!!
-!!		Object	topic
-!!		 class	ConversationTopic
-!!		 with	[...]
-!!				reaction [; give self ~visited; ];
+!!	Representa un tema sobre el que se puede hablar en una conversación.
 !!------------------------------------------------------------------------------
 
 Class	ConversationTopic
- with	compare_prompt [i j;
+ with	!! Determina el número de coincidencias entre la entrada del usuario y 
+		!! el tema.
+		compare_prompt [i j;
 			self.hits = 0;
-			for (i = 0 : i < self.#keys/WORDSIZE : i++) {
-				for (j = 1 : j <= num_words : j++) {
-					if (CompareWord(j, self.&keys-->i)) {
-						self.hits++;
+			if (self.keys ~= 0) {
+				for (i = 0 : i < (self.#keys)/WORDSIZE : i++) {
+					for (j = 1 : j <= num_words : j++) {
+						if (CompareWord(j, self.&keys-->i)) {
+							self.hits++;
+						}
 					}
 				}
 			}
 		],
-		!! Número de coincidencias de la entrada del usuario con el tema
+		!! Número de coincidencias de la entrada del usuario con el tema.
 		hits 0,
-		!! Descripción del tema
-		entry 0, 
-		!! Desarrollo del tema
-		reply 0, 
-		!! Acciones a ejecutar después de tratar el tema
+		!! Descripción del tema. Es el texto que se imprime al mostrar el 
+		!! inventario de temas de una conversación.
+		entry 0,
+		!! Palabras clave con las que el usuario puede hacer alusión al tema.
+		keys 0,
+		!! Rutina a ejecutar cuando se selecciona el tema.
+		reply 0,
+		!! Rutina a ejecutar después de tratar el tema.
 		reaction 0,
 		!! Vector de temas relacionados. Cuando éste se elimina, todos sus 
 		!! parientes se eliminan a la vez (y se marcan además como tratados si 
 		!! lo está también él).
 		relatives 0,
-		!! Lista de subtemas que añadir a la conversacion tras tratar este tema
-		subtopics 0, 
-		!! Si está establecido a 'true' se fuerza que el turno en que se trata 
-		!! este tema finalice mostrando el inventario de temas disponibles
-		append_topic_inventory true;
+		!! Vector de temas que se añaden a la conversación tras tratar éste.
+		subtopics 0,
+		!! Indica si el turno en que se trata este tema debe finalizar 
+		!! mostrando el inventario de temas restantes de la conversación de la 
+		!! que forma parte.
+		append_topic_inventory true,
+		!! Indica si el tema es persistente. Cuando el gestor trata un tema no 
+		!! persistente, automáticamente le da el atributo *visited* para 
+		!! marcarlo como tema tratado y luego lo elimina de la conversación.
+		persistent false;
 
 !!==============================================================================
 !!	Representa una conversación con una lista de temas que pueden ser tratados 
@@ -327,9 +333,10 @@ Class	ConversationTopic
 !!
 !!	 *	topic_inventory_size() - Retorna el número de temas de la conversación.
 !!
-!!	 *	show_topic_inventory(flag:boolean) - Imprime el inventario de temas. Si 
-!!		se invoca con *flag* verdadero y la conversación tiene definida la 
-!!		propiedad *talker*, ésta se imprime antes de imprimir el inventario.
+!!	 *	show_topic_inventory(flag:boolean) - Ordena aleatoriamente e imprime el 
+!!		inventario de temas. Si se invoca con *flag* verdadero y la 
+!!		conversación tiene definida la propiedad *talker*, ésta se imprime 
+!!		antes de imprimir el inventario.
 !!------------------------------------------------------------------------------
 
 Class	Conversation
@@ -361,16 +368,18 @@ Class	Conversation
 			}
 			return true;
 		],
-		remove_topic [ topic visited_flag obj i;
+		remove_topic [ topic visited_flag obj i x;
 			if (parent(topic) ~= self) return false;
 			if (visited_flag) give topic visited;
-			!! Se elimina a los parientes del tema:
+			!! Se marca a los parientes del tema como tratados (si procede), y 
+			!! se eliminan de la conversación (si están en ella):
 			if (topic.relatives ~= 0) {
-				for (obj=child(self) : obj~=nothing : obj=sibling(obj)) {
-					for (i=0 : i<(topic.#relatives)/WORDSIZE : i++) {
-						if (obj == topic.&relatives-->i) {
-							if (topic has visited) give obj visited;
-							remove obj;
+				for (i=0 : i<(topic.#relatives)/WORDSIZE : i++) {
+					x = topic.&relatives-->i;
+					if (topic has visited) give x visited;
+					for (obj=child(self) : obj~=nothing : obj=sibling(obj)) {
+						if (obj == x) {
+							remove x;
 							break;
 						}
 					}
@@ -391,7 +400,7 @@ Class	Conversation
 			objectloop(topic in self) size++;
 			return size;
 		],
-		show_topic_inventory [ flag		topic size;
+		show_topic_inventory [ flag		topic size i n;
 			!! XXX - Puesto que el temporizador comprueba si se deben eliminar 
 			!! los temas temporales al finalizar el turno (es decir, después de 
 			!! de mostrar el inventario de temas), puede ocurrir que algunos de 
@@ -400,6 +409,8 @@ Class	Conversation
 			!! los temas temporales.
 			if (self.time_left == 0) self.remove_temporal_topic();
 
+			!! Si la función se invoca con *flag* activado y la conversación 
+			!! tiene el parámetro *talker* definido, se imprime:
 			if ((flag) && (self.talker ~= 0)) {
 				switch (metaclass(self.talker)) {
 					Object:		print (The) self.talker;
@@ -409,14 +420,30 @@ Class	Conversation
 				print ": ";
 			}
 
+			!! Se calcula el número de temas de la conversación:
 			size = self.topic_inventory_size();
+
+			!! Se imprimen los mensajes previos al inventario:
 			if ((size == 0) && (CONVERSATION_NO_MSG ~= 0))
 				print (string) CONVERSATION_NO_MSG;
 			if ((size > 0) && (CONVERSATION_MSG1 ~= 0))
 				print (string) CONVERSATION_MSG1;
 			if ((size > 1) && (CONVERSATION_MSG2 ~= 0))
 				print (string) CONVERSATION_MSG2;
-			!! imprime el listado de temas
+
+			!! Se recolocan los temas en la conversación de forma aleatoria:
+			for (i=size : i>0 : i--) {
+				n = random(i);
+				topic = child(self);
+				while (n>1) {
+					topic = sibling(topic);
+					n--;
+				}
+				move topic to TopicBag;
+			}
+			while (child(TopicBag)) move child(TopicBag) to self;
+
+			!! Por último se imprime el listado de temas:
 			for (topic=child(self) : topic~=nothing : topic=sibling(topic)) {
 				PrintOrRun(topic, entry, true);
 				if (sibling(topic) ~= nothing) {
@@ -446,16 +473,17 @@ Class	Conversation
 		!! Guarda el tema temporal.
 		temporal_topic 0;
 
-
 !!==============================================================================
 !!	Objeto gestor del sistema de conversación. Cuenta con el siguiente conjunto 
 !!	de funciones que pueden ser utilizadas por un autor de relatos interactivos 
 !!	para manejar conversaciones:
 !!
-!!	 *	start(conv:Conversation) - Inicia y deja activa en el gestor la 
-!!		conversación pasada como parámetro. Retorna verdadero si la 
+!!	 *	start(conv:Conversation, no_action:boolean) - Inicia y deja activa en 
+!!		el gestor la conversación pasada como parámetro. Si además se invoca 
+!!		con *no_action* verdadero, se evita la ejecución de las acciones 
+!!		previas a la activación de la conversación. Retorna verdadero si la 
 !!		conversación se activa correctamente, falso si la conversación no es 
-!!		válida o no tiene temas que tratar.
+!!		válida o está marcada como finalizada.
 !!
 !!	 *	end() - Quita del gestor la conversación activa.
 !!
@@ -478,7 +506,7 @@ Class	Conversation
 !!------------------------------------------------------------------------------
 
 Object ConversationManager "(Conversation Manager)"
- with	start [ conv;
+ with	start [ conv no_action;
 			!! Se comprueba que la conversación pasada sea válida:
 			if ((conv == 0) || ~~(conv ofclass Conversation)) {
 				#Ifdef DEBUG_TOPICINVENTORY;
@@ -489,7 +517,7 @@ Object ConversationManager "(Conversation Manager)"
 			!! Si la conversación ha finalizado, ejecuta la acción de final de 
 			!! conversación (si está definida) y retorna:
 			if (conv has general) {
-				if (conv.final_action ~= 0) {
+				if ((conv.final_action ~= 0) && ~~(no_action)) {
 					PrintOrRun(conv, final_action);
 				}
 				return false;
@@ -497,7 +525,7 @@ Object ConversationManager "(Conversation Manager)"
 			!! Si la conversación ya está activada, ejecuta la acción de 
 			!! conversación en ejecución (si está definida):
 			if (self.is_running(conv)) {
-				if (conv.inter_action ~= 0) {
+				if ((conv.inter_action ~= 0) && ~~(no_action)) {
 					PrintOrRun(conv, inter_action);
 					new_line;
 				}
@@ -505,7 +533,7 @@ Object ConversationManager "(Conversation Manager)"
 			!! Se ejecuta la acción de inicio de conversación (si está 
 			!! definida) y activa la conversación en el gestor:
 			else {
-				if (conv.initial_action ~= 0) {
+				if ((conv.initial_action ~= 0) && ~~(no_action)) {
 					PrintOrRun(conv, initial_action);
 					new_line;
 				}
@@ -520,15 +548,15 @@ Object ConversationManager "(Conversation Manager)"
 			return true;
 		], 
 		is_running [ conv;
-			if (conv == nothing)
-				return self.current_conversation ~= nothing;
-			else return self.current_conversation == conv;
+			if (conv ~= nothing) return self.current_conversation == conv;
+			else return self.current_conversation ~= nothing;
 		], 
 		topic_inventory_size [;
 			return self.current_conversation.topic_inventory_size();
 		],
 		!! XXX - Requiere la extensión types.h v4.X o superior. Se puede 
-		!! cambiar por la versión alternativa que no hace uso de la extensión.
+		!! cambiar por la versión alternativa de la propiedad (definida más 
+		!! abajo) que no hace uso de la extensión.
 		show_topic_inventory [ flag;
 			if (self.current_conversation == 0) return false;
 			start_parser_style();
@@ -583,20 +611,20 @@ Object ConversationManager "(Conversation Manager)"
 		try [ o o_tmp_hits;
 			if (self.current_conversation) {
 
-				!! A) Inicializaciones del método
+				!! A) Inicializaciones del método:
 				self.topic_inventory_flag = false; 
 				self.hits = 0;
 				self.topic = 0;
 
 				!! B) Da un repaso a los temas actuales comprobando si alguno 
-				!! encaja con la entrada de usuario
+				!! encaja con la entrada de usuario:
 				objectloop (o in self.current_conversation) {
 					#Ifdef DEBUG_TOPICINVENTORY;
 					print "Probando: ", (string) o.entry, "... ";
 					#Endif; ! DEBUG_TOPICINVENTORY;
 
 					!! Se calcula el número de coincidencias del tema en 
-					!! relación al total de palabras (%)
+					!! relación al total de palabras (%):
 					o.compare_prompt();
 					o_tmp_hits = (o.hits*100) / num_words; 
 					
@@ -612,37 +640,41 @@ Object ConversationManager "(Conversation Manager)"
 					}
 				}
 
-				!! C) Se muestra la respuesta al tema elegido, si lo hay, se 
-				!! quita de la conversación y se añaden los posibles subtemas
+				!! C) Si se ha seleccionado un tema, se ejecutan las acciones 
+				!! del tema, se elimina de la conversación (si procede), y se 
+				!! añaden los posibles subtemas:
 				if (self.hits) {
 					#Ifdef DEBUG_TOPICINVENTORY;
 					print "Tema seleccionado: ", (string) self.topic.entry;
 					new_line;
 					#Endif; ! DEBUG_TOPICINVENTORY;
 
-					!! El tema queda marcado como tratado
-					give self.topic visited;
+					!! Si no es persistente, el tema queda marcado como tratado:
+					if (~~(self.topic.persistent)) give self.topic visited;
 
+					!! Acción al tratar el tema:
 					if (self.topic.reply ~= 0)
 						PrintOrRun(self.topic, reply);
 
-					!! Se establece la propiedad 'topic_inventory_flag' del 
-					!! sistema en función de las propiedades del tema
+					!! Se establece la propiedad *topic_inventory_flag* del 
+					!! gestor en función de las propiedades del tema:
 					self.topic_inventory_flag
 						= self.topic.append_topic_inventory;
 
 					!! Se elimina el tema seleccionado si está agotado y se 
-					!! añaden a la conversación todos sus subtemas, si los hay
+					!! añaden a la conversación todos sus subtemas, si los hay:
 					if (self.topic has visited)
 						self.current_conversation.remove_topic(self.topic);
 					self.current_conversation.add_subtopics(self.topic);
 
+					!! Acción después de tratar el tema:
 					if (self.topic.reaction ~= 0)
 						PrintOrRun(self.topic, reaction);
 
 					!! Se modifica la entrada de usuario para que la librería 
 					!! lance la acción de apoyo ##NPCTalk (referenciada con la 
-					!! palabra clave 'npc.talk')
+					!! palabra clave 'npc.talk'):
+
 					parse-->1 = 'npc.talk';
 					num_words = 1;
 
@@ -654,22 +686,22 @@ Object ConversationManager "(Conversation Manager)"
 			}
 
 			!! Retorna de la función sin hacer nada -> tratamiento normal de 
-			!! la entrada del usuario
+			!! la entrada del usuario:
 			return false;
 		], 
 		get_topic_inventory_flag [;
 			return self.topic_inventory_flag;
 		],
  private
-		!! Tema con mayor porcentaje de coincidencias hasta el momento
+		!! Tema con mayor porcentaje de coincidencias hasta el momento.
 		topic 0,
 		!! Número de coincidencias del tema con más coincidencias de la 
-		!! conversación (en tanto por 100 sobre el número de palabras clave)
+		!! conversación (en tanto por 100 sobre el número de palabras clave).
 		hits 0, 
-		!! Conversación actual activa en el gestor
+		!! Conversación actual activa en el gestor.
 		current_conversation 0, 
 		!! Indica si hay que mostrar el inventario de temas al terminar de 
-		!! desarrollar uno de los temas de la conversación actual
+		!! desarrollar uno de los temas de la conversación actual.
 		topic_inventory_flag false;
 
 !!==============================================================================

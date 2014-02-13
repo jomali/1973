@@ -19,20 +19,21 @@
 !!
 !!	Copyright (c) 2014, J. Francisco Martín
 !!
-!!	This file is part of PROYECTO 1973.
+!!	Este archivo forma parte de PROYECTO 1973.
 !!
-!!	PROYECTO 1973 is free software: you can redistribute it and/or modify 
-!!	it under the terms of the GNU General Public License as published by 
-!!	the Free Software Foundation, either version 3 of the License, or 
-!!	(at your option) any later version.
+!!	PROYECTO 1973 es software libre: usted puede redistribuirlo y/o 
+!!	modificarlo bajo los términos de la Licencia Pública General GNU 
+!!	publicada por la Fundación para el Software Libre, ya sea la versión 
+!!	3 de la Licencia, o (a su elección) cualquier versión posterior.
 !!
-!!	PROYECTO 1973 is distributed in the hope that it will be useful, 
-!!	but WITHOUT ANY WARRANTY; without even the implied warranty of 
-!!	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-!!	GNU General Public License for more details.
+!!	PROYECTO 1973 se distribuye con la esperanza de que sea útil, pero 
+!!	SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o 
+!!	de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de 
+!!	la Licencia Pública General GNU para más información.
 !!
-!!	You should have received a copy of the GNU General Public License 
-!!	along with PROYECTO 1973. If not, see <http://www.gnu.org/licenses/>.
+!!	Debería haber recibido una copia de la Licencia Pública General GNU 
+!!	junto a PROYECTO 1973. En caso contrario, consulte
+!!	<http://www.gnu.org/licenses/>.
 !!
 !!------------------------------------------------------------------------------
 
@@ -47,7 +48,7 @@
 !!	<>	abrir/cerrar puerta
 !!	<>	acción gritar
 
-Room	OBJ_TAXI "Dentro del taxi"
+Room	obj_TAXI "Dentro del taxi"
  with	name	'taxi' 'coche' 'vehiculo' 'automovil' 'auto', 
 		initial [; if (self hasnt visited) {
 			!! Inicializaciones multimedia: ------------------------------------
@@ -62,7 +63,7 @@ Room	OBJ_TAXI "Dentro del taxi"
 			#Endif; ! TARGET_GLULX;
 			!! Otra inicializaciones de la escena: -----------------------------
 			SetGrammaticalInflection(THIRD_PERSON_PRESENT);
-			move OBJ_maleta to self;
+			move obj_maleta to self;
 			StartTimer(self, 5); !! TODO: ajustar temporizador
 			!! Introducción ----------------------------------------------------
 			O__M(self, 1);
@@ -112,8 +113,8 @@ Room	OBJ_TAXI "Dentro del taxi"
 			!Damusix.Tocar(STREET_ENVIRONMENT);
 			Damusix.FadeIn(SATIATE_PERCUSSION, 1000, 50);
 			#Endif; ! TARGET_GLULX;
-			give OBJ_puerta_taxi open;
-			return OBJ_puerta_taxi;
+			give obj_puerta_taxi open;
+			return obj_puerta_taxi;
 		],
 		out_to [;
 			return self.e_to();
@@ -168,7 +169,7 @@ Room	OBJ_TAXI "Dentro del taxi"
 			print "Siente cómo la sangre le salta repentinamente a la cara; no 
 			se había dado cuenta de que recitaba en voz alta.^";
 			new_line;
-			ConversationManager.start(OBJ_conversacion_taxista_1);
+			ConversationManager.start(obj_conversacion_taxista_1);
 			return true;
 		],
 		!! Avanza al estado: 2
@@ -185,7 +186,7 @@ Room	OBJ_TAXI "Dentro del taxi"
 			hacia Gabriel.^";
 			new_line;
 			print "---¿Tiene mucha prisa";
-			if (OBJ_taxista.k_poetry) print ", señor poeta";
+			if (obj_taxista.k_poetry) print ", señor poeta";
 			print "?^";
 			flag = PressAnyKey(flag);
 			new_line;
@@ -198,7 +199,7 @@ Room	OBJ_TAXI "Dentro del taxi"
 			new_line;
 			print "---Va a huir del país, ¿eh?^";
 			new_line;
-			ConversationManager.start(OBJ_conversacion_taxista_2);
+			ConversationManager.start(obj_conversacion_taxista_2);
 			return true;
 		],
 ;
@@ -209,7 +210,7 @@ Room	OBJ_TAXI "Dentro del taxi"
 !!------------------------------------------------------------------------------
 !! NPCs:
 
-NPC		OBJ_taxista "taxista" OBJ_TAXI
+NPC		obj_taxista "taxista" obj_TAXI
  with
 		name_m	'taxista' 'conductor' 'chofer' 'hombre' 'individuo', 
 		name_f	'persona', 
@@ -256,10 +257,10 @@ NPC		OBJ_taxista "taxista" OBJ_TAXI
 !!------------------------------------------------------------------------------
 !! Conversación con el taxista:
 
-Conversation OBJ_conversacion_taxista_1
- with	topics OBJ_op03 OBJ_op02 OBJ_taxista_tema_01;
+Conversation obj_conversacion_taxista_1
+ with	topics obj_op03 obj_op02 obj_taxista_tema_01;
 
-ConversationTopic OBJ_taxista_tema_01
+ConversationTopic obj_taxista_tema_01
  class	TextSequence
  with	description
 			"---Es... es algo que escribí yo."
@@ -271,7 +272,7 @@ ConversationTopic OBJ_taxista_tema_01
 			print "---Eso que he recitado. Son unos versos que presenté a un 
 			concurso. Aquí al lado, hace unos meses. No gané nada. ---Aunque sí 
 			se sintió bastante satisfecho con su obra.";
-			if (OBJ_ventanilla.is_described())
+			if (obj_ventanilla.is_described())
 				print " Juzgaba que había mejorado mucho desde los pareados 
 				grabados a punta de navaja en un árbol.";
 		]
@@ -293,11 +294,11 @@ ConversationTopic OBJ_taxista_tema_01
 			self.display();
 		],
 		reaction [;
-			OBJ_taxista.last_topic = 1;
-			OBJ_taxista.k_poetry = true;
+			obj_taxista.last_topic = 1;
+			obj_taxista.k_poetry = true;
 		];
 
-ConversationTopic OBJ_op02
+ConversationTopic obj_op02
  with	entry [;
 			print "hablar sobre el ", (strong) "estado del tráfico";
 		],
@@ -305,7 +306,7 @@ ConversationTopic OBJ_op02
 		reply [ flag;
 			print "---No es habitual que se forme un atasco así a estas horas, 
 			¿no es cierto?";
-			if (OBJ_taxista.last_topic == 0 && ~~OBJ_taxista.k_poetry)
+			if (obj_taxista.last_topic == 0 && ~~obj_taxista.k_poetry)
 				print " ---cambia de tema Gabriel.";
 			new_line;
 			flag = PressAnyKey(flag);
@@ -319,20 +320,20 @@ ConversationTopic OBJ_op02
 			malsonante.^";
 		], 
 		reaction [;
-			parent(self).remove_topic(OBJ_taxista_tema_01);
-			OBJ_taxista.last_topic = 2;
+			parent(self).remove_topic(obj_taxista_tema_01);
+			obj_taxista.last_topic = 2;
 			self.append_topic_inventory = true;
 		], 
 ;
 
-ConversationTopic OBJ_op03
+ConversationTopic obj_op03
  with	entry [;
 			print "hablar sobre el ", (strong) "golpe contra el gobierno";
 		],
 		keys	'golpe' 'contra' 'gobierno' 'estado' 'sublevacion' 'militar', 
 		reply [ flag;
 			print "---¿Puedo preguntarle una cosa?";
-			if (OBJ_taxista.last_topic == 0 && ~~OBJ_taxista.k_poetry)
+			if (obj_taxista.last_topic == 0 && ~~obj_taxista.k_poetry)
 				print " ---cambia de tema Gabriel.";
 			new_line;
 			flag = PressAnyKey(flag);
@@ -354,16 +355,16 @@ ConversationTopic OBJ_op03
 			print "---Si, desde luego.^";
 		], 
 		reaction [;
-			parent(self).remove_topic(OBJ_taxista_tema_01);
-			OBJ_taxista.last_topic = 3;
+			parent(self).remove_topic(obj_taxista_tema_01);
+			obj_taxista.last_topic = 3;
 			self.append_topic_inventory = true;
 		], 
 ;
 
-Conversation OBJ_conversacion_taxista_2
- with	topics OBJ_op06 OBJ_op05 OBJ_op04;
+Conversation obj_conversacion_taxista_2
+ with	topics obj_op06 obj_op05 obj_op04;
 
-ConversationTopic OBJ_op04
+ConversationTopic obj_op04
  with	keys	'ser,' 'se,' 'contestar,' 'contesta,' 'sincero' 'sinceridad', 
 		entry [;
 			print (strong) "ser sincero";
@@ -373,13 +374,13 @@ ConversationTopic OBJ_op04
 			new_line;
 		],
 		reaction [;
-			parent(self).remove_topic(OBJ_op05);
-			parent(self).remove_topic(OBJ_op06);
-			OBJ_taxista.last_topic = 4;
+			parent(self).remove_topic(obj_op05);
+			parent(self).remove_topic(obj_op06);
+			obj_taxista.last_topic = 4;
 		],
-		subtopics OBJ_op02 OBJ_op03;
+		subtopics obj_op02 obj_op03;
 
-ConversationTopic OBJ_op05
+ConversationTopic obj_op05
  with	keys	'mentir,' 'miente,' 'mentira', 
 		entry [;
 			print (strong) "mentir";
@@ -389,13 +390,13 @@ ConversationTopic OBJ_op05
 			new_line;
 		],
 		reaction [;
-			parent(self).remove_topic(OBJ_op04);
-			parent(self).remove_topic(OBJ_op06);
-			OBJ_taxista.last_topic = 5;
+			parent(self).remove_topic(obj_op04);
+			parent(self).remove_topic(obj_op06);
+			obj_taxista.last_topic = 5;
 		],
-		subtopics OBJ_op02 OBJ_op03;
+		subtopics obj_op02 obj_op03;
 
-ConversationTopic OBJ_op06
+ConversationTopic obj_op06
  with	keys	'guardar,' 'guarda,' 'silencio', 
 		entry [;
 			print (strong) "guardar silencio";
@@ -408,11 +409,11 @@ print "---Bueno, ---rompe finalmente el silencio, y exhalando una gran nube de h
 			new_line;
 		],
 		reaction [;
-			parent(self).remove_topic(OBJ_op04);
-			parent(self).remove_topic(OBJ_op05);
-			OBJ_taxista.last_topic = 6;
+			parent(self).remove_topic(obj_op04);
+			parent(self).remove_topic(obj_op05);
+			obj_taxista.last_topic = 6;
 		],
-		subtopics OBJ_op02 OBJ_op03;
+		subtopics obj_op02 obj_op03;
 
 !!------------------------------------------------------------------------------
 !! Items:
@@ -424,7 +425,7 @@ print "---Bueno, ---rompe finalmente el silencio, y exhalando una gran nube de h
 !! Atrezzo:
 
 !! TODO
-Atrezzo	"ciudad" OBJ_TAXI
+Atrezzo	"ciudad" obj_TAXI
  with	name_m	'santiago' 'edificio' 'parque' 'parquecillo' 'paseo' 'bulevar' 
 				'bordillo' 'anden' 'pavimento', 
 		name_f	'ciudad' 'urbe' 'capital' 'metropoli' 'calle' 'carretera' 
@@ -434,27 +435,27 @@ Atrezzo	"ciudad" OBJ_TAXI
 		gender	G_FEMENINO, 
 		before [;
 			Examine:
-				<<Examine OBJ_ventanilla>>;
+				<<Examine obj_ventanilla>>;
 		], 
  has	female;
 
 !! TODO
-Atrezzo	OBJ_puerta_taxi "puerta" OBJ_TAXI
+Atrezzo	obj_puerta_taxi "puerta" obj_TAXI
  with	name_f	'puerta', 
 		gender	G_FEMENINO, 
 		before [;
 			Examine:
-				<<Examine OBJ_ventanilla>>;
+				<<Examine obj_ventanilla>>;
 		],
 		door_dir 
 			out_to, 
 		door_to	
-			OBJ_CALLE_ARRIBA,
+			obj_CALLE_ARRIBA,
  has	female door openable ~open;
 
 !! TODO:
 !!	<>	abrir / cerrar ventanilla
-Atrezzo	OBJ_ventanilla "ventanilla" OBJ_TAXI
+Atrezzo	obj_ventanilla "ventanilla" obj_TAXI
  with
 		name_m	'cristal' 'vidrio', 
 		name_f	'ventanilla' 'ventana' 'luna', 
@@ -463,10 +464,10 @@ Atrezzo	OBJ_ventanilla "ventanilla" OBJ_TAXI
 		gender	G_FEMENINO, 
 		adjectives 'lateral' 'laterales' 'puerta' 'puertas', 
 		description [; 
-			if (OBJ_TAXI.get_state() == 3) {
+			if (obj_TAXI.get_state() == 3) {
 !! XXX
 				"Descripción de la calle con el coche parado.";
-			} else if (OBJ_TAXI.get_state() == 2) {
+			} else if (obj_TAXI.get_state() == 2) {
 				<<Go out_obj>>;
 			} else if (~~self.described) {
 				self.described = true;
@@ -499,7 +500,7 @@ Atrezzo	OBJ_ventanilla "ventanilla" OBJ_TAXI
 !!	CALLE_ARRIBA: Santiago
 !!------------------------------------------------------------------------------
 
-Room	OBJ_CALLE_ARRIBA "Santiago"
+Room	obj_CALLE_ARRIBA "Santiago"
  with	name	'calle' 'calles' 'santiago' 'aceras' 'acera' 'via' 'paseo' 
 				'avenida' 'bulevar' 'rambla' 'ronda' 'bordillo' 'anden' 
 				'pavimento' 'calzada' 'carretera',
@@ -508,8 +509,8 @@ Room	OBJ_CALLE_ARRIBA "Santiago"
 print "Apenas una semana después del golpe, el ambiente que se respira en la calle vuelve a ser el de siempre, como si nunca hubiera ocurrido nada. Los habitantes de Santiago han vuelto a sus quehaceres diarios. Las tiendas y los bares están frecuentados otra vez por la clientela habitual, los ociosos pasean tranquilamente bajo el sol del mediodía y todos se esfuerzan, en fin, por recuperar la vida que tenían antes. Al menos aquéllos que aún conservan una.";
 			new_line;
 		],
-		s_to	OBJ_CALLE_ABAJO, 
-		w_to	OBJ_taxi_aparcado, 
+		s_to	obj_CALLE_ABAJO, 
+		w_to	obj_taxi_aparcado, 
 		in_to	[; return self.w_to(); ],
 ;
 
@@ -528,14 +529,14 @@ print "Apenas una semana después del golpe, el ambiente que se respira en la cal
 !!------------------------------------------------------------------------------
 !! Atrezzo:
 
-Atrezzo	OBJ_taxi_aparcado "taxi" OBJ_CALLE_ARRIBA
+Atrezzo	obj_taxi_aparcado "taxi" obj_CALLE_ARRIBA
  with	name_m	'taxi' 'coche' 'vehiculo' 'automovil' 'auto', 
 		gender	G_MASCULINO, 
 		adjectives 'parado' 'detenido' 'aparcado', 
 		door_dir 
 			in_to, 
 		door_to
-			OBJ_TAXI, 
+			obj_TAXI, 
  has	male door openable ~open;
 
 
@@ -543,7 +544,7 @@ Atrezzo	OBJ_taxi_aparcado "taxi" OBJ_CALLE_ARRIBA
 !!	CALLE_ABAJO: Santiago
 !!------------------------------------------------------------------------------
 
-Room	OBJ_CALLE_ABAJO "Santiago"
+Room	obj_CALLE_ABAJO "Santiago"
  with	name	'calle' 'calles' 'santiago' 'aceras' 'acera' 'via' 'paseo' 
 				'avenida' 'bulevar' 'rambla' 'ronda' 'bordillo' 'anden' 
 				'pavimento' 'calzada' 'carretera',
@@ -552,7 +553,7 @@ Room	OBJ_CALLE_ABAJO "Santiago"
 print "Un puñado de pasos calle abajo la ve por fin. Esta a punto de echar a correr a su encuentro, pero se detiene en el último momento. Luz está en una terraza cercana, pero no es ella la única a quién ve. Dos soldados están sentados a una de las mesas y la han hecho detenerse. Tras unos instantes interrogándola acerca de algún asunto ---Gabriel no puede escuchar cuál---, la dejan continuar. Luz se sienta a otra mesa de la terraza, sola.";
 			new_line;
 		],
-		n_to	OBJ_CALLE_ARRIBA,
+		n_to	obj_CALLE_ARRIBA,
 ;
 
 !!------------------------------------------------------------------------------

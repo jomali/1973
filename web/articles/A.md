@@ -1,0 +1,13 @@
+# A. Intérpretes
+
+
+
+Una de las partes más confusas (por desgracia) para el lector de relatos interactivos es la necesidad de programas intérpretes. Y es que no basta con tener el fichero de la historia que queramos experimentar (en nuestro caso: **"Cerillera.zblorb"**), sino también un programa capaz de ejecutar dicha historia en nuestro ordenador. El objetivo de esta distinción entre "objetos historia" y "programas intérprete" es facilitar la portabilidad entre diferentes modelos de computadora; la misma historia puede ser ejecutada tanto en un Mac, en un PC con sistemas operativos Windows o Linux, una PDA, un teléfono móvil..., contando simplemente con el intérprete adecuado. En el caso de que ejecutes la historia directamente desde Internet, no hay necesidad de que te preocupes de esto. Pero si no es así, antes deberás instalar antes un programa intérprete en tu ordenador y, una vez lo tengas, bastará con hacer doble clic en el fichero **"Cerillera.zblorb"** para iniciar el relato.
+
+* **Intérpretes para PC/Windows:** Para PC/Windows, probablemente una de las mejores opciones es Gargoyle, un conjunto de intérpretes que ejecutan historias en la mayor parte de los formatos más usuales de relato interactivo. Además, su aspecto visual es uno de los más ciudados. Puedes descargarlo gratuítamente desde su página web: <http://ccxvii.net/gargoyle/>
+
+* **Intérpretes para MAC/MACOS X:** Un muy buen programa para Mac es *Splatterlight*. El aspecto visual no está tan cuidado como el *Gargoyle* para PC, pero es un intérprete capaz de entender también la gran mayoría de formatos existentes. Descárgalo gratuítamente de su página web: <http://ccxvii.net/spatterlight/>. Otra opción también interesante es el intérprete *Zoom*, que logra un buen aspecto visual y una gran claridad de texto. Puedes descargarlo desde su página web: <http://www.logicalshift.demon.co.uk/mac/zoom.html>
+
+* **Intérpretes para PC/Linux:** Posiblemente la mejor opción para Linux es nuevamente *Gargoyle*, ya comentado para PC/Windows. Enlace a la página web de Gargoyle: <http://ccxvii.net/gargoyle/> (se puede encontrar disponible también en los repositorios de alguna de las distribuciones más populares como Ubuntu).
+
+* **Intérpretes para otros sistemas:** Para otros sistemas distintos (teléfonos móviles, PDAs,...), la mejor opción es consultar en cualquiera de los directorios de intérpretes del repositorio internacional de Ficción Interactiva, IF-Archive: <ftp://ftp.ifarchive.org/if-archive/>
